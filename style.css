@@ -175,7 +175,7 @@ li.menu-item :hover{
 	min-height:272px;
 }
 
-#main-content p , #main-content h2, #main-content h3 , #main-content form{
+#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content lu{
 	margin-left:60px;
 }
 
@@ -239,7 +239,7 @@ li.menu-item :hover{
 	float:right
 }
 
-#sidebar p {
+#sidebar p, #sidebar li {
 	margin-bottom:5px;
 }
 
@@ -305,7 +305,7 @@ hr {
 	width:240px;
 	background-color:#f4f4f4;
 }
-/*
+/* may not need the following
 .main{
 	width:1000px;
 	margin:0 auto 33px auto;
