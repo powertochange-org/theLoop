@@ -175,8 +175,12 @@ li.menu-item :hover{
 	min-height:272px;
 }
 
-#main-content p , #main-content h2, #main-content h3 {
+#main-content p , #main-content h2, #main-content h3 , #main-content form{
 	margin-left:60px;
+}
+
+#main-content form p {
+	margin-left:0;
 }
 
 #main-content h1{
@@ -235,6 +239,10 @@ li.menu-item :hover{
 	float:right
 }
 
+#sidebar p {
+	margin-bottom:5px;
+}
+
 .search-img{
 	width:29px;
 	height:29px;
@@ -255,7 +263,7 @@ li.menu-item :hover{
 }
 
 .search-input{
-	width:204px;
+	width:200px;
 	border: 0;
 	padding:0;
 	margin:0;

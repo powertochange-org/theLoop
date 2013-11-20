@@ -14,7 +14,7 @@
 			var dropdown = document.getElementById("cat");
 			function onCatChange() {
 				if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
-					location.href = "http://localhost:81/?cat="+dropdown.options[dropdown.selectedIndex].value;
+					location.href = "<?php echo site_url(); ?>/?cat="+dropdown.options[dropdown.selectedIndex].value;
 				}
 			}
 			dropdown.onchange = onCatChange;
