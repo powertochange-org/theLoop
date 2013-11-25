@@ -7,7 +7,7 @@ html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
+small, strike, /* strong,*/ sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
@@ -22,6 +22,8 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	text-decoration:none;
+	font-family: 'Open Sans', sans-serif;
 	
 }	
 article, aside, details, figcaption, figure, 
@@ -91,7 +93,6 @@ header .button{
 	height:21px;
 	color:#000000;
 	text-align:center;
-	text-decoration:none;
 	font-family:'Open Sans', sans-serif;
 	font-weight:300;
 	font-size:13px;
@@ -124,7 +125,6 @@ header .button.absence{
 	padding:0px 20px;
 	float: left;
 	position: relative;
-	text-decoration: none;
 	font-size:14px;
 	padding-top: 17px;
 	top:-1px;
@@ -175,7 +175,7 @@ li.menu-item :hover{
 	min-height:272px;
 }
 
-#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content lu{
+#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content lu, hr.comment{
 	margin-left:60px;
 }
 
@@ -183,23 +183,29 @@ li.menu-item :hover{
 	margin-left:0;
 }
 
-#main-content h1{
+#main-content h1, #content h1{
 	font-size:30px;
 	margin-left:60px;
 }
 
-#main-content h1 a{
+#main-content h1 a {
 	color:#4a4d4e;
-	
 }
 
 #main-content a{
-	text-decoration:none;
 	color:#005e90;
 }
 
-#main-content hr{
-	border-color:#13b5ea;
+hr{
+	display: block;
+	height: 1px;
+    border: 0;
+	border-top: 1px solid #f7941d;
+	margin: 20px 0;
+}
+
+#main-content hr.comment{
+	border-color:#d6d7d4;
 }
 
 #main-content .meta{
@@ -210,25 +216,37 @@ li.menu-item :hover{
 	color:#005e90;
 }
 
+.replace {
+	margin-bottom:5px;
+}
 
+ .comment_text, .comment_meta{
+	float:left;
+ }
+
+ .right{
+	float:right;
+	display:inline;
+ }
 
 #main-content textarea {
-	width:530px;
+	width:100%;
 	height:100px;
-	border: 1px solid #0079c1;
+	border: 1px solid #adafb2;
 	background-color:#f4f4f4;
 	margin:10px 0;
 }
 
-#main-content input {
+#main-content .btn1 {
 	width:225px;
 	height:55px;
-	background:#13b5ea;
-	border-color:#13b5ea;
+	background:#f7941d;
+	border-color:#f7941d;
 	color:#ffffff;
 	margin:10px 0;
 	border:0;
 	border-radius: 5px;
+	line-height:normal;
 }
 
 #sidebar{
@@ -243,6 +261,16 @@ li.menu-item :hover{
 	margin-bottom:5px;
 }
 
+#sidebar p {
+	font-size:11px;
+	font-style:italic;
+	line-height:normal;
+}
+
+#sidebar h1 {
+	margin-left:0;
+}
+
 .search-img{
 	width:29px;
 	height:29px;
@@ -251,7 +279,7 @@ li.menu-item :hover{
 	display:inline;
 }
 
-.search-img:hover{
+.search-img:hover, .false-link:hover{
 	cursor:pointer;
 }
 
@@ -272,7 +300,6 @@ li.menu-item :hover{
 }
 
 .sidebaritem *{
-	text-decoration:none;
 	font-family:'Open Sans', sans-serif;
 	font-size:20px;
 	color:#4a4d4e;
@@ -292,7 +319,7 @@ li.menu-item :hover{
 	color: #0079c1;
 }
 
-hr {
+.sidebaritem hr {
 	display: block;
 	height: 1px;
     border: 0;
@@ -690,7 +717,6 @@ footer a{
 	font-family:'Open Sans', sans-serif;
 	font-size:14px;	
 	line-height:26px;
-	text-decoration:none;
 }
 
 footer .contact{
@@ -786,7 +812,6 @@ footer .privacy{
 	font-size:13px;
 	display:inline-block;
 	margin-left:80px;
-	text-decoration:none;
 }
 footer .privacy:hover{
 	text-decoration:underline;

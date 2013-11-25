@@ -16,20 +16,21 @@
 
 <?php if ( have_comments() ) : ?>
 	<h3><?php comments_number('No Comments', '1 Comment', '% Comments' );?></h3>
-	
+	<hr class='comment'>
 	<ol id="comments_list">
 		<?php foreach ($comments as $comment) : ?>
 		<?php $comment_type = get_comment_type(); ?><?php if($comment_type == 'comment') { ?>
 			<li class="<?php if (the_author('', false) == get_comment_author()) echo 'author'; else echo $oddcomment; ?>" id="comment-<?php comment_ID() ?>">
 				<div class="comment_meta">
 					<?php if(function_exists('get_avatar')) { echo get_avatar($comment, '40'); } ?>
-					<p class="meta">by <strong><?php comment_author_link()?></strong></p>
-					<p>On <?php comment_date('F j, Y') ?></p>
+					<p class="meta"><strong><?php comment_author_link()?></strong></p>
+					<p><?php comment_date('F j, Y') ?></p>
 				</div>
 			
 				<div class="comment_text">
 					<?php comment_text(); ?>
-				</div>
+				</div><div style='clear:both;'></div>
+				<hr class='comment'>
 				<?php if ($comment->comment_approved == '0') : ?>
 				<em>Your comment is awaiting moderation.</em>
 			<?php endif; ?>
@@ -57,15 +58,15 @@
 </div><!-- end #comments -->
 <?php if ( comments_open() ) : ?>
 <div class="comments_reply">
-	<h3><?php comment_form_title( 'Leave a Reply', 'Leave a Reply to %s' ); ?></h3>
+	<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" id="commentform">
+	<strong style='line-height: 23px;'><?php comment_form_title( 'Leave a Reply', 'Leave a Reply to %s' ); ?></strong>
 
 	<?php if ( get_option('comment_registration') && !is_user_logged_in() ) : //if visitors must be logged in to comment ?>
 		<p>Sorry, but you must be <a href="<?php echo wp_login_url( get_permalink() ); ?>">logged in</a> to post a comment.</p>
 	<?php else : ?>
 
-	<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" id="commentform">
 		<?php if ( is_user_logged_in() ) : //if user is logged in, displays username and option to log out ?>
-			<p>Logged in as <a class='username' href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo wp_logout_url(get_permalink()); ?>" title="Log out of this account">Log out.</a></p>
+			<p class='right'>Logged in as <a class='username' href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo wp_logout_url(get_permalink()); ?>" title="Log out of this account">Log out.</a></p><div style='clear:both;'></div>
 		<?php else : ?>
 
 		<p><input type="text" name="author" id="author" value="<?php echo esc_attr($comment_author); ?>" size="22" tabindex="1" <?php if ($req) echo "aria-required='true'"; ?> />
