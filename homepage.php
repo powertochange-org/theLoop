@@ -3,136 +3,123 @@
 *Template Name: HomePage
 *
 */
-
  get_header(); ?>
-<div class="main">
-	<?php /* todo include('slideshow.php'); */ ?>
-
-
-	<?php 
-	$about = get_post_meta(get_the_ID(), 'about-text', true);
-	$involve = get_post_meta(get_the_ID(), 'involve-text', true);
-	$donate = get_post_meta(get_the_ID(), 'donate-text', true);
-	?>
-	
-	<div class='columns top'>
-		<div class='column left'>
-			<h2><a href='/who-we-are/'><span class='arrowbox'></span>About us</a></h2>
-			<p><?php echo $about; ?></p>
-		</div><div class='column centre'>
-			<h2><a href='/get-involved/'><span class='arrowbox'></span>Get Involved</a></h2>
-			<p><?php echo $involve; ?></p>
-		</div><div class='column right'>
-			<h2><a href='/donate/'><span class='arrowbox'></span>Donate</a></h2>
-			<p><?php echo $donate; ?></p>
-		</div>
-			</div>
-		<div class='bar'>
-			<?php 
-			$shareSaveDisabled = true;
-			the_content();?>
-		</div>
-		<div class='columns bottom'>
-		<div class='latest column'>
-			<h2><a href='/blogs/org/'><span class='arrowbox'></span>Latest Post</a></h2>
-				<?php
-					$query =  new WP_Query('cat=11802&posts_per_page=1');
-					if ( $query->have_posts() ) {
-						while ( $query->have_posts() ) {
-							$query->the_post(); ?>
-							<h3><a href='<?php the_permalink(); ?>'><?php the_title(); ?></a></h3>
-							<div class='text'><?php the_excerpt(); ?></div>
-							<div class='bottombuttons'>
-								<a class='readmore' href='<?php the_permalink(); ?>'>Read More</a>
-								<a class='subscribe' href='subscribe'>Subscribe</a>
-							</div>
-							
+<div id="content">
+	<div id='slideshow' style='height:100px; width:100%;'>
+	</div>
+    <div id="content-left">
+	<div id="main-content">
+		<table style='width:100%;'>
+			<tr>
+				<td>
+					<hr>
+					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						Featured</span><BR>
+						<?php 
+							$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
+							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+							?>
+							<BR>
+							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+							<BR>
+							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
-						}
-					}
-					/* Restore original Post Data */
-					wp_reset_postdata();
-				?>
-			
-		
-				
-			</div><div class='events column'>
-				<h2><span class='arrowbox'></span><a href='/events/'>Upcoming Events</a></h2>
-				
-			<?php /* todo  $feed = fetch_feed('http://192.168.210.67:8787/organization/events/?listformat=rss');
-			$first = true;
-			foreach ($feed->get_items(0, 2) as $item){
-				$loc = $item->get_item_tags ('http://powertochange.org', 'location');
-				$source = $item->get_item_tags ('http://powertochange.org', 'source');
-				if($source[0]['data'] == 'studioonline'){
-					$linktext = 'Register';
-					$class='register';
-				}else{
-					$linktext = 'Learn More';
-					$class='learn';
-				}
-				
-				if($first){
-					echo "<div class='first' >";
-					$first = false;
-				}else{
-					echo "<div >";
-				}
-				echo "<a class='link ". $class ."' href='" . $item->get_permalink() . "'>" . $linktext . "</a>";
-				echo "<h3>" . $item->get_title() . "</h3>";
-				echo "<h4>" . date('F j, Y') . "</h4>";
-				echo "<h4>" . $loc[0]['child'][""]['city'][0]['data'] . ", " . $loc[0]['child'][""]['province'][0]['data'] . "</h4>";
-				
-				
-				
-				
-				
-				echo "</div>";
-			}
-			
-			
-			*/?>
-			
-			<div class='bottombuttons'>
-				<a class='viewmore' href='/events/'>View More</a>
-			</div>
-			</div><div class='twitter column'>
-			<?php // $tweets = get_tweets(); ?>
-				<h2><span class='arrowbox'></span><a href='https://twitter.com/powertochange/'>Twitter</a> | <a href='<?php echo $tweets[0]['datelink']; ?>'><?php echo Date('M d, Y', $tweets[0]['date']); ?></a></h2>
-				<a class='balllogo' href='https://twitter.com/powertochange/'><img src='/wp-content/themes/hybrid/corporate/images/balllogo.png' /></a>
-				<h3><a href='https://twitter.com/powertochange/'>Power to Change</a></h3>
-				<h4><a href='https://twitter.com/powertochange/'>@powertochange</a></h4>
-				<p><?php echo $tweets[0]['tweet']; ?></p>
-				    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-				
-				<div class='actions'><a href="https://twitter.com/intent/tweet?in_reply_to=<?php echo $tweets[0]['id']; ?>">Reply</a>
-					<a href="https://twitter.com/intent/retweet?tweet_id=<?php echo $tweets[0]['id']; ?>">Retweet</a>
-					<a href="https://twitter.com/intent/favorite?tweet_id=<?php echo $tweets[0]['id']; ?>">Favorite</a>
-				</div>
-				
-				<div class='bottombuttons'>
-					<a href="https://twitter.com/powertochange" class="twitter-follow-button" data-show-count="false">Follow @powertochange</a>
-					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-				</div>
-			</div><div class='facebook column'>
-			<?php // $facebook = fb_feed(50767430543, array('echo'=>false)); 	?>
-			<h2><span class='arrowbox'></span><a href='https://www.facebook.com/PowerToChange'>Facebook</a> | <a href='<?php echo $facebook[0]['link']; ?>'><?php echo Date('M d, Y', $facebook[0]['date']); ?></a></h2>
-				<a class='balllogo' href='https://www.facebook.com/PowerToChange'><img src='/wp-content/themes/hybrid/corporate/images/balllogo.png' /></a>
-				<h3><a href='https://www.facebook.com/PowerToChange'>Power to Change</a></h3>
-				<p><?php echo $facebook[0]['message']; ?></p>
-				<div class='bottombuttons'>
-				<div id="fb-root"></div>
-					<script>(function(d, s, id) {
-					  var js, fjs = d.getElementsByTagName(s)[0];
-					  if (d.getElementById(id)) return;
-					  js = d.createElement(s); js.id = id;
-					  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1375050846054682";
-					  fjs.parentNode.insertBefore(js, fjs);
-					}(document, 'script', 'facebook-jssdk'));</script>
-					<div class="fb-like" data-href="<?php echo $facebook['link']; ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
-				</div>
-			</div>
-		</div>
-
+							endwhile; endif; ?>
+				</td>
+				<td style='width:46px;'>
+				</td>
+				<td>
+					<hr>
+					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						News and Update</span><BR>
+						<?php 
+							$latest_cat_post = new WP_Query( array('posts_per_page' => 1));
+							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+							?>
+							<BR>
+							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+							<BR>
+							<span class="homepage"><?php the_excerpt(); ?></span>
+							<?php
+							endwhile; endif; ?>
+				</td>
+			</tr>
+			<tr>
+				<td colspan='3' style='height:46px;'>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<hr>
+					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						From Leonard</span><BR>
+						<?php 
+							$idObj = get_category_by_slug('from-leonard'); 
+							$id = $idObj->term_id;
+							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+							?>
+							<BR>
+							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+							<BR>
+							<span class="homepage"><?php the_excerpt(); ?></span>
+							<?php
+							endwhile; endif; ?>
+				</td>
+				<td></td>
+				<td>
+					<hr>
+					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						Prayer Requests</span><BR>
+						<?php 
+							$idObj = get_category_by_slug('prayer-requests'); 
+							$id = $idObj->term_id;
+							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+							?>
+							<BR>
+							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+							<BR>
+							<span class="homepage"><?php the_excerpt(); ?></span>
+							<?php
+							endwhile; endif; ?><BR><BR>
+						<a style='display:block;width:100%;background-color:#f7941d;padding:20px 0;border-radius:5px' href='/'><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+				</td>
+			</tr>
+		</table>
+	
+	
+	   
+	</div>
+    </div>
+    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
 </div>
+<!--content end-->
+<!--Popup window-->
+</div>
+<!--main end-->
+</div>
+<!--wrapper end-->
+<div style='clear:both;'></div>
+<hr style='border-color:#d6d7d4'>	
+<div class='middle'>
+	<img class='logo' src='/wp-content/themes/carmel/img/footer-logo.png' /> <!-- change?-->
+	<img class='cluster' src='/wp-content/themes/carmel/img/cluster.png'  usemap="#clustermap" />
+	<map name="clustermap">
+		<!-- todo change? -->
+	  <area shape="rect" coords="0,0,115,50" href="/ministries/aia/" />
+	  <area shape="rect" coords="115,0,250,50" href="/ministries/students/" />
+	  <area shape="rect" coords="250,0,330,50" href="/ministries/gain/" />
+	  <area shape="rect" coords="330,0,470,50" href="/ministries/fl/" />
+	  <area shape="rect" coords="470,0,600,50" href="/ministries/tm/" />
+	  <area shape="rect" coords="600,0,729,50" href="/ministries/li/" />
+	  <area shape="rect" coords="0,50,125,95" href="/ministries/cs/" />
+	  <area shape="rect" coords="125,50,225,95" href="/ministries/drime/" />
+	  <area shape="rect" coords="225,50,310,95" href="/ministries/jfs/" />
+	  <area shape="rect" coords="310,50,400,95" href="/ministries/tl/" />
+	  <area shape="rect" coords="400,50,530,95" href="/ministries/icn/" />
+	  <area shape="rect" coords="530,50,600,95" href="/ministries/ce/" />
+	  <area shape="rect" coords="600,50,729,95" href="/ministries/btp/" />
+	</map> 
+</div>	
 <?php get_footer(); ?>

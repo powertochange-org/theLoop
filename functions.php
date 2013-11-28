@@ -17,4 +17,43 @@ register_sidebar(array(
 	'before_title' => '<h1>',
 	'after_title' => '</h1>',
 ));
+
+// custom 'read more' link
+function excerpt_ellipse($text) {
+    return str_replace(' [&hellip;]', ' <BR><BR><a href="'.get_permalink().'">Read more</a>', $text);
+}
+add_filter('the_excerpt', 'excerpt_ellipse');
+
+/*function new_excerpt_more( $more ) {
+	return '[.....]';
+}
+add_filter('excerpt_more', 'new_excerpt_more');*/
+
+$postArray = array();
+/*$count_posts = wp_count_posts();
+$published_posts = $count_posts->publish;*/
+$posts_array = get_posts( array('numberposts'   => 50));
+foreach($posts_array as $post){
+	$postArray[$post->ID] = $post->post_title;
+}
+
+function themename_customize_register($wp_customize){
+    
+	global $postArray;
+     $wp_customize->add_setting('feature_post', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+    $wp_customize->add_control( 'select_feature_post', array(
+        'settings' => 'feature_post',
+        'label'   => 'Feature Post:',
+        'section' => 'static_front_page',
+        'type'    => 'select',
+        'choices'    => $postArray
+    ));
+}
+ 
+add_action('customize_register', 'themename_customize_register');
 ?>

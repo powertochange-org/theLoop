@@ -69,6 +69,14 @@ p strong{
 		
 }
 
+span.heading{
+	font-size:25px;
+}
+
+td hr{
+	margin:0;
+}
+
 header{
 	background:#0079c1;
 	height:154px;
@@ -96,26 +104,27 @@ header .button{
 	font-family:'Open Sans', sans-serif;
 	font-weight:300;
 	font-size:13px;
-	border-radius:2px;
 	padding-top:5px;
 	margin-right:10px;
 	margin-top:10px;
 }
 
-header .button.helpdesk{
+header .popupMenu{
+	color:#adafb2;
+	font-size:15px;
+	padding: 15px 0;
+}
+
+header .popupMenu:hover{
+	color:#f7941d;
+}
+
+header .button.related{
 	background:#f58220;
 	border:1px solid #eb8528;
-}
-
-header .button.selfhelp{
-	background:#fdbb30;
-	border:1px solid #e3b43f;
-	margin-right:0;
-}
-
-header .button.absence{
-	background:#13b5ea;
-	border:1px solid #11afe6;
+	cursor:default;
+	z-index:2;
+	position:relative;
 }
 
 .menu-item a {
@@ -698,10 +707,10 @@ hr{
 
 */
 footer{
-	background:#494c4b;
+	background:#0079c1;
 
 }
-
+/*
 footer h1{
 	font-family:'Roboto Slab', Courier;
 	font-weight:bold;	
@@ -733,15 +742,13 @@ footer .top{
 	padding-top:43px;
 	padding-bottom:39px;
 }
-
-footer .middle{
+*/
+.middle{
 	width:1000px;
 	margin: auto;
-	background:#e0e2e4;
 	padding:13px;
-	border-radius:3px;
 }
-
+/*
 footer .top h1{
 	margin-bottom:28px;
 	
@@ -765,17 +772,17 @@ footer .links div{
 	vertical-align:top;
 	width:160px;
 }
-
-footer .middle .logo{
+*/
+.middle .logo{
 	padding:29px 25px 20px 10px;	
 	border-right: 1px solid #c7c7c7;
 }
-
+/*
 footer .wide{
 	background:#878c91;	
 	padding:10px 0;
 }
-
+*/
 footer .bottom{
 	width:1000px;
 	margin:0 auto;
@@ -791,7 +798,7 @@ footer .bottom div{
 footer .bottom a{
 	color:#c4c4c4;
 }
-
+/*
 footer .connect{
 	float:right;
 	font-family:'Open sans', sans-serif;
@@ -806,7 +813,7 @@ footer .cluster{
 	margin-left:25px;
 	margin-bottom:10px;
 }
-	
+	*/
 footer .privacy{
 	font-family: 'Open sans', sans-serif;
 	font-size:13px;
@@ -822,4 +829,14 @@ footer .copy{
 	font-size:13px;
 }
 
+#main-content .homepage{
+	margin:0;
+}
 
+#main-content .homepage h2{
+}
+
+#main-content .homepage p{
+	margin:0;
+	line-height:15px;
+}

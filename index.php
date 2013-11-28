@@ -30,5 +30,5 @@
 <!--main end-->
 </div>
 <!--wrapper end-->
-<div class="clear"></div>		
+<div style='clear:both;'></div>		
 <?php get_footer(); ?>
