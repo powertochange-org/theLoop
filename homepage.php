@@ -54,7 +54,7 @@
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
 						From Leonard</span><BR>
 						<?php 
-							$idObj = get_category_by_slug('from-leonard'); 
+							$idObj = get_category_by_slug('leonards-updates'); 
 							$id = $idObj->term_id;
 							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
