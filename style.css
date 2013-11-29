@@ -184,7 +184,7 @@ li.menu-item :hover{
 	min-height:272px;
 }
 
-#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content lu, hr.comment{
+#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content ul, hr.comment {
 	margin-left:60px;
 }
 
@@ -194,7 +194,6 @@ li.menu-item :hover{
 
 #main-content h1, #content h1{
 	font-size:30px;
-	margin-left:60px;
 }
 
 #main-content h1 a {
@@ -839,4 +838,80 @@ footer .copy{
 #main-content .homepage p{
 	margin:0;
 	line-height:15px;
+}
+
+.orange_button, #content-right.download a{
+	display:block;
+	width:100%;
+	background-color:#f7941d;
+	padding:20px 0;
+	border-radius:5px
+}
+
+#content-right.download a{
+	text-align:center;
+	color:#ffffff;
+	margin-bottom:20px;
+}
+
+.crumbs{
+	vertical-align:middle;
+	background-color:#adafb2;
+	padding-left:24px;
+	width:213px;
+	height:37px;
+}
+
+#main-content .crumbs a{
+	color:#ffffff;
+}
+
+#main-content.form  *, #main-content.ministries  *{
+	margin:0;
+}
+
+#main-content.form .post table, #main-content.ministries .post table{
+	margin:-30px;
+	border-collapse: separate;
+    border-spacing: 30px;
+	margin-bottom:0px;
+	
+}
+
+#main-content.form  .post h2, #main-content.ministries  .post h2{
+	font-size:17px;
+	font-weight:bold;
+	color:#858585;
+	margin-bottom:20px;
+}
+
+#main-content.form  .post p, #main-content.ministries  .post p{
+	color:#858585;
+}
+
+#main-content.form  .post td:hover, #main-content.ministries  .post td:hover{
+	background-color:#f7941d;
+}
+
+#main-content.form  .post td, #main-content.ministries  .post td{
+	background-color:#eeeeee;
+	border:solid 1px #eaeae8;
+	text-align:center;
+	height:147px;
+	padding-top:40px;
+	padding-left:6px;
+	padding-right:6px;
+}
+
+#main-content.ministries  .post td{
+	position:relative
+}
+#main-content.ministries  .post a{
+	background-color:#e0e0e0;
+	width:299px;
+	display:block;
+	color:#000000;
+	font-weight:bold;
+	vertical-align:baseline;
+	position:absolute; bottom:6px;
 }

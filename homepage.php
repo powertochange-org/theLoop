@@ -31,7 +31,7 @@
 				<td>
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						News and Update</span><BR>
+						News &amp; Update</span><BR>
 						<?php 
 							$latest_cat_post = new WP_Query( array('posts_per_page' => 1));
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
@@ -83,7 +83,7 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?><BR><BR>
-						<a style='display:block;width:100%;background-color:#f7941d;padding:20px 0;border-radius:5px' href='/'><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+						<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 				</td>
 			</tr>
 		</table>

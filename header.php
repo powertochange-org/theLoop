@@ -50,11 +50,12 @@ header .button.related:hover{
 				<a id='popUpButton' class='button related' onmouseout='popUpHide();' onmouseover='popUpShow();'>Related Links</a>
 				<div id='popUp' onmouseout='popUpHide();' onmouseover='popUpShow();' style='display:none;position:absolute;background-color:#f4f4f4;padding:10px 40px;right:10px;top:69px;z-index:1;border:1px solid #d6d7d4;'>
 					<center><ul>
-						<li class='popupMenu'><a class='popupMenu' href='/'>ABSENCE TRACKER</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='/'>HELPDESK</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='/'>SELF-HELP WIKI</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='/'>MY SETTINGS</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='/'>MYGCX</a></li>
+						<?php //may turn into wordpress menu */ ?>
+						<li class='popupMenu'><a class='popupMenu' href='https://absences.powertochange.org'>ABSENCE TRACKER</a></li>
+						<li class='popupMenu'><a class='popupMenu' href='mailto:helpdesk@powertochange.org'>HELPDESK</a></li>
+						<li class='popupMenu'><a class='popupMenu' href='https://wiki.powertochange.org/help'>SELF-HELP WIKI</a></li>
+						<li class='popupMenu'><a class='popupMenu' href='/wp-admin/admin.php?page=s2'>MY SETTINGS</a></li>
+						<li class='popupMenu'><a class='popupMenu' href='https://www.mygcx.org/system/screen/home'>MYGCX</a></li>
 					</ul></center>
 				</div>
 			</div>
