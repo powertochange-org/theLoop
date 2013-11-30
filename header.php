@@ -9,18 +9,6 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
         <?php wp_head(); ?> 
          <script type='text/javascript'>
-		 /*
-		 header .button.related{
-	background:#f58220;
-	border:1px solid #eb8528;
-	cursor:default;
-}
-
-header .button.related:hover{
-	background:#f4f4f4;
-	border:1px solid #d6d7d4;
-}
-		 */
 			function popUpShow(){
 				$("#popUp").show();
 				var e = document.getElementById('popUpButton');
