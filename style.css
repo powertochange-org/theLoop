@@ -140,11 +140,15 @@ header .button.related{
 	/*padding-left:20px;*/
 }
 
-li.menu-item :hover{
+li.menu-item  a:hover{
 	background:#0079c1;
 	border-bottom:thin solid #218ac9;
 }
 
+li.menu-item.current-menu-item  a{
+	background:#0079c1;
+	border-bottom:thin solid #218ac9;
+}
 
 .menu_bg{
 	background:#005e90;
@@ -193,7 +197,7 @@ li.menu-item :hover{
 }
 
 #main-content h1, #content h1{
-	font-size:30px;
+	font-size:25px;
 }
 
 #main-content h1 a {

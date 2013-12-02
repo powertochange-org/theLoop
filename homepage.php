@@ -5,7 +5,51 @@
 */
  get_header(); ?>
 <div id="content">
-	<div id='slideshow' style='height:100px; width:100%;'>
+	<div style='position:relative; top:-46px;'>
+		<img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'>
+		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
+		<?php
+			$pictures = array('/wp-content/uploads/house.png', '/wp-content/uploads/untitled.png', '/wp-content/uploads/two.png');
+			foreach($pictures as $pic=>$x){
+				?>
+				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
+				</div>
+				<?php
+			}
+		?>
+		</div>
+		<script type="text/javascript">
+			
+			window.setInterval(nextPic,10000);
+
+			var select_pic = 0;
+			
+			function showPicture(picture){
+				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#ffffff';
+				select_pic = picture;
+				document.getElementById('slideshow').src = pics_array[select_pic];
+				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#fdbb30';
+			}
+			
+			function nextPic(){
+				//-2 because of the null at the end of array
+				if (select_pic == pics_array.length - 2){
+					showPicture(0);
+				}
+				else {
+					showPicture(select_pic + 1);
+				}
+			}
+			
+			var pics_array = new Array (<?php
+			foreach($pictures as &$pic){
+				echo " '$pic',";
+			}
+			?> null);
+			
+			//init slideshow
+			showPicture(0);
+		</script>
 	</div>
     <div id="content-left">
 	<div id="main-content">
@@ -92,7 +136,44 @@
 	   
 	</div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <div id="content-right">
+		<div id="sidebar">
+			<div class="sidebaritem">
+				<a href='http://localhost/development/dummy.html'>Staff Directory</a><BR>
+				<hr>
+				<h1>Search the Loop</h1><BR>
+				<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>
+					<input name="s" id="s" class='search-input' placeholder='Search' type='text' />
+					<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
+				</div></form>
+				<hr>
+				<h1>Feature Update</h1><BR>
+				<?php 
+					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_update'));
+					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+					echo strtoupper(the_title('', '', false));
+					endwhile; endif; ?>
+				
+				<BR>
+				<hr>
+				<h1>Upcoming Event</h1><BR>
+				<?php 
+					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('upcoming_event'));
+					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+					echo strtoupper(the_title('', '', false)); 
+					endwhile; endif; ?>
+				
+				<hr>
+				<h1>Recent Comments</h1><BR>
+				<?php 
+				foreach(get_comments( array( 'number' => 5)) as $c){
+					echo "<a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
+					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a>\n";
+				
+				} ?>
+			</div>                        
+		</div>
+	</div><div style='clear:both;'></div>
 </div>
 <!--content end-->
 <!--Popup window-->

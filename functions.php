@@ -29,6 +29,8 @@ add_filter('the_excerpt', 'excerpt_ellipse');
 }
 add_filter('excerpt_more', 'new_excerpt_more');*/
 
+
+
 $postArray = array();
 /*$count_posts = wp_count_posts();
 $published_posts = $count_posts->publish;*/
@@ -53,6 +55,34 @@ function themename_customize_register($wp_customize){
         'type'    => 'select',
         'choices'    => $postArray
     ));
+	
+	   $wp_customize->add_setting('feature_update', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+    $wp_customize->add_control( 'select_feature_update', array(
+        'settings' => 'feature_update',
+        'label'   => 'Feature Update:',
+        'section' => 'static_front_page',
+        'type'    => 'select',
+        'choices'    => $postArray
+    ));
+	
+	   $wp_customize->add_setting('upcoming_event', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+    $wp_customize->add_control( 'select_upcoming_event', array(
+        'settings' => 'upcoming_event',
+        'label'   => 'Upcoming Event:',
+        'section' => 'static_front_page',
+        'type'    => 'select',
+        'choices'    => $postArray
+    ));
 }
  
 add_action('customize_register', 'themename_customize_register');
@@ -70,7 +100,7 @@ function wp_admin_bar_my_custom_account_menu( $wp_admin_bar ) {
 	if ( 0 != $user_id ) {
 		/* Add the "My Account" menu */
 		$avatar = get_avatar( $user_id, 28 );
-		$howdy = sprintf( __('Welcome, %1$s'), $current_user->display_name );
+		$howdy = sprintf( __('Hello, %1$s'), $current_user->display_name );
 		$class = empty( $avatar ) ? '' : 'with-avatar';
 
 		$wp_admin_bar->add_menu( array(
