@@ -53,11 +53,11 @@ $plans = array(
 			
 			<form action="" method="post">
 				<table class="small-table" style="float: left">
-					<tr><th>Plan</th><th>Annual Amount</th><th>Monthly Amount</th></tr>
+					<tr><th>Plan</th><th>Annual Amount</th><th>Quarterly Amount</th></tr>
 					<?php
 					// Display table of plan options
 					foreach ($plans as $planName => $planMonthly) {
-						echo "<tr><td>$planName</td><td>\$".($planMonthly*12)."</td><td>\$$planMonthly</td></tr>";
+						echo "<tr><td>$planName</td><td>\$".($planMonthly*12)."</td><td>\$".($planMonthly*3)."</td></tr>";
 					}
 					?>
 				</table>
@@ -151,7 +151,7 @@ recorded. You chose the following plan:
 
   Plan name: $healthplan
   Annual amount: \$".($plans[$healthplan]*12)."
-  Monthly amount: \$".$plans[$healthplan]."
+  Quarterly amount: \$".($plans[$healthplan]*3)."
   
 For more information about the HCSA for 2013, refer to this post on
 the loop: https://staff.powertochange.org/human-resources/important-update-2013-hcsa-enrollment-deadline-december-27th-2012/

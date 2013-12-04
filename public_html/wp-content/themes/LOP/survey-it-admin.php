@@ -81,7 +81,6 @@ div.search {
     </div>
 <!--content end-->
 <!--Popup window-->
-<?php include(TEMPLATEPATH.'/popup.php') ?>
 </div>
 <!--main end-->
 </div>

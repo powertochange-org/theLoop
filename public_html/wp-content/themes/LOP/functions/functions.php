@@ -26,15 +26,6 @@ function getSpouse(){
 	return $function_spouse;
 }
 
-//get a field from the employee table of the current user **after nov11 delete
-/*function getFieldEmployee($field){
-	global $current_user, $wpdb;
-	$user_login = $current_user->user_login;
-	$sql = "SELECT `".$field."` FROM `employee` WHERE `user_login` = '". $user_login . "'";
-	$result = $wpdb->get_results($sql);
-	return get_object_vars($result[0])[$field];
-}*/
-
 //get a field from the employee table of the current user
 function getFieldEmployee($field, $id=null){
 	global $current_user, $wpdb;
