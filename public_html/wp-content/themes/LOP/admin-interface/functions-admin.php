@@ -127,16 +127,23 @@ function printAdminChangeInterface(){
 			button.value="Show Administrative Options";
 		}
 	}
+	
+	function demoteUser(user){
+		document.getElementById("input_remove_admin").value = user;
+		remove_admin.submit();
+	}
 	</script>
 	<input type="button" name="admin_view_button" id="admin_view_button" value="Show Administrative Options" onclick="toggle_admin();" />
-	<div name="admin_view" id="admin_view" style="display:none">
+	<BR><BR>
+	<div name="admin_view" id="admin_view" style="display:none;background-color:#fafafa;padding:10px;">
 		<table><tr>
 		<td>Make administrator:</td>
 		<td><form name="add_admin" id="add_admin" action="" method="get">
 				<input type="text" name="input_add_admin" id="input_add_admin" />
 		</form></td>
-		<td><input type="button" value="Promote" onclick="add_admin.submit();"></td>
+		<td><input type="button" value="Make Admin" onclick="add_admin.submit();"></td>
 		</tr></table>
+		<BR>
 		<form name="remove_admin" id="remove_admin" action="" method="get">
 				<input type="hidden" name="input_remove_admin" id="input_remove_admin" />
 		</form>

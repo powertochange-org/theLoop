@@ -1,3 +1,15 @@
+<style type='text/css'>
+#admin_view td, .border{
+	border: 1px solid #808080;
+	padding: 5px;
+	margin: 3px;
+}
+
+.label{
+	width:100%;
+}
+
+</style>
 <?php
 
 include('functions-admin.php');
@@ -199,6 +211,7 @@ function printAdmin(){
 		</tr>
 	</table>
 </div>
+<BR>
 <form name="sendConstants" id="sendConstants" action="" method="get">
 	<input type="hidden" name="constants" id="constants" value="">
 </form>
@@ -231,11 +244,6 @@ function printAdmin(){
 		var data = cpp_rate + "+" + cpp_max + "+" + cpp_exempt + "+" + ei_rate1 + "+" + ei_rate2 + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
 		document.getElementById("constants").value = data;
 		sendConstants.submit();
-	}
-	
-	function demoteUser(user){
-		document.getElementById("input_remove_admin").value = user;
-		remove_admin.submit();
 	}
 	</script>
 	';
