@@ -1,0 +1,36 @@
+AddHandler php5-script .php
+
+## The following will ensure the site uses https://
+RewriteEngine On
+#RewriteCond %{HTTPS} off
+#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+## The following will prevent direct document access by non-logged-in users
+RewriteCond %{HTTP:Cookie} !^(wordpress_logged_in_).*$ [NC]
+#RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC] #allow images to be accessed without logging in (there are security concerns about this)
+RewriteRule .*\.(doc|xls|pdf|html|htm|xlsx|docx)$ https://staff.powertochange.org/wp-login.php?redirect_to=%{REQUEST_URI} [NC]
+
+# BEGIN WPSuperCache
+# END WPSuperCache
+
+
+# WP-AVOID-SLOW Begin
+# Add Expires headers
+ExpiresActive On
+ExpiresDefault "access plus 5 days"
+# ETags
+FileETag none
+# WP-AVOID-SLOW END
+
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+#RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
