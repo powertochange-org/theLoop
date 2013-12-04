@@ -1,0 +1,81 @@
+* Release Notes
+
+	Version 2.0
+		adding compatibility with WordPress 3.0+ (unfortunately removing support for pre-3.0 and WPMU installations)
+		removing support for shared SSL
+
+	Version 1.4.1
+		bugfix: bug in ignore specified urls feature
+
+	Version 1.4
+		new feature: the buffer ignores specified urls
+		new feature: added 'Settings' link on plugins admin page
+
+	Version 1.3.5
+		adding compatibility with NextGEN Gallery
+
+	Version 1.3.4
+		confirming support for WordPress 2.7 
+
+	Version 1.3.2
+		moving output buffering in as_init() to being after https detection
+		adding nonce field to config pages
+
+	Version 1.3.1
+		bugfix: WPMU detection was not working, continuous redirection once enabled
+
+	Version 1.3
+		new feature: scans and secures links in comment notification emails and new user emails
+		new feature: .htaccess security for all files except -cookie.php, -reset.php and -test.php
+		forces SSL on user-edit.php as well - hopefully no more pages with password on!
+		debugging log extended to include more operations
+
+	Version 1.2.1
+		fixed cookie bug on Shared SSL setups which caused (yet another) redirection loop
+
+	Version 1.2
+		detects Apache version and alters default HTTPS detection values accordingly
+		support for WordPress 2.6 - but only by disabling the new 'secure' cookies
+		forces wp-admin/users.php to be secure as well - the page has password entry
+
+	Version 1.1
+		new feature: site-side URLs can be secured in the same way as admin URLs
+		new feature: option to detect HTTPS on custom server setups
+		Akismet's WordPress API Key config page added to default additional URLs
+		improved regular expression in as_ob_handler() for adding absolute hrefs
+		more redirection bugfixes for shared ssl, changes to common functions
+		security enhancements, force script to die if Admin SSL pages accessed directly
+
+	Version 1.0
+		new feature: full support for WordPress 2.2+, moved legacy code to separate file
+		new feature: debug and reset modes for troubleshooting - do not leave enabled
+		new feature: support for WordPress MU, but only with Private SSL
+		new feature: secure additional custom pages defined on the config page
+		new feature: if options are not set, inserts default values into database
+		new feature: user can decide where you want Admin SSL's options page
+		removed short tags from admin-ssl-config.php in line with WP plugins code of practice
+		configuration page no longer allows non-HTTPS shared URLs to be saved
+		more bugfixes to redirection, significant code enhancements and commenting
+
+	Version 0.72
+		redirection bugfixes and code enhancements, improved force SSL login feature
+
+	Version 0.71
+		full legacy version (0.64) added (realised it was incomplete!)
+		filtering $location in wp_redirect() to ensure redirection to secure URL
+		bugfixes for creating siteurl cookie for use in Shared SSL setups
+		WordPress compliant readme added, with screenhots
+
+	Version 0.70
+		support for both WP 2.5 and WP pre-2.5
+		using WP options and configuration page for Shared SSL
+		code cleanup and commenting, removing all unnecessary functions
+
+	Version 0.67 - removing unnecessary overloaded functions
+	Version 0.66 - updated to work with WP 2.5
+	Version 0.65 - securing /wp-content/ pages
+
+* Development History
+
+	admin-ssl 0.64 by Haris (haris.tv)
+	secure-admin 0.2 by Ryan Boren

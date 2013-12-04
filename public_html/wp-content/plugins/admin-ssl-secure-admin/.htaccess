@@ -1,0 +1,6 @@
+Order Allow,Deny
+Deny from all
+
+<FilesMatch "^admin-ssl-(cookie|reset|test)\.php$">
+	Allow from all
+</FilesMatch>
