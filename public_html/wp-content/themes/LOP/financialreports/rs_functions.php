@@ -76,7 +76,6 @@ global $SERVER_FIRST_CHRONICLES, $SERVER_SQL2012;
   $request->addPostData('_reportPath', $reportPath);
   $request->addPostData('_renderFormat', $renderFormat);
   // API token, so we can run reports on behalf of other users.
-  // Runs as "report-test" user
   include('constant.php');
 
   // If there are report parameters
