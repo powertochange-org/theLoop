@@ -70,8 +70,6 @@ class WPMinify {
         add_action('init', array($this, 'pre_content'), 99999);
         add_action('wp_footer', array($this, 'post_content'));
       }
-      // advertise hook
-      add_action('wp_footer', array($this, 'advertise'));
     }
   }
 
