@@ -1,0 +1,6 @@
+IndexIgnore *
+RewriteEngine On
+#RewriteCond %{HTTP_REFERER} !^(https://)?staff.powertochange.org/ [NC]
+RewriteCond %{HTTP:Cookie} !wordpress_logged_in_ [NC]
+#RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC]
+RewriteRule .*\.(gif|png|jpg|doc|xls|pdf|html|htm|xlsx|docx)$ https://staff.powertochange.org/wp-login.php?redirect_to=https://staff.powertochange.org/%{REQUEST_URI} [NC]

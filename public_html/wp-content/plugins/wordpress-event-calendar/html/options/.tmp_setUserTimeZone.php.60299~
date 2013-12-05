@@ -1,0 +1,122 @@
+<?php
+
+function wec_setUserTimeZone()
+{
+?>
+<a name="setTimeZone"></a>
+<h3>Time Zone Settings</h3>
+<?php
+global $current_user;
+get_currentuserinfo();
+
+
+//Get the latest user info for this user so we can grab the user's ID
+$timeManager = new dateTimeManager();
+
+$gmtStamp = $timeManager->getCurrentGMTTimestamp();
+?>
+<table class="form-table">
+    <tr>
+        <th>
+            GMT Info
+        </th>
+        <td><?php
+			$timezone_format = 'Y-m-d G:i:s';
+            $current_offset = get_option('gmt_offset');
+            $tzstring = get_option('timezone_string');
+            if ( empty($tzstring))
+            { // set the Etc zone if no timezone string exists
+                if ($current_offset < 0)
+                    $offnum = -ceil($current_offset);
+                else $offnum = -floor($current_offset);
+            $tzstring = 'Etc/GMT'.(($offnum >= 0)?'+':'').$offnum;
+            }
+			
+			
+			
+			
+			?><span id="utc-time"><?php printf(__('<abbr title="Coordinated Universal Time">UTC</abbr> time is <code>%s</code>'), date_i18n($timezone_format, false, 'gmt')); ?></span>
+<?php if (get_option('timezone_string')) : ?>
+	<span id="local-time"><?php printf(__('Local time is <code>%1$s</code>'), date_i18n($timezone_format)); ?></span>
+<?php endif; ?>
+<br />
+			
+        </td>
+    </tr>
+    <tr>
+        <th>
+            <label for="wec_gmtOffset">
+                Your time zone:
+            </label>
+        </th>
+        <td>
+            <select name="wec_gmtOffset" id="wec_gmtOffset">
+                <?php
+                echo wp_timezone_choice(wecUser::getUserLocale($current_user->id));
+                ?>
+            </select>
+            <br/>
+	
+
+<span>
+<?php 
+add_option('timezone_string', 'America/Edmonton');
+if (get_option('timezone_string')) : ?>
+	<?php
+	$now = localtime(time(),true);
+	if ($now['tm_isdst']) _e('This timezone is currently in daylight savings time.');
+	else _e('This timezone is currently in standard time.');
+	?>
+	<br />
+	<?php
+	if (function_exists('timezone_transitions_get') && $tzstring) {
+		$dateTimeZoneSelected = new DateTimeZone($tzstring);
+		foreach (timezone_transitions_get($dateTimeZoneSelected) as $tr) {
+			if ($tr['ts'] > time()) {
+			    	$found = true;
+				break;
+			}
+		}
+
+		if ( isset($found) && $found === true ) {
+			echo ' ';
+			$message = $tr['isdst'] ?
+				__('Daylight savings time begins on: <code>%s</code>.') :
+				__('Standard time begins  on: <code>%s</code>.');
+			$tz = new DateTimeZone($tzstring);
+			$d = new DateTime( "@{$tr['ts']}" );
+			$d->setTimezone($tz);
+			printf( $message, date_i18n(get_option('date_format').' '.get_option('time_format'), $d->format('U') ) );
+		} else {
+			_e('This timezone does not observe daylight savings time.');
+		}
+	}
+	?>
+	</span>
+<?php endif; ?>
+			
+			
+        </td>
+    </tr>
+</table>
+<?php
+}
+
+
+function wec_updateUserInfo()
+{
+    //Get the current user ID and the form data from the submitted info
+    $currentUserId = $_POST['user_id'];
+    $formData = $_POST['wec_gmtOffset'];
+
+    //Check if the form data reads NULL, if so, the user hasn't selected a time zone so do nothing.
+    if (!strcasecmp($formData, "NULL") == 0)
+    {
+
+        //If we can't update the user's locale, then add the user meta entry required to do this
+        update_usermeta($currentUserId, 'wec_userLocale', $formData);
+
+    }
+
+}
+?>
