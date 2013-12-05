@@ -2,12 +2,6 @@ IndexIgnore *
 Options +FollowSymlinks
 RewriteEngine On
 
-#if can not find file looks for it on live site
-RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond https://staff.powertochange.org%{REQUEST_URI} -f
-#RewriteCond %{REQUEST_URI} !\.(php|html|css)$ [NC] 
-RewriteRule . https://staff.powertochange.org%{REQUEST_URI} [L]
-
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} -f
