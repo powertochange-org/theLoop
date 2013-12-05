@@ -226,14 +226,16 @@ get_header(); ?>
 			?>">
 			<P>Choose Your Report:<BR>
 			<SELECT ID="repchoice" NAME="REPORT" onChange="showHelpButton(this.selectedIndex == 4);">
-                  <OPTION VALUE="">--Report Type--</OPTION>
+                  <OPTION VALUE="">--DONATION REPORTS--</OPTION>
                   <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected");}?>>Monthly Donation Report</OPTION>
                   <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected");}?>>13 Month Donor Report</OPTION>
                   <OPTION VALUE="MonthlyDonors" <?php if($REPORT == 'MonthlyDonors'){echo("selected");}?>>Recurring Monthly Donors</OPTION>
+				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected");}?>>Account Donors</OPTION>
+	              <OPTION VALUE="">--FINANCIAL REPORTS--</OPTION>
                   <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected");}?>>Detailed Income and Expense</OPTION>
                   <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected");}?>>Summary Income and Expense</OPTION>
                   <OPTION VALUE="AccountBalance" <?php if($REPORT == 'AccountBalance'){echo("selected");}?>>Account Balance</OPTION>
-				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected");}?>>Account Donors</OPTION>
+                  <OPTION VALUE="">--STAFF REPORTS--</OPTION>
 				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected");}?>>Staff List</OPTION>
 				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected");}?>>Staff Vacation and Wellness</OPTION>
             </SELECT>
@@ -400,6 +402,14 @@ get_header(); ?>
 		}
 		
 		function CheckForm(form, subType){
+			if($("#repchoice").val() == "") {
+				alert("Please select a report from the drop-down list");
+				return false;
+			}
+			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation"){
+				alert("Please enter your ministry/staff account number before running the report");
+				return false;
+			}
 			if(subType == "download" || form.REPORT.value == "AccountBalance")
 				form.target = "_self";
 			else {
@@ -408,10 +418,6 @@ get_header(); ?>
 				form.target = "preview";
 				$("#preview").slideDown();
 				*/
-			}
-			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation"){
-				alert("Please enter your ministry/staff account number, then click Run Report");
-				return false;
 			}
 			return true;
 		}//end of CheckForm

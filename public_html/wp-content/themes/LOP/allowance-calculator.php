@@ -7,6 +7,13 @@ include('functions/functions.php');
 *
 *todo description
 
+req:
+	tables-allowance-questiom/answser
+		  -support constant
+		  -string constant?
+	
+	ueses wordpress users_meta
+
 
 
 
@@ -33,7 +40,7 @@ todo test calculations (done in brief)
 
 -save (done), print (done)
 
-//second feedback
+//second feedback!!!!!!!!!!!!!!!!!
 
 -back button (done)
 -defualt 100 (done)(tested)
@@ -44,17 +51,21 @@ todo test calculations (done in brief)
 -todo hide first header (done)
 
 
-//third feedback
+//third feedback!!!!!!!!!!!!!!
 annal monthly (done)
 --role type (done))
 
-hanging indent
+hanging indent (done)
 space before bullet (done)
-default you
+default you (done)
 
-image confindat pdf (none)
+image confindat pdf (done)
 
 intersal see (remark:if hours)
+
+
+FIX_ME
+dump
 
 *
 */
@@ -112,19 +123,43 @@ include('functions/js_functions.php');
 ?>
 <?php get_header(); ?>
 <div id="content">
+	<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
+	<hr>
     <div id="content-left">
 	<div id="main-content">
-		<h1 class="replace" style="float:left"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
-		<BR><BR>
-		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="https://code.jquery.com/jquery-latest.js"></script>
 		<style type="text/css">
+			table {
+				border-collapse: separate;
+				border-spacing:10px;
+			}
+			
+			th {
+				background-color:#eeeeee;
+				padding:5px 0;
+			}
+		
 			td {
 				text-align:left;
+				vertical-align:middle;
 			}
 			.button {
 				width:auto;
 				border:0;
 				background-color:rgba(0,0,0,0);
+			}
+			
+			#main-content h2, #main-content h3 , #main-content form , #main-content lu, #main-content h1, #content h1{
+				margin-left:0;
+			}
+			
+			#main-content h2{
+				font-size:150%;
+				margin-bottom:10px;
+			}
+			
+			#admin_view hr{
+				margin:0;
 			}
 		</style>
 		<?php 
@@ -174,7 +209,7 @@ include('functions/js_functions.php');
 						echo "<option value='".$sub_result->id."'>".$sub_result->label."</option>\n";
 						break;
 					case 'radiobutton':
-						echo "<input type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='text-indent:50px; padding-left: -50px;' >&nbsp;&nbsp;&nbsp;".$sub_result->label."</label><BR>\n";
+						echo "<input style='vertical-align:top' type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='margin-left: 5px; display:inline-block; width:510px; margin-top:5px'>".$sub_result->label."</label><BR>\n";
 						break;
 					case 'radiobutton_sdw':
 						echo "<span style='white-space:nowrap;'><input type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'>".$sub_result->label."</label></span>\n";
@@ -219,7 +254,6 @@ include('functions/js_functions.php');
 		}
 		
 		function getMaxPoints(){
-			//intval
 			global $wpdb, $allowance_constant;
 			echo "new Array(";
 			$maxs = array(0,0,0,0);
@@ -260,7 +294,7 @@ include('functions/js_functions.php');
 			$sql = "SELECT * FROM `allowance_question` WHERE role & (1 << ".$role.") ORDER BY  `order` ASC";
 			$results = $wpdb->get_results($sql);
 			foreach ($results as $result){
-				echo " printV(".$result->id.", Math.min(".$result->max_points.",";
+				echo " printV('".$result->label."', Math.min(".$result->max_points.",";
 				switch($result->type){
 				case 'dropdown':
 					echo  "POINTS[parseInt(document.getElementById('form-".$result->id."').value)])) +";
@@ -343,8 +377,11 @@ include('functions/js_functions.php');
 			$isField = intVal(getFieldEmployee("is_field_staff", $id));
 			$level = intVal(getFieldEmployee("compensation_level", $id));
 			
+			
+			//levels 1 - 5 = individual
+			//levels 6 - 10 = leader
 			if ($isField == 1){
-				if ($level < 7){
+				if ($level < 6){
 					return $allowance_constant['fieldIndividual'];
 				}
 				else{
@@ -352,7 +389,7 @@ include('functions/js_functions.php');
 				}
 			}
 			else {
-				if ($level < 7){
+				if ($level < 6){
 					return $allowance_constant['corporateIndividual'];
 				}
 				else {
@@ -362,7 +399,10 @@ include('functions/js_functions.php');
 		}
 		
 		function getAccess($id){
-			global $allowance_constant;
+			global $allowance_constant, $current_user;
+			if (isAdmin() && $id == $current_user->id){
+				return $allowance_constant['partAccess'];
+			}
 			$involvment_type = getFieldEmployee("involvement_type", $id);
 			if (in_array($involvment_type, $allowance_constant['noAccess_involvementType'])){
 				return $allowance_constant['noAccess'];
@@ -385,7 +425,7 @@ include('functions/js_functions.php');
 			
 			switch(getRole($id)){
 			case $allowance_constant['fieldIndividual']:
-				//levels 3-6 are mapped to the the four answers respectively (levels 1, 2 will not be using this.  if they do result is undefined.)
+				//levels 3-5 are mapped to the the three answers respectively (levels 1, 2 will not be using this.  if they do, result is undefined.)
 				$q = 11;
 				
 				$sql = "SELECT `first_sub` FROM `allowance_question` WHERE allowance_question.id=".$q;
@@ -394,10 +434,11 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').check = true;\n";
 				break;
 			case $allowance_constant['fieldLeader']:
-				echo "document.getElementById('extra-field-".min($level,9)."').checked = true;\n";
+				//at and above level 8 is the same catergory
+				echo "document.getElementById('extra-field-".min($level,8)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateIndividual']:
-				//levels 1-6 are mapped to the six answers
+				//levels 1-5 are mapped to the five answers
 				$q = 12;
 				$sql = "SELECT `first_sub` FROM `allowance_question` WHERE allowance_question.id=".$q;
 				$result = $wpdb->get_results($sql);
@@ -405,7 +446,8 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').check = true;\n";
 				break;
 			case $allowance_constant['corporateLeader']:
-				echo "document.getElementById('extra-corp-".min($level,8)."').checked = true;\n";
+				//at and above level 7 is the same catergory
+				echo "document.getElementById('extra-corp-".min($level,7)."').checked = true;\n";
 				break;
 			}
 			//** END HARDCODED **//
@@ -419,22 +461,28 @@ include('functions/js_functions.php');
 				if ($value == "Null" || explode(":", $value) == "userIs"){
 					continue;
 				}
-				$quest_id = explode("-", explode(":",$value)[0])[1];
+				
+				$parts = explode(":",$value);
+				$parts = explode("-",  $parts[0]);
+				$quest_id = $parts[1];
 				$sql = "SELECT `type` , `pull_data`, `role` FROM `allowance_question` WHERE `id` =".$quest_id;
 				$results = $wpdb->get_results($sql);
 				if ($results[0]->pull_data or ((intval($results[0]->role)) & (1 << intval(getRole($id)))) == 0){
 					continue; //overrides stored values (they are not stored most likey but just in case);
 				}
+				$parts = explode(":", $value);
+				$part_0 = $parts[0];
+				$part_1 = $parts[1];
 				switch ($results[0]->type){
 				case 'dropdown':
-					echo "document.getElementById('".explode(":", $value)[0]."').value = ".explode(":", $value)[1].";\n";
+					echo "document.getElementById('".$part_0."').value = ".$part_1.";\n";
 					break;
 				case 'radiobutton': //same for both
 				case 'radiobutton_sdw':
-					echo "document.getElementById('".explode(":", $value)[0]."-".explode(":", $value)[1]."').checked = true;\n";
+					echo "document.getElementById('".$part_0."-".$part_1."').checked = true;\n";
 					break;
 				case 'checkbox':
-					echo "document.getElementById('".explode(":", $value)[0]."').checked = true;\n";
+					echo "document.getElementById('".$part_0."').checked = true;\n";
 					break;
 				case 'header': //just a label, no answers
 					break;
@@ -453,7 +501,7 @@ include('functions/js_functions.php');
 			if (isset($_POST['print']) and $_POST['print'] == 'true'){
 				$pdf = new FPDF();
 				$pdf->AddPage();
-				$pdf->Image(get_template_directory().'\res\footer-logo.png'); //todo change
+				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',16);
 				$pdf->Write(5,'Allowance Calculator');
@@ -508,7 +556,10 @@ include('functions/js_functions.php');
 							$pdf->Write(5, $result->label);$pdf->LN();
 							$pdf->SetFont('Arial','',12);
 							foreach ($array_key as $key){
-								if (explode("-", $key)[0] == 'form' and explode('-', $key)[1] == $result->id){
+								$parts = explode("-", $key);
+								$part_0 = $parts[0];
+								$part_1 = $parts[1];
+								if ($part_0 == 'form' and $part_1 == $result->id){
 									$sql = "SELECT * FROM `allowance_answer` WHERE `id`=".$_POST[$key];
 									$sub_result = $wpdb->get_results($sql);
 									$sub_result = $sub_result[0];
@@ -561,7 +612,8 @@ include('functions/js_functions.php');
 				$array_key = array_keys($_POST);
 				for ($i = 0; $i < count($_POST); $i ++){
 					$key = $array_key[$i];
-					if (explode("-", $key)[0] == 'form'){
+					$parts = explode("-", $key);
+					if ($parts[0] == 'form'){
 						$data .= $key.":".$_POST[$key].",";
 					}
 				}
@@ -579,7 +631,7 @@ include('functions/js_functions.php');
 			$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
 			//todo var_dump($_POST);
 			//echo $sql;
-			$wpdb->get_results($sql);
+			//$wpdb->get_results($sql);
 		}
 		
 		if (getAccess($current_user->id) == $allowance_constant['noAccess']){
@@ -616,7 +668,6 @@ include('functions/js_functions.php');
 				}
 			
 				var BLURBS = {whichWay: '<?php echo changeNL(getStringConstant("blurb_0")) ?>',
-						enterAll: '<?php echo changeNL(getStringConstant("blurb_1")) ?>', 
 						result: '<?php echo changeNL(getStringConstant("blurb_2"))?>'};
 						
 			
@@ -625,7 +676,7 @@ include('functions/js_functions.php');
 				
 					//hide all
 					document.getElementById('section_whichWay').style.display  = "none";
-					document.getElementById('section_enterAll').style.display  = "none";
+					//document.getElementById('section_enterAll').style.display  = "none";
 					document.getElementById('section_result').style.display  = "none";
 					//show the one
 					document.getElementById('section_' + section).style.display = "block";
@@ -671,9 +722,9 @@ include('functions/js_functions.php');
 						break;
 					case FREE:
 						//show choose_role
+						document.getElementById('user_name').innerHTML = "";
 						document.getElementById('choose_role_div').style.display = "block";
 						showQuestions(-1);
-						showSection('enterAll');
 					break;
 					}
 				}
@@ -689,7 +740,6 @@ include('functions/js_functions.php');
 					document.getElementById('user_name').innerHTML = who.name;
 					showQuestions(who.role);
 					$(".hidden").hide();
-					showSection('enterAll');
 				}
 				
 				function select_role(){
@@ -738,6 +788,7 @@ include('functions/js_functions.php');
 				}
 				
 				function calculatePoints(role){
+					document.getElementById('debug').innerHTML = "";
 					switch(role){
 					case FIELD_INDIVIDUAL:
 						return <?php getPointsEquation($allowance_constant['fieldIndividual']) ?>
@@ -757,6 +808,9 @@ include('functions/js_functions.php');
 				
 				function printV(who, v){
 					console.log("%" + who + "%" + v);
+					<?php if(isAdmin()) { ?>
+					document.getElementById('debug').innerHTML += who + " " + v + "<BR>";
+					<?php } ?>
 					return v;
 				}
 				
@@ -844,64 +898,99 @@ include('functions/js_functions.php');
 					showSection(section);
 				}
 				
+				
+				
+				function window_load(){
+					$("input[name='whichWay']").change(function(){
+						if (document.getElementById('show_you') != null && document.getElementById('show_you').checked){
+							proceed(0);
+						}
+						if (document.getElementById('show_spouse') != null && document.getElementById('show_spouse').checked){
+							proceed(1);
+						}
+						if (document.getElementById('show_anyone') != null && document.getElementById('show_anyone').checked){
+							proceed(2);
+						}
+					});
+					
+					<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
+						document.getElementById('show_you').checked = true;
+						proceed(0);
+					<?php } else if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
+						document.getElementById('show_spouse').checked = true;
+						proceed(1)
+					<?php } else { ?>
+						document.getElementById('show_anyone').checked = true;
+						proceed(2)
+					<?php } ?>
+				}
+				
+				
+				window.onload = window_load;
+				
 			</script>
 			<div id='blurb'><?php echo changeNL(getStringConstant("blurb_0")) ?></div>
 			<BR>
 			<div id='section_whichWay'>
 				Please select an option:<BR>
 				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
-				<input type='button' value='Calculate for yourself' onclick='proceed(0);'>
+				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_yourself'>Calculate for yourself</label>
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { // hides the option if there is no spouse ?>
-				<input type='button' value='Calculate for spouse' onclick='proceed(1);'>
+				<input type='radio' name='whichWay' id='show_spouse' value='1' ><label for='show_spouse'>Calculate for spouse</label>
 				<?php } ?>
 				<option value="2">Calculate for anyone</option>
-				<input type='button' value='Calculate for anyone' onclick='proceed(2);'>
-			</div>
-			<div id='user_name'></div>
-			<div id='section_enterAll' style='display:none;'>
-				<div id='choose_role_div'><select id="choose_role" onchange='select_role();'>
-				<?php
-					global $allowance_constant;
-				for($i = 0; $i < count($allowance_constant['roleType']); $i ++){
-					echo "<option value='".$i."'>".$allowance_constant['roleType'][$i]."</option>";
-				}?>
-				</select>
-				<input type='button' value='Select' onclick='select_role();'></div>
-				<!--  this are the extra special questions-->
-				<form name="saveUserValues_form" id="saveUserValues_form" action="" method="post">
-					<div id='questions'>
-						<BR>
-						<div id='hours'>
-							<h2><?php echo getStringConstant("first_header") ?></h2><BR>
-							<strong><?php echo getStringConstant("hour_label") ?></strong><BR>
-							<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
+				<input type='radio' name='whichWay' id='show_anyone' value='2'><label for='show_anyone'>Calculate for anyone</label>
+				<BR>
+				<BR>
+				<div style='font-size:125%' id='user_name'></div>
+				<div id='section_enterAll' style=' /* display:none; */'>
+					<div id='choose_role_div'><select id="choose_role" onchange='select_role();'>
+					<?php
+						global $allowance_constant;
+					for($i = 0; $i < count($allowance_constant['roleType']); $i ++){
+						echo "<option value='".$i."'>".$allowance_constant['roleType'][$i]."</option>";
+					}?>
+					</select>
+					<input type='button' value='Select' onclick='select_role();'></div>
+					<!--  this are the extra special questions-->
+					<form name="saveUserValues_form" id="saveUserValues_form" action="" method="post">
+						<div id='questions'>
+							<BR>
+							<div id='hours'>
+								<h2><?php echo getStringConstant("first_header") ?></h2><BR>
+								<strong><?php echo getStringConstant("hour_label") ?></strong><BR>
+								<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
+							</div>
+							<div id='role_type_field'>
+								<strong>Role Type</strong><BR>
+								<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Leader (all other types)</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Ministry Director</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-9' value='9'><label for='extra-field-9'>Domain Leader</label><BR><BR>
+							</div>
+							<div id='role_type_corp'>
+								<strong>Role Type</strong><BR>
+								<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Manager / Other Dept. Leader</label><BR>
+								<input type='radio' name='extra_level' id='extra-corp-8' value='8'><label for='extra-corp-8'>Department Director</label><BR><BR>
+							</div>
+							
+							<input type='hidden' name='userIs' id='userIs'>
+							<input type='hidden' name='print' id='print'>
+							<input type='hidden' name='minimum' id='minimum'>
+							<input type='hidden' name='maximum' id='maximum'>
+							<input type='hidden' name='minimum_month' id='minimum_month'>
+							<input type='hidden' name='maximum_month' id='maximum_month'>
+							<input type='hidden' name='role' id='role'>
+							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
-						<div id='role_type_field'>
-							<strong>Role Type</strong><BR>
-							<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Leader (all other types)</label><BR>
-							<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Ministry Director</label><BR>
-							<input type='radio' name='extra_level' id='extra-field-9' value='9'><label for='extra-field-9'>Domain Leader</label><BR><BR>
-						</div>
-						<div id='role_type_corp'>
-							<strong>Role Type</strong><BR>
-							<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Manager / Other Dept. Leader</label><BR>
-							<input type='radio' name='extra_level' id='extra-corp-8' value='8'><label for='extra-corp-8'>Department Director</label><BR><BR>
-						</div>
-						
-						<input type='hidden' name='userIs' id='userIs'>
-						<input type='hidden' name='print' id='print'>
-						<input type='hidden' name='minimum' id='minimum'>
-						<input type='hidden' name='maximum' id='maximum'>
-						<input type='hidden' name='minimum_month' id='minimum_month'>
-						<input type='hidden' name='maximum_month' id='maximum_month'>
-						<input type='hidden' name='role' id='role'>
-						<?php getQuestions($allowance_constant['fieldIndividual']) ?>
-					</div>
-				</form>
-				<input type='button' value='Back' onclick='reset();showSection("whichWay");'>
+					</form>
+				</div>
 			</div>
 			<div id='section_result' style='display:none;'>
+				<?php if(isAdmin()){ ?>
+					<div id='debug'>
+					</div>
+				<?php } ?>
 				<table>
 					<tr>
 						<td></td>
@@ -923,17 +1012,16 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Download' onclick='download();'></td>
-					<td class='button'><input type='button' value='Back' onclick='backTo("enterAll");'></td>
+					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
 			</div>
 		<?php } ?>
     </div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div>
+    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
 </div>
 <!--content end-->
 <!--Popup window-->
-<?php include(TEMPLATEPATH.'/popup.php') ?>
 </div>
 <!--main end-->
 </div>

@@ -72,9 +72,37 @@ Template Name: Site_Home
 					</div>
 				<?php } else { ?>
 					<div id="main-content">
-						<?php query_posts("showposts=$post_number"); ?>
+					
+						<?php
+						// Jason B 2013-11-29: add filtering so that posts only intended for P2C Students don't show up
+						// 		on the home page for people not in the P2C Students ministry
+						
+						// First, find out what ministry they are part of
+						$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
+						$result = $results[0];
+						
+						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
+						if ($result->ministry == "Power to Change - Students") {
+							// Show any posts
+							query_posts("showposts=$post_number");
+						} else {					
+							// Get a list of all categories EXCEPT the one for P2C Students
+							$categories = get_categories(array('orderby' => 'id', 'exclude' => '7')); //7 is the category ID for P2C Students
+							// Build a comma-separated list that we can pass to the query_posts function
+							$category_list = "";
+							foreach ($categories as $category) {	
+								if ($category_list != "") {
+									$category_list .= ",";
+								}
+								$category_list .= $category->term_id;
+							}
+							// Query posts associated with any category in our list. Posts that are only
+							// in the P2C Students category won't get selected.
+							query_posts("showposts=$post_number&cat=$category_list");
+						}
+						?>
 						<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-						<div class="post">																		   
+						<div class="post">
 							<h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
 							<?php the_post_thumbnail(); ?>
 							<?php the_excerpt(); ?>

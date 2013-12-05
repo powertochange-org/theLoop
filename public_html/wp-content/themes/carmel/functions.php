@@ -1,4 +1,4 @@
- <?php
+<?php
 
  //adding menu
 add_theme_support('nav-menus');
