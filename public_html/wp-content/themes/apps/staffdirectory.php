@@ -22,13 +22,16 @@
 				switch ($site) //load the specified site, or the dashboard by default
 				{
 				case "profile":
-					if (!isset($_GET['person'])) {
-						$_GET['person'] =  $current_user->user_login;
+					if (isset($_GET['person'])) {
+						$profile = $_GET['person'];
 					}
-					include 'staffdirectory/profile.php';
-				  break;
-				case "myprofile":
-				  include 'staffdirectory/myprofile.php';
+					$current_user = wp_get_current_user();
+					if(!isset($profile) || $current_user->user_login == $profile){
+						include 'staffdirectory/myprofile.php';
+					}
+					else{
+						include 'staffdirectory/profile.php';
+					}
 				  break;
 				case "search":
 				  include 'staffdirectory/search.php';
@@ -42,15 +45,15 @@
 				//case "upload_success":
 				  //include 'staffdirectory/upload.success.php';
 				  //break;
-				case "approval":
+				 case "approval":
 				  include 'staffdirectory/approval.php';
 				  break;
-				  
 				default:
 				  include "staffdirectory/search.php";
 				}
 			?>
 		</div>
+		<div class="clear"></div>				
 	</div>
 	<!--content end-->
 	<!--Popup window-->

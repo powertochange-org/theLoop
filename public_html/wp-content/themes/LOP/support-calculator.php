@@ -122,24 +122,11 @@ function generate_pdf(){
 <?php get_header();
 include('functions/js_functions.php'); ?>
 <div id="content">
-    
-	<style type='text/css'>
-		td, .border{
-			border: 1px solid #808080;
-			padding: 5px;
-			margin: 3px;
-		}
-		
-		table{
-			margin-bottom:10px;
-			margin-top:10px;
-			width:100%;
-		}
-	</style>
-	<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
-	<hr>
-	<div id="content-left">
-		<div id="main-content">
+    <div id="content-left">
+	<div id="main-content">
+		<h1 class="replace" style="float:left"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
+		<BR><BR>
+
 		<?php
 		//todo:
 		//error handeling
@@ -161,8 +148,7 @@ include('functions/js_functions.php'); ?>
 			if ($prov == 13){
 				return 'Foreign';
 			} 
-			$part = array_keys($support_constant['provinces']);
-			return $part[$prov]; 
+			return array_keys($support_constant['provinces'])[$prov];
 		}
 		
 		
@@ -584,7 +570,6 @@ include('functions/js_functions.php'); ?>
 		}
 		
 		function goForm(){
-			$('html,body').scrollTop(0);
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
 				document.getElementById("input_coverage").value = 0;
 				document.getElementById("input_hcsa").value = 0;
@@ -606,13 +591,11 @@ include('functions/js_functions.php'); ?>
 		}
 		
 		function skip(){
-			$('html,body').scrollTop(0);
 			document.getElementById("simple_form").style.display = "none";
 			document.getElementById("table_form").style.display = "block";
 		}
 		
 		function back(){
-			$('html,body').scrollTop(0);
 			document.getElementById("table_form").style.display = "none";
 			document.getElementById("simple_form").style.display = "block";
 		}
@@ -629,7 +612,7 @@ include('functions/js_functions.php'); ?>
 			var button = document.getElementById("detail_view");
 			show_detail = !show_detail;
 			if (show_detail){
-				block.style.display = "table";
+				block.style.display = "block";
 				button.value="Hide Details";
 			}
 			else{
@@ -1091,8 +1074,11 @@ When selecting an amount, consider expenses like cell phone, conferences, traini
 	</div>
 	</div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <div id="content-right"><?php get_sidebar(''); ?></div>
 </div>
+<!--content end-->
+<!--Popup window-->
+<?php include(TEMPLATEPATH.'/popup.php') ?>
 </div>
 <!--main end-->
 </div>

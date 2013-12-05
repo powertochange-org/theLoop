@@ -9,17 +9,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile . "'"); //go to DB and get 
 ?>
 
-	<p/>
-	<?php 
-	$current_user = wp_get_current_user();
-	if(!isset($profile) || $current_user->user_login == $profile){
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
-	}
-	else{
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "">MY PROFILE</a></h4>';
-	} ?>
-	
-	<BR>
+	<p/><h4 style="float:right;color:#adafb2;"><a href= "?page=profile" >MY PROFILE</a></h4><BR>
 	<hr>
 	<div style="clear:both"></div>
 	<div id="content-left">

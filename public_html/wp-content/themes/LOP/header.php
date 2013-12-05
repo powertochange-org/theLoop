@@ -17,7 +17,7 @@ if ($user_ID == '') {
 
 <link rel="stylesheet" href="https://staff.powertochange.org/wp-content/themes/LOP/style.css" type="text/css" media="screen" />
 
-<link rel="stylesheet" href="https://staff.powertochange.org/wp-content/themes/LOP/style-blue.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="https://staff.powertochange.org/wp-content/themes/LOP/style-orange.css" type="text/css" media="screen" />
 
 <link rel="stylesheet" href="https://staff.powertochange.org/wp-content/themes/LOP/superfish.css" type="text/css" media="screen" /> 
 

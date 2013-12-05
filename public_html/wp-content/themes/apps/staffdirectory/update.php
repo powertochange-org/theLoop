@@ -303,9 +303,9 @@
 		}
 		// INSERT PERSONAL EMAIL
 		if (isset($_POST['new_email_address'])) {
-				$address = strtolower(strip_tags($_POST['new_email_address']));
-				if (isMinistryAddress($address)) {
-						$ministry = '1';
+                        $address = strtolower(strip_tags($_POST['new_email_address']));
+                        if (isMinistryAddress($address)) {
+                                $ministry = '1';
 				$shared = '1';
                         } else {
                                 $ministry = '0';

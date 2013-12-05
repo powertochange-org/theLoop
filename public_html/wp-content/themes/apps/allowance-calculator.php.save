@@ -419,7 +419,10 @@ include('functions/js_functions.php');
 				if ($value == "Null" || explode(":", $value) == "userIs"){
 					continue;
 				}
-				$quest_id = explode("-", explode(":",$value)[0])[1];
+				echo $value;
+				exit();
+				//$part = explode(":",$value)[0];
+				//$quest_id = explode("-",  $part)[1];
 				$sql = "SELECT `type` , `pull_data`, `role` FROM `allowance_question` WHERE `id` =".$quest_id;
 				$results = $wpdb->get_results($sql);
 				if ($results[0]->pull_data or ((intval($results[0]->role)) & (1 << intval(getRole($id)))) == 0){
@@ -427,7 +430,7 @@ include('functions/js_functions.php');
 				}
 				switch ($results[0]->type){
 				case 'dropdown':
-					echo "document.getElementById('".explode(":", $value)[0]."').value = ".explode(":", $value)[1].";\n";
+				echo "document.getElementById('".explode(":", $value)[0]."').value = ".explode(":", $value)[1].";\n";
 					break;
 				case 'radiobutton': //same for both
 				case 'radiobutton_sdw':
