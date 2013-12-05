@@ -1,5 +1,5 @@
 IndexIgnore *
-Options +FollowSymlinks
+#Options +FollowSymlinks
 RewriteEngine On
 
 #RewriteBase /
