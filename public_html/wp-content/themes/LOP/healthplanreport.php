@@ -50,7 +50,7 @@ Purposes, in order of importance
 							<form action="" method="post">
 								<table>
 									<tr>
-										<th colspan=3>
+										<th colspan=4>
 											The signup form will be available from the following dates
 										</th>
 									</tr>'
