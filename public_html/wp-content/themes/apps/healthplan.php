@@ -152,7 +152,8 @@ recorded. You chose the following plan:
   Plan name: $healthplan
   Annual amount: \$".($plans[$healthplan]*12)."
   Quarterly amount: \$".($plans[$healthplan]*3)."
-  
+ 
+You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
 For more information about the HCSA for 2013, refer to this post on
 the loop: https://staff.powertochange.org/human-resources/important-update-2013-hcsa-enrollment-deadline-december-27th-2012/
 or email hr@powertochange.org.
@@ -163,7 +164,8 @@ Your HR team
 						mail($current_user->user_email, $subject, $emailMessage, $headers);
 						
 						// Print a success message
-						echo "Successfully Updated your Health Plan";
+						// may need to change 2013 to be a variable
+						echo "Thank you for enrolling for the medical allowance for 2013 for Annual amount: \$".($plans[$healthplan]*12).". You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.";
 						echo '<form action="" ><input type="submit" name="submit" value="Return" /></form>';
 					}
 				}
@@ -191,7 +193,6 @@ Your HR team
 		</div>
 	<!--content end-->
 	<!--Popup window-->
-		<?php include(TEMPLATEPATH.'/popup.php') ?>
 	</div>
     <!--main end-->
 </div>
