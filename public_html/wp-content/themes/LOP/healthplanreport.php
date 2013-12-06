@@ -144,6 +144,7 @@ Purposes, in order of importance
 											</select>
 										</td>
 										<td><input type="submit" name="dates" value="Update Open/Close Dates" /></td>
+										<td><label for='showAll'>Show All:</label><input type="checkbox" id="showAll" onchange="if(document.getElementById('showAll').checked){$('.outRange').show()} else {$('.outRange').hide()}"></td>
 									</tr>
 								</table>
 							</form>
@@ -283,14 +284,17 @@ Purposes, in order of importance
 						//------------------------------------------------------------------------------------
 						//Query for the main report table--the one that shows everyones info and plan. Uses left outer joins so if they
 						//haven't picked a plan, they still show up.
-						$results = $wpdb-> get_results('SELECT wp_users.user_login, first_name, last_name, plan, birth_date, dateentered, employee_number, staff_account
-														FROM  healthplan LEFT JOIN
-														      wp_users
-															     ON wp_users.id = healthplan.userid LEFT JOIN
-															  employee
-															     ON wp_users.user_login = employee.user_login
-														ORDER BY last_name ');
+						$results = $wpdb-> get_results('SELECT employee.user_login, first_name, last_name, plan, birth_date, dateentered, employee_number, staff_account
+														FROM employee, wp_users, healthplan
+														WHERE wp_users.user_login = employee.user_login
+														AND wp_users.id = healthplan.userid
+														GROUP BY last_name ');
 														
+						$opendate  = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "opendate"');
+						$closedate = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "closedate"');
+						$opendate = strtotime($opendate); //convert to unix time
+						$closedate = strtotime("$closedate 23:59:59"); // convert to just before midnight unix time
+						
 						//build table with info from above query
 						echo '<table>';
 							echo '<tr>'; //header row
@@ -305,7 +309,12 @@ Purposes, in order of importance
 							echo '</tr>';
 							foreach ( $results as $result ) 
 							{
-								echo '<tr>'; //data rows - contain all the data for each entry from db
+								$c = '';
+								$dateEntered = strtotime($result->dateentered);
+								if($dateEntered < $opendate || $dateEntered > $closedate){
+									$c = 'class="outRange" style="display:none"';
+								}
+								echo "<tr $c>"; //data rows - contain all the data for each entry from db
 									echo '<td>' . $result->user_login . '</td>';
 									echo '<td>' . $result->first_name . '</td>';
 									echo '<td>' . $result->last_name . '</td>';
@@ -373,10 +382,9 @@ Purposes, in order of importance
 		</div>
 	<!--content end-->
 	<!--Popup window-->
-		<?php include(TEMPLATEPATH.'/popup.php') ?>
 	</div>
     <!--main end-->
 </div>
 <!--wrapper end-->
-<div class="clear"></div>		
+<div style='clear:both;'></div>	
 <?php get_footer(); ?>
