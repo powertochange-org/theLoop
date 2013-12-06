@@ -311,7 +311,6 @@ Purposes, in order of importance
 							{
 								$c = '';
 								$dateEntered = strtotime($result->dateentered);
-								echo "$opendate $dateEntered $closedate";
 								if($dateEntered < $opendate || $dateEntered > $closedate){
 									$c = 'class="outRange" style="display:none"';
 								}
