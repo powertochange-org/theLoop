@@ -8,7 +8,7 @@ RewriteEngine On
 ## The following will prevent direct document access by non-logged-in users
 RewriteCond %{HTTP:Cookie} !^(wordpress_logged_in_).*$ [NC]
 #RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC] #allow images to be accessed without logging in (there are security concerns about this)
-RewriteRule .*\.(doc|xls|pdf|html|htm|xlsx|docx)$ https://staff.powertochange.org/wp-login.php?redirect_to=%{REQUEST_URI} [NC]
+RewriteRule .*\.(doc|xls|pdf|html|htm|xlsx|docx)$ https://devstaff.powertochange.org/wp-login.php?redirect_to=%{REQUEST_URI} [NC]
 
 # BEGIN WPSuperCache
 # END WPSuperCache
@@ -27,7 +27,7 @@ FileETag none
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
-#RewriteRule ^index\.php$ - [L]
+RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.php [L]

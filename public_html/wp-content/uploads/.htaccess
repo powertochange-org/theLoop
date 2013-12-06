@@ -1,5 +1,5 @@
 IndexIgnore *
-Options +FollowSymlinks
+#Options +FollowSymlinks
 RewriteEngine On
 
 #if can not find file looks for it on live site
