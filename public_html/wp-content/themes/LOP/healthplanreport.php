@@ -144,6 +144,7 @@ Purposes, in order of importance
 											</select>
 										</td>
 										<td><input type="submit" name="dates" value="Update Open/Close Dates" /></td>
+										<td><label for='showAll'>Show All:</label><input type="checkbox" id="showAll" onchange="if(document.getElementById('showAll').checked){$('.outRange').show()} else {$('.outRange').hide()}"></td>
 									</tr>
 								</table>
 							</form>
@@ -289,6 +290,11 @@ Purposes, in order of importance
 														AND wp_users.id = healthplan.userid
 														GROUP BY last_name ');
 														
+						$opendate  = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "opendate"');
+						$closedate = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "closedate"');
+						$opendate = strtotime($opendate); //convert to unix time
+						$closedate = strtotime("$closedate 23:59:59"); // convert to just before midnight unix time
+						
 						//build table with info from above query
 						echo '<table>';
 							echo '<tr>'; //header row
@@ -303,7 +309,13 @@ Purposes, in order of importance
 							echo '</tr>';
 							foreach ( $results as $result ) 
 							{
-								echo '<tr>'; //data rows - contain all the data for each entry from db
+								$c = '';
+								$dateEntered = strtotime($result->dateentered);
+								echo "$opendate $dateEntered $closedate";
+								if($dateEntered < $opendate || $dateEntered > $closedate){
+									$c = 'class="outRange" style="display:none"';
+								}
+								echo "<tr $c>"; //data rows - contain all the data for each entry from db
 									echo '<td>' . $result->user_login . '</td>';
 									echo '<td>' . $result->first_name . '</td>';
 									echo '<td>' . $result->last_name . '</td>';
@@ -371,10 +383,9 @@ Purposes, in order of importance
 		</div>
 	<!--content end-->
 	<!--Popup window-->
-		<?php include(TEMPLATEPATH.'/popup.php') ?>
 	</div>
     <!--main end-->
 </div>
 <!--wrapper end-->
-<div class="clear"></div>		
+<div style='clear:both;'></div>	
 <?php get_footer(); ?>
