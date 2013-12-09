@@ -218,7 +218,7 @@ include('functions/js_functions.php');
 						echo "<option value='".$sub_result->id."'>".$sub_result->label."</option>\n";
 						break;
 					case 'radiobutton':
-						echo "<input style='vertical-align: top; position: relative; top: 3px;' type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='margin-left: 5px; display:inline-block; width:510px; margin-top:5px'>".$sub_result->label."</label><BR>\n";
+						echo "<input style='vertical-align: top; position: relative; top: 6px;' type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='margin-left: 5px; display:inline-block; width:510px; margin-top:5px'>".$sub_result->label."</label><BR>\n";
 						break;
 					case 'radiobutton_sdw':
 						echo "<span style='white-space:nowrap;'><input type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'>".$sub_result->label."</label></span>\n";
