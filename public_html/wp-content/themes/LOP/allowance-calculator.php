@@ -900,7 +900,9 @@ include('functions/js_functions.php');
 				}
 				
 				function calculatePoints(role){
+					<?php if(isAdmin()){ ?>
 					document.getElementById('debug').innerHTML = "";
+					<?php } ?>
 					switch(role){
 					case FIELD_INDIVIDUAL:
 						return <?php getPointsEquation($allowance_constant['fieldIndividual']) ?>
