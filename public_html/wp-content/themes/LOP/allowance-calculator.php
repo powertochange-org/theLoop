@@ -318,7 +318,7 @@ include('functions/js_functions.php');
 				echo "'<strong>".$result->label."</strong>' + ";
 				switch($result->type){
 				case 'dropdown':
-					echo  "ANSWERS[parseInt(document.getElementById('form-".$result->id."').value)] + '<BR>\n')) +";
+					echo  "ANSWERS[parseInt(document.getElementById('form-".$result->id."').value)] + '<BR>' +";
 					echo "'<BR>' + ";
 					break;
 				case 'radiobutton': //same for both
