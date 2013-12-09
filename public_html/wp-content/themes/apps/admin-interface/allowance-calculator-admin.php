@@ -26,6 +26,7 @@ $question_types = Array('radiobutton', 'checkbox', 'dropdown', 'header', 'radiob
 		-in clean_tree() 			specify how to update user data
 	-in: allowance-calculator
 		-in: getQuestions() 		specify how to display the type of question
+		-in: getSelectAnswers() 	specify how to display question on the result page
 		-in: getPointsEquation()	specify how to calculate the number of points of the question
 		-in: getReset() 			specify how to reset the question to default value
 		-in: setUserValues() 		specify how to set the user's stored data
@@ -276,12 +277,9 @@ function parseInput(){
 							for ($sub_i = 0; $sub_i < count($_POST); $sub_i ++){
 								$sub_fullKey = $array_key[$sub_i];
 								$sub_key = explode("-",$sub_fullKey);
-								echo "{".$_POST[$sub_fullKey]."}";
 								if ($sub_key[3] == "role" and $_POST[$sub_fullKey] == 'on'){
-									echo intval($sub_key[2])."-".$sub_key[2];
-									$role |= 1 << intval($sub_key[2]);
+										$role |= 1 << intval($sub_key[2]);
 								}
-								echo $role;
 							}
 							add_question($_POST['e-add_question-label'], $_POST['e-add_question-max_points'], $_POST['e-add_question-type'], $role, $answers, $_POST['e-add_question-question']);
 							return;
@@ -621,13 +619,13 @@ function printAdmin(){
 		<BR>
 		<form class='border' action="" method="post">
 			First Header:
-			<input type='text' name="f-head" class='label' value='<?php echo getStringConstant("first_header") ?>' >
+			<input type='text' name="f-head" class='label' value='<?php echo getStringConstant("first_header", "'") ?>' >
 			<input type="submit" value="Save">
 		</form>
 		<BR>
 		<form class='border' action="" method="post">
 			Number of hours question label:
-			<input type='text' name="h-label" class='label' value='<?php echo getStringConstant("hour_label") ?>' >
+			<input type='text' name="h-label" class='label' value='<?php echo getStringConstant("hour_label", "'") ?>' >
 			<input type="submit" value="Save">
 		</form>
 		<BR>

@@ -55,14 +55,19 @@ function getConstant($field){
 	return $result;
 }
 
-function getStringConstant($field){
+function getStringConstant($field, $e=null){
 	global $wpdb;
 	$sql = "SELECT `value` FROM `string_store` WHERE `key` = '". $field. "'";
 	$result = $wpdb->get_row($sql)->value;
 	if ($result == ""){
 		return null;
 	}
-	return $result;
+	$result = stripcslashes ($result);
+	if ($e== null){
+		return $result;
+	}
+	return str_replace ($e , "\\$e" ,$result);
+	
 }	
 
 
