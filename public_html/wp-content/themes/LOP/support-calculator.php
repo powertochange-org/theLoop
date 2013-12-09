@@ -1,302 +1,224 @@
 <?php
 
+include('functions/functions.php');
+require('pdf/fpdf.php');
+
+
 /*
 *Template Name: Support_Calculator
 *
-*todo description
+*Author: matthew.chell
 *
-*
+*Description: A calculator to find out how much support a person has to raise.
+*	
+*Note: HCSA has been changed to Medical Allowance
 */
 
+$support_constant = array (
+	"provinces" => array (
+		"AB" => 0,
+		"BC" => 1,
+		"MB" => 2,
+		"NB" => 3,
+		"NL" => 4,
+		"NT" => 5,
+		"NS" => 6,
+		"NU" => 7,
+		"ON" => 8,
+		"PE" => 9,
+		"QC" => 10,
+		"SK" => 11,
+		"YT" => 12
+	),
 
-$provinces = array (
-			"AB" => 0,
-			"BC" => 1,
-			"MB" => 2,
-			"NB" => 3,
-			"NL" => 4,
-			"NT" => 5,
-			"NS" => 6,
-			"NU" => 7,
-			"ON" => 8,
-			"PE" => 9,
-			"QC" => 10,
-			"SK" => 11,
-			"YT" => 12);
+	"coverage" => array (
+		"single", 
+		"couple",
+		"family"
+	)
+);
 
+$support_dataID = null;
+
+
+generate_pdf();
+
+function generate_pdf(){
+
+	$data = explode('+',  htmlspecialchars($_GET["download"]));
+
+	//echos back the data for the user to download
+
+	//todo style not user stored data\
+	// todo remove var_dump($data);
+	if (count($data) == 26){
+		$label = Array('Name:', 'Hours per week:', 'Province:', 'Hours per week (spouse):', 'Staff Account:', 'Benefit Coverage:', 'Ministry:', 'Decline Benefits:', 'Monthly Allowance/Salary', 'Employer Paid CPP/EI', 'Monthly Allowance/Salary - Spouse', 'Employer Paid CPP/EI - Spouse', 'Extended Health', 'Provincial Medical', 'Medical Allowance', 'Worker\'s Compensation', 'Staff Conference', 'MPD correspondence', 'Reimbursable Ministry Expenses', 'Subtotal', 'Central Resource Charge', 'Monthly Support Goal', 'Solid Monthly Support', 'Total Funds Yet to be Raised', 'Bridge Amount', 'Percent Supported');
+		$pdf = new FPDF();
+		$pdf->AddPage();
+		$pdf->Image(get_template_directory().'\res\footer-logo.png'); //todo change
+		$pdf->SETXY(60, 15);
+		$pdf->SetFont('Arial','',16);
+		$pdf->Write(5,'Support Goal Calculator');
+		$pdf->SETY(25);
+		$pdf->LN();
+		$pdf->LN();
+		$pdf->SetFont('Arial','',12);
+		$dataMaxWidth = 0;
+		foreach ($data as $d){
+			if ($dataMaxWidth < $pdf->GetStringWidth($d)){
+				$dataMaxWidth = $pdf->GetStringWidth($d);
+			}
+		}
+		$labelTopMaxWidth = 0;
+		for ($i = 0; $i < 8; $i ++){
+			if ($labelTopMaxWidth < $pdf->GetStringWidth($label[$i])){
+				$labelTopMaxWidth = $pdf->GetStringWidth($label[$i]);
+			}
+		}
+		$labelBotMaxWidth = 0;
+		for ($i = 8; $i < count($label); $i ++){
+			if ($labelBotMaxWidth < $pdf->GetStringWidth($label[$i])){
+				$labelBotMaxWidth = $pdf->GetStringWidth($label[$i]);
+			}
+		}
+		for ($i = 0; $i < count($label); $i ++){
+			if ($i < 8){
+				$border = 1;
+				$pdf->Cell($labelTopMaxWidth + 2, 6,  $label[$i], $border);
+				if ($i == 2){
+					$pdf->Cell($dataMaxWidth + 2, 6,  getProvinceString($data[2]), $border);
+				}
+				else {
+					$pdf->Cell($dataMaxWidth + 2, 6,  $data[$i], $border);
+				}
+			}
+			else {
+				if ($i == 21 || $i == 23){
+					$pdf->SetFillColor(217);
+					$fill = true;
+				}
+				else{
+					$fill = false;
+				}
+				$border = 0;
+				$pdf->Cell($labelBotMaxWidth, 6,  $label[$i], $border, 0, 'L', $fill);
+				$pdf->Cell($dataMaxWidth, 6,  $data[$i], $border, 0, 'R', $fill);
+			}
 			
-$coverage = array ("single", "couple", "family");
-$data = explode('+',  htmlspecialchars($_GET["download"]));
-
-//echos back the data for the user to download
-
-//todo style not user stored data\
-// todo remove var_dump($data);
-if (count($data) == 27){
-	echo "<html>";
-	
-	//styling
-	echo "<style type='text/css'>
-
-table {
-}
-
-table td {
-	padding:2px 10px;
-}
-
-
-table.head {
-	border-collapse: collapse;
-}
-
-table.head td {
-	border: 1px solid #000000;
-}
-
-table.body td {
-	border: 0px solid #000000;
-}
-
-table.body {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-</style>";
-	
-	
-	if ($data[26]=="download"){
-		//downdloads instead of displaying
-		header("Content-disposition: attachment; filename=support_calculator.html");
-		header("Content-type: text/html:");
+			if (($i + 1) % 2 == 0 or $i > 7){
+				$pdf->LN();
+			}
+			if ($i == 7){
+				$pdf->LN();
+			}
+		}
+		$pdf->LN();
+		$pdf->Write(5,'Confidential');
+		$pdf->Output();
+		exit;
 	}
-	else if ($data[26]=="print"){
-		echo "<script type='text/javascript'>
-			/*todo enable */ window.setTimeout(function() {window.print()}, 1000);/**/
-		</script>";
-	}
-	echo"<body><table class='head'>
-			<caption>Support Goal Calculator</caption>
-			<tr>
-				<td><p>Name:</p></td>
-				<td><p>".$data[0]."</p></td>
-				<td><p>Hours per week:</p></td>
-				<td>".$data[1]."</td>
-			</tr>
-			<tr>
-				<td><p>Province:</p></td>
-				<td><p>".getProvinceString($data[2])."</p></td>
-				<td><p>Hours per week (spouse):</p></td>
-				<td>".$data[3]."</td>
-			</tr>
-			<tr>
-				<td><p>Staff Account:</p></td>
-				<td><p>".$data[4]."</p></td>
-				<td><p>Benefit Coverage:</p></td>
-				<td>".$coverage[$data[5]]."</td>
-			</tr>
-			<tr>
-				<td><p>Ministry:</p></td>
-				<td><p>".$data[6]."</p></td>
-				<td><p>Decline Benefits:</p></td>
-				<td>".$data[7]."</td>
-			</tr>
-			<tr><td colspan='4' style='border: 0px solid #000000;'>
-				<table class='body'>
-					<tr>
-						<td><p>Monthly Allowance/Salary</p></td>
-						<td style='text-align:right;'>".$data[8]."</td>
-					</tr>
-					<tr>
-						<td><p>Employer Paid CPP/EI</p></td>
-						<td style='text-align:right;'>".$data[9]."</td>
-					</tr>
-					<tr>
-						<td><p>Monthly Allowance/Salary - Spouse</p></td>
-						<td style='text-align:right;'>".$data[10]."</td>
-					</tr>
-					<tr>
-						<td><p>Employer Paid CPP/EI - Spouse</p></td>
-						<td style='text-align:right;'>".$data[11]."</td>
-					</tr>
-					<tr>
-						<td><p>Extended Health</p></td>
-						<td style='text-align:right;'>".$data[12]."</td>
-					</tr>
-					<tr>
-						<td><p>Provincial Medical</p></td>
-						<td style='text-align:right;'>".$data[13]."</td>
-					</tr>
-					<tr>
-						<td><p>Health Care Spending Account</p></td>
-						<td style='text-align:right;'>".$data[14]."</td>
-					</tr>
-					<tr>
-						<td><p>Worker&rsquo;s Compensation</p></td>
-						<td style='text-align:right;'>".$data[15]."</td>
-					</tr>
-					<tr>
-						<td><p>Staff Conference</p></td>
-						<td style='text-align:right;'>".$data[16]."</td>
-					</tr>
-					<tr>
-						<td><p>MPD correspondence</p></td>
-						<td style='text-align:right;'>".$data[17]."</td>
-					</tr>
-					<tr>
-						<td><p>Reimbursable Ministry Expenses</p></td>
-						<td style='text-align:right;'>".$data[18]."</td>
-					</tr>
-					<tr>
-						<td><p>Subtotal</p></td>
-						<td style='text-align:right;'>".$data[19]."</td>
-					</tr>
-					<tr>
-						<td><p>Central Resource Charge</p></td>
-						<td style='text-align:right;'>".$data[20]."</td>
-					</tr>
-					<tr style='background-color:d9d9d9'>
-						<td><p>Monthly Support Goal</p></td>
-						<td style='text-align:right; text-decoration:underline;'>".$data[21]."</td>
-					</tr>
-					<tr>
-						<td><p>Solid Monthly Support</p></td>
-						<td style='text-align:right;'>".$data[22]."</td>
-					</tr>
-					<tr style='background-color:d9d9d9'>
-						<td><p>Total Funds Yet to be Raised</p></td>
-						<td style='text-align:right; text-decoration:underline;'>".$data[23]."</td>
-					</tr>
-					<tr>
-						<td><p>Bridge Amount</p></td>
-						<td style='text-align:right;'>".$data[24]."</td>
-					</tr>
-					<tr>
-						<td><p>Percent Supported</p></td>
-						<td style='text-align:right;'>".$data[25]."</td>
-					</tr>
-				</table>
-			</td></tr>
-		</table></body></html>";
-	exit;
 }
 ?>
-<?php get_header(); ?>
+<?php get_header();
+include('functions/js_functions.php'); ?>
 <div id="content">
-    <div id="content-left">
-	<div id="main-content">
-		<h1 class="replace" style="float:left"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
-		<BR><BR>
-		<script type="text/javascript">
+    
+	<style type='text/css'>
+		td, .border{
+			border: 1px solid #808080;
+			padding: 5px;
+			margin: 3px;
+		}
+		
+		table{
+			margin-bottom:10px;
+			margin-top:10px;
+			width:100%;
+		}
+	</style>
+	<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
+	<hr>
+	<div id="content-left">
+		<div id="main-content">
+		<?php
 		//todo:
 		//error handeling
-
-		<?php
-			
-		$constants = array("cpp_rate", "cpp_max", "cpp_exempt", "ei_rate1", "ei_rate2", "ei_max", "ehc_single", "ehc_couple", "ehc_family", "ehc_MB", "health_tax_AB", "health_tax_BC", "health_tax_MB", "health_tax_NB", "health_tax_NL", "health_tax_NT", "health_tax_NS", "health_tax_NU", "health_tax_ON", "health_tax_PE", "health_tax_QC", "health_tax_SK", "health_tax_YT", "health_tax_FR", "part_time", "add_rate", "life_rate", "life_max", "dept_life_single", "dept_life_couple", "dept_life_family", "medical_ON", "medical_QC", "medical_BC_single", "medical_BC_couple", "medical_BC_family", "workers_rate_AB", "workers_rate_BC", "workers_rate_MB", "workers_rate_NB", "workers_rate_NL", "workers_rate_NT", "workers_rate_NS", "workers_rate_NU", "workers_rate_ON", "workers_rate_PE", "workers_rate_QC", "workers_rate_SK", "workers_rate_YT", "workers_rate_FR", "cr_charge");
+		//couples joining and unjoining
 		
 		$current_user = wp_get_current_user();
 		
-		function getName(){
-			global $wpdb;
-			//todo what if different last names
-			$name = getFieldEmployee("first_name");
-			$spouse = getSpouse();
-			if ($spouse != Null){
-				$name .= " and ";
-				$sql = 'SELECT `first_name` FROM `employee` JOIN `wp_users` ON  employee.user_login = wp_users.user_login WHERE wp_users.ID ='. $spouse;
-				$result = $wpdb->get_results($sql);
-				$name .= get_object_vars($result[0])['first_name'];
-			}
-			$name .= " ".getFieldEmployee("last_name");
-			return $name;
-		}
-		
-		function getSpouse(){
-			//gets spouse's wb id
-			global $current_user, $wpdb;
-			$ID = $current_user->ID;
-			$user_login = $current_user->user_login;
-			$sql = 'SELECT `ID` FROM `wp_users` JOIN `employee` AS user ON wp_users.user_login = user.user_login JOIN `employee` AS spouse ON user.external_id = spouse.spouse_id WHERE `ID` != '. $ID.' AND spouse.user_login = "'.$user_login.'"';
-			$result = $wpdb->get_results($sql);
-			if ($result[0] == ""){
-				return null;
-			}
-			return get_object_vars($result[0])['ID'];
-		}
-		
-		function getFieldEmployee($field){
-			global $current_user, $wpdb;
-			$user_login = $current_user->user_login;
-			$sql = "SELECT `".$field."` FROM `employee` WHERE `user_login` = '". $user_login . "'";
-			$result = $wpdb->get_results($sql);
-			return get_object_vars($result[0])[$field];
-		}
-		
 		function setProvince(){
-			global $provinces;
+			global $support_constant;
 			//if foreign
 			if (getFieldEmployee("country") == "CA"){
-				return $provinces[getFieldEmployee("province")];
+				return $support_constant['provinces'][getFieldEmployee("province")];
 			}
 			return 13;
 		}
 		
 		function getProvinceString($prov){
-			global $provinces;
+			global $support_constant;
 			if ($prov == 13){
 				return 'Foreign';
 			} 
-			return array_keys($provinces)[$prov];
+			$part = array_keys($support_constant['provinces']);
+			return $part[$prov]; 
 		}
 		
-		$dataID = null;
+		
 		parseDataInput();
 		
 		function parseDataInput(){
-			global $wpdb,$current_user, $dataID;
+			global $wpdb,$current_user, $support_dataID;
 			$ID = $current_user->ID;
 			//todo error handling
-			$data = explode('+',  htmlspecialchars($_GET["data"]));	
+			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
 			
-			$dataID = getDataID($ID);
-			if ($dataID == null){
+			$support_dataID = getDataID($ID);
+			if ($support_dataID == null){
 				$spouse = getSpouse();
-				if($spouse != null){
-					$dataID = getDataID($spouse);
-					if ($dataID == null){
+				if($spouse != -1){
+					$support_dataID = getDataID($spouse);
+					if ($support_dataID == null){
 						//user has spouse but neither has id
 						$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, `decline`, `salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 90
 						$wpdb->get_results($sql);
-						$dataID = $wpdb->insert_id;
-						update_user_meta( $ID, 'support_calculator_id', $dataID);
-						update_user_meta( $spouse, 'support_calculator_id', $dataID);
+						$support_dataID = $wpdb->insert_id;
+						update_user_meta( $ID, 'support_calculator_id', $support_dataID);
+						update_user_meta( $spouse, 'support_calculator_id', $support_dataID);
 					}
 					else{
 						//spouse has id but not user
-						update_user_meta( $ID, 'support_calculator_id', $dataID);
+						update_user_meta( $ID, 'support_calculator_id', $support_dataID);
 					}
 				}
 				else {
 					//user has no spouse or id
 					$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, `decline`, `salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 90
 					$wpdb->get_results($sql);
-					$dataID = $wpdb->insert_id;
-					update_user_meta( $ID, 'support_calculator_id', $dataID);
+					$support_dataID = $wpdb->insert_id;
+					update_user_meta( $ID, 'support_calculator_id', $support_dataID);
 				}
 			}
 			if (count($data) < 11){
 				return; //no data
 			}
 			//save data in table
+			
+			for($i = 0; $i < count($i); $i ++){
+				$data[$i] = parseFloat($data[$i]);
+			}
+			
 			$sql = "UPDATE `support_calculator` SET `hours`=".$data[0].",`hours_s`=".$data[1].",`coverage`=".$data[2].",`decline`=".$data[3].",`salary`=".$data[4].",`salary_s`=".$data[5].",`hcsa`=".$data[6].",`conference`=".$data[7].",`mpd`=".$data[8].",`expenses`=".$data[9].",`support`=".$data[10]." WHERE `id`=".$dataID;
 			$wpdb->get_results($sql);
-			echo '</script><BR>Data Saved!<BR><script type="text/javascript">';
+			
+			
+			
+			
+			echo '<BR>Data Saved!<BR>';
 		}
 		
-		//gets the dataID of a user only not also their spouse
+		//gets the support_dataID of a user only not also their spouse
 		function getDataID($ID){
 			$result = get_user_meta($ID, 'support_calculator_id', true);
 			if ($result == ""){
@@ -307,413 +229,66 @@ table.body {
 		
 		function getData($field){
 			//parseDataInput() must run before this function
-			global $wpdb, $dataID;
-			$sql = "SELECT `".$field."` FROM `support_calculator` WHERE `id` = '". $dataID. "'";
+			global $wpdb, $support_dataID;
+			$sql = "SELECT `".$field."` FROM `support_calculator` WHERE `id` = '". $support_dataID. "'";
 			$result = $wpdb->get_results($sql);
-			return get_object_vars($result[0])[$field];
+			return $result[0]->$field;
 		}
 		
-		function isAdmin(){
-			global $current_user;
-			$ID = $current_user->ID;
-			$result = get_user_meta($ID, 'support_calculator_admin', true);			
-			return $result == 1;
-		}
-		
-		//admin interfaces (changing the constants / adding admins)
-		
-		parseConstantInput();
-		
-		function parseConstantInput(){
-			global $wpdb, $constants;
-			if (isAdmin()){
-
-				//todo error handling
-				$data = explode('+',  htmlspecialchars($_GET["constants"]));
-				if (count($data) < 51){
-					return; //no data
-				}
-				for ($i = 0; $i < 51; $i ++){
-				
-					if(getConstant($constants[$i]) == null){ //if no row already
-						$sql = "INSERT INTO `support_calculator_constants`(`id`, `key`, `value`) VALUES (0,'".$constants[$i]."',".$data[$i].")";
-						$wpdb->get_results($sql);
-					}
-					else{
-						$sql = "UPDATE `support_calculator_constants` SET `value`=".$data[$i]." WHERE `key`='".$constants[$i]."'";
-						$wpdb->get_results($sql);
-					}
-				}
-				echo '</script><BR>Constants Saved!<BR><script type="text/javascript">';
-			}
-		}
-		
-		parseAdminInput();
-		function parseAdminInput(){
-			global $wpdb;
-			if (isAdmin()){
-				$admin = htmlspecialchars($_GET["input_add_admin"]);
-				$user = get_user_by('login', $admin );
-				if ($admin==""){
-					return;
-				}
-				if (!$user){
-					echo '</script><BR>No user: '. $admin.'<BR><script type="text/javascript">';
-				}
-				else{
-					$ID = $user->ID;
-					update_user_meta( $ID, 'support_calculator_admin', 1);
-					echo '</script><BR>Made user: '. $admin. ' an administer<BR><script type="text/javascript">';
-				}
-				
-			}
-		}
-		
-		parseAdminRemove();
-		function parseAdminRemove(){
-			global $wpdb;
-			if (isAdmin()){
-				$admin = htmlspecialchars($_GET["input_remove_admin"]);
-				$user = get_user_by('login', $admin );
-				if ($admin==""){
-					return;
-				}
-				if (!$user){
-					echo '</script><BR>No user: '. $admin.'<BR><script type="text/javascript">';
-				}
-				else{
-					$ID = $user->ID;
-					update_user_meta( $ID, 'support_calculator_admin', 0);
-					echo '</script><BR>Removed user: '. $admin. ' as administer<BR><script type="text/javascript">';
-				}
-				
-			}
-		}
-		
-		function getConstant($field){
-			global $wpdb;
-			$sql = "SELECT `value` FROM `support_calculator_constants` WHERE `key` = '". $field. "'";
-			$result = $wpdb->get_results($sql);
-			if ($result[0] == ""){
-				return null;
-			}
-			return get_object_vars($result[0])['value'];
-		}
-		
-		
-		function getAdmins(){
-			$string="";
-			$admins = get_users(array('meta_key' => 'support_calculator_admin', 'meta_value' => '1'));
-			foreach($admins as $user){
-				$string .= "<li>".$user->user_login."<input type='button' value='Remove' onclick='demoteUser(\"".$user->user_login."\");'></li>";
-			}
-			return $string;
+		if (isAdmin()){
+			include('admin-interface/support-calculator-admin.php');
 		}
 		
 		//these next six functions just help generate the table
 		function printHealthTax(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= '<label for="set_health_tax_'.$pro.'">'.$pro.'<input type="text" name="set_health_tax_'.$pro.'" id="set_health_tax_'.$pro.'" title='.$pro.' value="'.getConstant("health_tax_".$pro).'"></label><BR>';
 			}
 			return $out;
 		}
 
 		function printHealthTaxSet(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= 'get_value_float("set_health_tax_'.$pro.'"),';
 			}
 			return $out;
 		}
-		
+
 		function printHealthPreSet(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= getConstant("health_tax_".$pro).", ";
 			}
 			return $out;
 		}
-		
+
 		function printWorkers(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= '<label for="set_workers_tax_'.$pro.'">'.$pro.'<input type="text" name="set_workers_rate_'.$pro.'" id="set_workers_rate_'.$pro.'" title='.$pro.' value="'.getConstant("workers_rate_".$pro).'"></label><BR>';
 			}
 			return $out;
 		}
 			
 		function printWorkersSet(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= 'get_value_float("set_workers_rate_'.$pro.'"),';
 			}
 			return $out;
 		}
-		
+
 		function printWorkersPreSet(){
-			global $provinces;
-			foreach (array_keys($provinces) as $pro){
+			global $support_constant;
+			foreach (array_keys($support_constant['provinces']) as $pro){
 				$out .= getConstant("workers_rate_".$pro).", ";
 			}
 			return $out;
-		}
-		
-		printAdmin();
-		function printAdmin(){
-			if (isAdmin()){	
-				echo '
-		var show_admin = false;
-		
-		function toggle_admin(){
-			var block = document.getElementById("admin_view");
-			var button = document.getElementById("admin_view_button");
-			show_admin = !show_admin;
-			if (show_admin){
-				block.style.display = "block";
-				button.value="Hide Administrative Option";
-			}
-			else{
-				block.style.display = "none";
-				button.value="Show Administrative Options";
-			}
-		}
-		</script>
-		<input type="button" name="admin_view_button" id="admin_view_button" value="Show Administrative Options" onclick="toggle_admin();" />
-		<div name="admin_view" id="admin_view" style="display:none">
-			<table><tr>
-			<td>Make administer:</td>
-			<td><form name="add_admin" id="add_admin" action="" method="get">
-					<input type="text" name="input_add_admin" id="input_add_admin" />
-			</form></td>
-			<td><input type="button" value="Promote" onclick="add_admin.submit();"></td>
-			</tr></table>
-			<form name="remove_admin" id="remove_admin" action="" method="get">
-					<input type="hidden" name="input_remove_admin" id="input_remove_admin" />
-			</form>
-			Administers : 
-			<ul>
-			'.getAdmins().'
-			</ul>
-			<table>
-				<tr>
-					<td>
-						Canada Pension Plan rate
-					</td>
-					<td>
-						<input type="text" name="set_cpp_rate" id="set_cpp_rate" value="'.getConstant("cpp_rate").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Canada Pension Plan maximum pensionable earnings (annual)
-					</td>
-					<td>
-						<input type="text" name="set_cpp_max" id="set_cpp_max" value="'.getConstant("cpp_max").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Canada Pension Plan exemption (annual)
-					</td>
-					<td>
-						<input type="text" name="set_cpp_exempt" id="set_cpp_exempt" value="'.getConstant("cpp_exempt").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Employment Insurance rate (EE rate)
-					</td>
-					<td>
-						<input type="text" name="set_ei_rate1" id="set_ei_rate1" value="'.getConstant("ei_rate1").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Employment Insurance rate (ER rate)
-					</td>
-					<td>
-						<input type="text" name="set_ei_rate2" id="set_ei_rate2" value="'.getConstant("ei_rate2").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Employment Insurance maximum insurable earnings (annual)
-					</td>
-					<td>
-						<input type="text" name="set_ei_max" id="set_ei_max" value="'.getConstant("ei_max").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Extended Health Coverage (single, couple, family)
-					</td>
-					<td>
-						<input type="text" name="set_ehc_single" id="set_ehc_single" value="'.getConstant("ehc_single").'" title="single">
-						<input type="text" name="set_ehc_couple" id="set_ehc_couple" value="'.getConstant("ehc_couple").'" title="couple">
-						<input type="text" name="set_ehc_family" id="set_ehc_family" value="'.getConstant("ehc_family").'" title="family">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Manitoba tax on EHC
-					</td>
-					<td>
-						<input type="text" name="set_ehc_MB" id="set_ehc_MB" value="'.getConstant("ehc_MB").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Total Benefit Costs Tax
-					</td>
-					<td>
-						'.printHealthTax().'
-						<label for="set_health_tax_FR">Foreign<input type="text" name="set_health_tax_FR" id="set_health_tax_FR" title="Foreign" value="'.getConstant("health_tax_FR").'"></label>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Part time
-					</td>
-					<td>
-						<input type="text" name="set_part_time" id="set_part_time" value="'.getConstant("part_time").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						AD&D rate per $1000
-					</td>
-					<td>
-						<input type="text" name="set_add_rate" id="set_add_rate" value="'.getConstant("add_rate").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Life rate per $1000
-					</td>
-					<td>
-						<input type="text" name="set_life_rate" id="set_life_rate" value="'.getConstant("life_rate").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Life maximum 2 x annual salary
-					</td>
-					<td>
-						<input type="text" name="set_life_max" id="set_life_max" value="'.getConstant("life_max").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Depedents life (single, couple, family)
-					</td>
-					<td>
-						<input type="text" name="set_dept_life_single" id="set_dept_life_single" value="'.getConstant("dept_life_single").'" title="single">
-						<input type="text" name="set_dept_life_couple" id="set_dept_life_couple" value="'.getConstant("dept_life_couple").'" title="couple">
-						<input type="text" name="set_dept_life_family" id="set_dept_life_family" value="'.getConstant("dept_life_family").'" title="family">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Ontario medical rate
-					</td>
-					<td>
-						<input type="text" name="set_medical_ON" id="set_medical_ON" value="'.getConstant("medical_ON").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Quebec medical rate
-					</td>
-					<td>
-						<input type="text" name="set_medical_QC" id="set_medical_QC" value="'.getConstant("medical_QC").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						British Columbia medical is a flat rate (single, couple, family)
-					</td>
-					<td>
-						<input type="text" name="set_medical_BC_single" id="set_medical_BC_single" value="'.getConstant("medical_BC_single").'" title="single">
-						<input type="text" name="set_medical_BC_couple" id="set_medical_BC_couple" value="'.getConstant("medical_BC_couple").'" title="couple">
-						<input type="text" name="set_medical_BC_family" id="set_medical_BC_family" value="'.getConstant("medical_BC_family").'" title="family">
-					</td>
-				</tr>
-				
-				<tr>
-					<td>
-						 Workers compensation (rate per $100)
-					</td>
-					<td>
-						'.printWorkers().'
-						<label for="set_health_tax_FR">Foreign<input type="text" name="set_workers_rate_FR" id="set_workers_rate_FR" title="Foreign" value="'.getConstant("workers_rate_FR").'"></label>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Central Resource Charge
-					</td>
-					<td>
-						<input type="text" name="set_cr_charge" id="set_cr_charge" value="'.getConstant("cr_charge").'">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						
-					</td>
-					<td>
-						<input type="button" value="Save" onclick="saveConstants();">
-					</td>
-				</tr>
-			</table>
-		</div>
-		<form name="sendConstants" id="sendConstants" action="" method="get">
-			<input type="hidden" name="constants" id="constants" value="">
-		</form>
-		<script type="text/javascript">
-			
-			function storeValues(){
-				cpp_rate = get_value_float("set_cpp_rate");
-				cpp_max = get_value_float("set_cpp_max");
-				cpp_exempt = get_value_float("set_cpp_exempt");
-				ei_rate1 = get_value_float("set_ei_rate1");
-				ei_rate2 = get_value_float("set_ei_rate2");
-				ei_max = get_value_float("set_ei_max");
-				ehc = new Array(get_value_float("set_ehc_single"), get_value_float("set_ehc_couple"), get_value_float("set_ehc_family"));
-				ehc_MB = get_value_float("set_ehc_MB");
-				health_tax = new Array('.printHealthTaxSet().' get_value_float("set_health_tax_FR"));
-				part_time = get_value_float("set_part_time");
-				add_rate = get_value_float("set_add_rate");
-				life_rate = get_value_float("set_life_rate");
-				life_max = get_value_float("set_life_max");
-				dept_life = new Array(get_value_float("set_dept_life_single"), get_value_float("set_dept_life_couple"), get_value_float("set_dept_life_family")); 
-				medical_ON = get_value_float("set_medical_ON");
-				medical_QC = get_value_float("set_medical_QC");
-				medical_BC = new Array(get_value_float("set_medical_BC_single"), get_value_float("set_medical_BC_couple"), get_value_float("set_medical_BC_family"));
-				workers_rate = new Array('.printWorkersSet().' get_value_float("set_workers_rate_FR"));
-				cr_charge = get_value_float("set_cr_charge");
-			}
-			
-			function saveConstants(){
-				storeValues();
-				var data = cpp_rate + "+" + cpp_max + "+" + cpp_exempt + "+" + ei_rate1 + "+" + ei_rate2 + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
-				document.getElementById("constants").value = data;
-				sendConstants.submit();
-			}
-			
-			function demoteUser(user){
-				document.getElementById("input_remove_admin").value = user;
-				remove_admin.submit();
-			}
-			
-			';
-			}
-		}
-		
-		
-		//end of admin interface
+}
 		?>
-		
+		<script type="text/javascript">
 		//constants for the provinces
 		var AB = 0;
 		var BC = 1;
@@ -780,7 +355,7 @@ table.body {
 		var cr_charge = <?php echo getConstant("cr_charge") ?> //0.14; //Central Resource Charge
 		
 		
-		var province = <?php echo setProvince(); ?>;
+		var province = <?php echo setProvince(); ?>; //not stored
 		
 		//these are the values inputed by the users and will be stored
 		var hours = <?php echo getData("hours"); ?>;
@@ -795,7 +370,7 @@ table.body {
 		var expenses = <?php echo getData("expenses"); ?>;
 		var support = <?php echo getData("support"); ?>;
 		
-		//these are the calculated values
+		//these are the calculated values (not stored)
 		var cpp;
 		var cpp_s;
 		var health;
@@ -865,33 +440,23 @@ table.body {
 			return salary * workers_rate[province] / 100; //per $100
 		}
 		
-		function get_value_float(element){
-			var value = document.getElementById(element).value;
-			if (value == ""){
-				return 0;
-			}
-			if (isNaN(parseFloat(value))){
-				//TODO throw exception?
-				return 0;
-			}
-			return Math.max(parseFloat(value), 0);
-		}
-		
 		function set_value(element, value){
 			//todo look nice
 			document.getElementById(element).innerHTML = value.toFixed(2);
 		}
 		
 		function calculate(){
-			//todo error check :(
 			
 			province = parseInt(document.getElementById("input_province").value);
 			hours = get_value_float("input_hours");
 			hours_s = get_value_float("input_hours_s");
 			coverage = parseInt(document.getElementById("input_coverage").value);
 			decline = document.getElementById("input_decline").checked;
+			
+			hcsa = get_value_float("input_hcsa");
+			
 			salary = get_value_float("input_salary");
-			cpp = get_cpp_ei(salary);
+			cpp = get_cpp_ei(salary + hcsa);
 			set_value("output_cpp", cpp);
 			
 			salary_s = get_value_float("input_salary_s");
@@ -904,8 +469,6 @@ table.body {
 			medical = get_medical();
 			set_value("output_medical", medical);
 			
-			hcsa = get_value_float("input_hcsa");
-			
 			workers = get_workers();
 			set_value("output_workers", workers);
 			
@@ -913,7 +476,7 @@ table.body {
 			mpd = get_value_float("input_mpd");
 			expenses = get_value_float("input_expenses");
 			
-			subtotal = salary + cpp + salary_s + cpp_s + health + medical + hcsa + workers + conference + mpd + expenses;
+			subtotal = salary + cpp + salary_s + cpp_s + health + medical + /*hcsa +*/ workers + conference + mpd + expenses;
 			set_value("output_subtotal", subtotal);
 			total = subtotal / (1 - cr_charge);
 			set_value("output_total", total);
@@ -939,7 +502,7 @@ table.body {
 			//summary table
 			set_value("summ_salary", salary);
 			set_value("summ_salary_s", salary_s);
-			set_value("summ_tax", cpp + cpp_s + health + medical + hcsa + workers);
+			set_value("summ_tax", cpp + cpp_s + health + medical + /*hcsa + */workers);
 			set_value("summ_expenses", conference + mpd + expenses + charge);
 			set_value("summ_total", total);
 			set_value("summ_tobe_raised", tobe_raised);
@@ -979,18 +542,12 @@ table.body {
 				"+" + support.toFixed(2) + 
 				"+" + tobe_raised.toFixed(2) + 
 				"+" + bridge.toFixed(2) + 
-				"+" + percent.toFixed(2) + "+"; //must have the extra "+"
+				"+" + percent.toFixed(2);
 			return data;
-			input_province
-		}
-		
-		function printData(){
-			document.getElementById("download").value=getDownloadData() + "print";
-			document.getElementById("downloadDataForm").submit();
 		}
 		
 		function downloadData(){
-			document.getElementById("download").value=getDownloadData() + "download";
+			document.getElementById("download").value=getDownloadData();
 			document.getElementById("downloadDataForm").submit();
 		}
 		
@@ -1027,6 +584,7 @@ table.body {
 		}
 		
 		function goForm(){
+			$('html,body').scrollTop(0);
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
 				document.getElementById("input_coverage").value = 0;
 				document.getElementById("input_hcsa").value = 0;
@@ -1048,11 +606,13 @@ table.body {
 		}
 		
 		function skip(){
+			$('html,body').scrollTop(0);
 			document.getElementById("simple_form").style.display = "none";
 			document.getElementById("table_form").style.display = "block";
 		}
 		
 		function back(){
+			$('html,body').scrollTop(0);
 			document.getElementById("table_form").style.display = "none";
 			document.getElementById("simple_form").style.display = "block";
 		}
@@ -1069,7 +629,7 @@ table.body {
 			var button = document.getElementById("detail_view");
 			show_detail = !show_detail;
 			if (show_detail){
-				block.style.display = "block";
+				block.style.display = "table";
 				button.value="Hide Details";
 			}
 			else{
@@ -1144,10 +704,10 @@ table.body {
 			</tr>
 			<tr>
 				<td>
-					Please enter the monthly amount you would like to contribute to a Health Care Spending Account
+					Please enter the monthly amount you would like to contribute to Medical Allowance
 				</td>
 				<td name='table_hcsa' id='table_hcsa'>
-					<select name="simple_hcsa" id="simple_hcsa" title="Please enter the monthly amount you would like to contribute to a HCSA." value="2">
+					<select name="simple_hcsa" id="simple_hcsa" title="Please enter the monthly amount you would like to contribute to Medical Allowance." value="2">
 						<option value="0" <?php if (getData("hcsa") == 0) echo "selected"; ?>>0</option>
 						<option value="25" <?php if (getData("hcsa") == 25) echo "selected"; ?>>25</option>
 						<option value="50" <?php if (getData("hcsa") == 50) echo "selected"; ?>>50</option>
@@ -1213,7 +773,7 @@ table.body {
 					</p>
 				</td>
 				<td>
-					<input type="text" name="input_name" id="input_name" value="<?php echo getName(); ?>">
+					<input type="text" name="input_name" id="input_name" value="<?php echo getName(null, true); ?>">
 				</td>
 				<td>
 					<p>
@@ -1389,11 +949,11 @@ table.body {
 			<tr>
 				<td>
 					<p>
-						Health Care Spending Account
+						Medical Allowance
 					</p>
 				</td>
 				<td>
-					<select name="input_hcsa" id="input_hcsa" onchange="calculate();" title="Please enter the monthly amount you would like to contribute to a HCSA." value="2">
+					<select name="input_hcsa" id="input_hcsa" onchange="calculate();" title="Please enter the monthly amount you would like to contribute to Medical Allowance." value="2">
 						<option value="0" <?php if (getData("hcsa") == 0) echo "selected"; ?>>0</option>
 						<option value="25" <?php if (getData("hcsa") == 25) echo "selected"; ?>>25</option>
 						<option value="50" <?php if (getData("hcsa") == 50) echo "selected"; ?>>50</option>
@@ -1521,34 +1081,18 @@ When selecting an amount, consider expenses like cell phone, conferences, traini
 		</table>
 		<table>
 			<tr>
-				<td>
-					<input type="button" value="Calculate" onclick="calculate();">
-				</td>
-				<td>
-					<input type="button" value="Save" onclick="saveData();">
-				</td>
-				<td>
-					<input type="button" value="Download" onclick="downloadData();">
-				</td>
-				<td>
-					<input type="button" value="Print" onclick="printData();">
-				</td>
-				<td>
-					<input type="button" value="Clear Fields" onclick="clearFields();">
-				</td>
-				<td>
-					<input type="button" value="Back" onclick="back();">
-				</td>
+				<td><input type="button" value="Calculate" onclick="calculate();"></td>
+				<td><input type="button" value="Save" onclick="saveData();"></td>
+				<td><input type="button" value="Download" onclick="downloadData();"></td>
+				<td><input type="button" value="Clear Fields" onclick="clearFields();"></td>
+				<td><input type="button" value="Back" onclick="back();"></td>
 			</tr>
 		</table>
 	</div>
 	</div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div>
+    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
 </div>
-<!--content end-->
-<!--Popup window-->
-<?php include(TEMPLATEPATH.'/popup.php') ?>
 </div>
 <!--main end-->
 </div>
