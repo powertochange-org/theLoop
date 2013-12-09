@@ -608,12 +608,12 @@ function printAdmin(){
 		</form>
 		<form class='border' action="" method="post">
 			Start Blurb
-			<textarea name="b-0" id="b-0" class='label' value='' rows="6" cols="35" maxlength="1000"><?php echo getStringConstant("blurb_0") ?></textarea><BR>
+			<textarea name="b-0" id="b-0" class='label' value='' rows="6" cols="35" maxlength="10000"><?php echo getStringConstant("blurb_0") ?></textarea><BR>
 			<?php /* Filling out Blurb
-			<textarea name="b-1" id="b-1" class='label' value='' rows="6" cols="35" maxlength="1000"><?php echo getStringConstant("blurb_1") ?></textarea><BR>
+			<textarea name="b-1" id="b-1" class='label' value='' rows="6" cols="35" maxlength="10000"><?php echo getStringConstant("blurb_1") ?></textarea><BR>
 			*/ ?>
 			Result Blurb
-			<textarea name="b-2" id="b-2" class='label' value='' rows="6" cols="35" maxlength="1000"><?php echo getStringConstant("blurb_2") ?></textarea><BR>
+			<textarea name="b-2" id="b-2" class='label' value='' rows="6" cols="35" maxlength="10000"><?php echo getStringConstant("blurb_2") ?></textarea><BR>
 			<input type="submit" value="Save">
 		</form>
 		<BR>
