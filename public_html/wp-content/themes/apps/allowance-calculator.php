@@ -472,11 +472,11 @@ include('functions/js_functions.php');
 		
 		function getAccess($id){
 			global $allowance_constant, $current_user;
-			if (isAdmin() && $id == $current_user->id){
-				return $allowance_constant['partAccess'];
-			}
 			$involvment_type = getFieldEmployee("involvement_type", $id);
 			if (in_array($involvment_type, $allowance_constant['noAccess_involvementType'])){
+				if (isAdmin() && $id == $current_user->id){
+					return $allowance_constant['partAccess'];
+				}
 				return $allowance_constant['noAccess'];
 			}
 			if (getFieldEmployee("compensation_level", $id) == null){
@@ -578,6 +578,9 @@ include('functions/js_functions.php');
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',16);
 				$pdf->Write(5,'Allowance Calculator');
+				$pdf->SetFont('Arial','b',20);
+				$pdf->LN();
+				$pdf->Write(5,'');
 				$pdf->LN();
 				$pdf->LN();
 				$pdf->SetFont('Arial','',12);
@@ -1075,7 +1078,7 @@ include('functions/js_functions.php');
 			<div id='section_whichWay'>
 				Please select an option:<BR>
 				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
-				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_yourself'>Calculate for yourself</label>
+				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_you'>Calculate for yourself</label>
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { // hides the option if there is no spouse ?>
 				<input type='radio' name='whichWay' id='show_spouse' value='1' ><label for='show_spouse'>Calculate for spouse</label>
