@@ -1,5 +1,3 @@
-
-
 <?php
 /**
 * MyProfile
@@ -44,6 +42,10 @@ $max_file_size = 30000000; // size in bytes
 				font-weight:bold;
 				margin-bottom:10px;
 			}
+				
+			input {	
+				margin-bottom:2px;
+			}
 		</style>
 		<!-- MAIN DISPLAY -->
 		
@@ -78,22 +80,20 @@ $max_file_size = 30000000; // size in bytes
 			<div style='float:left;padding-left:23px;width:457px'>
 			
 			<h4>MINISTRY INFORMATION</h4>	
-			<div id="editMinistryAddress" class="edit cancel">
-				<form action="" method="post" enctype="multitype/form-data">
-					Address:
-					<input type="hidden" name="ministryAddress">
-					<input type="textbox" placeholder='Address Line #1' name="ministry_address1" value="<?php echo $user->ministry_address_line1 ?>">
-					<input type="textbox" placeholder='Address Line #2' name="ministry_address2" value="<?php echo $user->ministry_address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
-					<?php if(is_null($user->ministry_address_line3)){ ?>
-						<input type="textbox" placeholder='Address Line #3' name="ministry_address3" value="<?php echo $user->ministry_address_line3 ?>">
-					<?php } ?>
-					<input type="textbox" placeholder='City' name="ministry_city_value" value="<?php echo $user->ministry_city ?>">
-					<input type="textbox" placeholder='Pr.'  name="ministry_province_value" value="<?php echo $user->ministry_province ?>" maxlength="2" size='2'>
-					<input type="textbox" placeholder='Country' name="ministry_country" value="<?php echo $user->ministry_country ?>" maxlength="2" size='2'>
-					<input type="textbox" placeholder='PC' name="ministry_postal_code" value="<?php echo $user->ministry_postal_code ?>">
-					<input type="submit" value="Save">
-				</form>
-			</div>
+			<form action="" method="post" enctype="multitype/form-data">
+				Address:
+				<input type="hidden" name="ministryAddress">
+				<input type="textbox" placeholder='Address Line #1' name="ministry_address1" value="<?php echo $user->ministry_address_line1 ?>">
+				<input type="textbox" placeholder='Address Line #2' name="ministry_address2" value="<?php echo $user->ministry_address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
+				<?php if(is_null($user->ministry_address_line3)){ ?>
+					<input type="textbox" placeholder='Address Line #3' name="ministry_address3" value="<?php echo $user->ministry_address_line3 ?>">
+				<?php } ?>
+				<input type="textbox" placeholder='City' name="ministry_city_value" value="<?php echo $user->ministry_city ?>">
+				<input type="textbox" placeholder='Pr.'  name="ministry_province_value" value="<?php echo $user->ministry_province ?>" maxlength="2" size='2'>
+				<input type="textbox" placeholder='Country' name="ministry_country" value="<?php echo $user->ministry_country ?>" maxlength="2" size='2'>
+				<input type="textbox" placeholder='PC' name="ministry_postal_code" value="<?php echo $user->ministry_postal_code ?>">
+				<input type="submit" value="Save">
+			</form>
 			
 			
 			<?php
@@ -119,20 +119,18 @@ $max_file_size = 30000000; // size in bytes
 				}
 			}
 			?> 
-			<div id="add_phone" class="edit cancel">
 		
-				<form id="phone" action="" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="new_phone_number">
-					<input type='hidden' name='phoneShare' value='ministryshare' >
-					<input type='hidden' name='phonetype' value='BUS' >
-					 (<input type="text" placeholder='Area' name="phonearea" value="" maxlength="3" size="3" />)
-					 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
-					 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
-					 <input type="text"  placeholder='Ext' name="phoneextension" value="" maxlength="10" size = "5" />
-					<?php require("countrycodes.php"); ?>
-					 <input type="submit" value="Add Phone" />
-				</form>
-			</div>
+			<form id="phone" action="" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="new_phone_number">
+				<input type='hidden' name='phoneShare' value='ministryshare' >
+				<input type='hidden' name='phonetype' value='BUS' >
+				 (<input type="text" placeholder='Area' name="phonearea" value="" maxlength="3" size="3" />)
+				 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
+				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
+				 <input type="text"  placeholder='Ext' name="phoneextension" value="" maxlength="10" size = "5" />
+				<?php require("countrycodes.php"); ?>
+				 <input type="submit" value="Add Phone" />
+			</form>
 			
 			
 			<?php
@@ -141,7 +139,6 @@ $max_file_size = 30000000; // size in bytes
 				foreach($emails as $email){
 					if($email->is_ministry){
 						$id = $email->email_address_id;
-						echo '<div id="displayMinEmailId' . $id . '" class="reset">';
 						//don't allow editing or deleting of powertochange.org address
 						if(strpos(strtolower($email->email_address),'powertochange.org') === false) {
 							echo '<form action="" method="post" enctype="multitype/form-data" id="editMinEmail' . $id . '" class="edit cancel">';
@@ -177,127 +174,118 @@ $max_file_size = 30000000; // size in bytes
 			<h4>PERSONAL INFORMATION</h4>
 			
 			
-			<div id="editPersonalAddress" class="edit cancel" >
-				<form action="" method="post" enctype="multitype/form-data">
-					Address: 
-					<input type="hidden" name="personalAddress">
-					<input type="textbox" placeholder='Address Line #1' name="address1" value="<?php echo $user->address_line1 ?>">
-					<input type="textbox" placeholder='Address Line #2' name="address2" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
-					<?php if(is_null($user->address_line3)){ ?>
-						<input type="textbox" placeholder='Address Line #3' name="address3" value="<?php echo $user->address_line3 ?>"> 
-					<?php } ?>
-					<input type="textbox "placeholder='City' name="city_value" value="<?php echo $user->city ?>"> 
-					<input type="textbox" placeholder='Pr.' name="province_value" value="<?php echo $user->province ?>" maxlength="2" size='2'>
-					<input type="textbox" placeholder='Country' name="country" value="<?php echo $user->country ?>" maxlength="2" size='2'>
-					<input type="textbox" placeholder='PC' name="postal_code" value="<?php echo $user->postal_code ?>">
-					<input type='hidden' name='addressPermissions' value='NONE'>
-					<input type='checkbox' name='addressPermissions' value='FULL'  <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> >
-					<label for='addressPermissions'>Share with staff?</label>
-					<input type="submit" value="Save">
-				</form>
-			</div>
+			<form action="" method="post" enctype="multitype/form-data">
+				Address: 
+				<input type="hidden" name="personalAddress">
+				<input type="textbox" placeholder='Address Line #1' name="address1" value="<?php echo $user->address_line1 ?>">
+				<input type="textbox" placeholder='Address Line #2' name="address2" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
+				<?php if(is_null($user->address_line3)){ ?>
+					<input type="textbox" placeholder='Address Line #3' name="address3" value="<?php echo $user->address_line3 ?>"> 
+				<?php } ?>
+				<input type="textbox "placeholder='City' name="city_value" value="<?php echo $user->city ?>"> 
+				<input type="textbox" placeholder='Pr.' name="province_value" value="<?php echo $user->province ?>" maxlength="2" size='2'>
+				<input type="textbox" placeholder='Country' name="country" value="<?php echo $user->country ?>" maxlength="2" size='2'>
+				<input type="textbox" placeholder='PC' name="postal_code" value="<?php echo $user->postal_code ?>">
+				<input type='hidden' name='addressPermissions' value='NONE'>
+				<input type='checkbox' name='addressPermissions' value='FULL'  <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> >
+				<label for='addressPermissions'>Share with staff?</label>
+				<input type="submit" value="Save">
+			</form>
 			
 			
-					<?php
-					$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
-					if($phones){
-						foreach($phones as $phone){
-							$id = $phone->phone_number_id;
-							$contact = split("-", $phone->contact_number, 2);
-							echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data" class="edit cancel">';
-					?>
-						Phone:
-						<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
-						<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
-						<select name="phoneShare">
-							<option value="personalshare" <?php if (($phone->share_phone) && (!$phone->is_ministry)) { echo 'selected="selected"'; } ?>> Shared</option>
-							<option value="personalnotshare" <?php if ((!$phone->share_phone) && (!$phone->is_ministry)) {echo 'selected="selected"'; } ?>> Not Shared</option>
-						</select>
-						<select name="phonetype">
-							<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
-							<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
-							<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-							<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
-						</select>
-						(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
-							 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
-							 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
-							 <input type="text" placeholder="Ext." name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
-							 <input type="submit" value="Save" style="margin-left:50px"/>
+			<?php
+			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
+			if($phones){
+				foreach($phones as $phone){
+					$id = $phone->phone_number_id;
+					$contact = split("-", $phone->contact_number, 2);
+					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data" class="edit cancel">';
+				?>
+				Phone:
+				<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
+				<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
+				<select name="phoneShare">
+					<option value="personalshare" <?php if (($phone->share_phone) && (!$phone->is_ministry)) { echo 'selected="selected"'; } ?>> Shared</option>
+					<option value="personalnotshare" <?php if ((!$phone->share_phone) && (!$phone->is_ministry)) {echo 'selected="selected"'; } ?>> Not Shared</option>
+				</select>
+				<select name="phonetype">
+					<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
+					<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
+					<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
+					<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
+				</select>
+				(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
+					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
+					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
+					 <input type="text" placeholder="Ext." name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
+					 <input type="submit" value="Save" style="margin-left:50px"/>
 					 <?php
-							echo '</form>';
-						}
-					}
-					?> 
-					<div id="add_phone" class="edit cancel" >
+					echo '</form>';
+				}
+			} ?> 
 				
-						<form id="phone" action="" method="post" enctype="multipart/form-data">
-							<input type="hidden" name="new_phone_number">
-							<select name="phoneShare">
-								<option value="personalshare" > Shared</option>
-								<option value="personalnotshare" > Not Shared</option>
-							</select>
-							<select name="phonetype">
-								<option value="CELL">Cell</option>
-								<option value="HOME">Home</option>
-								<option value="FAX">Fax</option>
-								<option value="OTHER">Other</option>
-							</select>
-							 (<input type="text" name="phonearea" value="" maxlength="3" size="3" />)
-							 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
-							 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
-							 <input type="text" placeholder='Ext.' name="phoneextension" value="" maxlength="10" size = "5" />
-							<?php require("countrycodes.php"); ?>
-							 <input type="submit" value="Add Phone" />
-						</form>
-					</div>
+			<form id="phone" action="" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="new_phone_number">
+				<select name="phoneShare">
+					<option value="personalshare" > Shared</option>
+					<option value="personalnotshare" > Not Shared</option>
+				</select>
+				<select name="phonetype">
+					<option value="CELL">Cell</option>
+					<option value="HOME">Home</option>
+					<option value="FAX">Fax</option>
+					<option value="OTHER">Other</option>
+				</select>
+				 (<input type="text" name="phonearea" value="" maxlength="3" size="3" />)
+				 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
+				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
+				 <input type="text" placeholder='Ext.' name="phoneextension" value="" maxlength="10" size = "5" />
+				<?php require("countrycodes.php"); ?>
+				 <input type="submit" value="Add Phone" />
+			</form>
 					
 					
-					<?php
-					$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
-					if($emails){
-						foreach($emails as $email){
-							$id = $email->email_address_id;
-							echo '<form action="" method="post" enctype="multitype/form-data" id="editEmail' . $id . '" class="edit cancel">';
-							echo "Personal Email: ";
-							echo '<input type="hidden" name="email_address_id" value="' . $id . '">';
-							echo '<input type="text" name="email" value="' . $email->email_address . '" style="width:300px"/>';
-							echo '<input type="checkbox" name="share_email" ';
-							if ($email->share_email) {
-								echo 'checked="checked"';
-							} 
-							echo '>Share with staff?</input>';
-							echo '<input type="submit" value="Save" ></form>';
-						}  	
-					}
-					?>
-					<form action="" method="post" enctype="multitype/form-data" id="addEmail" class="edit cancel">
-						<input type="text" placeholder='Personal Email' name="new_email_address" style="width:240px"/>
-						<input type="checkbox" name="share_email">Share with staff?</input>
-						<input type="submit" value="Add Email" />
-					</form>
-					<br/>
-					<form id="editSocialMedia" action="" method="post" enctype="multitype/form-data" class="edit cancel">
-						<input type="hidden" name="socialMedia">
-							<input type="text" placeholder='Website' id="website" name="website" value="<?php echo $user->website ?>" style="width:200px"><BR>
-							<input type="text" placeholder='Twitter' id="twitter" name="twitter" value="<?php echo $user->twitter_handle ?>" style="width:200px"><BR>
-							<input type="text" placeholder='Skype' id="skype" name="skype" value="<?php echo $user->skype ?>" style="width:200px"><BR>
-							<input type="text" placeholder='Facebook' id="facebook" name="facebook" value="<?php echo $user->facebook ?>" style="width:200px"><BR>
-							<input type="submit" value="Save">
-					</form>
-				</div>
-				<br/>
-				Personal Message:
-				<form id="updateNotes" action="" method="post" enctype="multitype/form-data" class="edit cancel" style="/*padding:10px;margin-right:150px*/">
-					<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
-					<input type="submit" value="Save" class="cancel" />
-				</form>
-					
-				</div>
-
-
-			</div>
+			<?php
+			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
+			if($emails){
+				foreach($emails as $email){
+					$id = $email->email_address_id;
+					echo '<form action="" method="post" enctype="multitype/form-data" id="editEmail' . $id . '" class="edit cancel">';
+					echo "Personal Email: ";
+					echo '<input type="hidden" name="email_address_id" value="' . $id . '">';
+					echo '<input type="text" name="email" value="' . $email->email_address . '" style="width:300px"/>';
+					echo '<input type="checkbox" name="share_email" ';
+					if ($email->share_email) {
+						echo 'checked="checked"';
+					} 
+					echo '>Share with staff?</input>';
+					echo '<input type="submit" value="Save" ></form>';
+				}  	
+			}
+			?>
+			<form action="" method="post" enctype="multitype/form-data" id="addEmail" class="edit cancel">
+				<input type="text" placeholder='Personal Email' name="new_email_address" style="width:240px"/>
+				<input type="checkbox" name="share_email">Share with staff?</input>
+				<input type="submit" value="Add Email" />
+			</form>
+			<br/>
+			<form id="editSocialMedia" action="" method="post" enctype="multitype/form-data" class="edit cancel">
+				<input type="hidden" name="socialMedia">
+					<input type="text" placeholder='Website' id="website" name="website" value="<?php echo $user->website ?>" style="width:200px"><BR>
+					<input type="text" placeholder='Twitter' id="twitter" name="twitter" value="<?php echo $user->twitter_handle ?>" style="width:200px"><BR>
+					<input type="text" placeholder='Skype' id="skype" name="skype" value="<?php echo $user->skype ?>" style="width:200px"><BR>
+					<input type="text" placeholder='Facebook' id="facebook" name="facebook" value="<?php echo $user->facebook ?>" style="width:200px"><BR>
+					<input type="submit" value="Save">
+			</form>
+			<br/>
+			Personal Message:
+			<form id="updateNotes" action="" method="post" enctype="multitype/form-data" class="edit cancel" style="/*padding:10px;margin-right:150px*/">
+				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
+				<input type="submit" value="Save" class="cancel" />
+			</form>
+			</div>	
 		</div>
+	</div>
 	<div id="content-right">   
 	<div id="sidebar">
 		<div class="sidebaritem">
