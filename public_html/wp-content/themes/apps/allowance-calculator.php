@@ -588,12 +588,12 @@ include('functions/js_functions.php');
 				switch($_POST['userIs']){
 				case 'you':
 					$pdf->Write(5, "Name: ".getName());$pdf->LN();
-					$pdf->Write(5, "Ministry/Department:: ".getFieldEmployee('ministry'));$pdf->LN();
+					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry'));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry'));$pdf->LN();
 					break;
 				case 'spouse':
 					$pdf->Write(5, "Name: ".getName(getSpouse()));$pdf->LN();
-					$pdf->Write(5, "Ministry/Department:: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
+					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
 					break;
 				case 'free':
