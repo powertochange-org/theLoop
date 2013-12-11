@@ -46,6 +46,25 @@ $max_file_size = 30000000; // size in bytes
 			input {	
 				margin-bottom:2px;
 			}
+			
+			.plus{
+				position:absolute;
+				left:-7px;
+				top:-7px;' 
+			}
+			
+			.orange{
+				background-color:#f7941d;
+				border:0px solid #000000;
+				color:#ffffff;
+				border-radius:5px;
+				padding:3px 6px;
+			}
+			
+			#main-content form input[type=text], #main-content form input[type=textbox], #main-content form select{
+				background-color:#f4f4f4;
+				border:solid #adafb2 1px;
+			}
 		</style>
 		<!-- MAIN DISPLAY -->
 		
@@ -92,17 +111,22 @@ $max_file_size = 30000000; // size in bytes
 				<input type="textbox" placeholder='Pr.'  name="ministry_province_value" value="<?php echo $user->ministry_province ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='Country' name="ministry_country" value="<?php echo $user->ministry_country ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='PC' name="ministry_postal_code" value="<?php echo $user->ministry_postal_code ?>">
-				<input type="submit" value="Save">
+				<input class='orange' type="submit" value="SAVE">
 			</form>
 			
 			
 			<?php
 			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
 			if($phones){
+				$last = end($phones);
 				foreach($phones as $phone){
+					$isLast = $last === $phone;
 					$id = $phone->phone_number_id;
 					$contact = split("-", $phone->contact_number, 2);
-					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data" class="edit cancel">';
+					if ($isLast){
+						echo "<div style='position:relative;'>";
+					}
+					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data">';
 			?>
 					Phone:
 					<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
@@ -113,14 +137,18 @@ $max_file_size = 30000000; // size in bytes
 					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
 					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
 					 <input type="text" placeholder='Ext' name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
-					 <input type="submit" value="Save" />
+					 <input class='orange' type="submit" value="SAVE" />
 			 <?php
 					echo '</form>';
+					if ($isLast){
+						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#min_phone\").slideToggle()'>";
+						echo "</div>";
+					}
 				}
 			}
 			?> 
-		
-			<form id="phone" action="" method="post" enctype="multipart/form-data">
+			
+			<form id="min_phone" action="" method="post" enctype="multipart/form-data" <?php echo ($phones ? "style='display:none'" : "") ?> >
 				<input type="hidden" name="new_phone_number">
 				<input type='hidden' name='phoneShare' value='ministryshare' >
 				<input type='hidden' name='phonetype' value='BUS' >
@@ -129,44 +157,51 @@ $max_file_size = 30000000; // size in bytes
 				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
 				 <input type="text"  placeholder='Ext' name="phoneextension" value="" maxlength="10" size = "5" />
 				<?php require("countrycodes.php"); ?>
-				 <input type="submit" value="Add Phone" />
+				 <input class='orange' type="submit" value="ADD PHONE" />
 			</form>
 			
 			
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC");
 			if($emails){
+				$last = end($emails);
 				foreach($emails as $email){
-					if($email->is_ministry){
-						$id = $email->email_address_id;
-						//don't allow editing or deleting of powertochange.org address
-						if(strpos(strtolower($email->email_address),'powertochange.org') === false) {
-							echo '<form action="" method="post" enctype="multitype/form-data" id="editMinEmail' . $id . '" class="edit cancel">';
-							echo 'Ministry Email: ';
-							echo '<input type="hidden" name="email_address_id" value="' . $id . '">';
-							echo '<input type="text" name="minEmail" value="' . $email->email_address . '" style="width:250px"/>';
-							echo '<input type="submit" value="save"></form>';
-						}
-						else{
-							echo 'Ministry Email: ';
-							?><input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:250px"/><?php
-						}
+					$isLast = $last === $email;
+					if ($isLast){
+						echo "<div style='position:relative;'>";
+					}
+					$id = $email->email_address_id;
+					//don't allow editing or deleting of powertochange.org address
+					if(strpos(strtolower($email->email_address),'powertochange.org') === false) {
+						echo '<form action="" method="post" enctype="multitype/form-data" id="editMinEmail' . $id . '">';
+						echo 'Ministry Email: ';
+						echo '<input type="hidden" name="email_address_id" value="' . $id . '">';
+						echo '<input type="text" name="minEmail" value="' . $email->email_address . '" style="width:250px"/>';
+						echo '<input class="orange" type="submit" value="SAVE"></form>';
+					}
+					else{
+						echo 'Ministry Email: ';
+						?><input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:250px"/><?php
+					}
+					if ($isLast){
+						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addMinEmail\").slideToggle()'>";
+						echo "</div>";
 					}
 				}  	
 			}
 			?>
-			<form action="" method="post" enctype="multitype/form-data" id="addMinEmail" class="edit cancel">
+			<form action="" method="post" enctype="multitype/form-data" id="addMinEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
 				<input type="text"  placeholder='Ministry Email' name="new_min_email_address" style="width:300px"/>
-				<input type="submit" value="Add Email" >
+				<input class='orange' type="submit" value="ADD EMAIL" >
 			</form>
 				
-			<form id="editMinSocialMedia" action="" method="post" enctype="multitype/form-data" class="edit cancel" >
+			<form id="editMinSocialMedia" action="" method="post" enctype="multitype/form-data">
 				<input type="hidden" name="minSocialMedia">
 					<input type="text" placeholder='Website' id="minwebsite" name="website" value="<?php echo $user->ministry_website ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Twitter' id="mintwitter" name="twitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Skype' id="minskype" name="skype" value="<?php echo $user->ministry_skype ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Facebook' id="minfacebook" name="facebook" value="<?php echo $user->ministry_facebook ?>" style="width:200px"><BR>
-					<input type="submit" value="Save">
+					<input class='orange' type="submit" value="SAVE">
 			</form>
 			
 			
@@ -182,49 +217,59 @@ $max_file_size = 30000000; // size in bytes
 				<?php if(is_null($user->address_line3)){ ?>
 					<input type="textbox" placeholder='Address Line #3' name="address3" value="<?php echo $user->address_line3 ?>"> 
 				<?php } ?>
-				<input type="textbox "placeholder='City' name="city_value" value="<?php echo $user->city ?>"> 
+				<input type="textbox"placeholder='City' name="city_value" value="<?php echo $user->city ?>"> 
 				<input type="textbox" placeholder='Pr.' name="province_value" value="<?php echo $user->province ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='Country' name="country" value="<?php echo $user->country ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='PC' name="postal_code" value="<?php echo $user->postal_code ?>">
 				<input type='hidden' name='addressPermissions' value='NONE'>
 				<input type='checkbox' name='addressPermissions' value='FULL'  <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> >
 				<label for='addressPermissions'>Share with staff?</label>
-				<input type="submit" value="Save">
+				<input class='orange' type="submit" value="SAVE">
 			</form>
 			
 			
 			<?php
 			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
 			if($phones){
+				$last = end($phones);
 				foreach($phones as $phone){
+					$isLast = $last === $phone;
+					if ($isLast){
+						echo "<div style='position:relative;'>";
+					}
 					$id = $phone->phone_number_id;
 					$contact = split("-", $phone->contact_number, 2);
-					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data" class="edit cancel">';
-				?>
-				Phone:
-				<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
-				<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
-				<select name="phoneShare">
-					<option value="personalshare" <?php if (($phone->share_phone) && (!$phone->is_ministry)) { echo 'selected="selected"'; } ?>> Shared</option>
-					<option value="personalnotshare" <?php if ((!$phone->share_phone) && (!$phone->is_ministry)) {echo 'selected="selected"'; } ?>> Not Shared</option>
-				</select>
-				<select name="phonetype">
-					<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
-					<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
-					<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-					<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
-				</select>
-				(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
+					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data">';
+					?>
+					Phone:
+					<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
+					<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
+					<select name="phoneShare">
+						<option value="personalshare" <?php if (($phone->share_phone) && (!$phone->is_ministry)) { echo 'selected="selected"'; } ?>> Shared</option>
+						<option value="personalnotshare" <?php if ((!$phone->share_phone) && (!$phone->is_ministry)) {echo 'selected="selected"'; } ?>> Not Shared</option>
+					</select>
+					<select name="phonetype">
+						<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
+						<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
+						<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
+						<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
+					</select>
+					<BR>
+					(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
 					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
 					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
 					 <input type="text" placeholder="Ext." name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
-					 <input type="submit" value="Save" style="margin-left:50px"/>
+					 <input class='orange' type="submit" value="SAVE"/>
 					 <?php
 					echo '</form>';
+					if ($isLast){
+						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#phone\").slideToggle()'>";
+						echo "</div>";
+					}
 				}
 			} ?> 
 				
-			<form id="phone" action="" method="post" enctype="multipart/form-data">
+			<form id="phone" action="" method="post" enctype="multipart/form-data" <?php echo ($phones ? "style='display:none'" : "") ?> >
 				<input type="hidden" name="new_phone_number">
 				<select name="phoneShare">
 					<option value="personalshare" > Shared</option>
@@ -235,22 +280,27 @@ $max_file_size = 30000000; // size in bytes
 					<option value="HOME">Home</option>
 					<option value="FAX">Fax</option>
 					<option value="OTHER">Other</option>
-				</select>
+				</select><BR>
 				 (<input type="text" name="phonearea" value="" maxlength="3" size="3" />)
 				 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
 				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
 				 <input type="text" placeholder='Ext.' name="phoneextension" value="" maxlength="10" size = "5" />
 				<?php require("countrycodes.php"); ?>
-				 <input type="submit" value="Add Phone" />
+				 <input class='orange' type="submit" value="ADD PHONE" />
 			</form>
 					
 					
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
 			if($emails){
+				$last = end($emails);
 				foreach($emails as $email){
+					$isLast = $last === $email;
+					if ($isLast){
+						echo "<div style='position:relative;'>";
+					}
 					$id = $email->email_address_id;
-					echo '<form action="" method="post" enctype="multitype/form-data" id="editEmail' . $id . '" class="edit cancel">';
+					echo '<form action="" method="post" enctype="multitype/form-data" id="editEmail' . $id . '">';
 					echo "Personal Email: ";
 					echo '<input type="hidden" name="email_address_id" value="' . $id . '">';
 					echo '<input type="text" name="email" value="' . $email->email_address . '" style="width:300px"/>';
@@ -259,29 +309,33 @@ $max_file_size = 30000000; // size in bytes
 						echo 'checked="checked"';
 					} 
 					echo '>Share with staff?</input>';
-					echo '<input type="submit" value="Save" ></form>';
+					echo '<input class="orange" type="submit" value="SAVE" ></form>';
+					if ($isLast){
+						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addEmail\").slideToggle()'>";
+						echo "</div>";
+					}
 				}  	
 			}
 			?>
-			<form action="" method="post" enctype="multitype/form-data" id="addEmail" class="edit cancel">
+			<form action="" method="post" enctype="multitype/form-data" id="addEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
 				<input type="text" placeholder='Personal Email' name="new_email_address" style="width:240px"/>
 				<input type="checkbox" name="share_email">Share with staff?</input>
-				<input type="submit" value="Add Email" />
+				<input class='orange' type="submit" value="ADD EMAIL" />
 			</form>
 			<br/>
-			<form id="editSocialMedia" action="" method="post" enctype="multitype/form-data" class="edit cancel">
+			<form id="editSocialMedia" action="" method="post" enctype="multitype/form-data">
 				<input type="hidden" name="socialMedia">
 					<input type="text" placeholder='Website' id="website" name="website" value="<?php echo $user->website ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Twitter' id="twitter" name="twitter" value="<?php echo $user->twitter_handle ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Skype' id="skype" name="skype" value="<?php echo $user->skype ?>" style="width:200px"><BR>
 					<input type="text" placeholder='Facebook' id="facebook" name="facebook" value="<?php echo $user->facebook ?>" style="width:200px"><BR>
-					<input type="submit" value="Save">
+					<input class='orange' type="submit" value="SAVE">
 			</form>
 			<br/>
-			Personal Message:
-			<form id="updateNotes" action="" method="post" enctype="multitype/form-data" class="edit cancel" style="/*padding:10px;margin-right:150px*/">
+			<form id="updateNotes" action="" method="post" enctype="multitype/form-data" style="padding-right:10px;padding-left:5px;">
+				Personal Message:
 				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
-				<input type="submit" value="Save" class="cancel" />
+				<input class='orange' type="submit" value="SAVE" />
 			</form>
 			</div>	
 		</div>
