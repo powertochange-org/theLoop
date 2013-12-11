@@ -32,10 +32,10 @@ $max_file_size = 30000000; // size in bytes
 	}
 ?>
 	<style type="text/css">
-			form:hover {
+			#main-content form:hover {
 				background-color:#f5f5f5;
 			}
-			form {
+			#main-content form {
 				margin-bottom:10px;
 				padding-top:5px;
 			}
