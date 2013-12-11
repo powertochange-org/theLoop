@@ -48,10 +48,10 @@
 	<option value="KM">Comoros (+269)</option>
 	<option value="CK">Cook Islands (+682)</option>
 	<option value="CR">Costa Rica (+506)</option>
-	<option value="CI">Côte d'Ivoire (+225)</option>
+	<option value="CI">C&#244;te d'Ivoire (+225)</option>
 	<option value="HR">Croatia (+385)</option>
 	<option value="CU">Cuba (+53)</option>
-	<option value="CC">Curaçao (+599)</option>
+	<option value="CC">Cura&#231;ao (+599)</option>
 	<option value="CY">Cyprus (+357)</option>
 	<option value="CZ">Czech Republic (+420)</option>
 	<option value="DC">Democratic Republic of the Congo (+243)</option>
@@ -167,11 +167,11 @@
 	<option value="PR">Puerto Rico (+1)</option>
 	<option value="QA">Qatar (+974)</option>
 	<option value="RC">Republic of the Congo (+242)</option>
-	<option value="RE">Réunion (+262)</option>
+	<option value="RE">R&#233;union (+262)</option>
 	<option value="RO">Romania (+40)</option>
 	<option value="RU">Russia (+7)</option>
 	<option value="RW">Rwanda (+250)</option>
-	<option value="NT">Saint Barthélemy (+590)</option>
+	<option value="NT">Saint Barth&#233;lemy (+590)</option>
 	<option value="SH">Saint Helena (+290)</option>
 	<option value="KN">Saint Kitts and Nevis (+1)</option>
 	<option value="RT">Saint Martin (+590)</option>
@@ -179,7 +179,7 @@
 	<option value="VC">Saint Vincent and the Grenadines (+1)</option>
 	<option value="WS">Samoa (+685)</option>
 	<option value="SM">San Marino (+378)</option>
-	<option value="ST">São Tomé and Príncipe (+239)</option>
+	<option value="ST">S&#227;o Tom&#233; and Pr&#237;ncipe (+239)</option>
 	<option value="SA">Saudi Arabia (+966)</option>
 	<option value="SN">Senegal (+221)</option>
 	<option value="CS">Serbia (+381)</option>
