@@ -37,14 +37,10 @@ $max_file_size = 30000000; // size in bytes
 			}
 			form {
 				margin-bottom:10px;
+				padding-top:5px;
 			}
-			h4{
-				font-weight:bold;
-				margin-bottom:10px;
-			}
-				
-			input {	
-				margin-bottom:2px;
+			input, select {	
+				margin-bottom:5px;
 			}
 			
 			.plus{
@@ -82,17 +78,11 @@ $max_file_size = 30000000; // size in bytes
 					echo '<img style="display:block" src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
 				} ?>
 				
-				<input type='button' value='CHANGE IMAGE'  onClick="$('#picUpload').toggle('slow');">
-				<!-- are you sure todo -->
-				
-				<form id="Upload" action="../staff-directory/?page=upload_processor" enctype="multipart/form-data" method="post">	
-						<p />
-						<div id="picUpload" style="display:none; background:lightgrey; width:220px">
-							<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>"> 
-							<input id="file" type="file" name="file" onchange="$('#submitpic').removeAttr('disabled')"><BR>
-							<input id="submitpic" type="submit" name="submit" disabled="disabled" value="Upload Now">       
-						</div>
-					</form>
+				<form style=" width:220px" id="Upload" action="../staff-directory/?page=upload_processor" enctype="multipart/form-data" method="post">	
+					<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>"> 
+					<input style=" width:220px" id="file" type="file" name="file" onchange="$('#submitpic').removeAttr('disabled')"><BR>
+					<input class='orange' id="submitpic" type="submit" name="submit" disabled="disabled" value="CHANGE IMAGE">       
+				</form>
 				
 			</div>
 			
