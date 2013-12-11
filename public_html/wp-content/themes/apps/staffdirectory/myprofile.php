@@ -116,7 +116,7 @@ $max_file_size = 30000000; // size in bytes
 			
 			
 			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
+			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
 			if($phones){
 				$last = end($phones);
 				foreach($phones as $phone){
@@ -162,7 +162,7 @@ $max_file_size = 30000000; // size in bytes
 			
 			
 			<?php
-			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC");
+			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1'");
 			if($emails){
 				$last = end($emails);
 				foreach($emails as $email){
@@ -194,7 +194,7 @@ $max_file_size = 30000000; // size in bytes
 				<input type="text"  placeholder='Ministry Email' name="new_min_email_address" style="width:300px"/>
 				<input class='orange' type="submit" value="ADD EMAIL" >
 			</form>
-				
+			<BR>
 			<form id="editMinSocialMedia" action="" method="post" enctype="multitype/form-data">
 				<input type="hidden" name="minSocialMedia">
 					<input type="text" placeholder='Website' id="minwebsite" name="website" value="<?php echo $user->ministry_website ?>" style="width:200px"><BR>
@@ -229,7 +229,7 @@ $max_file_size = 30000000; // size in bytes
 			
 			
 			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' ORDER BY is_ministry DESC, share_phone DESC");
+			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
 			if($phones){
 				$last = end($phones);
 				foreach($phones as $phone){
@@ -245,8 +245,8 @@ $max_file_size = 30000000; // size in bytes
 					<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
 					<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
 					<select name="phoneShare">
-						<option value="personalshare" <?php if (($phone->share_phone) && (!$phone->is_ministry)) { echo 'selected="selected"'; } ?>> Shared</option>
-						<option value="personalnotshare" <?php if ((!$phone->share_phone) && (!$phone->is_ministry)) {echo 'selected="selected"'; } ?>> Not Shared</option>
+						<option value="personalshare" <?php if ($phone->share_phone) { echo 'selected="selected"'; } ?>> Shared</option>
+						<option value="personalnotshare" <?php if (!$phone->share_phone) {echo 'selected="selected"'; } ?>> Not Shared</option>
 					</select>
 					<select name="phonetype">
 						<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>

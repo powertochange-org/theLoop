@@ -6,11 +6,3 @@
 <?php wp_footer();/*to get rid off "Page optimized by WP Minify WordPress Plugin" */ ?>
 </body>
 </html>
-
-
-
-
-
-
-
-
