@@ -97,14 +97,14 @@ $allowance_constant = array(
 	'levelName' => array(
 		null, 
 		array ( 
-			7 => 'Ministry Leader',
-			8=> 'Ministry Director',
-			9=> 'Domain Leader'
+			6 => 'Managers and Other Ministry Leaders',
+			7=> 'Ministry Director',
+			8=> 'Domain Leader'
 		),
 		null,
 		array(
-			7=> 'Manager / Other Dept. Leader',
-			8=> 'Department Director'
+			6=> 'Manager / Other Dept. Leader',
+			7=> 'Department Director'
 		)
 	),
 
@@ -296,14 +296,14 @@ include('functions/js_functions.php');
 			echo "new Array(";
 			echo "{'min':".getConstant("role_0_0_min").",'max':".getConstant("role_0_0_max")."},";
 			
-			echo "{ 7 : {'min':".getConstant("role_1_7_min").",'max':".getConstant("role_1_7_max")."},";
-			echo "8 : {'min':".getConstant("role_1_8_min").",'max':".getConstant("role_1_8_max")."},";
-			echo "9 : {'min':".getConstant("role_1_9_min").",'max':".getConstant("role_1_9_max")."}},";
+			echo "{ 6 : {'min':".getConstant("role_1_6_min").",'max':".getConstant("role_1_6_max")."},";
+			echo "7 : {'min':".getConstant("role_1_7_min").",'max':".getConstant("role_1_7_max")."},";
+			echo "8 : {'min':".getConstant("role_1_8_min").",'max':".getConstant("role_1_8_max")."}},";
 			
 			echo "{'min':".getConstant("role_2_0_min").",'max':".getConstant("role_2_0_max")."},";
 			
-			echo "{ 7 : {'min':".getConstant("role_3_7_min").",'max':".getConstant("role_3_7_max")."},";
-			echo "8 : {'min':".getConstant("role_3_8_min").",'max':".getConstant("role_3_8_max")."}},";
+			echo "{ 6 : {'min':".getConstant("role_3_6_min").",'max':".getConstant("role_3_6_max")."},";
+			echo "7 : {'min':".getConstant("role_3_7_min").",'max':".getConstant("role_3_7_max")."}},";
 			
 			
 			echo "0)";
@@ -588,13 +588,13 @@ include('functions/js_functions.php');
 				switch($_POST['userIs']){
 				case 'you':
 					$pdf->Write(5, "Name: ".getName());$pdf->LN();
-					$pdf->Write(5, "Ministry/Department:: ".getFieldEmployee('ministry'));$pdf->LN();
-					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry'));$pdf->LN();
+					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry'));$pdf->LN();
+					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title'));$pdf->LN();
 					break;
 				case 'spouse':
 					$pdf->Write(5, "Name: ".getName(getSpouse()));$pdf->LN();
-					$pdf->Write(5, "Ministry/Department:: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
-					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
+					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
+					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title', getSpouse()));$pdf->LN();
 					break;
 				case 'free':
 					break;
@@ -1005,11 +1005,11 @@ include('functions/js_functions.php');
 				
 				function reset(){
 					document.getElementById('user_name').innerHTML = "";
+					document.getElementById('extra-field-6').checked = false;
 					document.getElementById('extra-field-7').checked = false;
 					document.getElementById('extra-field-8').checked = false;
-					document.getElementById('extra-field-9').checked = false;
+					document.getElementById('extra-corp-6').checked = false;
 					document.getElementById('extra-corp-7').checked = false;
-					document.getElementById('extra-corp-8').checked = false;
 					document.getElementById('hour_precentage').value = "100";
 					<?php getReset() ?>
 				}
@@ -1107,14 +1107,14 @@ include('functions/js_functions.php');
 							</div>
 							<div id='role_type_field'>
 								<strong>Role Type</strong><BR>
-								<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Leader (all other types)</label><BR>
-								<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Ministry Director</label><BR>
-								<input type='radio' name='extra_level' id='extra-field-9' value='9'><label for='extra-field-9'>Domain Leader</label><BR><BR>
+								<input type='radio' name='extra_level' id='extra-field-6' value='6'><label for='extra-field-6'>Managers and Other Ministry Leaders</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Director</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Domain Leader</label><BR><BR>
 							</div>
 							<div id='role_type_corp'>
 								<strong>Role Type</strong><BR>
-								<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Manager / Other Dept. Leader</label><BR>
-								<input type='radio' name='extra_level' id='extra-corp-8' value='8'><label for='extra-corp-8'>Department Director</label><BR><BR>
+								<input type='radio' name='extra_level' id='extra-corp-6' value='6'><label for='extra-corp-6'>Manager / Other Dept. Leader</label><BR>
+								<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Department Director</label><BR><BR>
 							</div>
 							
 							<input type='hidden' name='userIs' id='userIs'>
