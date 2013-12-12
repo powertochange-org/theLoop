@@ -115,9 +115,6 @@ $allowance_constant = array(
 );
 
 $current_user_id = wp_get_current_user()->id;
-if ($current_user_id == 745 ){
-	$current_user_id = 233;
-}
 		
 parseUserValuesInput();
 
@@ -577,6 +574,15 @@ include('functions/js_functions.php');
 			if (isset($_POST['print']) and $_POST['print'] == 'true'){
 				$pdf = new FPDF();
 				$pdf->AddPage();
+				
+				//there is a weird bug that depending on where things are draw on page on things may not get draw
+				// it is a weird bug with fpdf.  if I printed x lines on the page have of the page would not display 
+						//but if there was x +/- 1 lines it would print normal
+				//these two lines counter acts the bug
+				$pdf->SetDrawColor(255);
+				$pdf->Line(0, 0, 200, 400);
+				$pdf->Line(0, 400, 200, 0);
+				
 				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',16);
