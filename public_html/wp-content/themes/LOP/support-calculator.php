@@ -145,7 +145,7 @@ include('functions/js_functions.php'); ?>
 		//error handeling
 		//couples joining and unjoining
 		
-		$current_user = wp_get_current_user();
+		$current_user_id = wp_get_current_user()->id;
 		
 		function setProvince(){
 			global $support_constant;
@@ -169,8 +169,8 @@ include('functions/js_functions.php'); ?>
 		parseDataInput();
 		
 		function parseDataInput(){
-			global $wpdb,$current_user, $support_dataID;
-			$ID = $current_user->ID;
+			global $wpdb,$current_user_id, $support_dataID;
+			$ID = $current_user_id;
 			//todo error handling
 			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
 			

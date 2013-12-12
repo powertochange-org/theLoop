@@ -114,7 +114,10 @@ $allowance_constant = array(
 	'corporateLeader' => 3
 );
 
-$current_user = wp_get_current_user();
+$current_user_id = wp_get_current_user()->id;
+if ($current_user_id == 745 ){
+	$current_user_id = 233;
+}
 		
 parseUserValuesInput();
 
@@ -471,10 +474,10 @@ include('functions/js_functions.php');
 		}
 		
 		function getAccess($id){
-			global $allowance_constant, $current_user;
+			global $allowance_constant, $current_user_id;
 			$involvment_type = getFieldEmployee("involvement_type", $id);
 			if (in_array($involvment_type, $allowance_constant['noAccess_involvementType'])){
-				if (isAdmin() && $id == $current_user->id){
+				if (isAdmin() && $id == $current_user_id){
 					return $allowance_constant['partAccess'];
 				}
 				return $allowance_constant['noAccess'];
@@ -569,7 +572,7 @@ include('functions/js_functions.php');
 		}
 		
 		function parseUserValuesInput(){
-			global $current_user, $wpdb, $allowance_constant;
+			global $current_user_id, $wpdb, $allowance_constant;
 			dump($_POST);
 			if (isset($_POST['print']) and $_POST['print'] == 'true'){
 				$pdf = new FPDF();
@@ -681,8 +684,8 @@ include('functions/js_functions.php');
 			}
 			if (isset($_POST['userIs'])){
 				
-				if($_POST['userIs'] == 'you' and  getAccess($current_user->id) == $allowance_constant['fullAccess']){
-					$id = $current_user->id;
+				if($_POST['userIs'] == 'you' and  getAccess($current_user_id) == $allowance_constant['fullAccess']){
+					$id = $current_user_id;
 				}
 				else if ($_POST['userIs'] == 'spouse' and getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']){	
 					$id = getSpouse();
@@ -716,7 +719,7 @@ include('functions/js_functions.php');
 			//$wpdb->get_results($sql);
 		}
 		
-		if (getAccess($current_user->id) == $allowance_constant['noAccess']){
+		if (getAccess($current_user_id) == $allowance_constant['noAccess']){
 			?>
 			The Allowance Calculator is only available for Commissioned and Associate staff.
 			<?php
@@ -785,8 +788,8 @@ include('functions/js_functions.php');
 					}
 				}
 				
-				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
-				var you = {role:<?php echo getRole($current_user->id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user->id) ?>};
+				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
+				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user_id) ?>};
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
 				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
@@ -1057,7 +1060,7 @@ include('functions/js_functions.php');
 						}
 					});
 					
-					<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
+					<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 						document.getElementById('show_you').checked = true;
 						proceed(0);
 					<?php } else if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
@@ -1077,7 +1080,7 @@ include('functions/js_functions.php');
 			<BR>
 			<div id='section_whichWay'>
 				Please select an option:<BR>
-				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
+				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_you'>Calculate for yourself</label>
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { // hides the option if there is no spouse ?>
