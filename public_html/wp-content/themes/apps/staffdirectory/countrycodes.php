@@ -1,5 +1,5 @@
 <!--contains every country/calling zone in a select box-->
-<select name="phonecountry" id="phonecountry" length="11">
+<select name="phonecountry" id="phonecountry" style="width:<?php echo $width?>px">
 	<option value="AF">Afghanistan (+93)</option>
 	<option value="AL">Albania (+355)</option>
 	<option value="DZ">Algeria (+213)</option>

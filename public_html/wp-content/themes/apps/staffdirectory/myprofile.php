@@ -55,11 +55,23 @@ $max_file_size = 30000000; // size in bytes
 				color:#ffffff;
 				border-radius:5px;
 				padding:3px 6px;
+				font-size:12px;
 			}
 			
 			#main-content form input[type=text], #main-content form input[type=textbox], #main-content form select{
 				background-color:#f4f4f4;
 				border:solid #adafb2 1px;
+				margin:2px;
+				font-size:12px;
+				height:27px;
+			}
+			
+			#main-content form input[type=text], #main-content form input[type=textbox]{
+				padding-left:5px;
+			}
+			
+			#main-content form {
+				font-size:12px;
 			}
 		</style>
 		<!-- MAIN DISPLAY -->
@@ -92,21 +104,21 @@ $max_file_size = 30000000; // size in bytes
 			<form action="" method="post" enctype="multitype/form-data">
 				Address:
 				<input type="hidden" name="ministryAddress">
-				<input type="textbox" placeholder='Address Line #1' name="ministry_address1" value="<?php echo $user->ministry_address_line1 ?>">
-				<input type="textbox" placeholder='Address Line #2' name="ministry_address2" value="<?php echo $user->ministry_address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
+				<input type="textbox" placeholder='Address Line #1' name="ministry_address1" value="<?php echo $user->ministry_address_line1 ?>" style='width:205px;'>
+				<input type="textbox" placeholder='Address Line #2' name="ministry_address2" value="<?php echo $user->ministry_address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' style='width:172px;'>
 				<?php if(is_null($user->ministry_address_line3)){ ?>
-					<input type="textbox" placeholder='Address Line #3' name="ministry_address3" value="<?php echo $user->ministry_address_line3 ?>">
+					<input type="hidden" name="ministry_address3" value="<?php echo $user->ministry_address_line3 ?>">
 				<?php } ?>
-				<input type="textbox" placeholder='City' name="ministry_city_value" value="<?php echo $user->ministry_city ?>">
+				<input type="textbox" placeholder='City' name="ministry_city_value" value="<?php echo $user->ministry_city ?>" style='width:152px;'>
 				<input type="textbox" placeholder='Pr.'  name="ministry_province_value" value="<?php echo $user->ministry_province ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='Country' name="ministry_country" value="<?php echo $user->ministry_country ?>" maxlength="2" size='2'>
-				<input type="textbox" placeholder='PC' name="ministry_postal_code" value="<?php echo $user->ministry_postal_code ?>">
+				<input type="textbox" placeholder='PC' name="ministry_postal_code" value="<?php echo $user->ministry_postal_code ?>" style='width:125px;'>
 				<input class='orange' type="submit" value="SAVE">
 			</form>
 			
 			
 			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
+			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
 			if($phones){
 				$last = end($phones);
 				foreach($phones as $phone){
@@ -118,15 +130,15 @@ $max_file_size = 30000000; // size in bytes
 					}
 					echo '<form id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data">';
 			?>
-					Phone:
+					Phone: 
 					<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
 					<input type="text" placeholder='Country' name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
 					<input type='hidden' name='phoneShare' value='ministryshare' >
 					<input type='hidden' name='phonetype' value='BUS' >
-					(<input type="text" placeholder='Area' name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
-					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
-					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
-					 <input type="text" placeholder='Ext' name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
+					( <input type="text" placeholder='Area' name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" style="width:44px" /> )
+					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" style="width:44px" />
+					  - <input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4"style="width:54px" />
+					 <input type="text" placeholder='Ext' name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" style="width:90px" />
 					 <input class='orange' type="submit" value="SAVE" />
 			 <?php
 					echo '</form>';
@@ -142,11 +154,11 @@ $max_file_size = 30000000; // size in bytes
 				<input type="hidden" name="new_phone_number">
 				<input type='hidden' name='phoneShare' value='ministryshare' >
 				<input type='hidden' name='phonetype' value='BUS' >
-				 (<input type="text" placeholder='Area' name="phonearea" value="" maxlength="3" size="3" />)
-				 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
-				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
-				 <input type="text"  placeholder='Ext' name="phoneextension" value="" maxlength="10" size = "5" />
-				<?php require("countrycodes.php"); ?>
+				<?php $width = 153; require("countrycodes.php");  ?>
+				 (<input type="text" placeholder='Area' name="phonearea" value="" maxlength="3" style="width:30px" />)
+				 <input type="text" name="phonenumber1" value="" maxlength="3" style="width:30px" />
+				 -<input type="text" name="phonenumber2" value="" maxlength="4" style="width:40px" />
+				 <input type="text"  placeholder='Ext' name="phoneextension" value="" maxlength="10" style="width:40px" />
 				 <input class='orange' type="submit" value="ADD PHONE" />
 			</form>
 			
@@ -170,8 +182,7 @@ $max_file_size = 30000000; // size in bytes
 						echo '<input class="orange" type="submit" value="SAVE"></form>';
 					}
 					else{
-						echo 'Ministry Email: ';
-						?><input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:250px"/><?php
+						?><form>Ministry Email: <input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:359px"/></form><?php
 					}
 					if ($isLast){
 						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addMinEmail\").slideToggle()'>";
@@ -181,36 +192,30 @@ $max_file_size = 30000000; // size in bytes
 			}
 			?>
 			<form action="" method="post" enctype="multitype/form-data" id="addMinEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
-				<input type="text"  placeholder='Ministry Email' name="new_min_email_address" style="width:300px"/>
+				<input type="text"  placeholder='Ministry Email' name="new_min_email_address" style="width:360px"/>
 				<input class='orange' type="submit" value="ADD EMAIL" >
 			</form>
-			<BR>
 			<form id="editMinSocialMedia" action="" method="post" enctype="multitype/form-data">
 				<input type="hidden" name="minSocialMedia">
-					<input type="text" placeholder='Website' id="minwebsite" name="website" value="<?php echo $user->ministry_website ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Twitter' id="mintwitter" name="twitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Skype' id="minskype" name="skype" value="<?php echo $user->ministry_skype ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Facebook' id="minfacebook" name="facebook" value="<?php echo $user->ministry_facebook ?>" style="width:200px"><BR>
+					<input type="text" placeholder='Website' id="minwebsite" name="website" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Twitter' id="mintwitter" name="twitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Skype' id="minskype" name="skype" value="<?php echo $user->ministry_skype ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Facebook' id="minfacebook" name="facebook" value="<?php echo $user->ministry_facebook ?>" style="width:394px">
 					<input class='orange' type="submit" value="SAVE">
 			</form>
-			
-			
-			<BR>
 			<h4>PERSONAL INFORMATION</h4>
-			
-			
 			<form action="" method="post" enctype="multitype/form-data">
 				Address: 
 				<input type="hidden" name="personalAddress">
-				<input type="textbox" placeholder='Address Line #1' name="address1" value="<?php echo $user->address_line1 ?>">
-				<input type="textbox" placeholder='Address Line #2' name="address2" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' >
+				<input type="textbox" placeholder='Address Line #1' name="address1" value="<?php echo $user->address_line1 ?>" style="width:205px">
+				<input type="textbox" placeholder='Address Line #2' name="address2" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' style="width:172px" >
 				<?php if(is_null($user->address_line3)){ ?>
-					<input type="textbox" placeholder='Address Line #3' name="address3" value="<?php echo $user->address_line3 ?>"> 
+					<input type="hidden" name="address3" value="<?php echo $user->address_line3 ?>"> 
 				<?php } ?>
-				<input type="textbox"placeholder='City' name="city_value" value="<?php echo $user->city ?>"> 
-				<input type="textbox" placeholder='Pr.' name="province_value" value="<?php echo $user->province ?>" maxlength="2" size='2'>
-				<input type="textbox" placeholder='Country' name="country" value="<?php echo $user->country ?>" maxlength="2" size='2'>
-				<input type="textbox" placeholder='PC' name="postal_code" value="<?php echo $user->postal_code ?>">
+				<input type="textbox"placeholder='City' name="city_value" value="<?php echo $user->city ?>" style="width:113px"> 
+				<input type="textbox" placeholder='Pr.' name="province_value" value="<?php echo $user->province ?>" maxlength="2" style="width:20px">
+				<input type="textbox" placeholder='Country' name="country" value="<?php echo $user->country ?>" maxlength="2" style="width:20px">
+				<input type="textbox" placeholder='PC' name="postal_code" value="<?php echo $user->postal_code ?>" style="width:80px">
 				<input type='hidden' name='addressPermissions' value='NONE'>
 				<input type='checkbox' name='addressPermissions' value='FULL'  <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> >
 				<label for='addressPermissions'>Share with staff?</label>
@@ -233,8 +238,8 @@ $max_file_size = 30000000; // size in bytes
 					?>
 					Phone:
 					<input type="hidden" name="editPhone" value="<?php echo $id; ?>">
-					<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" size="3" />
-					<select name="phoneShare">
+					<input type="text" name="phonecountry" value="<?php echo $phone->country_code ?>" maxlength="3" style="width:20px" />
+					<select name="phoneShare" style="width:60px" >
 						<option value="personalshare" <?php if ($phone->share_phone) { echo 'selected="selected"'; } ?>> Shared</option>
 						<option value="personalnotshare" <?php if (!$phone->share_phone) {echo 'selected="selected"'; } ?>> Not Shared</option>
 					</select>
@@ -244,11 +249,10 @@ $max_file_size = 30000000; // size in bytes
 						<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
 						<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
 					</select>
-					<BR>
-					(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
-					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
-					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" size = "4" />
-					 <input type="text" placeholder="Ext." name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" size = "5" />
+					(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" style="width:27px" />)
+					 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" style="width:27px" />
+					 -<input type="text" name="phonenumber2" value="<?php echo $contact[1] ?>" maxlength="4" style="width:35px" />
+					 <input type="text" placeholder="Ext." name="phoneextension" value="<?php echo $phone->extension ?>" maxlength="10" style="width:40px" />
 					 <input class='orange' type="submit" value="SAVE"/>
 					 <?php
 					echo '</form>';
@@ -270,12 +274,12 @@ $max_file_size = 30000000; // size in bytes
 					<option value="HOME">Home</option>
 					<option value="FAX">Fax</option>
 					<option value="OTHER">Other</option>
-				</select><BR>
-				 (<input type="text" name="phonearea" value="" maxlength="3" size="3" />)
-				 <input type="text" name="phonenumber1" value="" maxlength="3" size = "3" />
-				 -<input type="text" name="phonenumber2" value="" maxlength="4" size = "4" />
-				 <input type="text" placeholder='Ext.' name="phoneextension" value="" maxlength="10" size = "5" />
-				<?php require("countrycodes.php"); ?>
+				</select>
+				<?php $width=285; require("countrycodes.php"); ?><BR>
+				 ( <input type="text" name="phonearea" value="" maxlength="3" style="width:60px" /> )
+				 <input type="text" name="phonenumber1" value="" maxlength="3" style="width:60px" />
+				  - <input type="text" name="phonenumber2" value="" maxlength="4" style="width:80px" />
+				 <input type="text" placeholder='Ext.' name="phoneextension" value="" maxlength="10" style="width:90px" />
 				 <input class='orange' type="submit" value="ADD PHONE" />
 			</form>
 					
@@ -308,20 +312,18 @@ $max_file_size = 30000000; // size in bytes
 			}
 			?>
 			<form action="" method="post" enctype="multitype/form-data" id="addEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
-				<input type="text" placeholder='Personal Email' name="new_email_address" style="width:240px"/>
+				<input type="text" placeholder='Personal Email' name="new_email_address" style="width:246px"/>
 				<input type="checkbox" name="share_email">Share with staff?</input>
 				<input class='orange' type="submit" value="ADD EMAIL" />
 			</form>
-			<br/>
 			<form id="editSocialMedia" action="" method="post" enctype="multitype/form-data">
 				<input type="hidden" name="socialMedia">
-					<input type="text" placeholder='Website' id="website" name="website" value="<?php echo $user->website ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Twitter' id="twitter" name="twitter" value="<?php echo $user->twitter_handle ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Skype' id="skype" name="skype" value="<?php echo $user->skype ?>" style="width:200px"><BR>
-					<input type="text" placeholder='Facebook' id="facebook" name="facebook" value="<?php echo $user->facebook ?>" style="width:200px"><BR>
+					<input type="text" placeholder='Website' id="website" name="website" value="<?php echo $user->website ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Twitter' id="twitter" name="twitter" value="<?php echo $user->twitter_handle ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Skype' id="skype" name="skype" value="<?php echo $user->skype ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Facebook' id="facebook" name="facebook" value="<?php echo $user->facebook ?>" style="width:394px">
 					<input class='orange' type="submit" value="SAVE">
 			</form>
-			<br/>
 			<form id="updateNotes" action="" method="post" enctype="multitype/form-data" style="padding-right:10px;padding-left:5px;">
 				Personal Message:
 				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
