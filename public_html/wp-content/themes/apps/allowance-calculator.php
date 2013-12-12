@@ -718,7 +718,7 @@ include('functions/js_functions.php');
 		
 		if (getAccess($current_user->id) == $allowance_constant['noAccess']){
 			?>
-			No ACCESS
+			The Allowance Calculator is only available for Commissioned and Associate staff.
 			<?php
 		}
 		else {
