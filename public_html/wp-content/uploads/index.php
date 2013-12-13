@@ -11,15 +11,13 @@ if (is_user_logged_in()) {
 		
 		$temp = explode(".", $_SERVER['REQUEST_URI']);
 		$ext = strtolower(end($temp));
-		
-		
-		header("Content-Type: ". pathinfo($_SERVER["REQUEST_URI"], PATHINFO_EXTENSION));
+		header("Content-Length:".filesize ("../../$_SERVER[REQUEST_URI]"));
 		if (in_array($ext, array('jpg' , 'png', 'jpeg', 'gif', 'tiff', 'bmp'))){
 			//for pictures
+			header("Content-Type: image/". pathinfo($_SERVER["REQUEST_URI"], PATHINFO_EXTENSION));
 		}
 		else{
-			//header('Content-Disposition: attachment; filename="downloaded.pdf"');
-			header('Content-Disposition: attachment');
+			header("Content-Type: application/". pathinfo($_SERVER["REQUEST_URI"], PATHINFO_EXTENSION));
 		}
 		
 		//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
@@ -31,6 +29,6 @@ if (is_user_logged_in()) {
 		header($_SERVER["SERVER_PROTOCOL"]." 404 NOT FOUND");
 	}
 } else {
-	header("Location: /wp-login.php?redirect_to=$_GET[file]");
+	header("Location: /wp-login.php?redirect_to=$_SERVER[REQUEST_URI]");
 }
 ?>
