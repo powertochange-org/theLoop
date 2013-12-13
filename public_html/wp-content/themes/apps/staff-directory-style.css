@@ -5,6 +5,7 @@
 	padding:12px;
 	line-height:normal;
 	margin:0;
+	font-size:125%;
 }
 
 #main-content h2, #main-content h3 , #main-content form , #main-content lu, #main-content h1, #content h1{
@@ -26,4 +27,9 @@ h4{
 
 .person{
 	padding:12px;
+}
+
+.a_search{
+	background-color: #f4f4f4;
+	border: #adafb2 solid 1px;
 }

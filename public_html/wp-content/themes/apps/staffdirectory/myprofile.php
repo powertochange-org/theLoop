@@ -81,7 +81,7 @@ $max_file_size = 30000000; // size in bytes
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo strtoupper ("$user->first_name $user->last_name")." | $user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;'>".strtoupper ("$user->first_name $user->last_name")."</span> | $user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 				<?php if(is_null($user->photo)){ //if we don't have a photo or aren't allowed to show it
 				echo '<img style="display:block" src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
@@ -118,7 +118,7 @@ $max_file_size = 30000000; // size in bytes
 			
 			
 			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
+			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
 			if($phones){
 				$last = end($phones);
 				foreach($phones as $phone){
@@ -333,23 +333,6 @@ $max_file_size = 30000000; // size in bytes
 		</div>
 	</div>
 	<div id="content-right">   
-	<div id="sidebar">
-		<div class="sidebaritem">
-			<h1>Search for Staff</h1><BR>
-			
-			<div id='simple-search-staff'>
-				<form id='s_s_s' method="post" action=""><div class='search-box' style='border-color:#adafb2'>
-					<input class='search-input' type='textbox' name='fullname' placeholder='Search' />
-					<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
-				</div></form>
-				<BR>
-				<p>You can search using any relevant keywords, like name, jop title, ministry, city, postal code, etc.</p>
-				<!-- BR>
-				<!-- a class='false-link'><h2>SHOW ADAVANCED SEARCH</h2></a -->
-			</div>
-			<div id='advanced-search-staff'>
-			</div>
-		</div>
-	</div>
+		<?php include('pro_sidebar.php') ?>
 </div><div style='clear:both;'></div>
 

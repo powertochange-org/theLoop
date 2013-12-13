@@ -579,7 +579,9 @@ include('functions/js_functions.php');
 				// it is a weird bug with fpdf.  if I printed x lines on the page have of the page would not display 
 						//but if there was x +/- 1 lines it would print normal
 				//these two lines counter acts the bug
-				$pdf->SetDrawColor(255);
+				//it is 254 and not 255 because it will realize that is drawing white on white and not draw the line
+					//254 is not white but practically it is.
+				$pdf->SetDrawColor(254);
 				$pdf->Line(0, 0, 200, 400);
 				$pdf->Line(0, 400, 200, 0);
 				
