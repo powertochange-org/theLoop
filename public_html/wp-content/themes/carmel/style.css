@@ -188,7 +188,7 @@ li.menu-item.current-menu-item  a{
 	min-height:272px;
 }
 
-#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content ul, hr.comment {
+#main-content p , #main-content h2, #main-content h3 , #main-content form , #main-content ul, hr.comment #main-content .post table{
 	margin-left:60px;
 }
 
