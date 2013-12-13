@@ -5,7 +5,7 @@
 */
  get_header(); ?>
 <div id="content">
-	<div style='position:relative; top:-46px;'>
+	<div style='position:relative; top:-43px;'>
 		<img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
