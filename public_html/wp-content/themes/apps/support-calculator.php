@@ -55,7 +55,7 @@ function generate_pdf(){
 		$label = Array('Name:', 'Hours per week:', 'Province:', 'Hours per week (spouse):', 'Staff Account:', 'Benefit Coverage:', 'Ministry:', 'Decline Benefits:', 'Monthly Allowance/Salary', 'Employer Paid CPP/EI', 'Monthly Allowance/Salary - Spouse', 'Employer Paid CPP/EI - Spouse', 'Extended Health', 'Provincial Medical', 'Medical Allowance', 'Worker\'s Compensation', 'Staff Conference', 'MPD correspondence', 'Reimbursable Ministry Expenses', 'Subtotal', 'Central Resource Charge', 'Monthly Support Goal', 'Solid Monthly Support', 'Total Funds Yet to be Raised', 'Bridge Amount', 'Percent Supported');
 		$pdf = new FPDF();
 		$pdf->AddPage();
-		$pdf->Image(get_template_directory().'\res\footer-logo.png'); //todo change
+		$pdf->Image(get_stylesheet_directory_uri().'/res/footer-logo.png'); //todo change
 		$pdf->SETXY(60, 15);
 		$pdf->SetFont('Arial','',16);
 		$pdf->Write(5,'Support Goal Calculator');
