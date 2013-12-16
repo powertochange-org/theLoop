@@ -7,17 +7,19 @@ require('../../wp-blog-header.php' );
 if (is_user_logged_in()) {
 	if(is_file("../../$_SERVER[REQUEST_URI]")){
 		
-		header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
-		
 		$temp = explode(".", $_SERVER['REQUEST_URI']);
 		$ext = strtolower(end($temp));
+		
+		header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
 		header("Content-Length:".filesize ("../../$_SERVER[REQUEST_URI]"));
 		if (in_array($ext, array('jpg' , 'png', 'jpeg', 'gif', 'tiff', 'bmp'))){
 			//for pictures
-			header("Content-Type: image/". pathinfo($_SERVER["REQUEST_URI"], PATHINFO_EXTENSION));
+			header("Content-Type: image/$ext");
 		}
 		else{
-			header("Content-Type: application/". pathinfo($_SERVER["REQUEST_URI"], PATHINFO_EXTENSION));
+			header("Cache-Control: private, max-age=15");
+			header("Pragma: private");
+			header("Content-Type: application/$ext"));
 		}
 		
 		//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
