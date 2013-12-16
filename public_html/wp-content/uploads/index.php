@@ -19,7 +19,7 @@ if (is_user_logged_in()) {
 		else{
 			header("Cache-Control: private, max-age=15");
 			header("Pragma: private");
-			header("Content-Type: application/$ext"));
+			header("Content-Type: application/$ext");
 		}
 		
 		//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
