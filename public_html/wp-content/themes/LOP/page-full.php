@@ -12,7 +12,7 @@ Template Name: Page_Full
 					<div class="entry">
 						<?php $parts = explode('<!-- showMore -->', get_the_content());
 						echo $parts[0]; ?>
-						<a onclick='document.getElementById("more").style.display = "block";'>Show More</a>
+						<a onclick='$("#more").slideToggle();'>Show More</a>
 						<div id='more' style='display:none;'>
 							<?php echo $parts[1]; ?>
 						</div>

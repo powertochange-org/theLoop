@@ -114,6 +114,108 @@
 			}
 			$wpdb->query("DELETE FROM phone_number WHERE phone_number_id='" . $_POST['deletePhone'] . "'");
 		}
+		
+		//MINISTRY PHONE
+		if(isset($_POST['new_phone_number_min'])){ 
+			$share = $_POST['phoneShare_min'];
+			if($share=='personalnotshare'){
+				$phoneshare = 0;
+				$isMinistry = 0; 
+			}
+			else if ($share == 'personalshare'){
+				$phoneshare = 1;
+				$isMinistry = 0;
+			}
+			else if ($share == 'ministryshare'){
+				$phoneshare = 1;
+				$isMinistry = 1;
+			}
+			$country = strip_tags($_POST['phonecountry_min']);
+			$area = strip_tags($_POST['phonearea_min']);
+			$number1 = strip_tags($_POST['phonenumber1_min']);
+			$number2 = strip_tags($_POST['phonenumber2_min']);
+			$extension = strip_tags($_POST['phoneextension_min']);
+			$type = strip_tags($_POST['phonetype_min']);
+			if($number1 != ""){
+				$number = $number1 . '-' . $number2; //format the phone number like XXX-XXXX
+				$wpdb->insert( 'phone_number',
+						array( 'country_code' 	=> $country,
+								'country_phone_code' => countryToNumber($country), 
+								'area_code'		=> $area, 
+								'contact_number' =>	$number, 
+								'extension'		=> $extension, 
+								'phone_type'	=> $type, 
+								'employee_id'	=> $user->external_id, 
+								'share_phone'	=> $phoneshare, 
+								'is_ministry' 	=> $isMinistry
+						));
+				// get the record ID
+				$id = $wpdb->insert_id;
+				$wpdb->insert( 'sync',
+						array(  'table_name'    => 'phone_number',
+								'record_id'     => $id,
+								'sync_action'   => 'insert',
+								'changed_date'	=>	date('Y-m-d H-i-s'),
+								'user_login'	=> $user->user_login
+						));
+			}
+		}
+		// UPDATE PHONE
+		if(isset($_POST['editPhone_min'])) {
+			$id = $_POST['editPhone_min'];
+			$phones = $wpdb-> get_results("SELECT * FROM phone_number WHERE phone_number_id = '" . $id . "'");
+			foreach ($phones as $phone) {
+				$phoneshare = 0;
+				$isMinistry = 0;
+				if ($_POST['phoneShare_min'] == 'personalshare') {
+					$phoneshare = 1;
+				} elseif ($_POST['phoneShare_min'] == 'ministryshare') {
+					$phoneshare = 1;
+					$isMinistry = 1;
+				}
+				if (!empty($_POST['phonenumber1_min'])) {
+					$country = strip_tags($_POST['phonecountry_min']);
+					$countrycode = countryToNumber($country);
+					$areacode = strip_tags($_POST['phonearea_min']);
+					$extension = strip_tags($_POST['phoneextension_min']);
+					$phonetype = strip_tags($_POST['phonetype_min']);
+					$phonenumber = strip_tags($_POST['phonenumber1_min']) . '-' . strip_tags($_POST['phonenumber2_min']);
+					$wpdb->insert( 'sync',
+							array(  'table_name'    => 'phone_number',
+									'record_id'     => $phone->phone_number_id,
+									'sync_action'   => 'update',
+									'changed_date'	=>	date('Y-m-d H-i-s'),
+									'user_login'	=> $user->user_login
+							));
+					$wpdb->update( 'phone_number', 
+							array( 'country_code' => $country,
+									'country_phone_code' => $countrycode,
+									'area_code' => $areacode,
+									'contact_number' => $phonenumber,
+									'extension' => $extension,
+									'phone_type' => $phonetype,
+									'employee_id' => $user->external_id,
+									'share_phone' => $phoneshare,
+									'is_ministry' => $isMinistry),
+							array(	'phone_number_id' => $id));
+				}
+			}
+		}
+		// DELETE PHONE #
+		if(isset($_POST['deletePhone_min'])) {
+			$phones = $wpdb-> get_results("SELECT * FROM phone_number WHERE phone_number_id = '" . $_POST['deletePhone_min'] ."' LIMIT 1");
+			foreach ($phones as $phone) {
+				$wpdb->insert( 'sync',
+						array(  'table_name'    => 'phone_number',
+								'record_id'     => $phone->external_id, 
+								'sync_action'   => 'delete',
+								'field_changed'	=> $_POST['deletePhone_min'],
+								'changed_date'	=>	date('Y-m-d H-i-s'),
+								'user_login'	=> $user->user_login
+						));
+			}
+			$wpdb->query("DELETE FROM phone_number WHERE phone_number_id='" . $_POST['deletePhone_min'] . "'");
+		}
 		// UPDATE MINISTRY ADDRESS
 		if (isset($_POST['ministryAddress'])) {
 			$wpdb->insert( 'sync',
