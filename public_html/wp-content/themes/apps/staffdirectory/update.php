@@ -411,7 +411,7 @@
 				$shared = '1';
                         } else {
                                 $ministry = '0';
-				$shared = isset($_POST['share_email']);
+				$shared = $_POST['share_email'];
                         }
 			$wpdb->insert( 'email_address', 
 							array( 'employee_id' => $user->external_id,
@@ -437,7 +437,7 @@
                                 $shared = '1';
                         } else {
                                 $ministry = '0';
-                                $shared = isset($_POST['share_email']);
+                                $shared = $_POST['share_email'];
                         }
 
 			$wpdb->insert( 'sync',
