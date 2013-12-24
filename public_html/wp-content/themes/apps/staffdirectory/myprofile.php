@@ -8,7 +8,7 @@
 *
 *
 **/
-	var_dump($_POST);//this is super helpful for debugging/building anything with the forms
+	//var_dump($_POST);//this is super helpful for debugging/building anything with the forms
 	include 'countryToNumber.php';
 	$current_user = wp_get_current_user();
 	$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
@@ -23,13 +23,6 @@ $uploadHandler = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'upload.p
 // set a max file size for the html upload form 
 $max_file_size = 30000000; // size in bytes 
 
-	//
-	// Process POST information if any
-	//
-	$null = "NULL";
-	//if(isset($_POST)){
-		include('update.php');
-	//}
 ?>
 	<style type="text/css">
 			#main-content div.form {
@@ -73,7 +66,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 		
-		<p/><h4 style="float:right;color:#adafb2;"><a href= "?page=profile">MY PROFILE</a></h4><BR>
+		<p/><h4 style="float:right;color:#adafb2;"><a class='false-link' onclick='getElementById("theForm").submit()'>SAVE & VIEW PROFILE</a></h4><BR>
 	<hr>
 	<div style="clear:both"></div>
 	<div id="content-left">
@@ -97,7 +90,7 @@ $max_file_size = 30000000; // size in bytes
 			
 			<div style='float:left;padding-left:23px;width:457px'>
 			
-			<form action="" method="post" enctype="multitype/form-data">
+			<form id='theForm' action="?page=profile" method="post" enctype="multitype/form-data">
 			<h4>MINISTRY INFORMATION</h4>	
 			<div class='form'>
 				<span style='font-weight:600;'>Address:</span>
@@ -163,19 +156,20 @@ $max_file_size = 30000000; // size in bytes
 					}
 					$id = $email->email_address_id;	?>
 					<div class="form">
-					<?php	//don't allow editing or deleting of powertochange.org address
+					<?php	//don't allow editing of powertochange.org address
 					if(strpos(strtolower($email->email_address),'powertochange.org') === false) { ?>
 						<span style="font-weight:600;">Ministry Email: </span>
-						<input type="text" name="email[<?php echo $id; ?>][email]" value="' . $email->email_address . '" style="width:446px"/>
-					<? }
-					else{
-						?><span style='font-weight:600;'>Ministry Email: </span><input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:359px"/><?php
+						<input type="text" name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address; ?>" style="width:359px"/>
+					<?php }
+					else{ ?>
+						<span style='font-weight:600;'>Ministry Email: </span>
+						<input type="text" value='<?php echo $email->email_address; ?>' disabled style="width:359px"/><?php
 					}
+					echo "</div>";
 					if ($isLast){
 						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addMinEmail\").slideToggle()'>";
 						echo "</div>";
 					}
-					echo "</div>";
 				}  	
 			}
 			?>
@@ -303,7 +297,7 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">
 				Personal Message:
 				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
-				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" />
+				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px' />
 			</div>
 			</form>
 			</div>	

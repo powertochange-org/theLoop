@@ -14,9 +14,13 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	$current_user = wp_get_current_user();
 	if(!isset($profile) || $current_user->user_login == $profile){
 		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		
+		if(count($_POST) > 0){
+			include('update.php');
+		}
 	}
 	else{
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "">MY PROFILE</a></h4>';
+		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=profile">MY PROFILE</a></h4>';
 	} ?>
 	
 	<BR>
@@ -202,34 +206,13 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			?>
-			<p>
+			<p style='margin:  5px 0'>
+			A personal message:
+			<?php echo $user->notes ?>
+			</p>
 			</div><div style='clear:both;'></div>
 		</div>
 	</div>
 	<div id="content-right">   
 		<?php include('pro_sidebar.php') ?>
 	</div><div style='clear:both;'></div>
-
-<!--
-	
-			<div id="nameheader">
-			<h1><?php
-				echo $user->first_name . " " . $user->last_name; //display name
-				?></h1>
-			</div>
-			<div id="left">
-				<p />
-<?php
-			if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
-				echo '<img src="../wp-content/uploads/staff_photos/anonymous.jpg" width=290 />';
-			}
-			else { //we have a photo and can share it
-				echo	 '<img src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=290 />';
-			}
-			echo str_replace("\\", "", $user->notes); //this displays the 'About me' section located beneath the profile pic
-			?>
-			</div><!--left->
-			<div class="right">
-			<?php include "infocard.php"; ?>
-			</div>
-<!-- -->

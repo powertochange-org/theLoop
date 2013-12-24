@@ -301,7 +301,7 @@
 		}
 		
 		//Personal Note
-		if(isset($_POST['notes'])){
+		if(substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,255)  != $user->notes){
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
