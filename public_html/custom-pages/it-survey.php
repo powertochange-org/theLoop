@@ -30,11 +30,10 @@
 		?>
 		<body>
 			<div style='top: 300px; position: relative;'>
-				Thank you for completing the IT survey.<BR><BR>
-				Merry Christmas and Happy New Year!
+				Thank you for completing the IT survey.
 			</div>
 
-			<table id="list-of-sites-container" style='top: 220px'>
+			<table id="list-of-sites-container" style='top: 240px'>
 				<tr>
 				  <td id="list-of-sites">
 					<ul><li><a href=https://absences.powertochange.org>Absence Tracker</a></li><li><a href=http://moodle.powertochange.org/staff/login>Global Learning Center</a></li><li><a href=http://moodle.powertochange.org/sandbox/login>Moodle Sandbox</a></li><li><a href=https://wiki.powertochange.org/help>Self-Help Wiki</a></li><li><a href=https://staff.powertochange.org>the LOOP</a></li><li><a href=http://staffblogs.powertochange.org/wp-login.php>Staff Blog Site</a></li></ul>
