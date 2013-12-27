@@ -2,7 +2,7 @@
 /**
 * MyProfile
 *
-* This is used when a user looks at their own profile in the Staff Address book project. 
+* This is used when a user looks at their own profile in the Staff Address book project.
 * This is where users can view, change, update, etc their information. They can even throw
 * a pic on their, too.
 *
@@ -12,16 +12,16 @@
 	include 'countryToNumber.php';
 	$current_user = wp_get_current_user();
 	$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
-	
-	
-// make a note of the current working directory relative to root. 
-$directory_self = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']); 
-                                                     
-// make a note of the location of the upload handler script 
-$uploadHandler = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'upload.processor.php'; 
 
-// set a max file size for the html upload form 
-$max_file_size = 30000000; // size in bytes 
+
+// make a note of the current working directory relative to root.
+$directory_self = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
+
+// make a note of the location of the upload handler script
+$uploadHandler = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'upload.processor.php';
+
+// set a max file size for the html upload form
+$max_file_size = 30000000; // size in bytes
 
 ?>
 	<style type="text/css">
@@ -29,16 +29,16 @@ $max_file_size = 30000000; // size in bytes
 				margin-bottom:10px;
 				padding-top:5px;
 			}
-			input, select {	
+			input, select {
 				margin-bottom:5px;
 			}
-			
+
 			.plus{
 				position:absolute;
 				left:-7px;
-				top:-7px;' 
+				top:-7px;'
 			}
-			
+
 			.orange{
 				background-color:#f7941d;
 				border:0px solid #000000;
@@ -47,7 +47,7 @@ $max_file_size = 30000000; // size in bytes
 				padding:3px 6px;
 				font-size:12px;
 			}
-			
+
 			#main-content form input[type=text], #main-content form input[type=textbox], #main-content form select{
 				background-color:#f4f4f4;
 				border:solid #adafb2 1px;
@@ -55,17 +55,17 @@ $max_file_size = 30000000; // size in bytes
 				font-size:12px;
 				height:27px;
 			}
-			
+
 			#main-content form input[type=text], #main-content form input[type=textbox]{
 				padding-left:5px;
 			}
-			
+
 			#main-content form {
 				font-size:12px;
 			}
 		</style>
 		<!-- MAIN DISPLAY -->
-		
+
 		<p/><h4 style="float:right;color:#adafb2;"><a class='false-link' onclick='getElementById("theForm").submit()'>SAVE & VIEW PROFILE</a></h4><BR>
 	<hr>
 	<div style="clear:both"></div>
@@ -73,25 +73,36 @@ $max_file_size = 30000000; // size in bytes
 		<div id="main-content">
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;'>".strtoupper ("$user->first_name $user->last_name")."</span> | $user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
-				<?php if(is_null($user->photo)){ //if we don't have a photo or aren't allowed to show it
-				echo '<img style="display:block" src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
+			<script type="text/javascript">
+
+				function submitFile(){
+					$("#file").click();
+					jQuery("#file").change(function () {
+						document.getElementById("upload").submit();
+					});
 				}
-				else { //we have a photo and can share it
-					echo '<img style="display:block" src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
-				} ?>
-				
-				<form style=" width:220px" id="Upload" action="../staff-directory/?page=upload_processor" enctype="multipart/form-data" method="post">	
-					<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>"> 
-					<input style=" width:220px" id="file" type="file" name="file" onchange="$('#submitpic').removeAttr('disabled')"><BR>
-					<input class='orange' id="submitpic" type="submit" name="submit" disabled="disabled" value="CHANGE IMAGE">       
+
+			</script>
+				<form style=" width:220px" id="upload" action="?page=upload_processor" enctype="multipart/form-data" method="post">
+					<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
+					<input id="file" type="file" name="file" style='display:none;'>
+
 				</form>
-				
+				<?php
+				if(is_null($user->photo)){ //if we don't have a photo
+					echo '<img style="display:block" src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
+					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE">
+				<?php }
+				else { //we have a photo and can share it
+					echo '<img style="display:block" src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
+					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE">
+				<?php } ?>
 			</div>
-			
+
 			<div style='float:left;padding-left:23px;width:457px'>
-			
+
 			<form id='theForm' action="?page=profile" method="post" enctype="multitype/form-data">
-			<h4>MINISTRY INFORMATION</h4>	
+			<h4>MINISTRY INFORMATION</h4>
 			<div class='form'>
 				<span style='font-weight:600;'>Address:</span>
 				<input type="textbox" placeholder='Address Line #1' name="ministryAddress[line1]" value="<?php echo $user->ministry_address_line1 ?>" style='width:205px;'>
@@ -101,8 +112,8 @@ $max_file_size = 30000000; // size in bytes
 				<input type="textbox" placeholder='Country' name="ministryAddress[country]" value="<?php echo $user->ministry_country ?>" maxlength="2" size='2'>
 				<input type="textbox" placeholder='PC' name="ministryAddress[pc]" value="<?php echo $user->ministry_postal_code ?>" style='width:172px;'>
 			</div>
-			
-			
+
+
 			<?php
 			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
 			if($phones){
@@ -132,8 +143,8 @@ $max_file_size = 30000000; // size in bytes
 					}
 				}
 			}
-			?> 
-			
+			?>
+
 			<div class="form" id="min_phone" <?php echo ($phones ? "style='display:none'" : "") ?> >
 				<input type='hidden' name='phone[-1][share]' value='ministryshare' >
 				<input type='hidden' name='phone[-1][type]' value='BUS' >
@@ -143,8 +154,8 @@ $max_file_size = 30000000; // size in bytes
 				 -<input type="text" name="phone[-1][part2]" value="" maxlength="4" style="width:40px" />
 				 <input type="text"  placeholder='Ext' name="phone[-1][ext]" value="" maxlength="10" style="width:40px" />
 			</div>
-			
-			
+
+
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1'");
 			if($emails){
@@ -170,7 +181,7 @@ $max_file_size = 30000000; // size in bytes
 						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addMinEmail\").slideToggle()'>";
 						echo "</div>";
 					}
-				}  	
+				}
 			}
 			?>
 			<div class="form" id="addMinEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
@@ -187,7 +198,7 @@ $max_file_size = 30000000; // size in bytes
 				<span style='font-weight:600;'>Address: </span>
 				<input type="textbox" placeholder='Address Line #1' name="personalAddress[line1]" value="<?php echo $user->address_line1 ?>" style="width:205px">
 				<input type="textbox" placeholder='Address Line #2' name="personalAddress[line2]" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' style="width:172px" >
-				<input type="textbox"placeholder='City' name="personalAddress[city]" value="<?php echo $user->city ?>" style="width:130px"> 
+				<input type="textbox"placeholder='City' name="personalAddress[city]" value="<?php echo $user->city ?>" style="width:130px">
 				<input type="textbox" placeholder='Pr.' name="personalAddress[pr]" value="<?php echo $user->province ?>" maxlength="2" style="width:30px">
 				<input type="textbox" placeholder='Country' name="personalAddress[country]" value="<?php echo $user->country ?>" maxlength="2" style="width:30px">
 				<input type="textbox" placeholder='PC' name="personalAddress[pc]" value="<?php echo $user->postal_code ?>" style="width:110px">
@@ -196,8 +207,8 @@ $max_file_size = 30000000; // size in bytes
 					<option value="NONE" <?php if($user->share_address == 'NONE') { echo 'selected'; } ?>>Not Shared</option>
 				</select>
 			</div>
-			
-			
+
+
 			<?php
 			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
 			if($phones){
@@ -234,8 +245,8 @@ $max_file_size = 30000000; // size in bytes
 						echo "</div>";
 					}
 				}
-			} ?> 
-				
+			} ?>
+
 			<div class="form" id="phone" <?php echo ($phones ? "style='display:none'" : "") ?> >
 				<select name="phone[-2][share]" style="width:67px">
 					<option value="personalshare" > Shared</option>
@@ -253,8 +264,8 @@ $max_file_size = 30000000; // size in bytes
 				  - <input type="text" name="phone[-2][part2]" value="" maxlength="4" style="width:35px" />
 				 <input type="text" placeholder='Ext.' name="phone[-2][ext]" value="" maxlength="10" style="width:50px" />
 			</div>
-					
-					
+
+
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
 			if($emails){
@@ -278,7 +289,7 @@ $max_file_size = 30000000; // size in bytes
 						echo "</div>";
 					}
 					echo '</div>';
-				}  	
+				}
 			}
 			?>
 			<div class="form" id="addEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
@@ -300,9 +311,9 @@ $max_file_size = 30000000; // size in bytes
 				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px' />
 			</div>
 			</form>
-			</div>	
+			</div>
 		</div>
 	</div>
-	<div id="content-right">   
+	<div id="content-right">
 		<?php include('pro_sidebar.php') ?>
 </div><div style='clear:both;'></div>

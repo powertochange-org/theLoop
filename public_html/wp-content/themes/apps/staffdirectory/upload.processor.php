@@ -28,10 +28,6 @@ $errors = array(1 => 'php.ini max file size exceeded',
                 3 => 'file upload was only partial', 
                 4 => 'no file was attached'); 
 
-// check the upload form was actually submitted else print the form 
-isset($_POST['submit']) 
-    or error('the upload form is neaded', $uploadForm); 
-
 // check for PHP's built-in uploading errors 
 ($_FILES[$fieldname]['error'] == 0) 
     or error($errors[$_FILES[$fieldname]['error']], $uploadForm); 
