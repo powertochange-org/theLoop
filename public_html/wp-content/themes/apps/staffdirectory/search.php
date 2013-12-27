@@ -6,8 +6,9 @@
 *
 *
 */?>
-<p/><h4 style="float:right;color:#adafb2;"><a href= "?page=profile" >MY PROFILE</a></h4><BR>
-<hr>
+<p/><h4 style="float:right;position:relative;top:30px;"><a style="color:#adafb2;font-weight:bold;" href= "?page=profile" >MY PROFILE</a></h4>
+<BR><BR><BR><BR>
+<hr style='margin-top:0'>
 <div style="clear:both"></div>
 <div id="content-left">
 	<div id="main-content">

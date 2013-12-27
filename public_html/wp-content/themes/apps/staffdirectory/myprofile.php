@@ -66,12 +66,12 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;color:#adafb2;"><a class='false-link' onclick='getElementById("theForm").submit()'>SAVE & VIEW PROFILE</a></h4><BR>
-	<hr>
+		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><BR><BR><BR><BR>
+	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;'>".strtoupper ("$user->first_name $user->last_name")."</span> | $user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<script type="text/javascript">
 
@@ -91,18 +91,18 @@ $max_file_size = 30000000; // size in bytes
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
 					echo '<img style="display:block" src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE">
+					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;'>
 				<?php }
 				else { //we have a photo and can share it
 					echo '<img style="display:block" src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE">
+					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;'>
 				<?php } ?>
 			</div>
 
 			<div style='float:left;padding-left:23px;width:457px'>
 
 			<form id='theForm' action="?page=profile" method="post" enctype="multitype/form-data">
-			<h4>MINISTRY INFORMATION</h4>
+			<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 			<div class='form'>
 				<span style='font-weight:600;'>Address:</span>
 				<input type="textbox" placeholder='Address Line #1' name="ministryAddress[line1]" value="<?php echo $user->ministry_address_line1 ?>" style='width:205px;'>
@@ -193,7 +193,7 @@ $max_file_size = 30000000; // size in bytes
 				<input type="text" placeholder='Skype' name="ministrySkype" value="<?php echo $user->ministry_skype ?>" style="width:446px"><BR>
 				<input type="text" placeholder='Facebook' name="ministryFacebook" value="<?php echo $user->ministry_facebook ?>" style="width:446px">
 			</div>
-			<h4>PERSONAL INFORMATION</h4>
+			<h4 style='font-size:16pt'>PERSONAL INFORMATION</h4>
 			<div class="form">
 				<span style='font-weight:600;'>Address: </span>
 				<input type="textbox" placeholder='Address Line #1' name="personalAddress[line1]" value="<?php echo $user->address_line1 ?>" style="width:205px">
@@ -308,7 +308,7 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">
 				Personal Message:
 				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
-				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px' />
+				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
 			</div>
 			</form>
 			</div>

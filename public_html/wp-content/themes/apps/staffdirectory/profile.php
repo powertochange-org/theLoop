@@ -13,22 +13,22 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	<?php 
 	$current_user = wp_get_current_user();
 	if(!isset($profile) || $current_user->user_login == $profile){
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		echo '<h4 style="float:right;position:relative;top:30px;"><a style="color:#adafb2;font-weight:bold;" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
 		
 		if(count($_POST) > 0){
 			include('update.php');
 		}
 	}
 	else{
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=profile">MY PROFILE</a></h4>';
+		echo '<h4 style="float:right;position:relative;top:30px;"><a  style="color:#adafb2;font-weight:bold;" href= "?page=profile">MY PROFILE</a></h4>';
 	} ?>
 	
-	<BR>
-	<hr>
+	<BR><BR><BR><BR>
+	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo strtoupper ("$user->first_name $user->last_name")." | $user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
 				echo '<img src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
