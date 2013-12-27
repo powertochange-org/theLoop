@@ -31,10 +31,10 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
-				echo '<img src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
+				echo '<img src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
 			}
 			else { //we have a photo and can share it
-				echo	 '<img src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
+				echo	 '<img src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
 			} ?>
 			</div>
 			<div style='float:left;padding-left:23px;width:407px'>
