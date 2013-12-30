@@ -116,7 +116,7 @@ function generate_pdf(){
 		$pdf->Write(5,'Confidential');
 		
 		//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
-		ob_end_flush();
+		ob_end_clean();
 		$pdf->Output('support_calculator.pdf', 'I');
 		exit;
 	}
