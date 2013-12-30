@@ -3,22 +3,22 @@
 Plugin Name: Fast Tube
 Plugin URI: http://blog.caspie.net/2009/02/19/fast-tube-wordpress-plugin/
 Description: Fast and easy way to insert videos from YouTube right into your WordPress blog posts.
-Version: 2.3
+Version: 2.3.1
 Author: Casper
 Author URI: http://blog.caspie.net/
 */
 add_filter('the_content','fast_youtube_content',50);
 function fast_youtube_content($the_content) {
  	$options = get_option('fast_tube_options');
- 	$fullpath = trailingslashit(get_bloginfo('wpurl')) . PLUGINDIR . '/' . dirname(plugin_basename(__FILE__));
+ 	$skinspath = plugins_url( 'skins/', __FILE__ );
  	$author = $options['author'] ? '<br /><small>Fast Tube by <a title="Casper\'s Blog" href="http://blog.caspie.net/">Casper</a></small>' : '';
  	$align_class = $options['alignclass'] != '' ? ' class="'.$options['alignclass'].'"' : '';
  	$align_after = $options['align'] ? '</'.$options['aligntag'].'>' : '</span>';
  	$align_display = $options['aligntag'] == 'span' ? 'display:block;' : '';
  	$thumb_dims = $options['thumbnail'] ? 'width="128" height="96"' : 'width="320" height="240"';
  	$thumb_size = $options['thumbnail'] ? 'small' : 'big';
-	$top = $options['skins'] ? '<img src="'.$fullpath.'/skins/'.$options['skin'].'/top_'.$thumb_size.'.png" border="0" /><br />' : '';
-	$bottom = $options['skins'] ? '<br /><img src="'.$fullpath.'/skins/'.$options['skin'].'/bottom_'.$thumb_size.'.png" border="0" />' : '';
+	$top = $options['skins'] ? '<img src="'.$skinspath.$options['skin'].'/top_'.$thumb_size.'.png" border="0" /><br />' : '';
+	$bottom = $options['skins'] ? '<br /><img src="'.$skinspath.$options['skin'].'/bottom_'.$thumb_size.'.png" border="0" />' : '';
 	$pat = "/\[(?:(?:http:\/\/)?(?:www\.)?youtube\.com\/)?(?:(?:watch\?)?v=|v\/)?([a-zA-Z0-9\-\_]{11})(?:&[a-zA-Z0-9\-\_]+=[a-zA-Z0-9\-\_]+)*\]/";
 	if(preg_match_all($pat,$the_content,$matches,PREG_SET_ORDER)) {
 		$ap = count($matches) > 1 ? 0 : (int)$options['autoplay'];
@@ -26,7 +26,7 @@ function fast_youtube_content($the_content) {
 			$m0 = $match[0]; $m1 = $match[1];
 			if(@file_get_contents("http://gdata.youtube.com/feeds/api/videos/".$m1) != "Video not found") {
  			$align_before = $options['align'] ? '<'.$options['aligntag'].' id="'.$m1.'"'.$align_class.' style="text-align:'.$options['alignment'].';'.$align_display.'">' : '<span id="'.$m1.'" style="display:block;">';
-			$video = 'http://www.youtube.com/v/'.$m1.'&amp;hl=en&amp;fs='.(int)$options['fullscreen'].'&amp;border='.(int)$options['border'].'&amp;color1=0x'.$options['color1'].'&amp;color2=0x'.$options['color2'].'&amp;egm='.(int)$options['egm'].'&amp;disablekb='.(int)$options['disablekb'].'&amp;autoplay='.$ap.'&amp;loop='.(int)$options['loop'].'&amp;rel='.(int)$options['related'].'&amp;showinfo='.(int)$options['info'].'&amp;showsearch='.(int)$options['search'].'&amp;iv_load_policy='.$options['annotations'].'&amp;start='.(int)$options['start'];
+			$video = 'http://www.youtube.com/v/'.$m1.'?version=3&amp;hl=en&amp;fs='.(int)$options['fullscreen'].'&amp;border='.(int)$options['border'].'&amp;color1=0x'.$options['color1'].'&amp;color2=0x'.$options['color2'].'&amp;egm='.(int)$options['egm'].'&amp;disablekb='.(int)$options['disablekb'].'&amp;autoplay='.$ap.'&amp;loop='.(int)$options['loop'].'&amp;rel='.(int)$options['related'].'&amp;showinfo='.(int)$options['info'].'&amp;showsearch='.(int)$options['search'].'&amp;iv_load_policy='.$options['annotations'].'&amp;start='.(int)$options['start'];
 				if((!is_singular() && $options['thumb']) || is_feed()) {
 					$vid = '<!--[Fast Tube]-->'.$align_before.$top.'<a title="Click here to watch this video!" href="'.get_permalink().'#'.$m1.'"><img src="http://i.ytimg.com/vi/'.$m1.'/'.(int)$options['thumbnail'].'.jpg" alt="Fast Tube" border="0" '.$thumb_dims.' /></a>'.$bottom.$author.$align_after.'<!--[/Fast Tube]-->';
 				}
@@ -42,9 +42,9 @@ function fast_youtube_content($the_content) {
 }
 add_action('admin_menu', 'fast_tube_menu');
 function fast_tube_menu() {
-	add_menu_page('Fast Tube', 'Fast Tube', 8, __FILE__, 'fast_tube_options', plugins_url('fast-tube/img/ft.gif'));
-	add_submenu_page(__FILE__, 'Fast Tube Video Options', 'Video Options', 8, __FILE__, 'fast_tube_options');
-	add_submenu_page(__FILE__, 'Fast Tube Video Gallery', 'Video Gallery', 8, 'fast-tube/fast-tube-gallery.php');
+	add_menu_page( 'Fast Tube', 'Fast Tube', 'manage_options', __FILE__, 'fast_tube_options', plugins_url( 'img/ft.gif', __FILE__ ) );
+	add_submenu_page( __FILE__, 'Fast Tube Video Options', 'Video Options', 'manage_options', __FILE__, 'fast_tube_options' );
+	add_submenu_page( __FILE__, 'Fast Tube Video Gallery', 'Video Gallery', 'manage_options', dirname( __FILE__ ) . '/fast-tube-gallery.php' );
 }
 function fast_tube_options() {
 	if(isset($_POST['submit'])) {
@@ -84,9 +84,10 @@ function fast_tube_options() {
 	$span = $options['aligntag'] == 'span' ? ' selected="selected"' : '';
 	$div = $options['aligntag'] == 'div' ? ' selected="selected"' : '';
 	$p = $options['aligntag'] == 'p' ? ' selected="selected"' : '';
+	$small = $big = '';
 	$thumbnail = $options['thumbnail'] ? $small = ' selected="selected"' : $big = ' selected="selected"';
 	$default = $options['skin'] == 'default' ? ' selected="selected"' : '';
-	$path = defined('WP_PLUGIN_URL') ? trailingslashit(WP_PLUGIN_URL . '/' . dirname(plugin_basename(__FILE__))) : trailingslashit(get_bloginfo('wpurl')) . PLUGINDIR . '/' . dirname(plugin_basename(__FILE__));
+	$path = trailingslashit( plugins_url( '', __FILE__ ) );
 ?>
 <style type="text/css" media="screen">
 a { text-decoration:none; }
@@ -109,7 +110,7 @@ select { width:120px; }
 	<input type="button" class="button" onclick="javascript:moreInfo('usage');" value="Fast Tube Usage" />
 	<input type="button" class="button" onclick="javascript:moreInfo('skins');" value="Fast Tube Skins" />
 	<div id="information" class="info" style="display:none;">
-		<div><small><strong>Check out my other WordPress plugins at <a title="Downloads @ Casper's Blog" href="http://blog.caspie.net/downloads/">http://blog.caspie.net/downloads</a><br />Nice plugin eh? Feel free to <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=R7HRD7C3JDDN8&amp;lc=GB&amp;item_name=WordPress%20Plugins%20by%20Casper&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG_global%2egif%3aNonHosted" target="_blank">donate</a> if you like it. Thanks and have fun! :)</strong></small></div>
+		<div><small><strong>Check out my other WordPress plugins at <a title="Downloads @ Casper's Blog" href="http://blog.caspie.net/downloads/">http://blog.caspie.net/downloads</a><br />Nice plugin eh? Feel free to <a href="http://donate.caspie.net/" target="_blank">donate</a> if you like it. Thanks and have fun! :)</strong></small></div>
 	</div>
 	<div id="usage" class="info" style="display:none;">	
 		<div><small><strong>Visit youtube.com and play some video. Copy the video URL and insert it in post or page, surrounded by square brackets - [URL]. You can insert as many as you like in the same post or page. All the variations will work as well...</strong>
@@ -122,7 +123,6 @@ select { width:120px; }
 		[watch?v=gOAra5f0qlk]<br />
 		[v=gOAra5f0qlk]<br />
 		[gOAra5f0qlk]<br />
-		[http://www.youtube.com/watch?v=gOAra5f0qlk&amp;feature=related] will work too!<br />
 		</small></div>
 	</div>
 	<div id="skins" class="info" style="display:none;">
@@ -384,5 +384,5 @@ function fast_tube_excerpt($text) {
 	return preg_replace('/(?:<br \/>)?Fast Tube '.FAST_TUBE_VERSION.' by Casper(?:<br \/>)?/', '', $text);
 }
 add_filter('the_excerpt', 'fast_tube_excerpt');
-define('FAST_TUBE_VERSION','2.3');
+define('FAST_TUBE_VERSION','2.3.1');
 ?>

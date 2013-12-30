@@ -7,24 +7,24 @@
  * users away from the linking page.
  *
  * @author Matt Martz <matt@sivel.net>
- * @version 3.0.3.2
+ * @version 3.0.3.10.2
  * @package shadowbox-js
  */
 
 /*
 Plugin Name:  Shadowbox JS
 Plugin URI:   http://sivel.net/wordpress/shadowbox-js/
-Description:  A javascript media viewer similar to Lightbox and Thickbox. Supports all types of media, not just images. 
-Version:      3.0.3.2
+Description:  A javascript media viewer similar to Lightbox and Thickbox. Supports all types of media, not just images.
+Version:      3.0.3.10.2
 Author:       Matt Martz
 Author URI:   http://sivel.net/
 Text Domain:  shadowbox-js
 Domain Path:  shadowbox-js/localization
-License:      LGPL
+License:      GPL
 
-	Shadowbox JS (c) 2008-2010 Matt Martz (http://sivel.net/)
-	Shadowbox JS is released under the GNU General Public License (LGPL)
-	http://www.gnu.org/licenses/lgpl-2.1.txt
+	Shadowbox JS (c) 2008-2012 Matt Martz (http://sivel.net/)
+	Shadowbox JS is released under the GNU General Public License (GPL)
+	http://www.gnu.org/licenses/gpl-2.0.txt
 
 	Shadowbox (c) 2007-2010 Michael J. I. Jackson (http://www.shadowbox-js.com/)
 	Shadowbox is licensed under the Shadowbox.js License version 1.0
@@ -55,7 +55,7 @@ class Shadowbox {
 	 * @since 3.0.0.4
 	 * @var int
 	 */
-	var $version = '3.0.3';
+	var $version = '3.0.3.10';
 
 	/**
 	 * Plugin Options Version
@@ -65,7 +65,7 @@ class Shadowbox {
 	 * @since 3.0.0.0
 	 * @var int
 	 */
-	var $dbversion = '3.0.3';
+	var $dbversion = '3.0.3.3';
 
 	/**
 	 * Shadowbox Version
@@ -93,18 +93,20 @@ class Shadowbox {
 	 */
 	function __construct () {
 		$this->options = get_option ( 'shadowbox' );
-	} 
+	}
 
 	/**
 	 * Get specific option from the options table
 	 *
 	 * @param string $option Name of option to be used as array key for retrieving the specific value
-	 * @return mixed 
+	 * @return mixed
 	 * @since 2.0.3
 	 */
-	function get_option ( $option ) {
-		if ( isset ( $this->options[$option] ) )
-			return $this->options[$option];
+	function get_option ( $option , $options = null ) {
+		if ( is_null ( $options ) )
+			$options = &$this->options;
+		if ( isset ( $options[$option] ) )
+			return $options[$option];
 		else
 			return false;
 	}
@@ -134,6 +136,62 @@ class Shadowbox {
 	}
 
 	/**
+	 * Checks if a file is world readable
+	 *
+	 * @since 3.0.3.3
+	 * @param string $file File to be checked for being world readable
+	 * @return boolean
+	 */
+	function is_world_readable ( $file ) {
+		if ( @file_exists ( $file ) && ( @fileperms ( $file ) & 0444 ) == 0444 )
+			return true;
+		else
+			return false;
+	}
+
+	/**
+	 * Escape string to prevent against nasty things.
+	 *
+	 * This is a wrapper function to add some additional measures for making
+	 * sure users don't break things
+	 *
+	 * @since 3.0.3.3
+	 * @param string $string The string to be escaped
+	 * @param string $type The type of escaping to do
+	 * @return string
+	 */
+	function esc ( $string , $type = 'js' ) {
+		global $wp_filter , $merged_filters;
+
+		// Some themes and plugins hook into these filters and muck things up
+		// Remove all filters attached and then restore afterwards
+		$filters = compact ( $wp_filter , $merged_filters );
+		remove_all_filters ( 'js_escape' );
+		remove_all_filters ( 'htmledit_pre' );
+		remove_all_filters ( 'attribute_escape' );
+
+		$string = strip_tags ( $string );
+
+		switch ( $type ) {
+			case 'attr' :
+				$string = esc_attr ( $string );
+				break;
+			case 'htmledit' :
+				$string = wp_htmledit_pre ( $string );
+				break;
+			case 'js' :
+			default:
+				$string = esc_js ( $string );
+				break;
+		}
+
+		// Restore filters that were removed above
+		extract ( $filters );
+
+		return $string;
+	}
+
+	/**
 	 * Deactivate this plugin and die
 	 *
 	 * Used to deactivate the plugin when files critical to it's operation can not be loaded
@@ -148,6 +206,60 @@ class Shadowbox {
 			include ( ABSPATH . 'wp-admin/includes/plugin.php' );
 		deactivate_plugins ( __FILE__ );
 		wp_die ( $message );
+	}
+
+	/**
+	 * Returns whether or not a specific type or all of the automations are enabled
+	 *
+	 * @return boolean
+	 * @since 2.0.4.0
+	 */
+	function is_automatic ( $type = null , $options = null ) {
+		if ( is_null ( $options ) )
+			$options = &$this->options;
+		switch ( $type ) {
+			case 'img'	:
+			case 'mov'	:
+			case 'aud'	:
+			case 'tube' :
+			case 'flv'	:
+				if ( $this->get_option ( "auto{$type}" , $options ) == "true" )
+					return true;
+				else
+					return false;
+				break;
+			default :
+				if (
+					$this->get_option ( 'autoimg' , $options )  == "true" ||
+					$this->get_option ( 'automov' , $options )  == "true" ||
+					$this->get_option ( 'autoaud' , $options )  == "true" ||
+					$this->get_option ( 'autotube' , $options ) == "true" ||
+					$this->get_option ( 'autoflv' , $options )  == "true"
+				)
+					return true;
+				else
+					return false;
+				break;
+		}
+	}
+
+	function protected_options () {
+		return array (
+			'library' ,
+			'language' ,
+			'version' ,
+			'smartLoad' ,
+			'useCache' ,
+			'autoimg' ,
+			'automov' ,
+			'autotube' ,
+			'autoaud' ,
+			'autoflv' ,
+			'enableFlv' ,
+			'genericVideoWidth' ,
+			'genericVideoHeight' ,
+			'players'
+		);
 	}
 
 }
@@ -170,5 +282,3 @@ if ( is_admin () ) {
 		Shadowbox::deactivate_and_die ( dirname ( __FILE__ ) . '/inc/frontend.php' );
 	}
 }
-
-?>

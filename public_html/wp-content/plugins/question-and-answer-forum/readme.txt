@@ -3,9 +3,9 @@ Contributors: trevorpythag, Tristan Petersen
 Donate link: http://qandaforum.trevorpythag.co.uk
 Tags: questions, answers, forum
 Requires at least: 3.0
-Tested up to: 3.2.1
-Stable tag:2.1.2
-version:2.1.2
+Tested up to: 3.4
+Stable tag:2.1.4
+version:2.1.4
 Allows a question and answer forum to be added to a site/blog. Can be fully integrated with your theme using custom post types.
 
 == Description ==
@@ -41,6 +41,7 @@ I have been provided with *some* localisation of the core features for the *fron
 
 Current translations are:
 
+* Portuguese by Tristan Petersen (http://www.marketingeseo.com )
 * Russian by Yuriy Petrovskiy
 * Spanish by Gabriel Gil (http://gabrielgil.es)
 * French by Romain Varnier (http://www.revibrevet.com)

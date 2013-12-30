@@ -5,6 +5,9 @@ if ( !function_exists('add_action') ) {
 
 global $wpdb, $subscribers, $what, $current_tab;
 
+// detect or define which tab we are in
+$current_tab = isset( $_GET['tab'] ) ? esc_attr($_GET['tab']) : 'public';
+
 // was anything POSTed ?
 if ( isset($_POST['s2_admin']) ) {
 	check_admin_referer('bulk-subscribers');
@@ -37,12 +40,29 @@ if ( isset($_POST['s2_admin']) ) {
 		}
 		echo $message;
 		$_POST['what'] = 'confirmed';
-	} elseif ( $_POST['action'] === 'delete' || $_POST['action2'] === 'delete' ) {
-		foreach ( $_POST['subscriber'] as $address ) {
-			$this->delete($address);
+	} elseif ( (isset($_POST['action']) && $_POST['action'] === 'delete') || (isset($_POST['action2']) && $_POST['action2'] === 'delete') ) {
+		if ( $current_tab === 'public' ) {
+			foreach ( $_POST['subscriber'] as $address ) {
+				$this->delete($address);
+			}
+			echo "<div id=\"message\" class=\"updated fade\"><p><strong>" . __('Address(es) deleted!', 'subscribe2') . "</strong></p></div>";
+		} elseif ( $current_tab === 'registered' ) {
+			global $current_user;
+			$users_deleted_error = '';
+			$users_deleted = '';
+			foreach ( $_POST['subscriber'] as $address ) {
+				$user = get_user_by('email', $address);
+				if ( !current_user_can('delete_user', $user->ID) || $user->ID == $current_user->ID ) {
+					$users_deleted_error = __('Delete failed! You cannot delete some or all of these users', 'subscribe2') . "<br />";
+					continue;
+				} else {
+					$users_deleted = __('User(s) deleted! Any posts made by these users were assigned to you', 'subscribe2');
+					//wp_delete_user($user->$id, $current_user->ID);
+				}
+			}
+			echo "<div id=\"message\" class=\"updated fade\"><p><strong>" . $users_deleted_error . $users_deleted . "</strong></p></div>";
 		}
-		echo "<div id=\"message\" class=\"updated fade\"><p><strong>" . __('Address(es) deleted!', 'subscribe2') . "</strong></p></div>";
-	} elseif ( $_POST['action'] === 'toggle' || $_POST['action2'] === 'toggle' ) {
+	} elseif ( (isset($_POST['action']) && $_POST['action'] === 'toggle') || (isset($_POST['action2']) && $_POST['action2'] === 'toggle') ) {
 		global $current_user;
 		$this->ip = $current_user->user_login;
 		foreach ( $_POST['subscriber'] as $address ) {
@@ -67,8 +87,6 @@ if ( isset($_POST['s2_admin']) ) {
 	}
 }
 
-// detect or define which tab we are in
-$current_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'public';
 if ( $current_tab == 'registered' ) {
 	// Get Registered Subscribers
 	$registered = $this->get_registered();
@@ -120,13 +138,22 @@ if ( isset($_REQUEST['what']) ) {
 	}
 }
 
-if ( !empty($_POST['s']) ) {
-	foreach ( $subscribers as $subscriber ) {
-		if ( is_numeric(stripos($subscriber, $_POST['s'])) ) {
-			$result[] = $subscriber;
+if ( !empty($_REQUEST['s']) ) {
+	if ( !empty($_POST['s']) ) {
+		foreach ( $subscribers as $subscriber ) {
+			if ( is_numeric(stripos($subscriber, $_POST['s'])) ) {
+				$result[] = $subscriber;
+			}
 		}
+		$subscribers = $result;
+	} else {
+		foreach ( $subscribers as $subscriber ) {
+			if ( is_numeric(stripos($subscriber, $_REQUEST['s'])) ) {
+				$result[] = $subscriber;
+			}
+		}
+		$subscribers = $result;
 	}
-	$subscribers = $result;
 }
 
 if ( !class_exists('WP_List_Table') ) {
@@ -143,7 +170,7 @@ $S2ListTable->prepare_items();
 // show our form
 echo "<div class=\"wrap\">";
 echo "<div id=\"icon-tools\" class=\"icon32\"></div>";
-$tabs = array('public' => 'Public Subscribers', 'registered' => 'Registered Subscribers');
+$tabs = array('public' => __('Public Subscribers', 'subscribe2'), 'registered' => __('Registered Subscribers', 'subscribe2'));
 echo "<h2 class=\"nav-tab-wrapper\">";
 foreach ( $tabs as $tab_key => $tab_caption ) {
 	$active = ($current_tab == $tab_key) ? "nav-tab-active" : "";
@@ -178,7 +205,7 @@ switch ($current_tab) {
 	case 'registered':
 		echo "<div class=\"s2_admin\" id=\"s2_add_subscribers\">\r\n";
 		echo "<h2>" . __('Add/Remove Subscribers', 'subscribe2') . "</h2>\r\n";
-		echo "<p class=\"submit\" style=\"border-top: none;\"><input type=\"button\" class=\"button-primary\" name=\"add_user\" value=\"" . __('Add Registered User', 'subscribe2') . "\" formaction=\"" . admin_url() . "user-new.php\" /></p>\r\n";
+		echo "<p class=\"submit\" style=\"border-top: none;\"><a class=\"button-primary\" href=\"" . admin_url() . "user-new.php\">" . __('Add Registered User', 'subscribe2') . "</a></p>\r\n";
 
 		echo "</div>\r\n";
 
