@@ -8,11 +8,11 @@ $function_spouse = null;
 
 function getSpouse(){
 	//gets spouse's wb id 
-	// if no spouse return 0
+	// if no spouse return -1
 	global $function_spouse;
 	
 	
-	if ($function_spouse == null){
+	if (is_null($function_spouse)){
 		global $current_user_id, $wpdb;
 		$ID = $current_user_id;
 		$user_login =  wp_get_current_user()->user_login;
@@ -21,7 +21,9 @@ function getSpouse(){
 		if ($id == "" || is_null($id)){
 			$function_spouse = -1;
 		}
-		$function_spouse = $id;
+		else {
+			$function_spouse = $id;
+		}
 	}
 	return $function_spouse;
 }
