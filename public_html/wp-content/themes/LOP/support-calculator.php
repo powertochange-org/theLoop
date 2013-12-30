@@ -114,7 +114,7 @@ function generate_pdf(){
 		}
 		$pdf->LN();
 		$pdf->Write(5,'Confidential');
-		$pdf->Output();
+		$pdf->Output('support_calculator.pdf', 'I');
 		exit;
 	}
 }
