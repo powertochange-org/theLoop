@@ -575,16 +575,6 @@ include('functions/js_functions.php');
 				$pdf = new FPDF();
 				$pdf->AddPage();
 				
-				//there is a weird bug that depending on where things are draw on page on things may not get draw
-				// it is a weird bug with fpdf.  if I printed x lines on the page have of the page would not display 
-						//but if there was x +/- 1 lines it would print normal
-				//these two lines counter acts the bug
-				//it is 254 and not 255 because it will realize that is drawing white on white and not draw the line
-					//254 is not white but practically it is.
-				$pdf->SetDrawColor(254);
-				$pdf->Line(0, 0, 200, 400);
-				$pdf->Line(0, 400, 200, 0);
-				
 				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',16);
@@ -687,7 +677,7 @@ include('functions/js_functions.php');
 				$pdf->Cell($widthM,5, $_POST['maximum_month'], 0, 1, "R");
 				$pdf->LN();
 				$pdf->Write(5,'Confidential');
-				$pdf->Output();
+				$pdf->Output('allowance_calculator.pdf', 'I');
 				exit;
 			}
 			if (isset($_POST['userIs'])){
