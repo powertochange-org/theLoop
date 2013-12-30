@@ -677,6 +677,9 @@ include('functions/js_functions.php');
 				$pdf->Cell($widthM,5, $_POST['maximum_month'], 0, 1, "R");
 				$pdf->LN();
 				$pdf->Write(5,'Confidential');
+				
+				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
+				ob_end_flush();
 				$pdf->Output('allowance_calculator.pdf', 'I');
 				exit;
 			}
