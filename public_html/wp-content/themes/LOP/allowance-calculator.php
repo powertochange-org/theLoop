@@ -679,7 +679,7 @@ include('functions/js_functions.php');
 				$pdf->Write(5,'Confidential');
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
-				ob_end_flush();
+				ob_end_clean();
 				$pdf->Output('allowance_calculator.pdf', 'I');
 				exit;
 			}
