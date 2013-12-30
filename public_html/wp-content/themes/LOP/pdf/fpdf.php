@@ -220,11 +220,8 @@ function SetDisplayMode($zoom, $layout='default')
 
 function SetCompression($compress)
 {
-	// Set page compression
-	if(function_exists('gzcompress'))
-		$this->compress = $compress;
-	else
-		$this->compress = false;
+	//disabling compress because there where problems if it was enabled
+	$this->compress = false;
 }
 
 function SetTitle($title, $isUTF8=false)
