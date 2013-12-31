@@ -5,76 +5,35 @@ include('functions/functions.php');
 /*
 *Template Name: Allowance Calculator
 *
-*todo description
+*Author: matthew.chell
+*
+*Description: A calculator to find out how much allowance a person has to raise.
 
 req:
 	tables-allowance-questiom/answser
 		  -support constant
-		  -string constant?
+		  -string constant
 	
 	ueses wordpress users_meta
 
 
-
-
-choose_way change to button (done)
-show name on form-(done) test
-have blurb- test (store different way?)
-format total dollar currecny (done) test
-format question and answer (done)
--have headers (done)
--question over answer (question bolded) (done)
-field in only 3-6;
-another gestion 
--hours/ percent
-
-
-total disable salary and affiliate
-if no field like accpted disable  intern  (no comp level)
-enable asscosate commissoned
-	(done) test
-
-change hidden question (done)ishish
-
-todo test calculations (done in brief)
-
--save (done), print (done)
-
-//second feedback!!!!!!!!!!!!!!!!!
-
--back button (done)
--defualt 100 (done)(tested)
--onchange (done)
--to top of page (done)
--side ways radio (done)
-
--todo hide first header (done)
-
-
-//third feedback!!!!!!!!!!!!!!
-annal monthly (done)
---role type (done))
-
-hanging indent (done)
-space before bullet (done)
-default you (done)
-
-image confindat pdf (done)
-
-intersal see (remark:if hours)
-
-
-FIX_ME
-dump
-
 *
 */
 
-/*(todo: out of date!!!) there is one spot that has hardcoded numbers since, for a question, a specific person you can not choose 
-		but for anyone you can choose
-	from the admin interface you are able to change things that will need the hardcoded values to change
-		such as who can see a question
-	-in: setUserValues() and showSomeFor()
+/* ****NOTE: HARDCODED VALUES****
+there is one spot that has hardcoded numbers since, for two questions
+		(such as What is the scope of ministry operations for which the staff member is  responsible? 
+		(which what level a person is)), for a specific person (such as for you or your spouse), you can not choose the answer
+		but for anyone you can choose the answer for the question.
+	since the question uses hardcoded numbers then some of the edit capabilites have been disable in the admin interface
+		from the admin interface you should not be able to change anything that would need the hardcoded numbers to change
+	the hardcoded values are in function setUserValues()
+	
+	
+	
+the number of hours question is different from the rest of the questions.  From the admin interface you can
+	only change the label of the question.  The answer is open ended.  It does not have predefined answer
+	like the other question.  Also it is used to pro rate the result calculated by the other questions.
 */
 
 $allowance_constant = array(
@@ -490,12 +449,12 @@ include('functions/js_functions.php');
 			global $wpdb, $allowance_constant;
 			echo "function() {reset();";
 			echo "document.getElementById('hour_precentage').value ='".getFieldEmployee("percent_of_fulltime", $id)."';\n";
-			$level = intVal(getFieldEmployee("compensation_level", $id));
 			
 			//** HARDCODED **// this is to set the preset user values;
 			//if clean_tree() in allowance-calculator-admin is run $q may have to change
-			//if the sturture of this two question change (the ones with pulled data) this code may need to be changed
+			//if the sturture of these two question change (the ones with pulled data) this code may need to be changed
 			
+			$level = intVal(getFieldEmployee("compensation_level", $id));
 			switch(getRole($id)){
 			case $allowance_constant['fieldIndividual']:
 				//levels 3-5 are mapped to the the three answers respectively (levels 1, 2 will not be using this.  if they do, result is undefined.)
@@ -507,7 +466,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['fieldLeader']:
-				//at and above level 8 is the same catergory
+				//at and above level 8 are in the same catergory
 				echo "document.getElementById('extra-field-".min($level,8)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateIndividual']:
@@ -519,7 +478,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateLeader']:
-				//at and above level 7 is the same catergory
+				//at and above level 7 are in the same catergory
 				echo "document.getElementById('extra-corp-".min($level,7)."').checked = true;\n";
 				break;
 			}
@@ -541,7 +500,7 @@ include('functions/js_functions.php');
 				$sql = "SELECT `type` , `pull_data`, `role` FROM `allowance_question` WHERE `id` =".$quest_id;
 				$results = $wpdb->get_results($sql);
 				if ($results[0]->pull_data or ((intval($results[0]->role)) & (1 << intval(getRole($id)))) == 0){
-					continue; //overrides stored values (they are not stored most likey but just in case);
+					continue; //overrides stored values (they are not stored, most likey, but just in case);
 				}
 				$parts = explode(":", $value);
 				$part_0 = $parts[0];
@@ -620,7 +579,6 @@ include('functions/js_functions.php');
 				$pdf->SetFont('Arial','',12);
 				$pdf->Write(5, "       ".$_POST['hour_precentage']."%");$pdf->LN();
 				$pdf->LN();
-				
 				
 				$array_key = array_keys($_POST);
 				$sql = "SELECT * FROM `allowance_question` WHERE `role` & (1 <<".$_POST['role'].") ORDER BY  `order` ASC";

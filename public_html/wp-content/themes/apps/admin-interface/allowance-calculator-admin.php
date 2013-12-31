@@ -882,7 +882,7 @@ function clean_tree(){
 			$current = $sub_result->next;
 		}
 	}
-	//droptableish
+	//drop tableish
 	$sql = "RENAME TABLE allowance_question TO allowance_question_old"; 
 	$wpdb->get_results($sql);
 	$sql = "CREATE TABLE allowance_question LIKE allowance_question_old"; 

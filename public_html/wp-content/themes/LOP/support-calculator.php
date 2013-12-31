@@ -1,8 +1,6 @@
 <?php
-
 include('functions/functions.php');
 require('pdf/fpdf.php');
-
 
 /*
 *Template Name: Support_Calculator
@@ -39,7 +37,6 @@ $support_constant = array (
 );
 
 $support_dataID = null;
-
 
 generate_pdf();
 
