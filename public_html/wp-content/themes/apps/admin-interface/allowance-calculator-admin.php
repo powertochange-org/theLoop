@@ -299,17 +299,6 @@ function parseInput(){
 	}
 }
 
-//modify structure function todo test todo move to last
-//test
-// add answer (first, middle, last)   ... good!
-// remove answer (first, middle/last) ... good!
-// move answer (middle to first)      ....good!
-// add question (in parts)            ....good!
-// move question (first, middle, last)....good!
-// remove question (middle)           ....good!
-// 
-//test roles for adding questions todo ...good!
-
 function get_new_order($quest_id, $after){
 	global $wpdb;
 	$quest_id = intval($quest_id);

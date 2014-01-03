@@ -536,14 +536,14 @@ include('functions/js_functions.php');
 				
 				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
-				$pdf->SetFont('Arial','b',16);
+				$pdf->SetFont('Arial','b',14);
 				$pdf->Write(5,'Allowance Calculator');
-				$pdf->SetFont('Arial','b',20);
+				$pdf->SetFont('Arial','b',16);
 				$pdf->LN();
 				$pdf->Write(5,'');
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->SetFont('Arial','',12);
+				$pdf->SetFont('Arial','',10);
 			
 				switch($_POST['userIs']){
 				case 'you':
@@ -572,11 +572,11 @@ include('functions/js_functions.php');
 					$pdf->Write(5, 'default');$pdf->LN();
 				}
 				$pdf->LN();
-				$pdf->SetFont('Arial','b',16);
+				$pdf->SetFont('Arial','b',13);
 				$pdf->Write(5, getStringConstant("first_header"));$pdf->LN();$pdf->LN();
-				$pdf->SetFont('Arial','b',12);
+				$pdf->SetFont('Arial','b',11);
 				$pdf->Write(5, getStringConstant("hour_label"));$pdf->LN();
-				$pdf->SetFont('Arial','',12);
+				$pdf->SetFont('Arial','',10);
 				$pdf->Write(5, "       ".$_POST['hour_precentage']."%");$pdf->LN();
 				$pdf->LN();
 				
@@ -593,9 +593,9 @@ include('functions/js_functions.php');
 						case 'radiobutton_sdw':
 						case 'dropdown':
 						case 'checkbox':
-							$pdf->SetFont('Arial','b',12);
+							$pdf->SetFont('Arial','b',11);
 							$pdf->Write(5, $result->label);$pdf->LN();
-							$pdf->SetFont('Arial','',12);
+							$pdf->SetFont('Arial','',10);
 							foreach ($array_key as $key){
 								$parts = explode("-", $key);
 								$part_0 = $parts[0];
@@ -610,14 +610,13 @@ include('functions/js_functions.php');
 							}
 							break;
 						case 'header':
-							$pdf->SetFont('Arial','b',16);
+							$pdf->SetFont('Arial','b',13);
 							$pdf->Write(5, $result->label);$pdf->LN();
-							$pdf->SetFont('Arial','',12);
+							$pdf->SetFont('Arial','',10);
 							break;
 					}
 					$pdf->LN();
 				}
-				$pdf->LN();
 				$widthL = Max($pdf->GetStringWidth("Recommended Minimum:"), $pdf->GetStringWidth("Staff Member's Personal Maximum:")) + 5;
 				$widthV = Max($pdf->GetStringWidth($_POST['minimum']), $pdf->GetStringWidth($_POST['maximum']), $pdf->GetStringWidth('Annual')) + 5;
 				$widthM = Max($pdf->GetStringWidth($_POST['minimum_month']), $pdf->GetStringWidth($_POST['maximum_month']), $pdf->GetStringWidth('Monthly'));
@@ -634,7 +633,40 @@ include('functions/js_functions.php');
 				$pdf->Cell($widthV,5, $_POST['maximum']);
 				$pdf->Cell($widthM,5, $_POST['maximum_month'], 0, 1, "R");
 				$pdf->LN();
-				$pdf->Write(5,'Confidential');
+				
+				$lineDrop = 4;
+				$pdf->Line(10, $pdf->GetY(), 195, $pdf->GetY());
+				$pdf->LN();
+				$pdf->SetFont('Arial','b',10);
+				$pdf->Write(5,'Change in Allowance or Hours');
+				$pdf->SetFont('Arial','',10);
+				$pdf->LN();
+				$pdf->Write(5,'Previous Base:___________________________________   New Base: _____________________________');
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'Previous number of hours:__________________________   New Number of Hours: ____________________');
+				$pdf->LN();
+				$pdf->SetFont('Arial','bi',10);
+				$pdf->Write(5,'** If schedule is less than 40 hours per week enter normal days/ hours worked');
+				$pdf->SetFont('Arial','',10);Monday: Tuesday: Wednesday: Thursday: Friday:
+				$pdf->LN();
+				$pdf->LN();
+				$line = ' ________   ';
+				$pdf->Write(5,"Monday:$line Tuesday:$line Wednesday:$line Thursday:$line Friday:$line");
+				$pdf->Line(10, $pdf->GetY() + 8, 195, $pdf->GetY() + 8);
+				$pdf->LN();
+				
+				
+				
+				
+				$pdf->LN();
+				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: ____________');
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'Ministry/Department Director Signature: ________________________________________ Date: ____________');
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'HR Authorizing Agent: ______________________________________________________ Date: ____________');
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
 				ob_end_clean();
