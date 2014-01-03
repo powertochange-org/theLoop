@@ -1,8 +1,6 @@
 <?php
-
 include('functions/functions.php');
 require('pdf/fpdf.php');
-
 
 /*
 *Template Name: Support_Calculator
@@ -40,7 +38,6 @@ $support_constant = array (
 
 $support_dataID = null;
 
-
 generate_pdf();
 
 function generate_pdf(){
@@ -55,7 +52,7 @@ function generate_pdf(){
 		$label = Array('Name:', 'Hours per week:', 'Province:', 'Hours per week (spouse):', 'Staff Account:', 'Benefit Coverage:', 'Ministry:', 'Decline Benefits:', 'Monthly Allowance/Salary', 'Employer Paid CPP/EI', 'Monthly Allowance/Salary - Spouse', 'Employer Paid CPP/EI - Spouse', 'Extended Health', 'Provincial Medical', 'Medical Allowance', 'Worker\'s Compensation', 'Staff Conference', 'MPD correspondence', 'Reimbursable Ministry Expenses', 'Subtotal', 'Central Resource Charge', 'Monthly Support Goal', 'Solid Monthly Support', 'Total Funds Yet to be Raised', 'Bridge Amount', 'Percent Supported');
 		$pdf = new FPDF();
 		$pdf->AddPage();
-		$pdf->Image(get_template_directory().'\res\footer-logo.png'); //todo change
+		$pdf->Image(get_stylesheet_directory_uri().'/res/footer-logo.png'); //todo change
 		$pdf->SETXY(60, 15);
 		$pdf->SetFont('Arial','',16);
 		$pdf->Write(5,'Support Goal Calculator');
@@ -114,7 +111,10 @@ function generate_pdf(){
 		}
 		$pdf->LN();
 		$pdf->Write(5,'Confidential');
-		$pdf->Output();
+		
+		//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
+		ob_end_clean();
+		$pdf->Output('support_calculator.pdf', 'I');
 		exit;
 	}
 }
@@ -145,7 +145,7 @@ include('functions/js_functions.php'); ?>
 		//error handeling
 		//couples joining and unjoining
 		
-		$current_user = wp_get_current_user();
+		$current_user_id = wp_get_current_user()->id;
 		
 		function setProvince(){
 			global $support_constant;
@@ -169,8 +169,8 @@ include('functions/js_functions.php'); ?>
 		parseDataInput();
 		
 		function parseDataInput(){
-			global $wpdb,$current_user, $support_dataID;
-			$ID = $current_user->ID;
+			global $wpdb,$current_user_id, $support_dataID;
+			$ID = $current_user_id;
 			//todo error handling
 			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
 			

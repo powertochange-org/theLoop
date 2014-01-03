@@ -1,10 +1,10 @@
 === Subscribe To Comments Reloaded ===
 Contributors: coolmann, Reedyseth
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=Subscribe%20To%20Comments%20Reloaded&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: subscribe, comments, notification, subscription, manage, double check-in, follow, commenting
 Requires at least: 2.9.2
 Tested up to: 3.5
-Stable tag: 2.0.4
+Stable tag: 2.0.6
 
 Subscribe to Comments Reloaded allows commenters to sign up for e-mail notifications of subsequent replies.
 
@@ -48,7 +48,7 @@ Yes, each HTML tag has a CSS class or ID that you can use to change its position
 Add a custom field called `stcr_disable_subscriptions` to it, with value 'yes'
 
 = How do I add the management page URL to my posts? =
-Use the shortcode `[subscribe-url]`, or use the following code in your theme: 
+Use the shortcode `[subscribe-url]`, or use the following code in your theme:
 `if(function_exists('subscribe_reloaded_show')) echo '<a href="'.do_shortcode('[subscribe-url]').'">Subscribe</a>";`
 
 = Can I move the subscription checkbox to another position? =
@@ -62,6 +62,13 @@ Yes! Just disable the corresponding option under Settings > Comment Form and the
 3. Customize the plugin's behavior
 
 == Changelog ==
+
+= 2.0.6 =
+* Updated: Updated the contact information on every laguage file, some links were missing.
+* Fixed: The Spanish translation had some missing text.
+
+= 2.0.5 =
+* Added: Since the authorship of the plugin has changed I added the correct information of the contact in order to have a faster response to the issues.
 
 = 2.0.4 =
 * Added: Dutch translation fixes provided by [Martijn Chel](http://www.martijnchel.com)

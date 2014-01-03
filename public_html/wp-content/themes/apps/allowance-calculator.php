@@ -5,76 +5,35 @@ include('functions/functions.php');
 /*
 *Template Name: Allowance Calculator
 *
-*todo description
+*Author: matthew.chell
+*
+*Description: A calculator to find out how much allowance a person has to raise.
 
 req:
 	tables-allowance-questiom/answser
 		  -support constant
-		  -string constant?
+		  -string constant
 	
 	ueses wordpress users_meta
 
 
-
-
-choose_way change to button (done)
-show name on form-(done) test
-have blurb- test (store different way?)
-format total dollar currecny (done) test
-format question and answer (done)
--have headers (done)
--question over answer (question bolded) (done)
-field in only 3-6;
-another gestion 
--hours/ percent
-
-
-total disable salary and affiliate
-if no field like accpted disable  intern  (no comp level)
-enable asscosate commissoned
-	(done) test
-
-change hidden question (done)ishish
-
-todo test calculations (done in brief)
-
--save (done), print (done)
-
-//second feedback!!!!!!!!!!!!!!!!!
-
--back button (done)
--defualt 100 (done)(tested)
--onchange (done)
--to top of page (done)
--side ways radio (done)
-
--todo hide first header (done)
-
-
-//third feedback!!!!!!!!!!!!!!
-annal monthly (done)
---role type (done))
-
-hanging indent (done)
-space before bullet (done)
-default you (done)
-
-image confindat pdf (done)
-
-intersal see (remark:if hours)
-
-
-FIX_ME
-dump
-
 *
 */
 
-/*(todo: out of date!!!) there is one spot that has hardcoded numbers since, for a question, a specific person you can not choose 
-		but for anyone you can choose
-	from the admin interface you are able to change things that will need the hardcoded values to change
-		such as who can see a question
-	-in: setUserValues() and showSomeFor()
+/* ****NOTE: HARDCODED VALUES****
+there is one spot that has hardcoded numbers since, for two questions
+		(such as What is the scope of ministry operations for which the staff member is  responsible? 
+		(which what level a person is)), for a specific person (such as for you or your spouse), you can not choose the answer
+		but for anyone you can choose the answer for the question.
+	since the question uses hardcoded numbers then some of the edit capabilites have been disable in the admin interface
+		from the admin interface you should not be able to change anything that would need the hardcoded numbers to change
+	the hardcoded values are in function setUserValues()
+	
+	
+	
+the number of hours question is different from the rest of the questions.  From the admin interface you can
+	only change the label of the question.  The answer is open ended.  It does not have predefined answer
+	like the other question.  Also it is used to pro rate the result calculated by the other questions.
 */
 
 $allowance_constant = array(
@@ -97,14 +56,14 @@ $allowance_constant = array(
 	'levelName' => array(
 		null, 
 		array ( 
-			7 => 'Ministry Leader',
-			8=> 'Ministry Director',
-			9=> 'Domain Leader'
+			6 => 'Managers and Other Ministry Leaders',
+			7=> 'Ministry Director',
+			8=> 'Domain Leader'
 		),
 		null,
 		array(
-			7=> 'Manager / Other Dept. Leader',
-			8=> 'Department Director'
+			6=> 'Manager / Other Dept. Leader',
+			7=> 'Department Director'
 		)
 	),
 
@@ -114,7 +73,7 @@ $allowance_constant = array(
 	'corporateLeader' => 3
 );
 
-$current_user = wp_get_current_user();
+$current_user_id = wp_get_current_user()->id;
 		
 parseUserValuesInput();
 
@@ -296,14 +255,14 @@ include('functions/js_functions.php');
 			echo "new Array(";
 			echo "{'min':".getConstant("role_0_0_min").",'max':".getConstant("role_0_0_max")."},";
 			
-			echo "{ 7 : {'min':".getConstant("role_1_7_min").",'max':".getConstant("role_1_7_max")."},";
-			echo "8 : {'min':".getConstant("role_1_8_min").",'max':".getConstant("role_1_8_max")."},";
-			echo "9 : {'min':".getConstant("role_1_9_min").",'max':".getConstant("role_1_9_max")."}},";
+			echo "{ 6 : {'min':".getConstant("role_1_6_min").",'max':".getConstant("role_1_6_max")."},";
+			echo "7 : {'min':".getConstant("role_1_7_min").",'max':".getConstant("role_1_7_max")."},";
+			echo "8 : {'min':".getConstant("role_1_8_min").",'max':".getConstant("role_1_8_max")."}},";
 			
 			echo "{'min':".getConstant("role_2_0_min").",'max':".getConstant("role_2_0_max")."},";
 			
-			echo "{ 7 : {'min':".getConstant("role_3_7_min").",'max':".getConstant("role_3_7_max")."},";
-			echo "8 : {'min':".getConstant("role_3_8_min").",'max':".getConstant("role_3_8_max")."}},";
+			echo "{ 6 : {'min':".getConstant("role_3_6_min").",'max':".getConstant("role_3_6_max")."},";
+			echo "7 : {'min':".getConstant("role_3_7_min").",'max':".getConstant("role_3_7_max")."}},";
 			
 			
 			echo "0)";
@@ -471,10 +430,10 @@ include('functions/js_functions.php');
 		}
 		
 		function getAccess($id){
-			global $allowance_constant, $current_user;
+			global $allowance_constant, $current_user_id;
 			$involvment_type = getFieldEmployee("involvement_type", $id);
 			if (in_array($involvment_type, $allowance_constant['noAccess_involvementType'])){
-				if (isAdmin() && $id == $current_user->id){
+				if (isAdmin() && $id == $current_user_id){
 					return $allowance_constant['partAccess'];
 				}
 				return $allowance_constant['noAccess'];
@@ -490,12 +449,12 @@ include('functions/js_functions.php');
 			global $wpdb, $allowance_constant;
 			echo "function() {reset();";
 			echo "document.getElementById('hour_precentage').value ='".getFieldEmployee("percent_of_fulltime", $id)."';\n";
-			$level = intVal(getFieldEmployee("compensation_level", $id));
 			
 			//** HARDCODED **// this is to set the preset user values;
 			//if clean_tree() in allowance-calculator-admin is run $q may have to change
-			//if the sturture of this two question change (the ones with pulled data) this code may need to be changed
+			//if the sturture of these two question change (the ones with pulled data) this code may need to be changed
 			
+			$level = intVal(getFieldEmployee("compensation_level", $id));
 			switch(getRole($id)){
 			case $allowance_constant['fieldIndividual']:
 				//levels 3-5 are mapped to the the three answers respectively (levels 1, 2 will not be using this.  if they do, result is undefined.)
@@ -507,7 +466,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['fieldLeader']:
-				//at and above level 8 is the same catergory
+				//at and above level 8 are in the same catergory
 				echo "document.getElementById('extra-field-".min($level,8)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateIndividual']:
@@ -519,7 +478,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateLeader']:
-				//at and above level 7 is the same catergory
+				//at and above level 7 are in the same catergory
 				echo "document.getElementById('extra-corp-".min($level,7)."').checked = true;\n";
 				break;
 			}
@@ -541,7 +500,7 @@ include('functions/js_functions.php');
 				$sql = "SELECT `type` , `pull_data`, `role` FROM `allowance_question` WHERE `id` =".$quest_id;
 				$results = $wpdb->get_results($sql);
 				if ($results[0]->pull_data or ((intval($results[0]->role)) & (1 << intval(getRole($id)))) == 0){
-					continue; //overrides stored values (they are not stored most likey but just in case);
+					continue; //overrides stored values (they are not stored, most likey, but just in case);
 				}
 				$parts = explode(":", $value);
 				$part_0 = $parts[0];
@@ -569,11 +528,12 @@ include('functions/js_functions.php');
 		}
 		
 		function parseUserValuesInput(){
-			global $current_user, $wpdb, $allowance_constant;
+			global $current_user_id, $wpdb, $allowance_constant;
 			dump($_POST);
 			if (isset($_POST['print']) and $_POST['print'] == 'true'){
 				$pdf = new FPDF();
 				$pdf->AddPage();
+				
 				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',16);
@@ -589,12 +549,12 @@ include('functions/js_functions.php');
 				case 'you':
 					$pdf->Write(5, "Name: ".getName());$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry'));$pdf->LN();
-					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry'));$pdf->LN();
+					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title'));$pdf->LN();
 					break;
 				case 'spouse':
 					$pdf->Write(5, "Name: ".getName(getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
-					$pdf->Write(5, "Position Title: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
+					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title', getSpouse()));$pdf->LN();
 					break;
 				case 'free':
 					break;
@@ -619,7 +579,6 @@ include('functions/js_functions.php');
 				$pdf->SetFont('Arial','',12);
 				$pdf->Write(5, "       ".$_POST['hour_precentage']."%");$pdf->LN();
 				$pdf->LN();
-				
 				
 				$array_key = array_keys($_POST);
 				$sql = "SELECT * FROM `allowance_question` WHERE `role` & (1 <<".$_POST['role'].") ORDER BY  `order` ASC";
@@ -676,13 +635,16 @@ include('functions/js_functions.php');
 				$pdf->Cell($widthM,5, $_POST['maximum_month'], 0, 1, "R");
 				$pdf->LN();
 				$pdf->Write(5,'Confidential');
-				$pdf->Output();
+				
+				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
+				ob_end_clean();
+				$pdf->Output('allowance_calculator.pdf', 'I');
 				exit;
 			}
 			if (isset($_POST['userIs'])){
 				
-				if($_POST['userIs'] == 'you' and  getAccess($current_user->id) == $allowance_constant['fullAccess']){
-					$id = $current_user->id;
+				if($_POST['userIs'] == 'you' and  getAccess($current_user_id) == $allowance_constant['fullAccess']){
+					$id = $current_user_id;
 				}
 				else if ($_POST['userIs'] == 'spouse' and getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']){	
 					$id = getSpouse();
@@ -716,9 +678,9 @@ include('functions/js_functions.php');
 			//$wpdb->get_results($sql);
 		}
 		
-		if (getAccess($current_user->id) == $allowance_constant['noAccess']){
+		if (getAccess($current_user_id) == $allowance_constant['noAccess']){
 			?>
-			No ACCESS
+			The Allowance Calculator is only available for Commissioned and Associate staff.
 			<?php
 		}
 		else {
@@ -785,8 +747,8 @@ include('functions/js_functions.php');
 					}
 				}
 				
-				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
-				var you = {role:<?php echo getRole($current_user->id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user->id) ?>};
+				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
+				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user_id) ?>};
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
 				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
@@ -1005,11 +967,11 @@ include('functions/js_functions.php');
 				
 				function reset(){
 					document.getElementById('user_name').innerHTML = "";
+					document.getElementById('extra-field-6').checked = false;
 					document.getElementById('extra-field-7').checked = false;
 					document.getElementById('extra-field-8').checked = false;
-					document.getElementById('extra-field-9').checked = false;
+					document.getElementById('extra-corp-6').checked = false;
 					document.getElementById('extra-corp-7').checked = false;
-					document.getElementById('extra-corp-8').checked = false;
 					document.getElementById('hour_precentage').value = "100";
 					<?php getReset() ?>
 				}
@@ -1057,7 +1019,7 @@ include('functions/js_functions.php');
 						}
 					});
 					
-					<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
+					<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 						document.getElementById('show_you').checked = true;
 						proceed(0);
 					<?php } else if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
@@ -1077,7 +1039,7 @@ include('functions/js_functions.php');
 			<BR>
 			<div id='section_whichWay'>
 				Please select an option:<BR>
-				<?php if(getAccess($current_user->id) == $allowance_constant['fullAccess']) { ?>
+				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_you'>Calculate for yourself</label>
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { // hides the option if there is no spouse ?>
@@ -1107,14 +1069,14 @@ include('functions/js_functions.php');
 							</div>
 							<div id='role_type_field'>
 								<strong>Role Type</strong><BR>
-								<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Leader (all other types)</label><BR>
-								<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Ministry Director</label><BR>
-								<input type='radio' name='extra_level' id='extra-field-9' value='9'><label for='extra-field-9'>Domain Leader</label><BR><BR>
+								<input type='radio' name='extra_level' id='extra-field-6' value='6'><label for='extra-field-6'>Managers and Other Ministry Leaders</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-7' value='7'><label for='extra-field-7'>Ministry Director</label><BR>
+								<input type='radio' name='extra_level' id='extra-field-8' value='8'><label for='extra-field-8'>Domain Leader</label><BR><BR>
 							</div>
 							<div id='role_type_corp'>
 								<strong>Role Type</strong><BR>
-								<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Manager / Other Dept. Leader</label><BR>
-								<input type='radio' name='extra_level' id='extra-corp-8' value='8'><label for='extra-corp-8'>Department Director</label><BR><BR>
+								<input type='radio' name='extra_level' id='extra-corp-6' value='6'><label for='extra-corp-6'>Manager / Other Dept. Leader</label><BR>
+								<input type='radio' name='extra_level' id='extra-corp-7' value='7'><label for='extra-corp-7'>Department Director</label><BR><BR>
 							</div>
 							
 							<input type='hidden' name='userIs' id='userIs'>

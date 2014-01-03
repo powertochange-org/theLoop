@@ -123,7 +123,7 @@ function q_list_questions($atts,$content)
 			$loophtml .= "<li><span class='list-question-title'><a class='list-answer-link' href='" . get_permalink($question->ID) ."'>" . $question->post_title . "</a></span><span>";
 			$loophtml .= sprintf(_n("%d answer", "%d answers", $answerCount, 'qna-forum'), $answerCount);
 			$loophtml .= " | " . __('Asked by','qna-forum') . "<b>$author</b>";
-			$loophtml .= " | $post_date ". __('ago in','qna-forum') . " <a href='" . get_category_link($temp_c[0]->cat_ID) . "&#063;post_type=question'>$cat_name</a></span>";
+			$loophtml .= " | $post_date ". __('ago in','qna-forum') . " <a href='" . get_category_link($temp_c[0]->cat_ID) . "&#63;&amp;post_type=question'>$cat_name</a></span>";
 			$loophtml .= "</li>";
 		 }
 	}

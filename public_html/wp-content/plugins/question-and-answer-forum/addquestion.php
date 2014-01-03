@@ -79,7 +79,7 @@ else
 			'post_status' => 'pending',													///STATUS CHANGED TO PENDING
 			'post_type' => $q_question_post_type,
 			'comment_status' => 'open',
-			'post_category' => array($_POST['category'])
+			'post_category' => array($_POST['category']),
 		);
 		
 		//new question status

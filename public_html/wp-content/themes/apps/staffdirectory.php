@@ -11,7 +11,7 @@
 <?php get_header(); ?>
 	<link href="<?php echo get_stylesheet_directory_uri(); ?>/staff-directory-style.css" rel="stylesheet" type="text/css" />
 	<div id="content">
-		<h1 style="float:left"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
+		<h1 style="float:left;"><a style="font-size:35pt;font-family:Roboto Slab Light" href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 		<div class="entry">
 			<?php 
 				if(isset($_GET['page'])){ //check if the page has been specified

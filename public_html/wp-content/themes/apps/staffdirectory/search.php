@@ -6,8 +6,9 @@
 *
 *
 */?>
-<p/><h4 style="float:right;color:#adafb2;"><a href= "?page=profile" >MY PROFILE</a></h4><BR>
-<hr>
+<p/><h4 style="float:right;position:relative;top:30px;"><a style="color:#adafb2;font-weight:bold;" href= "?page=profile" >MY PROFILE</a></h4>
+<BR><BR><BR><BR>
+<hr style='margin-top:0'>
 <div style="clear:both"></div>
 <div id="content-left">
 	<div id="main-content">
@@ -144,24 +145,7 @@
 	</div>
 </div>
 <div id="content-right">   
-	<div id="sidebar">
-		<div class="sidebaritem">
-			<h1>Search for Staff</h1><BR>
-			
-			<div id='simple-search-staff'>
-				<form id='s_s_s' method="post" action=""><div class='search-box' style='border-color:#adafb2'>
-					<input class='search-input' type='textbox' name='fullname' placeholder='Search' />
-					<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
-				</div></form>
-				<BR>
-				<p>You can search using any relevant keywords, like name, jop title, ministry, city, postal code, etc.</p>
-				<!-- BR>
-				<!-- a class='false-link'><h2>SHOW ADAVANCED SEARCH</h2></a -->
-			</div>
-			<div id='advanced-search-staff'>
-			</div>
-		</div>
-	</div>
+	<?php include('pro_sidebar.php') ?>
 </div><div style='clear:both;'></div>
 <?php
 	function objectToArray($d) {

@@ -391,7 +391,7 @@ get_header(); ?>
 		<script type="text/javascript">
 		<!--
 		// Set focus to the project code field
-		document.getElementById('DESGCODE').focus();
+		//document.getElementById('DESGCODE').focus();
 
 		function showHelpButton(visible) {
 			if (visible) {

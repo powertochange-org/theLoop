@@ -48,10 +48,10 @@
 	<option value="KM" <?php if($phone->country_code == 'KM'){ echo 'selected="1"'; } ?>>Comoros (+269)</option>
 	<option value="CK" <?php if($phone->country_code == 'CK'){ echo 'selected="1"'; } ?>>Cook Islands (+682)</option>
 	<option value="CR" <?php if($phone->country_code == 'CR'){ echo 'selected="1"'; } ?>>Costa Rica (+506)</option>
-	<option value="CI" <?php if($phone->country_code == 'CI'){ echo 'selected="1"'; } ?>>Côte d'Ivoire (+225)</option>
+	<option value="CI" <?php if($phone->country_code == 'CI'){ echo 'selected="1"'; } ?>>C&#244;te d'Ivoire (+225)</option>
 	<option value="HR" <?php if($phone->country_code == 'HR'){ echo 'selected="1"'; } ?>>Croatia (+385)</option>
 	<option value="CU" <?php if($phone->country_code == 'CU'){ echo 'selected="1"'; } ?>>Cuba (+53)</option>
-	<option value="CC" <?php if($phone->country_code == 'CC'){ echo 'selected="1"'; } ?>>Curaçao (+599)</option>
+	<option value="CC" <?php if($phone->country_code == 'CC'){ echo 'selected="1"'; } ?>>Cura&#231;ao (+599)</option>
 	<option value="CY" <?php if($phone->country_code == 'CY'){ echo 'selected="1"'; } ?>>Cyprus (+357)</option>
 	<option value="CZ" <?php if($phone->country_code == 'CZ'){ echo 'selected="1"'; } ?>>Czech Republic (+420)</option>
 	<option value="DC" <?php if($phone->country_code == 'DC'){ echo 'selected="1"'; } ?>>Democratic Republic of the Congo (+243)</option>
@@ -167,11 +167,11 @@
 	<option value="PR" <?php if($phone->country_code == 'PR'){ echo 'selected="1"'; } ?>>Puerto Rico (+1)</option>
 	<option value="QA" <?php if($phone->country_code == 'QA'){ echo 'selected="1"'; } ?>>Qatar (+974)</option>
 	<option value="RC" <?php if($phone->country_code == 'RC'){ echo 'selected="1"'; } ?>>Republic of the Congo (+242)</option>
-	<option value="RE" <?php if($phone->country_code == 'RE'){ echo 'selected="1"'; } ?>>Réunion (+262)</option>
+	<option value="RE" <?php if($phone->country_code == 'RE'){ echo 'selected="1"'; } ?>>R&#233;union (+262)</option>
 	<option value="RO" <?php if($phone->country_code == 'RO'){ echo 'selected="1"'; } ?>>Romania (+40)</option>
 	<option value="RU" <?php if($phone->country_code == 'RU'){ echo 'selected="1"'; } ?>>Russia (+7)</option>
 	<option value="RW" <?php if($phone->country_code == 'RW'){ echo 'selected="1"'; } ?>>Rwanda (+250)</option>
-	<option value="NT" <?php if($phone->country_code == 'NT'){ echo 'selected="1"'; } ?>>Saint Barthélemy (+590)</option>
+	<option value="NT" <?php if($phone->country_code == 'NT'){ echo 'selected="1"'; } ?>>Saint Barth&#233;lemy (+590)</option>
 	<option value="SH" <?php if($phone->country_code == 'SH'){ echo 'selected="1"'; } ?>>Saint Helena (+290)</option>
 	<option value="KN" <?php if($phone->country_code == 'KN'){ echo 'selected="1"'; } ?>>Saint Kitts and Nevis (+1)</option>
 	<option value="RT" <?php if($phone->country_code == 'RT'){ echo 'selected="1"'; } ?>>Saint Martin (+590)</option>
@@ -179,7 +179,7 @@
 	<option value="VC" <?php if($phone->country_code == 'VC'){ echo 'selected="1"'; } ?>>Saint Vincent and the Grenadines (+1)</option>
 	<option value="WS" <?php if($phone->country_code == 'WS'){ echo 'selected="1"'; } ?>>Samoa (+685)</option>
 	<option value="SM" <?php if($phone->country_code == 'SM'){ echo 'selected="1"'; } ?>>San Marino (+378)</option>
-	<option value="ST" <?php if($phone->country_code == 'ST'){ echo 'selected="1"'; } ?>>São Tomé and Príncipe (+239)</option>
+	<option value="ST" <?php if($phone->country_code == 'ST'){ echo 'selected="1"'; } ?>>S&#227;o Tom&#233; and Pr&#237;ncipe (+239)</option>
 	<option value="SA" <?php if($phone->country_code == 'SA'){ echo 'selected="1"'; } ?>>Saudi Arabia (+966)</option>
 	<option value="SN" <?php if($phone->country_code == 'SN'){ echo 'selected="1"'; } ?>>Senegal (+221)</option>
 	<option value="CS" <?php if($phone->country_code == 'CS'){ echo 'selected="1"'; } ?>>Serbia (+381)</option>

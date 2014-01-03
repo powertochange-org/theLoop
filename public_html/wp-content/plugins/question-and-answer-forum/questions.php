@@ -3,7 +3,7 @@
 Plugin Name: Question and Answer Forum
 Description: Allows users to ask questions which can be answered by the author or other visitors to the site
 Author: David Woodford
-Version: 2.1.2
+Version: 2.1.4
 Author URI: http://qandaforum.trevorpythag.co.uk
 
 Translations Provided by Yuriy Petrovskiy (Russian), Gabriel Gil http://gabrielgil.es (Spanish)
@@ -57,6 +57,7 @@ function q_deactivate(){
 
 function create_question_post_type() {
 global $q_question_post_type;
+global $q_question_capabilities_tag;
 	if($q_question_post_type != "post" && $q_question_post_type != "page"){
 		register_post_type($q_question_post_type,
 		array(
@@ -79,7 +80,8 @@ global $q_question_post_type;
 				'slug' => 'question',
 				'with_front' => false
 			),
-			'has_archive' => 'question/recent'
+			'has_archive' => 'question/recent',
+			'capability_type' =>  $q_question_capabilities_tag,
 		)		
 	);
 	}

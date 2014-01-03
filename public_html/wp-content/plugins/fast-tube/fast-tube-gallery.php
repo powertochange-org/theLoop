@@ -8,7 +8,7 @@ http://blog.caspie.net/
 function fast_tube_gallery() { 
 	global $wpdb;	
 	$pattern = "/\[(?:(?:http:\/\/)?(?:www\.)?youtube\.com\/)?(?:(?:watch\?)?v=|v\/)?([a-zA-Z0-9\-\_]{11})(?:&[a-zA-Z0-9\-\_]+=[a-zA-Z0-9\-\_]+)*\]/";
-	$path = defined('WP_PLUGIN_URL') ? trailingslashit(WP_PLUGIN_URL . '/' . dirname(plugin_basename(__FILE__))) : trailingslashit(get_bloginfo('wpurl')) . PLUGINDIR . '/' . dirname(plugin_basename(__FILE__));
+	$path = trailingslashit( plugins_url( '', __FILE__ ) );
 	$limit = 5;
 	if(isset($_GET['vp'])) { $limit = $_GET['vp']; }
 	if(isset($_POST['vp'])) { $limit = $_POST['vp']; }
@@ -93,6 +93,7 @@ input.ftbutton:hover {
 	border: 1px dotted #ccc;
 	background: #fff;
 	margin-top: 10px;
+	margin-bottom: 10px;
 	padding: 10px;
 	text-align: justify;
 }
@@ -110,7 +111,7 @@ input.ftbutton:hover {
 
 	<h2 style="float:left;">Video Gallery</h2>
 		<div style="float:right;">
-	<form method="post" action="<?php $PHP_SELF; ?>">
+	<form method="post" action="">
 		<select name="vp" onchange="form.submit();">
 		<?php
 			$vidspp = array(5,10,15,20);
@@ -134,7 +135,7 @@ input.ftbutton:hover {
 			</thead>
 		<tbody>
 <?php
-	$next = $_GET['next'] ? $_GET['next'] : 0;
+	$next = isset($_GET['next']) ? $_GET['next'] : 0;
 	$results = $wpdb->get_results("SELECT id,post_date,post_modified,post_title,post_content,post_type from $wpdb->posts WHERE post_type = 'post' OR post_type = 'page' ORDER by post_date DESC LIMIT $next,18446744073709551615");	
 	$z = 1; $idcolor = '';
 	$i = $j = 0;
@@ -178,7 +179,7 @@ input.ftbutton:hover {
 							<div class="smti"><em>Post Information:</em></div>
 							&middot; Created: <span class="sminf-o">'.$result->post_date.'</span> &middot; Updated: <span class="sminf-o">'.$result->post_modified.'</span></div>
 							</td><td>
-							<form class="idch" name="videoaction" method="post" action="'.$PHP_SELF.'#'.$result->id.'">
+							<form class="idch" name="videoaction" method="post" action="#'.$result->id.'">
 							<input class="smin"'.$idcolor.' type="text" name="vid" maxlength="11" value="'.$m1.'" /><input type="hidden" value="'.$result->id.'" name="postid" /><input type="hidden" value="['.$m0.']" name="addedas" /><input type="hidden" value="'.$m1.'" name="videoid" /><br /><input name="check" class="ftbutton" type="submit" value="Check" /><input name="change" class="ftbutton" type="submit" value="Change" /><input name="remove" class="ftbutton" type="submit" value="Remove" />
 							</form>
 							</td></tr>';
@@ -197,7 +198,7 @@ input.ftbutton:hover {
 				</tr>
 			</tfoot>	
 		</table>';
-		if($_GET['next']) echo '<a style="float:left;padding:5px;text-decoration:none;" href="javascript:history.back()">&larr; Prev '.$limit.' Videos</a> ';
+		if(isset($_GET['next'])) echo '<a style="float:left;padding:5px;text-decoration:none;" href="javascript:history.back()">&larr; Prev '.$limit.' Videos</a> ';
 		if($i > $limit) echo '<a style="float:right;padding:5px;text-decoration:none;" href="admin.php?page=fast-tube/fast-tube-gallery.php&next='.$next.'&vp='.$limit.'">Next '.$limit.' Videos &rarr;</a>';
 
 	echo '</div>';

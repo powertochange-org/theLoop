@@ -13,24 +13,28 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	<?php 
 	$current_user = wp_get_current_user();
 	if(!isset($profile) || $current_user->user_login == $profile){
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		echo '<h4 style="float:right;position:relative;top:30px;"><a style="color:#adafb2;font-weight:bold;" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		
+		if(count($_POST) > 0){
+			include('update.php');
+		}
 	}
 	else{
-		echo '<h4 style="float:right;color:#adafb2;"><a href= "">MY PROFILE</a></h4>';
+		echo '<h4 style="float:right;position:relative;top:30px;"><a  style="color:#adafb2;font-weight:bold;" href= "?page=profile">MY PROFILE</a></h4>';
 	} ?>
 	
-	<BR>
-	<hr>
+	<BR><BR><BR><BR>
+	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo strtoupper ("$user->first_name $user->last_name")." | $user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
-				echo '<img src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
+				echo '<img src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
 			}
 			else { //we have a photo and can share it
-				echo	 '<img src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
+				echo	 '<img src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
 			} ?>
 			</div>
 			<div style='float:left;padding-left:23px;width:407px'>
@@ -202,51 +206,13 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			?>
-			<p>
+			<p style='margin:  5px 0'>
+			A personal message:
+			<?php echo $user->notes ?>
+			</p>
 			</div><div style='clear:both;'></div>
 		</div>
 	</div>
 	<div id="content-right">   
-		<div id="sidebar">
-			<div class="sidebaritem">
-				<h1>Search for Staff</h1><BR>
-				
-				<div id='simple-search-staff'>
-					<form id='s_s_s' method="post" action=""><div class='search-box' style='border-color:#adafb2'>
-						<input class='search-input' type='textbox' name='fullname' placeholder='Search' />
-						<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
-					</div></form>
-					<BR>
-					<p>You can search using any relevant keywords, like name, jop title, ministry, city, postal code, etc.</p>
-					<!-- BR>
-					<!-- a class='false-link'><h2>SHOW ADAVANCED SEARCH</h2></a -->
-				</div>
-				<div id='advanced-search-staff'>
-				</div>
-			</div>
-		</div>
+		<?php include('pro_sidebar.php') ?>
 	</div><div style='clear:both;'></div>
-
-<!--
-	
-			<div id="nameheader">
-			<h1><?php
-				echo $user->first_name . " " . $user->last_name; //display name
-				?></h1>
-			</div>
-			<div id="left">
-				<p />
-<?php
-			if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
-				echo '<img src="../wp-content/uploads/staff_photos/anonymous.jpg" width=290 />';
-			}
-			else { //we have a photo and can share it
-				echo	 '<img src="../wp-content/uploads/staff_photos/' . $user->photo . '"  width=290 />';
-			}
-			echo str_replace("\\", "", $user->notes); //this displays the 'About me' section located beneath the profile pic
-			?>
-			</div><!--left->
-			<div class="right">
-			<?php include "infocard.php"; ?>
-			</div>
-<!-- -->

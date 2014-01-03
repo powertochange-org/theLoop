@@ -3,8 +3,8 @@ Contributors: Caspie
 Donate link: http://blog.caspie.net/downloads
 Tags: YouTube, video, videos, clip, clips, insert, post, page, thumbs, skins, gallery
 Requires at least: 2.6
-Tested up to: 2.7.1
-Stable tag: 2.3
+Tested up to: 3.5.1
+Stable tag: 2.3.1
 
 Fast and easy way to insert videos from YouTube right into your WordPress blog posts or pages.
 
@@ -82,6 +82,14 @@ Ok, the easiest way is to copy some video URL and to put it right into your post
 * [http://www.youtube.com/watch?v=gOAra5f0qlk&feature=related] will work too!
 
 == Changelog ==
+
+Version: 2.3.1 (2 May 2013)
+
+ * This is a trunk version for urgent fixes
+ * Fixed autoplay issue
+ * Fixed various warnings and notices
+ * Fixed some depricated code
+
 
 Version: 2.3 (20 Mar 2009)
 

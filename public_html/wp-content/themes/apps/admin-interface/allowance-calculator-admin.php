@@ -32,10 +32,10 @@ $question_types = Array('radiobutton', 'checkbox', 'dropdown', 'header', 'radiob
 		-in: setUserValues() 		specify how to set the user's stored data
 		-in: parseUserValuesInput()	specify how to generate the question in the pdf file.
 	
-	there is no option for storing user's data because it is automatic sp 
+	there is no option for storing user's data because it is automatic
 	all the information is the form is stored;
 	
-From question types it may be possible to switch between them without user data corruption (such radiobutton and dropdown)
+For question types it may be possible to switch between them without user data corruption (such radiobutton and dropdown)
 */
 
 $points_width = 5; //specify the width of the points and max_points textboxes
@@ -237,7 +237,7 @@ function parseInput(){
 				case "m": //minMax range
 					setConstant("role_".$key[1]."_".$key[2]."_".$key[3], $_POST[$fullKey]);
 					break;
-				case "e": //edit sturcture of questions and answers todo sp
+				case "e": //edit structure of questions and answers
 					switch($key[1]){
 						case "add_answer":
 							if (isPullData($_POST['e-add_answer-question'])){
@@ -299,7 +299,7 @@ function parseInput(){
 	}
 }
 
-//modify stucture function todo sp test todo move to last
+//modify structure function todo test todo move to last
 //test
 // add answer (first, middle, last)   ... good!
 // remove answer (first, middle/last) ... good!
@@ -596,12 +596,12 @@ function printAdmin(){
 			<table style='width:100%'>
 			<tr><th></th><th>Recommended<BR>Minimum</th><th>Absolute<BR>Maximum</th></tr>
 			<?php echo printMinMax($allowance_constant['fieldIndividual']); ?>  
-			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Ministry Leader (all other types)</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-7-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_7_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-7-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_7_max")?>'></tr>
-			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Ministry Director</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-8-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_8_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-8-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_8_max")?>'></tr>
-			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Domain Leader</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-9-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_9_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-9-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_9_max")?>'></tr>
+			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Managers and Other Ministry Leaders</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-6-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_6_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-6-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_6_max")?>'></tr>
+			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Ministry Director</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-7-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_7_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-7-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_7_max")?>'></tr>
+			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['fieldLeader']] ?><BR>Domain Leader</td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-8-min' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_8_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['fieldLeader'] ?>-8-max' value='<?php echo getConstant("role_".$allowance_constant['fieldLeader']."_8_max")?>'></tr>
 			<?php echo printMinMax($allowance_constant['corporateIndividual']); ?>
-			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['corporateLeader']] ?><BR>Manager / Other Dept. Leader</td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-7-min' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_7_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-7-max' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_7_max")?>'></tr>
-			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['corporateLeader']] ?><BR>Department Director</td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-8-min' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_8_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-8-max' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_8_max")?>'></tr>
+			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['corporateLeader']] ?><BR>Manager / Other Dept. Leader</td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-6-min' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_6_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-6-max' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_6_max")?>'></tr>
+			<tr><td><?php echo $allowance_constant['roleType'][$allowance_constant['corporateLeader']] ?><BR>Department Director</td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-7-min' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_7_min")?>'></td><td><input type='text' name='m-<?php echo $allowance_constant['corporateLeader'] ?>-7-max' value='<?php echo getConstant("role_".$allowance_constant['corporateLeader']."_7_max")?>'></tr>
 			
 			<tr><td colspan='3'><input type="submit" value="Save"></td></tr>
 			</table>
@@ -882,7 +882,7 @@ function clean_tree(){
 			$current = $sub_result->next;
 		}
 	}
-	//droptableish
+	//drop tableish
 	$sql = "RENAME TABLE allowance_question TO allowance_question_old"; 
 	$wpdb->get_results($sql);
 	$sql = "CREATE TABLE allowance_question LIKE allowance_question_old"; 

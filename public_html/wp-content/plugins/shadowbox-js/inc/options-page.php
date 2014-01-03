@@ -10,6 +10,7 @@
  */
 ?>
 		<div class="wrap shadowbox">
+			<div id="icon-options-general" class="icon32"><br /></div>
 			<h2><?php _e( 'Shadowbox JS' , 'shadowbox-js' ); ?></h2>
 			<?php if ( has_filter ( 'shadowbox-js' ) ) : ?>
 			<div id="shadowbox-override" class="notice">
@@ -20,10 +21,15 @@
 				</p>
 			</div>
 			<?php endif; ?>
+			<?php if ( ! empty ( $this->options ) && ! has_filter( 'shadowbox-js' ) ) : ?>
+			<div class="metabox-holder">
+				<?php do_meta_boxes ( 'shadowbox-js' , 'normal' , '' ); ?>
+			</div>
+			<?php endif; ?>
 			<form action="options.php" method="post">
 				<?php settings_fields ( 'shadowbox' ); ?>
 				<?php if ( ! empty ( $this->options ) ) : // Start option check. Don't show most of the form if there are no options in the db ?>
-				<input type="hidden" name="shadowbox[version]" value="<?php echo esc_attr ( $this->dbversion ); ?>" />
+				<input type="hidden" name="shadowbox[version]" value="<?php echo $this->esc ( $this->dbversion , 'attr' ); ?>" />
 				<h3><?php _e( 'General' , 'shadowbox-js' ); ?></h3>
 				<p><?php _e( 'These are general options for the Shadowbox Javascript that tell Shadowbox how to run, how to look and what language to use.' , 'shadowbox-js' ); ?></p>
 				<table class="form-table">
@@ -111,6 +117,19 @@
 							<?php _e( 'Enabling this will only load Shadowbox and its dependencies when needed based on the content of your posts.	Please note that when enabling this Shadowbox will not be loaded if rel="shadowbox" is not found in the content of your post(s).  If you experience problems after enabling this, try disabling. Default is false.' , 'shadowbox-js' ); ?>
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row">
+							<?php _e( 'Use Cached shadowbox.js' , 'shadowbox-js' ); ?>
+						</th>
+						<td>
+							<select name="shadowbox[useCache]">
+								<option value="true"<?php selected ( 'true' , $this->get_option ( 'useCache' ) ); ?>><?php _e( 'true' , 'shadowbox-js' ); ?></option>
+								<option value="false"<?php selected ( 'false' , $this->get_option ( 'useCache' ) ); ?>><?php _e( 'false' , 'shadowbox-js' ); ?></option>
+							</select>
+							<br />
+							<?php _e( 'This will allow this plugin to create a cached copy of shadowbox.js in wp-content/uploads/shadowbox-js.  With this disabled the shadowbox.js file will be built on the fly during each page load.  If you experience problems with this plugin not working with this enabled, try disabling. Default is true.' , 'shadowbox-js' ); ?>
+						</td>
+					</tr>
 				</table>
 				<h3 id="sbadvancedtitle"><?php _e( 'Advanced Configuration' , 'shadowbox-js' ); ?></h3>
 				<p><input id="sbadvancedbtn" type="button" class="button" value="<?php _e( 'Show Advanced Configuration' , 'shadowbox-js' ); ?>" style="display:none; font-weight: bold; width: 216px;"/></p>
@@ -186,7 +205,7 @@
 							<?php _e( 'Overlay Color' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[overlayColor]" value="<?php echo esc_attr ( $this->get_option ( 'overlayColor' ) ); ?>" size="7" />
+							<input type="text" name="shadowbox[overlayColor]" value="<?php echo $this->esc ( $this->get_option ( 'overlayColor' ) , 'attr' ); ?>" size="7" />
 							<br />
 							<?php _e( 'The color to use for the modal overlay (in hex). Defaults to "#000".' , 'shadowbox-js' ); ?>
 						</td>
@@ -196,7 +215,7 @@
 							<?php _e( 'Overlay Opacity' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[overlayOpacity]" value="<?php echo esc_attr ( $this->get_option ( 'overlayOpacity' ) ); ?>" size="4" />
+							<input type="text" name="shadowbox[overlayOpacity]" value="<?php echo $this->esc ( $this->get_option ( 'overlayOpacity' ) , 'attr' ); ?>" size="4" />
 							<br />
 							<?php _e( 'The opacity to use for the modal overlay. Defaults to 0.8.' , 'shadowbox-js' ); ?>
 						</td>
@@ -206,7 +225,7 @@
 							<?php _e( 'Flash Background Color' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[flashBgColor]" value="<?php echo esc_attr ( $this->get_option ( 'flashBgColor' ) ); ?>" size="7" />
+							<input type="text" name="shadowbox[flashBgColor]" value="<?php echo $this->esc ( $this->get_option ( 'flashBgColor' ) , 'attr' ); ?>" size="7" />
 							<br />
 							<?php _e( 'The default background color to use for Flash movies. Defaults to "#000000".' , 'shadowbox-js' ); ?>
 						</td>
@@ -242,7 +261,7 @@
 							<?php _e( 'Slideshow Delay' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[slideshowDelay]" value="<?php echo esc_attr ( $this->get_option ( 'slideshowDelay' ) ); ?>" size="2" style="width: 1.5em;" />
+							<input type="text" name="shadowbox[slideshowDelay]" value="<?php echo $this->esc ( $this->get_option ( 'slideshowDelay' ) , 'attr' ); ?>" size="2" style="width: 1.5em;" />
 							<br />
 							<?php _e( 'A delay (in seconds) to use for slideshows. If set to anything other than 0, this value determines an interval at which Shadowbox will automatically proceed to the next piece in the gallery. Defaults to 0.' , 'shadowbox-js' ); ?>
 						</td>
@@ -252,7 +271,7 @@
 							<?php _e( 'Resize Duration' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[resizeDuration]" value="<?php echo esc_attr ( $this->get_option ( 'resizeDuration' ) ); ?>" size="4" />
+							<input type="text" name="shadowbox[resizeDuration]" value="<?php echo $this->esc ( $this->get_option ( 'resizeDuration' ) , 'attr' ); ?>" size="4" />
 							<br />
 							<?php _e( 'The duration (in seconds) of the resizing animations. Defaults to 0.55.' , 'shadowbox-js' ); ?>
 						</td>
@@ -262,7 +281,7 @@
 							<?php _e( 'Fade Duration' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[fadeDuration]" value="<?php echo esc_attr ( $this->get_option ( 'fadeDuration' ) ); ?>" size="4" />
+							<input type="text" name="shadowbox[fadeDuration]" value="<?php echo $this->esc ( $this->get_option ( 'fadeDuration' ) , 'attr' ); ?>" size="4" />
 							<br />
 							<?php _e( 'The duration (in seconds) of the fade animations. Defaults to 0.35.' , 'shadowbox-js' ); ?>
 						</td>
@@ -324,7 +343,7 @@
 							<?php _e( 'Counter Limit' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[counterLimit]" value="<?php echo esc_attr ( $this->get_option ( 'counterLimit' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[counterLimit]" value="<?php echo $this->esc ( $this->get_option ( 'counterLimit' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'Limits the number of counter links that will be displayed in a "skip" style counter. If the actual number of gallery elements is greater than this value, the counter will be restrained to the elements immediately preceding and following the current element. Defaults to 10.' , 'shadowbox-js' ); ?>
 						</td>
@@ -334,7 +353,7 @@
 							<?php _e( 'Viewport Padding' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[viewportPadding]" value="<?php echo esc_attr ( $this->get_option ( 'viewportPadding' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[viewportPadding]" value="<?php echo $this->esc ( $this->get_option ( 'viewportPadding' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'The amount of padding (in pixels) to maintain around the edge of the browser window. Defaults to 20.' , 'shadowbox-js' ); ?>
 						</td>
@@ -384,7 +403,7 @@
 							<?php _e( 'Initial Height' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[initialHeight]" value="<?php echo esc_attr ( $this->get_option ( 'initialHeight' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[initialHeight]" value="<?php echo $this->esc ( $this->get_option ( 'initialHeight' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'The height of Shadowbox (in pixels) when it first appears on the screen. Defaults to 160.' , 'shadowbox-js' ); ?>
 						</td>
@@ -394,7 +413,7 @@
 							<?php _e( 'Initial Width' , 'shadowbox-js' ); ?>
 						</th> 
 						<td>
-							<input type="text" name="shadowbox[initialWidth]" value="<?php echo esc_attr ( $this->get_option ( 'initialWidth' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[initialWidth]" value="<?php echo $this->esc ( $this->get_option ( 'initialWidth' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'The width of Shadowbox (in pixels) when it first appears on the screen. Defaults to 320.' , 'shadowbox-js' ); ?>
 						</td>
@@ -443,7 +462,7 @@
 							<?php _e( 'Flash Params' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<textarea name="shadowbox[flashParams]" rows="10" cols="50"><?php echo htmlspecialchars ( $this->get_option ( 'flashParams' ) , ENT_NOQUOTES ); ?></textarea>
+							<textarea name="shadowbox[flashParams]" rows="10" cols="50"><?php echo $this->esc ( $this->get_option ( 'flashParams' ) , 'htmledit' ); ?></textarea>
 							<br />
 							<?php _e( 'A list of parameters (in a JavaScript object) that will be passed to a flash &lt;object&gt;. For a partial list of available parameters, see <a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_12701">this page</a>. Only one parameter is specified by default: bgcolor. Defaults to {bgcolor:"#000000", allowFullScreen:true}.' , 'shadowbox-js' ); ?>
 						</td>
@@ -453,7 +472,7 @@
 							<?php _e( 'Flash Vars' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<textarea name="shadowbox[flashVars]" rows="10" cols="50"><?php echo htmlspecialchars ( $this->get_option ( 'flashVars' ), ENT_NOQUOTES ); ?></textarea>
+							<textarea name="shadowbox[flashVars]" rows="10" cols="50"><?php echo $this->esc ( $this->get_option ( 'flashVars' ), 'htmledit' ); ?></textarea>
 							<br />
 							<?php _e( 'A list of variables (in a JavaScript object) that will be passed to a flash movie as <a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_16417">FlashVars</a>. Defaults to {}.' , 'shadowbox-js' ); ?>
 						</td>
@@ -463,7 +482,7 @@
 							<?php _e( 'Flash Version' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[flashVersion]" value="<?php echo esc_attr ( $this->get_option ( 'flashVersion' ) ); ?>" size="5" />
+							<input type="text" name="shadowbox[flashVersion]" value="<?php echo $this->esc ( $this->get_option ( 'flashVersion' ) , 'attr' ); ?>" size="5" />
 							<br />
 							<?php _e( 'The minimum Flash version required to play a flash movie (as a string). Defaults to "9.0.0".' , 'shadowbox-js' ); ?>
 						</td>
@@ -549,7 +568,7 @@
 							<?php _e( 'Generic Video Width' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[genericVideoWidth]" value="<?php echo esc_attr ( $this->get_option ( 'genericVideoWidth' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[genericVideoWidth]" value="<?php echo $this->esc ( $this->get_option ( 'genericVideoWidth' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'The width of Shadowbox (in pixels) when displaying videos. Defaults to 640.' , 'shadowbox-js' ); ?>
 						</td>
@@ -559,7 +578,7 @@
 							<?php _e( 'Generic Video Height' , 'shadowbox-js' ); ?>
 						</th>
 						<td>
-							<input type="text" name="shadowbox[genericVideoHeight]" value="<?php echo esc_attr ( $this->get_option ( 'genericVideoHeight' ) ); ?>" size="3" />
+							<input type="text" name="shadowbox[genericVideoHeight]" value="<?php echo $this->esc ( $this->get_option ( 'genericVideoHeight' ) , 'attr' ); ?>" size="3" />
 							<br />
 							<?php _e( 'The height of Shadowbox (in pixels) when when displaying videos. Defaults to 385.' , 'shadowbox-js' ); ?>
 						</td>

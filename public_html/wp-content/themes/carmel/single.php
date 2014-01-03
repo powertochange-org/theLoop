@@ -6,7 +6,7 @@
 					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 						<?php $is_pray = in_category( 'prayer-requests' ) ?>
 						<?php  if($is_pray) {} else { ?>  
-							<div style='margin-right:20px;width:40px;height:35px;background-color:#f7941d;display:inline;float:left;text-align:center;padding-top:5px;'>
+							<div style='margin-right:20px;width:40px;padding-bottom:3px;background-color:#f7941d;display:inline;float:left;text-align:center;padding-top:5px;'>
 								<span style='color:#ffffff;'><?php echo strtoupper(get_the_time('M')) ?></span><BR>
 								<span style='color:#ffffff;font-size:20px;'><strong style='color:#ffffff;'><?php the_time('d') ?></strong></span>
 							</div>
@@ -16,7 +16,7 @@
 						<?php if ($is_pray){ ?>
 						If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, please send them to <a href="mailto:prayersupport@powertochange.org">prayersupport@powertochange.org</a>.
 						<hr>
-						<div style='width:40px;height:35px;background-color:#f7941d;display:inline;float:left;text-align:center;padding-top:5px;'>
+						<div style='width:40px;height:35px;background-color:#f7941d;display:inline;float:left;text-align:center;padding-top:5px;padding-bottom: 5px;'>
 							<span style='color:#ffffff;'><?php echo strtoupper(get_the_time('M')) ?></span><BR>
 							<span style='color:#ffffff;font-size:20px;'><strong style='color:#ffffff;'><?php the_time('d') ?></strong></span>
 						</div>
