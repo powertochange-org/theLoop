@@ -13,22 +13,20 @@
 <br/>
 Welcome to the Staff Directory. <p /><p/>
 
-This application replaces the booklet version of the PTC Staff Address Book.  Staff will now be able to search for other staff members in their city or region as well as look up details about other staff.  Feel free to use any parameters to begin your search.<p/> 
+This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.<p/> 
 
 Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.<p/>
-
-We hope you enjoy using this new tool!<p/>
-<form action="" method="get">
+<form action="" method="post">
 <input type='textbox' name='fullname' />
 <input type='submit' name='report' value='Search' />
 </form>
 <?php
 		$fullname = "";
-		if (isset($_GET['fullname'])) {
-			$fullname = $_GET['fullname'] ; //the entire thing that was searched for
+		if (isset($_POST['fullname'])) {
+			$fullname = $_POST['fullname'] ; //the entire thing that was searched for
 		} 
 		$names = preg_split("/[\s,]+/", $fullname);  // split the phrase by any number of commas or space characters,
-		if(! empty($_GET['fullname'])){ //if user searched something, it'll live in post
+		if(! empty($_POST['fullname'])){ //if user searched something, it'll live in post
 			//this is where my intelligent search kicks in. here we try to identify some input
 			//check if ministry
 			$j=0;
@@ -271,11 +269,11 @@ function ministry($ministry) { //see if the given word matches a keyword associa
 		case 'streams':
 			return 'Connecting Streams';
 		case 'lig':
-			return 'LIG';
+			return 'LeaderImpact';
 		case 'leader':
-			return 'LeaderImpact Group';
+			return 'LeaderImpact';
 		case 'impact':
-			return 'LeaderImpact Group';
+			return 'LeaderImpact';
 		case 'drime':
 			return 'DRIME';
 		case 'christian':
@@ -288,7 +286,7 @@ function ministry($ministry) { //see if the given word matches a keyword associa
 			return "President's Office";
 		case 'corporate':
 			return 'Corporate Services';
-		case 'corporate services':
+		case 'services':
 			return 'Corporate Services';
 		case 'advancement':
 			return 'Advancement';
@@ -308,12 +306,6 @@ function ministry($ministry) { //see if the given word matches a keyword associa
 			return 'Marketing & Communications';
 		case 'communications':
 			return 'Marketing & COmmunications';
-		case 'project services':
-			return 'Project Services';
-		case 'projectservices':
-			return 'Project Services';
-		case 'ps':
-			return 'Project Services';
 			
 		default:
 			return false;
