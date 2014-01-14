@@ -717,9 +717,8 @@ include('functions/js_functions.php');
 		function dump($d){
 			global $wpdb;
 			$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
-			//todo var_dump($_POST);
 			//echo $sql;
-			$wpdb->get_results($sql);
+			//$wpdb->get_results($sql);
 		}
 		
 		if (getAccess($current_user_id) == $allowance_constant['noAccess']){
