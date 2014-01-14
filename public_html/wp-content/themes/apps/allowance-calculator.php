@@ -656,15 +656,33 @@ include('functions/js_functions.php');
 				}
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'Previous number of hours:__________________________   New Number of Hours: ____________________');
+				
+				if ($_POST['preHours'] == ""){
+					$pdf->Write(5,'Previous number of hours:_____________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous number of hours: $_POST[preHours]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newHours'] == ""){
+					$pdf->Write(5,'New number of hours: ________________________');
+				}
+				else {
+					$pdf->Write(5,"New number of hours:  $_POST[newHours]");
+				}
 				$pdf->LN();
 				$pdf->SetFont('Arial','bi',10);
 				$pdf->Write(5,'** If schedule is less than 40 hours per week enter normal days/ hours worked');
-				$pdf->SetFont('Arial','',10);Monday: Tuesday: Wednesday: Thursday: Friday:
+				$pdf->SetFont('Arial','',10);
 				$pdf->LN();
 				$pdf->LN();
-				$line = ' ________   ';
-				$pdf->Write(5,"Monday:$line Tuesday:$line Wednesday:$line Thursday:$line Friday:$line");
+				$line = ' ________'.$_POST['mon'];
+				$pdf->Write(5,"Monday: ".(($_POST['mon'] == "") ? $line : $_POST['mon']).
+						"    Tuesday: ".(($_POST['tues'] == "") ? $line : $_POST['tues']).
+						"    Wednesday: ".(($_POST['wed'] == "") ? $line : $_POST['wed']).
+						"    Thursday: ".(($_POST['thurs'] == "") ? $line : $_POST['thurs']).
+						"    Friday: ".(($_POST['fri'] == "") ? $line : $_POST['fri']));
+				
 				$pdf->Line(10, $pdf->GetY() + 8, 195, $pdf->GetY() + 8);
 				$pdf->LN();
 				
@@ -672,13 +690,13 @@ include('functions/js_functions.php');
 				
 				
 				$pdf->LN();
-				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: ____________');
+				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'Ministry/Department Director Signature: ________________________________________ Date: ____________');
+				$pdf->Write(5,'Ministry/Department Director Signature: ________________________________________ Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'HR Authorizing Agent: ______________________________________________________ Date: ____________');
+				$pdf->Write(5,'HR Authorizing Agent: ______________________________________________________ Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
 				ob_end_clean();
@@ -1041,6 +1059,14 @@ include('functions/js_functions.php');
 					document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
 					document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
 					document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
+					document.getElementById('preHours').value = document.getElementById('input_preHours').value;
+					document.getElementById('newHours').value = document.getElementById('input_newHours').value;
+					document.getElementById('mon').value = document.getElementById('input_mon').value;
+					document.getElementById('tues').value = document.getElementById('input_tues').value;
+					document.getElementById('wed').value = document.getElementById('input_wed').value;
+					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
+					document.getElementById('fri').value = document.getElementById('input_fri').value;
+					document.getElementById('date').value = document.getElementById('input_date').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1132,6 +1158,14 @@ include('functions/js_functions.php');
 							<input type='hidden' name='maximum_month' id='maximum_month'>
 							<input type='hidden' name='preAllowance' id='preAllowance'>
 							<input type='hidden' name='newAllowance' id='newAllowance'>
+							<input type='hidden' name='preHours' id='preHours'>
+							<input type='hidden' name='newHours' id='newHours'>
+							<input type='hidden' name='mon' id='mon'>
+							<input type='hidden' name='tues' id='tues'>
+							<input type='hidden' name='wed' id='wed'>
+							<input type='hidden' name='thurs' id='thurs'>
+							<input type='hidden' name='fri' id='fri'>
+							<input type='hidden' name='date' id='date'>
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1157,11 +1191,28 @@ include('functions/js_functions.php');
 						<td id='output_maximum_month'></td>
 					</tr>
 				</table>
-				<BR>
-				Previous Allowance: <input type='text' id='input_preAllowance'>
-				New Allowance: <input type='text' id='input_newAllowance'><BR>
-				(for the download form)<BR>
-				<BR>
+				<hr>
+				<strong>Change in Allowance or Hours</strong>
+				<table><tr>
+				<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
+				<td>New Allowance: <input type='text' id='input_newAllowance'></td>
+				</tr><tr>
+				<td>Previous number of hours: <input type='text' style="width:40px" id='input_preHours'></td>
+				<td>New Number of Hours: <input type='text' style="width:40px" id='input_newHours'></td>
+				</tr><tr>
+				<td colspan='2'><strong>** If schedule is less than 40 hours per week enter normal days/ hours worked</strong></td>
+				</tr></table>
+				<table><tr>
+				<td>Monday: <input type='text' style="width:40px" id='input_mon'></td>
+				<td>Tuesday: <input type='text' style="width:40px" id='input_tues'></td>
+				<td>Wednesday: <input type='text' style="width:40px" id='input_wed'></td>
+				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
+				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
+				</tr></table>
+				Date: <input type='text' id='input_date' value='<?php echo date("j M Y") ?>'>
+				
+				
+				<hr>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
