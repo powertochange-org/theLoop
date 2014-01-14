@@ -676,7 +676,7 @@ include('functions/js_functions.php');
 				$pdf->SetFont('Arial','',10);
 				$pdf->LN();
 				$pdf->LN();
-				$line = ' ________'.$_POST['mon'];
+				$line = ' ________';
 				$pdf->Write(5,"Monday: ".(($_POST['mon'] == "") ? $line : $_POST['mon']).
 						"    Tuesday: ".(($_POST['tues'] == "") ? $line : $_POST['tues']).
 						"    Wednesday: ".(($_POST['wed'] == "") ? $line : $_POST['wed']).
@@ -685,9 +685,6 @@ include('functions/js_functions.php');
 				
 				$pdf->Line(10, $pdf->GetY() + 8, 195, $pdf->GetY() + 8);
 				$pdf->LN();
-				
-				
-				
 				
 				$pdf->LN();
 				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
