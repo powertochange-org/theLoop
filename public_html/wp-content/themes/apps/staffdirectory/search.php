@@ -21,11 +21,10 @@
 				else { //display welcome message if nothing being search for
 					?><p class='orange-box'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
 
-		This application replaces the booklet version of the PTC Staff Address Book.  Staff will now be able to search for other staff members in their city or region as well as look up details about other staff.  Feel free to use any parameters to begin your search.<p/> 
+		This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.<p/> 
 
 		Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.<p/>
-
-		We hope you enjoy using this new tool!<p/><?php
+<?php
 				}
 				$names = preg_split("/[\s,]+/", $fullname);  // split the phrase by any number of commas or space characters,
 				if(! empty($_POST['fullname'])){ //if user searched something, it'll live in post
@@ -275,11 +274,11 @@ function ministry($ministry) { //see if the given word matches a keyword associa
 		case 'streams':
 			return 'Connecting Streams';
 		case 'lig':
-			return 'LIG';
+			return 'LeaderImpact';
 		case 'leader':
-			return 'LeaderImpact Group';
+			return 'LeaderImpact';
 		case 'impact':
-			return 'LeaderImpact Group';
+			return 'LeaderImpact';
 		case 'drime':
 			return 'DRIME';
 		case 'christian':
