@@ -641,9 +641,19 @@ include('functions/js_functions.php');
 				$pdf->Write(5,'Change in Allowance or Hours');
 				$pdf->SetFont('Arial','',10);
 				$pdf->LN();
-				$pdf->Write(5,'Previous Allowance:___________________________________'); 
-				$pdf->SETX(60);
-				$pdf->Write(5,'New Allowance: _____________________________');
+				if ($_POST['preAllowance'] == ""){
+					$pdf->Write(5,'Previous Allowance:__________________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous Allowance: $_POST[preAllowance]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newAllowance'] == ""){
+					$pdf->Write(5,'New Allowance: _____________________________');
+				}
+				else {
+					$pdf->Write(5,"New Allowance:  $_POST[newAllowance]");
+				}
 				$pdf->LN();
 				$pdf->LN();
 				$pdf->Write(5,'Previous number of hours:__________________________   New Number of Hours: ____________________');
@@ -709,7 +719,7 @@ include('functions/js_functions.php');
 			$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
 			//todo var_dump($_POST);
 			//echo $sql;
-			//$wpdb->get_results($sql);
+			$wpdb->get_results($sql);
 		}
 		
 		if (getAccess($current_user_id) == $allowance_constant['noAccess']){
@@ -1030,6 +1040,8 @@ include('functions/js_functions.php');
 					document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
 					document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
 					document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
+					document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
+					document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1119,6 +1131,8 @@ include('functions/js_functions.php');
 							<input type='hidden' name='maximum' id='maximum'>
 							<input type='hidden' name='minimum_month' id='minimum_month'>
 							<input type='hidden' name='maximum_month' id='maximum_month'>
+							<input type='hidden' name='preAllowance' id='preAllowance'>
+							<input type='hidden' name='newAllowance' id='newAllowance'>
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1144,6 +1158,11 @@ include('functions/js_functions.php');
 						<td id='output_maximum_month'></td>
 					</tr>
 				</table>
+				<BR>
+				Previous Allowance: <input type='text' id='input_preAllowance'>
+				New Allowance: <input type='text' id='input_newAllowance'><BR>
+				(for the download form)<BR>
+				<BR>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
