@@ -30,7 +30,7 @@ function changeNL($string){
 ?>
 <?php get_header(); ?>
 <div id="content">
-	<div id="main-content" class='form'>
+	<div id="main-content" class='form-item'>
 		<h1>Forms &amp; Information</h1>
 		<hr>
 	    <?php if (have_posts()) : while (have_posts()) : the_post(); 
