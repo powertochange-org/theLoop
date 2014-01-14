@@ -4,6 +4,29 @@
 *
 *
 */
+
+function changeNL($string){
+	$out = "";
+	for ($i = 0; $i < strlen($string); $i ++){
+		if (ord ($string{$i}) == 10){
+			$out.= "<BR>";
+			if ($i + 1 < strlen($string) and ord ($string{$i + 1}) == 13){
+				$i ++;
+			}
+		}
+		else if (ord ($string{$i}) == 13){
+			$out.= "<BR>";
+			if ($i + 1 < strlen($string) and ord ($string{$i + 1}) == 10){
+				$i ++;
+			}
+		}
+		else {
+			$out .= $string{$i};
+		}
+	}
+	return $out;
+}
+
 ?>
 <?php get_header(); ?>
 <div id="content">
@@ -34,7 +57,7 @@
 				 <hr>
 				 <BR>
 				<?php the_post_thumbnail(); ?>
-				<?php $parts = explode('<!-- links -->', get_the_content());
+				<?php $parts = explode('<!-- links -->', changeNL(get_the_content()));
 				echo $parts[0]; ?>
 			</div>
 			<!--/box-->   
