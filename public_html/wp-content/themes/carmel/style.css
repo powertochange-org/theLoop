@@ -33,7 +33,7 @@ footer, header, hgroup, menu, nav, section {
 body {
 	/*line-height: 1;*/
 }
-ol.menu ,ul.menu  {
+ol.menu ,ul.menu, ol.popupMenu, ul.popupMenu {
 	list-style: none;
 }
 blockquote, q {
@@ -131,7 +131,7 @@ header .button.related{
 	height:31px;
 	color:#ffffff;
 	font-family:'Open Sans', sans-serif;
-	padding:0px 20px;
+	padding:0px 41px;
 	float: left;
 	position: relative;
 	font-size:14px;

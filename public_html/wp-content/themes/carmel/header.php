@@ -33,11 +33,11 @@
 		<header>
 			<div class='inner' style='position:relative;'>
 				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
-				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
+				<a href='/'><img style='position:relative;left:37px;top:-5px' class='header-logo' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
 				
 				<a id='popUpButton' class='button related' onmouseout='popUpHide();' onmouseover='popUpShow();'>Related Links</a>
 				<div id='popUp' onmouseout='popUpHide();' onmouseover='popUpShow();' style='display:none;position:absolute;background-color:#f4f4f4;padding:10px 40px;right:10px;top:69px;z-index:1;border:1px solid #d6d7d4;'>
-					<center><ul>
+					<center><ul class='popupMenu'>
 						<?php //may turn into wordpress menu */ ?>
 						<li class='popupMenu'><a class='popupMenu' href='https://absences.powertochange.org'>ABSENCE TRACKER</a></li>
 						<li class='popupMenu'><a class='popupMenu' href='mailto:helpdesk@powertochange.org'>HELPDESK</a></li>
