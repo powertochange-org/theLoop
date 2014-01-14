@@ -887,14 +887,14 @@ footer .copy{
 	
 }
 
-#main-content.form  .post h2, #main-content.ministries  .post h2{
+#main-content.form  .post h2, #main-content.ministries  .post h2, #main-content.form-item .post h2{
 	font-size:17px;
 	font-weight:bold;
 	color:inherit;
 	margin-bottom:20px;
 }
 
-#main-content.form  .post p, #main-content.ministries  .post p{
+#main-content.form  .post p, #main-content.ministries  .post p, #main-content.form-item .post p{
 	color:inherit;
 }
 
@@ -915,7 +915,7 @@ footer .copy{
 	color:#858585;
 }
 
-#main-content.form .post a{
+#main-content.form .post a, #main-content.form-item .post a{
 	color:inherit;
 }
 
