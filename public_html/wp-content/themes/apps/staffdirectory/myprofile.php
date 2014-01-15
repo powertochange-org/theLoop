@@ -71,7 +71,7 @@ $max_file_size = 30000000; // size in bytes
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<script type="text/javascript">
 
@@ -91,11 +91,11 @@ $max_file_size = 30000000; // size in bytes
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
 					echo '<img style="display:block" src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;'>
+					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
 				<?php }
 				else { //we have a photo and can share it
 					echo '<img style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;'>
+					<input class='orange'id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
 				<?php } ?>
 			</div>
 

@@ -5,28 +5,6 @@
 *
 */
 
-function changeNL($string){
-	$out = "";
-	for ($i = 0; $i < strlen($string); $i ++){
-		if (ord ($string{$i}) == 10){
-			$out.= "<BR>";
-			if ($i + 1 < strlen($string) and ord ($string{$i + 1}) == 13){
-				$i ++;
-			}
-		}
-		else if (ord ($string{$i}) == 13){
-			$out.= "<BR>";
-			if ($i + 1 < strlen($string) and ord ($string{$i + 1}) == 10){
-				$i ++;
-			}
-		}
-		else {
-			$out .= $string{$i};
-		}
-	}
-	return $out;
-}
-
 ?>
 <?php get_header(); ?>
 <div id="content">
@@ -56,8 +34,11 @@ function changeNL($string){
 				 <h2 style="font-size:20px;font-weight:bold;margin-bottom:20px;"><a style='color:#f7941d;' href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
 				 <hr>
 				 <BR>
-				<?php the_post_thumbnail(); ?>
-				<?php $parts = explode('<!-- links -->', changeNL(get_the_content()));
+				<?php the_post_thumbnail();
+				$content = get_the_content();
+				$content = apply_filters('the_content', $content);
+				$content = str_replace(']]>', ']]&gt;', $content);
+				$parts = explode('<!-- links -->', $content);
 				echo $parts[0]; ?>
 			</div>
 			<!--/box-->   
