@@ -1073,7 +1073,6 @@ include('functions/js_functions.php');
 					document.getElementById('wed').value = document.getElementById('input_wed').value;
 					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
 					document.getElementById('fri').value = document.getElementById('input_fri').value;
-					document.getElementById('date').value = document.getElementById('input_date').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1172,7 +1171,7 @@ include('functions/js_functions.php');
 							<input type='hidden' name='wed' id='wed'>
 							<input type='hidden' name='thurs' id='thurs'>
 							<input type='hidden' name='fri' id='fri'>
-							<input type='hidden' name='date' id='date'>
+							<input type='hidden' name='date' id='date' value="">
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1216,8 +1215,6 @@ include('functions/js_functions.php');
 				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
 				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
 				</tr></table>
-				Date: <input type='text' id='input_date' value='<?php echo date("j M Y") ?>'>
-				
 				
 				<hr>
 				<table class='button'><tr>
