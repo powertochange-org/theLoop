@@ -36,7 +36,7 @@ $max_file_size = 30000000; // size in bytes
 			.plus{
 				position:absolute;
 				left:-7px;
-				top:-7px;'
+				top:2px;'
 			}
 
 			.orange{

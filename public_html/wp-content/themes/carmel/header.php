@@ -6,7 +6,7 @@
         <title>The Loop | An Internal Communications Blog</title>
         <?php $siteURL = get_bloginfo('url'); ?>
         <link href="<?php bloginfo('template_url'); ?>/style.css" rel="stylesheet" type="text/css" />
-        <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
         <?php wp_head(); ?> 
          <script type='text/javascript'>
 			function popUpShow(){

@@ -617,6 +617,9 @@ include('functions/js_functions.php');
 					}
 					$pdf->LN();
 				}
+				
+				$pdf->setY($pdf->getY() - 5);
+				
 				$widthL = Max($pdf->GetStringWidth("Recommended Minimum:"), $pdf->GetStringWidth("Staff Member's Personal Maximum:")) + 5;
 				$widthV = Max($pdf->GetStringWidth($_POST['minimum']), $pdf->GetStringWidth($_POST['maximum']), $pdf->GetStringWidth('Annual')) + 5;
 				$widthM = Max($pdf->GetStringWidth($_POST['minimum_month']), $pdf->GetStringWidth($_POST['maximum_month']), $pdf->GetStringWidth('Monthly'));
@@ -687,13 +690,20 @@ include('functions/js_functions.php');
 				$pdf->LN();
 				
 				$pdf->LN();
-				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->LN();
+				$pdf->Write(5,'Staff Member Signature: __________________________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'Ministry/Department Director Signature: ________________________________________ Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->Write(5,'Ministry/Department Director Signature: _______________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'HR Authorizing Agent: ______________________________________________________ Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->Write(5,'HR Authorizing Agent: _____________________________________________________ ');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
 				ob_end_clean();

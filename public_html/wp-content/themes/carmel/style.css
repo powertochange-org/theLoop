@@ -33,7 +33,7 @@ footer, header, hgroup, menu, nav, section {
 body {
 	/*line-height: 1;*/
 }
-ol.menu ,ul.menu, ol.popupMenu, ul.popupMenu {
+ol.menu ,ul.menu, ol.popupMenu, ul.popupMenu, #sidebar ol, #sidebar ul {
 	list-style: none;
 }
 blockquote, q {
