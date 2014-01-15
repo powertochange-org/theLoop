@@ -5,76 +5,35 @@ include('functions/functions.php');
 /*
 *Template Name: Allowance Calculator
 *
-*todo description
+*Author: matthew.chell
+*
+*Description: A calculator to find out how much allowance a person has to raise.
 
 req:
 	tables-allowance-questiom/answser
 		  -support constant
-		  -string constant?
+		  -string constant
 	
 	ueses wordpress users_meta
 
 
-
-
-choose_way change to button (done)
-show name on form-(done) test
-have blurb- test (store different way?)
-format total dollar currecny (done) test
-format question and answer (done)
--have headers (done)
--question over answer (question bolded) (done)
-field in only 3-6;
-another gestion 
--hours/ percent
-
-
-total disable salary and affiliate
-if no field like accpted disable  intern  (no comp level)
-enable asscosate commissoned
-	(done) test
-
-change hidden question (done)ishish
-
-todo test calculations (done in brief)
-
--save (done), print (done)
-
-//second feedback!!!!!!!!!!!!!!!!!
-
--back button (done)
--defualt 100 (done)(tested)
--onchange (done)
--to top of page (done)
--side ways radio (done)
-
--todo hide first header (done)
-
-
-//third feedback!!!!!!!!!!!!!!
-annal monthly (done)
---role type (done))
-
-hanging indent (done)
-space before bullet (done)
-default you (done)
-
-image confindat pdf (done)
-
-intersal see (remark:if hours)
-
-
-FIX_ME
-dump
-
 *
 */
 
-/*(todo: out of date!!!) there is one spot that has hardcoded numbers since, for a question, a specific person you can not choose 
-		but for anyone you can choose
-	from the admin interface you are able to change things that will need the hardcoded values to change
-		such as who can see a question
-	-in: setUserValues() and showSomeFor()
+/* ****NOTE: HARDCODED VALUES****
+there is one spot that has hardcoded numbers since, for two questions
+		(such as What is the scope of ministry operations for which the staff member is  responsible? 
+		(which what level a person is)), for a specific person (such as for you or your spouse), you can not choose the answer
+		but for anyone you can choose the answer for the question.
+	since the question uses hardcoded numbers then some of the edit capabilites have been disable in the admin interface
+		from the admin interface you should not be able to change anything that would need the hardcoded numbers to change
+	the hardcoded values are in function setUserValues()
+	
+	
+	
+the number of hours question is different from the rest of the questions.  From the admin interface you can
+	only change the label of the question.  The answer is open ended.  It does not have predefined answer
+	like the other question.  Also it is used to pro rate the result calculated by the other questions.
 */
 
 $allowance_constant = array(
@@ -490,12 +449,12 @@ include('functions/js_functions.php');
 			global $wpdb, $allowance_constant;
 			echo "function() {reset();";
 			echo "document.getElementById('hour_precentage').value ='".getFieldEmployee("percent_of_fulltime", $id)."';\n";
-			$level = intVal(getFieldEmployee("compensation_level", $id));
 			
 			//** HARDCODED **// this is to set the preset user values;
 			//if clean_tree() in allowance-calculator-admin is run $q may have to change
-			//if the sturture of this two question change (the ones with pulled data) this code may need to be changed
+			//if the sturture of these two question change (the ones with pulled data) this code may need to be changed
 			
+			$level = intVal(getFieldEmployee("compensation_level", $id));
 			switch(getRole($id)){
 			case $allowance_constant['fieldIndividual']:
 				//levels 3-5 are mapped to the the three answers respectively (levels 1, 2 will not be using this.  if they do, result is undefined.)
@@ -507,7 +466,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['fieldLeader']:
-				//at and above level 8 is the same catergory
+				//at and above level 8 are in the same catergory
 				echo "document.getElementById('extra-field-".min($level,8)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateIndividual']:
@@ -519,7 +478,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateLeader']:
-				//at and above level 7 is the same catergory
+				//at and above level 7 are in the same catergory
 				echo "document.getElementById('extra-corp-".min($level,7)."').checked = true;\n";
 				break;
 			}
@@ -541,7 +500,7 @@ include('functions/js_functions.php');
 				$sql = "SELECT `type` , `pull_data`, `role` FROM `allowance_question` WHERE `id` =".$quest_id;
 				$results = $wpdb->get_results($sql);
 				if ($results[0]->pull_data or ((intval($results[0]->role)) & (1 << intval(getRole($id)))) == 0){
-					continue; //overrides stored values (they are not stored most likey but just in case);
+					continue; //overrides stored values (they are not stored, most likey, but just in case);
 				}
 				$parts = explode(":", $value);
 				$part_0 = $parts[0];
@@ -577,14 +536,14 @@ include('functions/js_functions.php');
 				
 				$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
 				$pdf->SETXY(60, 15);
-				$pdf->SetFont('Arial','b',16);
+				$pdf->SetFont('Arial','b',14);
 				$pdf->Write(5,'Allowance Calculator');
-				$pdf->SetFont('Arial','b',20);
+				$pdf->SetFont('Arial','b',16);
 				$pdf->LN();
 				$pdf->Write(5,'');
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->SetFont('Arial','',12);
+				$pdf->SetFont('Arial','',10);
 			
 				switch($_POST['userIs']){
 				case 'you':
@@ -613,14 +572,13 @@ include('functions/js_functions.php');
 					$pdf->Write(5, 'default');$pdf->LN();
 				}
 				$pdf->LN();
-				$pdf->SetFont('Arial','b',16);
+				$pdf->SetFont('Arial','b',13);
 				$pdf->Write(5, getStringConstant("first_header"));$pdf->LN();$pdf->LN();
-				$pdf->SetFont('Arial','b',12);
+				$pdf->SetFont('Arial','b',11);
 				$pdf->Write(5, getStringConstant("hour_label"));$pdf->LN();
-				$pdf->SetFont('Arial','',12);
+				$pdf->SetFont('Arial','',10);
 				$pdf->Write(5, "       ".$_POST['hour_precentage']."%");$pdf->LN();
 				$pdf->LN();
-				
 				
 				$array_key = array_keys($_POST);
 				$sql = "SELECT * FROM `allowance_question` WHERE `role` & (1 <<".$_POST['role'].") ORDER BY  `order` ASC";
@@ -635,9 +593,9 @@ include('functions/js_functions.php');
 						case 'radiobutton_sdw':
 						case 'dropdown':
 						case 'checkbox':
-							$pdf->SetFont('Arial','b',12);
+							$pdf->SetFont('Arial','b',11);
 							$pdf->Write(5, $result->label);$pdf->LN();
-							$pdf->SetFont('Arial','',12);
+							$pdf->SetFont('Arial','',10);
 							foreach ($array_key as $key){
 								$parts = explode("-", $key);
 								$part_0 = $parts[0];
@@ -652,14 +610,16 @@ include('functions/js_functions.php');
 							}
 							break;
 						case 'header':
-							$pdf->SetFont('Arial','b',16);
+							$pdf->SetFont('Arial','b',13);
 							$pdf->Write(5, $result->label);$pdf->LN();
-							$pdf->SetFont('Arial','',12);
+							$pdf->SetFont('Arial','',10);
 							break;
 					}
 					$pdf->LN();
 				}
-				$pdf->LN();
+				
+				$pdf->setY($pdf->getY() - 5);
+				
 				$widthL = Max($pdf->GetStringWidth("Recommended Minimum:"), $pdf->GetStringWidth("Staff Member's Personal Maximum:")) + 5;
 				$widthV = Max($pdf->GetStringWidth($_POST['minimum']), $pdf->GetStringWidth($_POST['maximum']), $pdf->GetStringWidth('Annual')) + 5;
 				$widthM = Max($pdf->GetStringWidth($_POST['minimum_month']), $pdf->GetStringWidth($_POST['maximum_month']), $pdf->GetStringWidth('Monthly'));
@@ -676,7 +636,74 @@ include('functions/js_functions.php');
 				$pdf->Cell($widthV,5, $_POST['maximum']);
 				$pdf->Cell($widthM,5, $_POST['maximum_month'], 0, 1, "R");
 				$pdf->LN();
-				$pdf->Write(5,'Confidential');
+				
+				$lineDrop = 4;
+				$pdf->Line(10, $pdf->GetY(), 195, $pdf->GetY());
+				$pdf->LN();
+				$pdf->SetFont('Arial','b',10);
+				$pdf->Write(5,'Change in Allowance or Hours');
+				$pdf->SetFont('Arial','',10);
+				$pdf->LN();
+				if ($_POST['preAllowance'] == ""){
+					$pdf->Write(5,'Previous Allowance:__________________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous Allowance: $_POST[preAllowance]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newAllowance'] == ""){
+					$pdf->Write(5,'New Allowance: _____________________________');
+				}
+				else {
+					$pdf->Write(5,"New Allowance:  $_POST[newAllowance]");
+				}
+				$pdf->LN();
+				$pdf->LN();
+				
+				if ($_POST['preHours'] == ""){
+					$pdf->Write(5,'Previous number of hours:_____________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous number of hours: $_POST[preHours]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newHours'] == ""){
+					$pdf->Write(5,'New number of hours: ________________________');
+				}
+				else {
+					$pdf->Write(5,"New number of hours:  $_POST[newHours]");
+				}
+				$pdf->LN();
+				$pdf->SetFont('Arial','bi',10);
+				$pdf->Write(5,'** If schedule is less than 40 hours per week enter normal days/ hours worked');
+				$pdf->SetFont('Arial','',10);
+				$pdf->LN();
+				$pdf->LN();
+				$line = ' ________';
+				$pdf->Write(5,"Monday: ".(($_POST['mon'] == "") ? $line : $_POST['mon']).
+						"    Tuesday: ".(($_POST['tues'] == "") ? $line : $_POST['tues']).
+						"    Wednesday: ".(($_POST['wed'] == "") ? $line : $_POST['wed']).
+						"    Thursday: ".(($_POST['thurs'] == "") ? $line : $_POST['thurs']).
+						"    Friday: ".(($_POST['fri'] == "") ? $line : $_POST['fri']));
+				
+				$pdf->Line(10, $pdf->GetY() + 8, 195, $pdf->GetY() + 8);
+				$pdf->LN();
+				
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'Staff Member Signature: __________________________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'Ministry/Department Director Signature: _______________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'HR Authorizing Agent: _____________________________________________________ ');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
 				ob_end_clean();
@@ -715,7 +742,6 @@ include('functions/js_functions.php');
 		function dump($d){
 			global $wpdb;
 			$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
-			//todo var_dump($_POST);
 			//echo $sql;
 			//$wpdb->get_results($sql);
 		}
@@ -1038,6 +1064,15 @@ include('functions/js_functions.php');
 					document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
 					document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
 					document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
+					document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
+					document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
+					document.getElementById('preHours').value = document.getElementById('input_preHours').value;
+					document.getElementById('newHours').value = document.getElementById('input_newHours').value;
+					document.getElementById('mon').value = document.getElementById('input_mon').value;
+					document.getElementById('tues').value = document.getElementById('input_tues').value;
+					document.getElementById('wed').value = document.getElementById('input_wed').value;
+					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
+					document.getElementById('fri').value = document.getElementById('input_fri').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1127,6 +1162,16 @@ include('functions/js_functions.php');
 							<input type='hidden' name='maximum' id='maximum'>
 							<input type='hidden' name='minimum_month' id='minimum_month'>
 							<input type='hidden' name='maximum_month' id='maximum_month'>
+							<input type='hidden' name='preAllowance' id='preAllowance'>
+							<input type='hidden' name='newAllowance' id='newAllowance'>
+							<input type='hidden' name='preHours' id='preHours'>
+							<input type='hidden' name='newHours' id='newHours'>
+							<input type='hidden' name='mon' id='mon'>
+							<input type='hidden' name='tues' id='tues'>
+							<input type='hidden' name='wed' id='wed'>
+							<input type='hidden' name='thurs' id='thurs'>
+							<input type='hidden' name='fri' id='fri'>
+							<input type='hidden' name='date' id='date' value="">
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1152,6 +1197,26 @@ include('functions/js_functions.php');
 						<td id='output_maximum_month'></td>
 					</tr>
 				</table>
+				<hr>
+				<strong>Change in Allowance or Hours</strong>
+				<table><tr>
+				<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
+				<td>New Allowance: <input type='text' id='input_newAllowance'></td>
+				</tr><tr>
+				<td>Previous number of hours: <input type='text' style="width:40px" id='input_preHours'></td>
+				<td>New Number of Hours: <input type='text' style="width:40px" id='input_newHours'></td>
+				</tr><tr>
+				<td colspan='2'><strong>** If schedule is less than 40 hours per week enter normal days/ hours worked</strong></td>
+				</tr></table>
+				<table><tr>
+				<td>Monday: <input type='text' style="width:40px" id='input_mon'></td>
+				<td>Tuesday: <input type='text' style="width:40px" id='input_tues'></td>
+				<td>Wednesday: <input type='text' style="width:40px" id='input_wed'></td>
+				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
+				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
+				</tr></table>
+				
+				<hr>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
