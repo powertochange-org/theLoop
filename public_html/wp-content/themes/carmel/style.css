@@ -189,9 +189,13 @@ li.menu-item.current-menu-item  a{
 }
 
 #main-content p , #main-content h2, #main-content h3 , #main-content form ,
- #main-content ul, hr.comment, #main-content .post table{
+ hr.comment, #main-content .post table{
 	margin-left:60px;
 }
+
+ #main-content ul{
+	margin-left:100px;
+ }
 
 #main-content table p {
 	margin-left:0	;
