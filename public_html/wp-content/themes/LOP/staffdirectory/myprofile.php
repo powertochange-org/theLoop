@@ -138,7 +138,7 @@ echo "<p />";
 								<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
 								<option value="BUS" <?php if ($phone->phone_type == 'BUS') { echo 'selected="selected"'; } ?>>Office</option>
 								<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-								<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
+								<option value="ALT" <?php if ($phone->phone_type == 'ALT') { echo 'selected="selected"'; } ?>>Other</option>
 							</select>
 							(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
 								 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
