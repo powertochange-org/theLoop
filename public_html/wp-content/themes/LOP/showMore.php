@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Page_Full
+Template Name: Show_More
 */
 ?>
 <?php get_header(); ?>
@@ -10,7 +10,12 @@ Template Name: Page_Full
 				<div id="post-<?php the_ID(); ?>" class="post">
 					<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 					<div class="entry">
-						<?php the_content(); ?>
+						<?php $parts = explode('<!-- showMore -->', get_the_content());
+						echo $parts[0]; ?>
+						<a onclick='$("#more").slideToggle();'>Show More</a>
+						<div id='more' style='display:none;'>
+							<?php echo $parts[1]; ?>
+						</div>
 					</div>
 					<div class="clear"></div>				
 				</div>
