@@ -138,7 +138,7 @@ echo "<p />";
 								<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
 								<option value="BUS" <?php if ($phone->phone_type == 'BUS') { echo 'selected="selected"'; } ?>>Office</option>
 								<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-								<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
+								<option value="ALT" <?php if ($phone->phone_type == 'ALT') { echo 'selected="selected"'; } ?>>Other</option>
 							</select>
 							(<input type="text" name="phonearea" value="<?php echo $phone->area_code ?>" maxlength="3" size="3" />)
 								 <input type="text" name="phonenumber1" value="<?php echo $contact[0] ?>" maxlength="3" size = "3" />
@@ -354,10 +354,10 @@ echo "<p />";
 								<input type="textbox" name="country" value="<?php echo $user->country ?>" maxlength="2"><br/>
 								<fieldset style="display:inline;background:white;border:1px solid lightgrey;padding:8px">
 									<legend>Address Share Level</legend>
-									<input type="radio" name="addressPermissions" value="FULL" <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> />Full Address<br/>
-									<input type="radio" name="addressPermissions" value="CITY&PROV" <?php if($user->share_address == 'CITY&PROV') { echo 'checked'; } ?> />City and Province Only<br/>	
+									<input type="radio" name="addressPermissions" value="FULL" <?php if($user->share_address == 'FULL') { echo 'checked'; } ?> />Share my Address<br/>
+<!--									<input type="radio" name="addressPermissions" value="CITY&PROV" <?php if($user->share_address == 'CITY&PROV') { echo 'checked'; } ?> />City and Province Only<br/>	
 									<input type="radio" name="addressPermissions" value="PROVONLY" <?php if($user->share_address == 'PROVONLY') { echo 'checked'; } ?> />Province Only<br/>
-									<input type="radio" name="addressPermissions" value="NONE" <?php if($user->share_address == 'NONE') { echo 'checked'; } ?> />Do not share any details about my location
+-->									<input type="radio" name="addressPermissions" value="NONE" <?php if($user->share_address == 'NONE') { echo 'checked'; } ?> />Do not share my address
 								</fieldset>
 								<input type="submit" value="save" style="margin-left:200px">
 							</form>
