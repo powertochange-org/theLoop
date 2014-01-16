@@ -544,21 +544,20 @@ include('functions/js_functions.php');
 				$pdf->LN();
 				$pdf->LN();
 				$pdf->SetFont('Arial','',10);
-			
+				$pdf->Write(5, "Name: $_POST[person_name]");$pdf->LN();
 				switch($_POST['userIs']){
 				case 'you':
-					$pdf->Write(5, "Name: ".getName());$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry'));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title'));$pdf->LN();
 					break;
 				case 'spouse':
-					$pdf->Write(5, "Name: ".getName(getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title', getSpouse()));$pdf->LN();
 					break;
 				case 'free':
 					break;
 				}
+				$pdf->Write(5, "Project Code: $_POST[projectCode]");$pdf->LN();
 				switch($_POST['role']){
 				case $allowance_constant['fieldIndividual']:
 				case $allowance_constant['corporateIndividual']:
@@ -816,10 +815,10 @@ include('functions/js_functions.php');
 				}
 				
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
-				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user_id) ?>};
+				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', projectCode: '<?php echo getFieldEmployee('staff_account') ?>', setValues: <?php setUserValues($current_user_id) ?>};
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
-				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
+				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', projectCode: '<?php echo getFieldEmployee('staff_account', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
 				<?php } ?>
 				
 				var chooseWay = -1;
@@ -858,6 +857,7 @@ include('functions/js_functions.php');
 				function getNameBlurb(who){
 					var html = "Name: " + who.name + "<BR>";
 					html += "Ministry/Department: " + who.min + "<BR>";
+					html += "Project Code: " + who.projectCode + "<BR>";
 					html += "Position Title: " + who.title + "<BR>";
 					return html;
 				}
@@ -999,6 +999,10 @@ include('functions/js_functions.php');
 					if (who != null){
 						html += getNameBlurb(who) + "<BR>";
 					}
+					else {
+						html += "Name: " + document.getElementById('person_name').value + "<BR>";
+						html += "Project Code: " + document.getElementById('projectCode').value + "<BR><BR>";
+					}
 					switch(role){
 					case FIELD_INDIVIDUAL:
 						html += <?php getSelectAnswers($allowance_constant['fieldIndividual']) ?>
@@ -1035,6 +1039,8 @@ include('functions/js_functions.php');
 				
 				function reset(){
 					document.getElementById('user_name').innerHTML = "";
+					document.getElementById('person_name').value = "";
+					document.getElementById('projectCode').value = "";
 					document.getElementById('extra-field-6').checked = false;
 					document.getElementById('extra-field-7').checked = false;
 					document.getElementById('extra-field-8').checked = false;
@@ -1050,10 +1056,14 @@ include('functions/js_functions.php');
 					case YOU:
 						document.getElementById('userIs').value = 'you';
 						document.getElementById('role').value = you.role;
+						document.getElementById('person_name').value = you.name;
+						document.getElementById('projectCode').value = you.projectCode;
 						break;
 					case SPOUSE:
 						document.getElementById('userIs').value = 'spouse';
 						document.getElementById('role').value = spouse.role;
+						document.getElementById('person_name').value = spouse.name;
+						document.getElementById('projectCode').value = spouse.projectCode;
 						break;
 					case FREE:
 						document.getElementById('userIs').value = 'free';
@@ -1140,6 +1150,8 @@ include('functions/js_functions.php');
 						<div id='questions'>
 							<BR>
 							<div id='hours'>
+								Name: <input type='text' name='person_name' id='person_name'><BR>
+								Project Code: <input type='text' name='projectCode' id='projectCode'><BR><BR>
 								<h2><?php echo getStringConstant("first_header") ?></h2>
 								<strong><?php echo getStringConstant("hour_label") ?></strong>
 								<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
