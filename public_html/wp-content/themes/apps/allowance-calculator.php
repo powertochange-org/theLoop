@@ -538,6 +538,9 @@ include('functions/js_functions.php');
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',14);
 				$pdf->Write(5,'Allowance Calculator');
+				$pdf->SETX(140);
+				$pdf->SetFont('Arial','',10);
+				$pdf->Write(5,'Effective Date: '.(($_POST['effective'] == "") ? '_____________' : $_POST['effective']));
 				$pdf->SetFont('Arial','b',16);
 				$pdf->LN();
 				$pdf->Write(5,'');
@@ -1083,6 +1086,7 @@ include('functions/js_functions.php');
 					document.getElementById('wed').value = document.getElementById('input_wed').value;
 					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
 					document.getElementById('fri').value = document.getElementById('input_fri').value;
+					document.getElementById('effective').value = document.getElementById('input_effective').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1184,6 +1188,7 @@ include('functions/js_functions.php');
 							<input type='hidden' name='thurs' id='thurs'>
 							<input type='hidden' name='fri' id='fri'>
 							<input type='hidden' name='date' id='date' value="">
+							<input type='hidden' name='effective' id='effective'>
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1227,7 +1232,7 @@ include('functions/js_functions.php');
 				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
 				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
 				</tr></table>
-				
+				Effective Date: <input type='text' id='input_effective'>
 				<hr>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
