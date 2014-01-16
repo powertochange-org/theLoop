@@ -1151,7 +1151,7 @@ include('functions/js_functions.php');
 							<BR>
 							<div id='hours'>
 								Name: <input type='text' name='person_name' id='person_name'><BR>
-								Project Code: <input type='text' name='projectCode' id='projectCode'><BR><BR>
+								Project Code: <input type='text' name='projectCode' id='projectCode' maxlength='6'><BR><BR>
 								<h2><?php echo getStringConstant("first_header") ?></h2>
 								<strong><?php echo getStringConstant("hour_label") ?></strong>
 								<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
