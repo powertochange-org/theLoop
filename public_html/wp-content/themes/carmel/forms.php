@@ -14,7 +14,7 @@
 		$parts = explode('/', get_page_uri(get_the_ID())); 
 		$link = "";
 		?>
-		<table style='width:100%;margin:30px 0;'><tr style=''>
+		<table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr style=''>
 		<?php for ($i = 0; $i < count($parts); $i ++){
 			$link .= "/$parts[$i]";
 			if ($i < count($parts) - 2){ ?>

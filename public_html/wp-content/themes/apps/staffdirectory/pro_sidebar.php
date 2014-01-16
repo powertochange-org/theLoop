@@ -1,6 +1,6 @@
 <div id="sidebar">
 	<div class="sidebaritem">
-		<h1 style='font-size:25pt;font-family:Roboto Slab Light'>Search for Staff</h1><BR>
+		<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1><BR>
 		
 		<div id='simple-search-staff'>
 			<form id='s_s_s' method="post" action="?"><div class='search-box' style='border-color:#adafb2'>

@@ -4,17 +4,18 @@
 *
 *
 */
+
 ?>
 <?php get_header(); ?>
 <div id="content">
-	<div id="main-content" class='form'>
+	<div id="main-content" class='form-item'>
 		<h1>Forms &amp; Information</h1>
 		<hr>
 	    <?php if (have_posts()) : while (have_posts()) : the_post(); 
 		$parts = explode('/', get_page_uri(get_the_ID())); 
 		$link = "";
 		?>
-		<table style='width:100%;margin:30px 0;'><tr style=''>
+		<table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr style=''>
 		<?php for ($i = 0; $i < count($parts); $i ++){
 			$link .= "/$parts[$i]";
 			if ($i < count($parts) - 2){ ?>
@@ -33,8 +34,11 @@
 				 <h2 style="font-size:20px;font-weight:bold;margin-bottom:20px;"><a style='color:#f7941d;' href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
 				 <hr>
 				 <BR>
-				<?php the_post_thumbnail(); ?>
-				<?php $parts = explode('<!-- links -->', get_the_content());
+				<?php the_post_thumbnail();
+				$content = get_the_content();
+				$content = apply_filters('the_content', $content);
+				$content = str_replace(']]>', ']]&gt;', $content);
+				$parts = explode('<!-- links -->', $content);
 				echo $parts[0]; ?>
 			</div>
 			<!--/box-->   

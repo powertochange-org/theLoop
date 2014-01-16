@@ -538,27 +538,29 @@ include('functions/js_functions.php');
 				$pdf->SETXY(60, 15);
 				$pdf->SetFont('Arial','b',14);
 				$pdf->Write(5,'Allowance Calculator');
+				$pdf->SETX(140);
+				$pdf->SetFont('Arial','',10);
+				$pdf->Write(5,'Effective Date: '.(($_POST['effective'] == "") ? '_____________' : $_POST['effective']));
 				$pdf->SetFont('Arial','b',16);
 				$pdf->LN();
 				$pdf->Write(5,'');
 				$pdf->LN();
 				$pdf->LN();
 				$pdf->SetFont('Arial','',10);
-			
+				$pdf->Write(5, "Name: $_POST[person_name]");$pdf->LN();
 				switch($_POST['userIs']){
 				case 'you':
-					$pdf->Write(5, "Name: ".getName());$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry'));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title'));$pdf->LN();
 					break;
 				case 'spouse':
-					$pdf->Write(5, "Name: ".getName(getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Ministry/Department: ".getFieldEmployee('ministry', getSpouse()));$pdf->LN();
 					$pdf->Write(5, "Position Title: ".getFieldEmployee('role_title', getSpouse()));$pdf->LN();
 					break;
 				case 'free':
 					break;
 				}
+				$pdf->Write(5, "Project Code: $_POST[projectCode]");$pdf->LN();
 				switch($_POST['role']){
 				case $allowance_constant['fieldIndividual']:
 				case $allowance_constant['corporateIndividual']:
@@ -617,6 +619,9 @@ include('functions/js_functions.php');
 					}
 					$pdf->LN();
 				}
+				
+				$pdf->setY($pdf->getY() - 5);
+				
 				$widthL = Max($pdf->GetStringWidth("Recommended Minimum:"), $pdf->GetStringWidth("Staff Member's Personal Maximum:")) + 5;
 				$widthV = Max($pdf->GetStringWidth($_POST['minimum']), $pdf->GetStringWidth($_POST['maximum']), $pdf->GetStringWidth('Annual')) + 5;
 				$widthM = Max($pdf->GetStringWidth($_POST['minimum_month']), $pdf->GetStringWidth($_POST['maximum_month']), $pdf->GetStringWidth('Monthly'));
@@ -641,32 +646,66 @@ include('functions/js_functions.php');
 				$pdf->Write(5,'Change in Allowance or Hours');
 				$pdf->SetFont('Arial','',10);
 				$pdf->LN();
-				$pdf->Write(5,'Previous Base:___________________________________   New Base: _____________________________');
+				if ($_POST['preAllowance'] == ""){
+					$pdf->Write(5,'Previous Allowance:__________________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous Allowance: $_POST[preAllowance]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newAllowance'] == ""){
+					$pdf->Write(5,'New Allowance: _____________________________');
+				}
+				else {
+					$pdf->Write(5,"New Allowance:  $_POST[newAllowance]");
+				}
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'Previous number of hours:__________________________   New Number of Hours: ____________________');
+				
+				if ($_POST['preHours'] == ""){
+					$pdf->Write(5,'Previous number of hours:_____________________________'); 
+				}
+				else {
+					$pdf->Write(5,"Previous number of hours: $_POST[preHours]"); 
+				}
+				$pdf->SETX(112);
+				if ($_POST['newHours'] == ""){
+					$pdf->Write(5,'New number of hours: ________________________');
+				}
+				else {
+					$pdf->Write(5,"New number of hours:  $_POST[newHours]");
+				}
 				$pdf->LN();
 				$pdf->SetFont('Arial','bi',10);
 				$pdf->Write(5,'** If schedule is less than 40 hours per week enter normal days/ hours worked');
-				$pdf->SetFont('Arial','',10);Monday: Tuesday: Wednesday: Thursday: Friday:
+				$pdf->SetFont('Arial','',10);
 				$pdf->LN();
 				$pdf->LN();
-				$line = ' ________   ';
-				$pdf->Write(5,"Monday:$line Tuesday:$line Wednesday:$line Thursday:$line Friday:$line");
+				$line = ' ________';
+				$pdf->Write(5,"Monday: ".(($_POST['mon'] == "") ? $line : $_POST['mon']).
+						"    Tuesday: ".(($_POST['tues'] == "") ? $line : $_POST['tues']).
+						"    Wednesday: ".(($_POST['wed'] == "") ? $line : $_POST['wed']).
+						"    Thursday: ".(($_POST['thurs'] == "") ? $line : $_POST['thurs']).
+						"    Friday: ".(($_POST['fri'] == "") ? $line : $_POST['fri']));
+				
 				$pdf->Line(10, $pdf->GetY() + 8, 195, $pdf->GetY() + 8);
 				$pdf->LN();
 				
-				
-				
-				
-				$pdf->LN();
-				$pdf->Write(5,'Staff Member Signature: ___________________________________________________  Date: ____________');
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'Ministry/Department Director Signature: ________________________________________ Date: ____________');
+				$pdf->Write(5,'Staff Member Signature: __________________________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				$pdf->LN();
 				$pdf->LN();
-				$pdf->Write(5,'HR Authorizing Agent: ______________________________________________________ Date: ____________');
+				$pdf->Write(5,'Ministry/Department Director Signature: _______________________________________');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
+				$pdf->LN();
+				$pdf->LN();
+				$pdf->Write(5,'HR Authorizing Agent: _____________________________________________________ ');
+				$pdf->SETX(152);
+				$pdf->Write(5,'Date: '.(($_POST['date'] == "") ? $line : $_POST['date']));
 				
 				//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
 				ob_end_clean();
@@ -705,7 +744,6 @@ include('functions/js_functions.php');
 		function dump($d){
 			global $wpdb;
 			$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
-			//todo var_dump($_POST);
 			//echo $sql;
 			//$wpdb->get_results($sql);
 		}
@@ -780,10 +818,10 @@ include('functions/js_functions.php');
 				}
 				
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
-				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', setValues: <?php setUserValues($current_user_id) ?>};
+				var you = {role:<?php echo getRole($current_user_id) ?>, name:'<?php echo getName() ?>', min: '<?php echo getFieldEmployee('ministry') ?>', title: '<?php echo getFieldEmployee('role_title') ?>', projectCode: '<?php echo getFieldEmployee('staff_account') ?>', setValues: <?php setUserValues($current_user_id) ?>};
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
-				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
+				var spouse = {role:<?php echo getRole(getSpouse());?>, name:'<?php echo getName(getSpouse()) ?>', min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', projectCode: '<?php echo getFieldEmployee('staff_account', getSpouse()) ?>', setValues: <?php setUserValues(getSpouse()) ?> };
 				<?php } ?>
 				
 				var chooseWay = -1;
@@ -822,6 +860,7 @@ include('functions/js_functions.php');
 				function getNameBlurb(who){
 					var html = "Name: " + who.name + "<BR>";
 					html += "Ministry/Department: " + who.min + "<BR>";
+					html += "Project Code: " + who.projectCode + "<BR>";
 					html += "Position Title: " + who.title + "<BR>";
 					return html;
 				}
@@ -963,6 +1002,10 @@ include('functions/js_functions.php');
 					if (who != null){
 						html += getNameBlurb(who) + "<BR>";
 					}
+					else {
+						html += "Name: " + document.getElementById('person_name').value + "<BR>";
+						html += "Project Code: " + document.getElementById('projectCode').value + "<BR><BR>";
+					}
 					switch(role){
 					case FIELD_INDIVIDUAL:
 						html += <?php getSelectAnswers($allowance_constant['fieldIndividual']) ?>
@@ -999,6 +1042,8 @@ include('functions/js_functions.php');
 				
 				function reset(){
 					document.getElementById('user_name').innerHTML = "";
+					document.getElementById('person_name').value = "";
+					document.getElementById('projectCode').value = "";
 					document.getElementById('extra-field-6').checked = false;
 					document.getElementById('extra-field-7').checked = false;
 					document.getElementById('extra-field-8').checked = false;
@@ -1014,10 +1059,14 @@ include('functions/js_functions.php');
 					case YOU:
 						document.getElementById('userIs').value = 'you';
 						document.getElementById('role').value = you.role;
+						document.getElementById('person_name').value = you.name;
+						document.getElementById('projectCode').value = you.projectCode;
 						break;
 					case SPOUSE:
 						document.getElementById('userIs').value = 'spouse';
 						document.getElementById('role').value = spouse.role;
+						document.getElementById('person_name').value = spouse.name;
+						document.getElementById('projectCode').value = spouse.projectCode;
 						break;
 					case FREE:
 						document.getElementById('userIs').value = 'free';
@@ -1028,6 +1077,16 @@ include('functions/js_functions.php');
 					document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
 					document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
 					document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
+					document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
+					document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
+					document.getElementById('preHours').value = document.getElementById('input_preHours').value;
+					document.getElementById('newHours').value = document.getElementById('input_newHours').value;
+					document.getElementById('mon').value = document.getElementById('input_mon').value;
+					document.getElementById('tues').value = document.getElementById('input_tues').value;
+					document.getElementById('wed').value = document.getElementById('input_wed').value;
+					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
+					document.getElementById('fri').value = document.getElementById('input_fri').value;
+					document.getElementById('effective').value = document.getElementById('input_effective').value;
 					document.getElementById('saveUserValues_form').target = "_blank";
 					saveUserValues_form.submit();
 				}
@@ -1095,6 +1154,8 @@ include('functions/js_functions.php');
 						<div id='questions'>
 							<BR>
 							<div id='hours'>
+								Name: <input type='text' name='person_name' id='person_name'><BR>
+								Project Code: <input type='text' name='projectCode' id='projectCode' maxlength='6'><BR><BR>
 								<h2><?php echo getStringConstant("first_header") ?></h2>
 								<strong><?php echo getStringConstant("hour_label") ?></strong>
 								<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
@@ -1117,6 +1178,17 @@ include('functions/js_functions.php');
 							<input type='hidden' name='maximum' id='maximum'>
 							<input type='hidden' name='minimum_month' id='minimum_month'>
 							<input type='hidden' name='maximum_month' id='maximum_month'>
+							<input type='hidden' name='preAllowance' id='preAllowance'>
+							<input type='hidden' name='newAllowance' id='newAllowance'>
+							<input type='hidden' name='preHours' id='preHours'>
+							<input type='hidden' name='newHours' id='newHours'>
+							<input type='hidden' name='mon' id='mon'>
+							<input type='hidden' name='tues' id='tues'>
+							<input type='hidden' name='wed' id='wed'>
+							<input type='hidden' name='thurs' id='thurs'>
+							<input type='hidden' name='fri' id='fri'>
+							<input type='hidden' name='date' id='date' value="">
+							<input type='hidden' name='effective' id='effective'>
 							<input type='hidden' name='role' id='role'>
 							<?php getQuestions($allowance_constant['fieldIndividual']) ?>
 						</div>
@@ -1142,6 +1214,26 @@ include('functions/js_functions.php');
 						<td id='output_maximum_month'></td>
 					</tr>
 				</table>
+				<hr>
+				<strong>Change in Allowance or Hours</strong>
+				<table><tr>
+				<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
+				<td>New Allowance: <input type='text' id='input_newAllowance'></td>
+				</tr><tr>
+				<td>Previous number of hours: <input type='text' style="width:40px" id='input_preHours'></td>
+				<td>New Number of Hours: <input type='text' style="width:40px" id='input_newHours'></td>
+				</tr><tr>
+				<td colspan='2'><strong>** If schedule is less than 40 hours per week enter normal days/ hours worked</strong></td>
+				</tr></table>
+				<table><tr>
+				<td>Monday: <input type='text' style="width:40px" id='input_mon'></td>
+				<td>Tuesday: <input type='text' style="width:40px" id='input_tues'></td>
+				<td>Wednesday: <input type='text' style="width:40px" id='input_wed'></td>
+				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
+				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
+				</tr></table>
+				Effective Date: <input type='text' id='input_effective'>
+				<hr>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
