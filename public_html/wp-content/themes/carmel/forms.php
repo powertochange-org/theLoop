@@ -8,9 +8,9 @@
 <?php get_header(); ?>
 <div id="content">
 	<div id="main-content" class='form'>
-		<h1>Forms &amp; Information</h1>
+	    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+		<h1><?php the_title() ?></h1>
 		<hr>
-	    <?php if (have_posts()) : while (have_posts()) : the_post(); 
 		$parts = explode('/', get_page_uri(get_the_ID())); 
 		$link = "";
 		?>
