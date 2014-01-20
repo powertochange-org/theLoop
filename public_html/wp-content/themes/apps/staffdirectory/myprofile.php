@@ -251,7 +251,7 @@ $max_file_size = 30000000; // size in bytes
 							<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
 							<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
 							<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-							<option value="OTHER" <?php if ($phone->phone_type == 'OTHER') { echo 'selected="selected"'; } ?>>Other</option>
+							<option value="ALT" <?php if ($phone->phone_type == 'ALT') { echo 'selected="selected"'; } ?>>Other</option>
 						</select></td>
 						<td>(</td>
 						<td><input type="text" name="phone[<?php echo $id; ?>][area]" value="<?php echo $phone->area_code ?>" maxlength="3" style="width:27px" /></td>
