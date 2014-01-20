@@ -11,7 +11,7 @@
 	    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 		<h1><?php the_title() ?></h1>
 		<hr>
-		$parts = explode('/', get_page_uri(get_the_ID())); 
+		<?php $parts = explode('/', get_page_uri(get_the_ID())); 
 		$link = "";
 		?>
 		<table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr style=''>
