@@ -903,6 +903,14 @@ footer .copy{
 	margin-bottom:20px;
 }
 
+#main-content.ministries  .post h2{
+	margin-top:10px;
+}
+
+#main-content.form  .post h2{
+	margin-top:40px;
+}
+
 #main-content.form  .post p, #main-content.ministries  .post p, #main-content.form-item .post p{
 	color:inherit;
 }
@@ -918,6 +926,9 @@ footer .copy{
 	text-align:center;
 	width:299px;
 	height:147px;
+	padding-top:40px;
+	padding-left:6px;
+	padding-right:6px;
 	padding:0;
 	color:#858585;
 }
@@ -925,18 +936,9 @@ footer .copy{
 #main-content.form  .post a, #main-content.ministries  .post a{
 	text-align:center;
 	display:block;
-	padding-top:40px;
-	padding-left:6px;
-	padding-right:6px;
 	width:287px;
 	height:100%;
-}
-
-#main-content.form  .post a {
-	padding-top:40px;
-}
-#main-content.ministries  .post a{
-	padding-top:10px;
+	position:absolute;
 }
 
 
@@ -944,7 +946,7 @@ footer .copy{
 	color:inherit;
 }
 
-#main-content.ministries  .post td{
+#main-content.ministries  .post td, #main-content.form  .post td{
 	position:relative
 }
 #main-content.ministries  .post p {
@@ -954,5 +956,7 @@ footer .copy{
 	color:#000000;
 	font-weight:bold;
 	vertical-align:baseline;
-	position:absolute; bottom:6px;
+	position:absolute;
+	bottom:6px;
+	left:6px;
 }
