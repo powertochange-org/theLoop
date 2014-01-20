@@ -16,10 +16,10 @@
 				$fullname = "";
 				if (isset($_POST['fullname'])) {
 					$fullname = $_POST['fullname'] ; //the entire thing that was searched for
-					echo "<p class='orange-box'>SEARCH RESULTS FOR: \"".strtoupper($fullname)."\"</p> <p /><p/>";
+					echo "<p class='orange-box'  style='padding: 9px;'>SEARCH RESULTS FOR: \"".strtoupper($fullname)."\"</p> <p /><p/>";
 				}
 				else { //display welcome message if nothing being search for
-					?><p class='orange-box'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
+					?><p class='orange-box' style='padding: 9px;'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
 
 		This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.<p/> 
 

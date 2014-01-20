@@ -28,7 +28,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	<div style="clear:both"></div>
 	<div id="content-left">
 		<div id="main-content">
-			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:18pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
+			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
 				echo '<img src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';
