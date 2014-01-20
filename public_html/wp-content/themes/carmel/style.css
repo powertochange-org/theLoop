@@ -918,23 +918,39 @@ footer .copy{
 	text-align:center;
 	width:299px;
 	height:147px;
-	padding-top:40px;
-	padding-left:6px;
-	padding-right:6px;
+	padding:0;
 	color:#858585;
 }
 
-#main-content.form .post a, #main-content.form-item .post a{
+#main-content.form  .post a, #main-content.ministries  .post a{
+	text-align:center;
+	display:block;
+	padding-top:40px;
+	padding-left:6px;
+	padding-right:6px;
+	width:287px;
+	height:100%;
+}
+
+#main-content.form  .post a {
+	padding-top:40px;
+}
+#main-content.ministries  .post a{
+	padding-top:10px;
+}
+
+
+#main-content.form .post a, #main-content.form-item .post a, #main-content.ministries  .post a {
 	color:inherit;
 }
 
 #main-content.ministries  .post td{
 	position:relative
 }
-#main-content.ministries  .post a{
-	background-color:#e0e0e0;
-	width:299px;
-	display:block;
+#main-content.ministries  .post p {
+	 background-color:#e0e0e0; 
+	 width:287px; 
+	 display:block; 
 	color:#000000;
 	font-weight:bold;
 	vertical-align:baseline;
