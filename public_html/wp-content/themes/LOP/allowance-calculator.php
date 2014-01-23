@@ -474,7 +474,7 @@ include('functions/js_functions.php');
 				$q = 12;
 				$sql = "SELECT `first_sub` FROM `allowance_question` WHERE allowance_question.id=".$q;
 				$result = $wpdb->get_results($sql);
-				$offset = intVal($result[0]->first_sub - 1);
+				$offset = intVal($result[0]->first_sub - 3);
 				echo "document.getElementById('form-".$q."-".($offset + $level)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateLeader']:
