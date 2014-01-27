@@ -470,7 +470,7 @@ include('functions/js_functions.php');
 				echo "document.getElementById('extra-field-".min($level,8)."').checked = true;\n";
 				break;
 			case $allowance_constant['corporateIndividual']:
-				//levels 1-5 are mapped to the five answers
+				//levels 3-5 are mapped to the five answers
 				$q = 12;
 				$sql = "SELECT `first_sub` FROM `allowance_question` WHERE allowance_question.id=".$q;
 				$result = $wpdb->get_results($sql);
