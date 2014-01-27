@@ -193,7 +193,7 @@ li.menu-item.current-menu-item  a{
 	margin-left:60px;
 }
 
- #main-content ul{
+ #main-content ul, #main-content ol{
 	margin-left:100px;
  }
 
@@ -945,13 +945,17 @@ footer .copy{
 	color:inherit;
 }
 
+#main-content.form .post p, #main-content.form-item .post p, #main-content.ministries  .post p {
+	margin:10px;
+}
+
 #main-content.ministries  .post td, #main-content.form  .post td{
 	position:relative
 }
 #main-content.ministries  .post p {
-	 background-color:#e0e0e0; 
-	 width:287px; 
-	 display:block; 
+	background-color:#e0e0e0; 
+	width:287px; 
+	display:block; 
 	color:#000000;
 	font-weight:bold;
 	vertical-align:baseline;
