@@ -48,7 +48,6 @@
 			<?php endif; ?>
 		</div>
 		<div id="content-right" class='download' style='width: 240px;'>
-			<span style='font-weight: bold;color: #005e90;display:block;margin-bottom:25px;'>DOWNLOADS</span>
 			<?php $parts = explode('<!-- links -->', get_the_content());
 				echo $parts[1]; ?>
 		</div><div style='clear:both;'></div>
