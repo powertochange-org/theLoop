@@ -1,8 +1,6 @@
 <?php
-
 include('functions/functions.php');
 require('pdf/fpdf.php');
-
 
 /*
 *Template Name: Support_Calculator
@@ -39,7 +37,6 @@ $support_constant = array (
 );
 
 $support_dataID = null;
-
 
 generate_pdf();
 
@@ -528,14 +525,15 @@ include('functions/js_functions.php'); ?>
 				"+" + document.getElementById("input_account").value + 
 				"+" + coverage +
 				"+" + document.getElementById("input_ministry").value + 
-				"+" + decline + "+" + salary.toFixed(2) + 
+				"+" + decline + 
+				"+" + salary.toFixed(2) + 
 				"+" + cpp.toFixed(2) + 
 				"+" + salary_s.toFixed(2) + 
 				"+" + cpp_s.toFixed(2) +
 				"+" + health.toFixed(2) +
 				"+" + medical.toFixed(2) +
-				"+" + workers.toFixed(2) + 
 				"+" + hcsa.toFixed(2) + 
+				"+" + workers.toFixed(2) + 
 				"+" + conference.toFixed(2) +
 				"+" + mpd.toFixed(2)  +
 				"+" + expenses.toFixed(2) +
