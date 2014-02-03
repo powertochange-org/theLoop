@@ -818,7 +818,7 @@ include('functions/js_functions.php');
 				}
 				
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
-				var you = {role:<?php echo getRole($current_user_id) ?>, \
+				var you = {role:<?php echo getRole($current_user_id) ?>,
 							name:"<?php echo getName() ?>", 
 							min: '<?php echo getFieldEmployee('ministry') ?>', 
 							title: '<?php echo getFieldEmployee('role_title') ?>', 
