@@ -22,17 +22,22 @@
 						</div>
 						<?php } ?>
 						<?php the_post_thumbnail('single-post-thumbnail'); ?>
-						<?php the_content('<p>Read the rest of this entry &raquo;</p>'); ?>
-						<?php wp_link_pages(array('before' => '<p><strong>Pages:</strong> ', 'after' => '</p>', 'next_or_number' => 'number')); ?>
+						<div class='indent'>
+							<?php the_content('<p>Read the rest of this entry &raquo;</p>'); ?>
+							<?php wp_link_pages(array('before' => '<p><strong>Pages:</strong> ', 'after' => '</p>', 'next_or_number' => 'number')); ?>
+						</div>
 						<div class="clear"></div>				
 						<div >
 						<hr>
+						<div class='indent'>
 						<p class="meta">CATEGORIES: <?php strtoupper(the_category(' | ')) ?> <BR> Posted on <?php the_time('F j, Y'); ?></p>
-						
 						</p>
 						</div>
+						</div>
 						<hr>
-						<?php comments_template(); ?>
+						<div class='indent'>
+							<?php comments_template();?>
+						</div>
 					<?php endwhile; else: ?>
 						<h1 class="replace">Error 404 - Not Found</h1>
 						<p><strong>We're sorry, but that page doesn't exist or has been moved.</strong><br />

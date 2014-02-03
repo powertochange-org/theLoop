@@ -1,4 +1,3 @@
-<div class="divider"></div>
 <?php
 
 // Do not delete these lines
@@ -79,7 +78,7 @@
 		<label for="url"><small>Website</small></label></p>
 		<?php endif; ?>
 
-		<p><textarea name="comment" id="comment" cols="80%" rows="10" tabindex="4"></textarea></p>
+		<p><textarea class='modify' name="comment" id="comment" cols="80%" rows="10" tabindex="4"></textarea></p>
 
 		<p><input name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" class="btn1" />
 		<?php comment_id_fields(); ?>
