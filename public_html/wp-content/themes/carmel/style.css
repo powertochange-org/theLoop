@@ -919,13 +919,13 @@ footer .copy{
 	color:#858585;
 }
 
-#main-content.form  .post a, #main-content.ministries  .post a{
+/*#main-content.form  .post a, #main-content.ministries  .post a{
 	text-align:center;
 	display:block;
 	width:287px;
 	height:100%;
 	position:absolute;
-}
+}*/
 
 
 #main-content.form .post a, #main-content.form-item .post a, #main-content.ministries  .post a {
