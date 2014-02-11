@@ -9,6 +9,8 @@ $con=mysqli_connect(constant("DB_HOST"),constant("DB_USER"),constant("DB_PASSWOR
 
 $sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($_POST, true))."', NULL)";
 mysqli_query($con, $sql);
+$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($_GET, true))."', NULL)";
+mysqli_query($con, $sql);
 mysqli_close($con);
 
 ?>
