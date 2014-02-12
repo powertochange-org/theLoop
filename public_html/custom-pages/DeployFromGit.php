@@ -3,7 +3,7 @@
     <title></title>
 </head>
 <body>
-	<h1>Deploy from Git to Hebron</h1>
+	<h1>Deploy from Git to web-host-1</h1>
 <?php
 
 $repos = array(
