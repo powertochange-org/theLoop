@@ -30,6 +30,9 @@ if (isset($_POST['type'])){
 							header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
 							header("Content-Length:".filesize ($file));
 							header("Content-Type: image/$ext");
+							
+							//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
+							ob_end_flush();
 							readfile($file);
 							exit;
 						} 
