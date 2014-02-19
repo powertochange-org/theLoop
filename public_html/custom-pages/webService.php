@@ -1,10 +1,10 @@
 <?php 
 include("constant.php");
-if (isset($_POST['type'])){
-	switch ($_POST['type']){
+if (isset($_GET['type'])){
+	switch ($_GET['type']){
 		case 'staff_photo':
-			if (isset($_POST['api_token']) && $_POST['api_token'] == $api_token){
-				if (isset($_POST['staff_username'])){
+			if (isset($_GET['api_token']) && $_GET['api_token'] == $api_token){
+				if (isset($_GET['staff_username'])){
 					
 					global $GET_WORD_PRESS_VARIABLE;
 					$GET_WORD_PRESS_VARIABLE = true;
@@ -15,7 +15,7 @@ if (isset($_POST['type'])){
 					$con=mysqli_connect(constant("DB_HOST"),constant("DB_USER"),constant("DB_PASSWORD"),constant("DB_NAME"));
 					
 					
-					$sql="SELECT `photo` FROM `employee` WHERE `user_login` = '$_POST[staff_username]'";
+					$sql="SELECT `photo` FROM `employee` WHERE `user_login` = '$_GET[staff_username]'";
 					$result = mysqli_query($con, $sql);
 					if($staff = $result->fetch_object()){ 
 						if (is_null($staff->photo)){
@@ -30,6 +30,9 @@ if (isset($_POST['type'])){
 							header($_SERVER["SERVER_PROTOCOL"]." 200 OK");
 							header("Content-Length:".filesize ($file));
 							header("Content-Type: image/$ext");
+							
+							//to counter act the wp-minify plugin (ob_start(array($this, 'modify_buffer'));)
+							ob_end_flush();
 							readfile($file);
 							exit;
 						} 

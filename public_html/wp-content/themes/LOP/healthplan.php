@@ -142,11 +142,11 @@ $plans = array(
 					} else {
 						// Send the user an email reminding them of what they chose
 						$headers = "From: hr@powertochange.org";
-						$subject = "Health Care Spending Account Enrollment";
+						$subject = "Medical Allowance Enrollment";
 						$emailMessage = 
 "$current_user->display_name,
 
-Your enrollment in the Health Care Spending Account has been 
+Your enrollment in the Medical Allowance has been 
 recorded. You chose the following plan:
 
   Plan name: $healthplan
