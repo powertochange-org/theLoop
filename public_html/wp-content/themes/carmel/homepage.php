@@ -58,9 +58,9 @@
 				<td>
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Featured</span><BR>
+						News &amp; Update</span><BR>
 						<?php 
-							$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
+							$latest_cat_post = new WP_Query( array('posts_per_page' => 1));
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
@@ -75,9 +75,11 @@
 				<td>
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						News &amp; Update</span><BR>
+						Leonard's Updates</span><BR>
 						<?php 
-							$latest_cat_post = new WP_Query( array('posts_per_page' => 1));
+							$idObj = get_category_by_slug('leonards-updates'); 
+							$id = $idObj->term_id;
+							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
@@ -93,14 +95,13 @@
 				</td>
 			</tr>
 			<tr>
+				
 				<td>
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						From Leonard</span><BR>
+						Staff Stories</span><BR>
 						<?php 
-							$idObj = get_category_by_slug('leonards-updates'); 
-							$id = $idObj->term_id;
-							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+							$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
