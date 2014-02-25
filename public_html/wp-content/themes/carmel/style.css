@@ -159,6 +159,7 @@ li.menu-item.current-menu-item  a{
 }
 
 .menu{
+	padding: 0;
 	width:1000px;
 	margin:0 auto;
 }
@@ -857,7 +858,7 @@ footer .copy{
 	vertical-align:middle;
 	background-color:#adafb2;
 	padding-left:24px;
-	width:213px;
+	width:280px;
 	height:37px;
 }
 
@@ -870,7 +871,7 @@ footer .copy{
 }
 
 #main-content.form .post table, #main-content.ministries .post table{
-	margin:-30px;
+	margin:-30px 0;
 	border-collapse: separate;
     border-spacing: 30px;
 	margin-bottom:0px;

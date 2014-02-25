@@ -17,13 +17,22 @@
 		<table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr style=''>
 		<?php for ($i = 0; $i < count($parts); $i ++){
 			$link .= "/$parts[$i]";
-			if ($i < count($parts) - 2){ ?>
+			if ($i < count($parts) - 2){
+				if ($i % 3 == 0 and $i > 0) {?>
+					<tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+				<? } ?>
 				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 				<td style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
-			<?php } else if ($i < count($parts) - 1){ ?>
+			<?php } else if ($i < count($parts) - 1){
+				if ($i % 3 == 0 and $i > 0) {?>
+					</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+				<? } ?>
 				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 				<td style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
-			<?php } else { ?>
+			<?php } else { 
+				if ($i % 3 == 0 and $i > 0) {?>
+					</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
+				<? } ?>
 				<td class ='crumbs' style='background-color:#f7941d; width:auto;'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 			<?php }
 		 } ?>
