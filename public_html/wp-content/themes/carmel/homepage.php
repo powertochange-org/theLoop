@@ -59,14 +59,24 @@
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
 						News &amp; Update</span><BR>
-						<?php 
-							$latest_cat_post = new WP_Query( array('posts_per_page' => 1));
+						<?php
+							$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
+							$result = $results[0];
+
+							// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
+							if ($result->ministry == "Power to Change - Students") {
+								// Show any posts
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 4));
+							} else {					
+								// Query posts associated with any category in our list. Posts that are only
+								// in the P2C Students category won't get selected.
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 4, 'category__not_in' => array(7))); //7 is the category ID for P2C Students
+							}
+							
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
 							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-							<BR>
-							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
 				</td>
