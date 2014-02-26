@@ -9,6 +9,7 @@
 $repos = array(
 	'theLoop' => array (
 		'/home/powertochange/domains/staff.powertochange.org',
+		'/home/powertochange/domains/stafftemp.powertochange.org',
 		'/home/development/domains/devstaff.powertochange.org'));
 
 if (array_key_exists("project", $_GET)){
