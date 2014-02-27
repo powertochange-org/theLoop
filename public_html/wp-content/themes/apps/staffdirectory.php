@@ -10,7 +10,7 @@
 ?>
 <?php get_header(); ?>
 	<link href="<?php echo get_stylesheet_directory_uri(); ?>/staff-directory-style.css" rel="stylesheet" type="text/css" />
-	<div id="content">
+	<div id="content" class='staff-d'>
 		<?php if (have_posts()) : while (have_posts()) : the_post();  ?>
 			<h1 style="float:left;"><a style="font-size:35pt;font-family:Roboto Slab;font-weight:100;" href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 			<div class="entry">

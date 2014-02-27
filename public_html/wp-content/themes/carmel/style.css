@@ -60,6 +60,11 @@ td {
 	padding:5px;
 }
 
+.staff-d td {
+    border: 0;
+    padding: 0;
+}
+
 p{
 	font-family:'Open Sans', sans-serif;
 	line-height:23px;
