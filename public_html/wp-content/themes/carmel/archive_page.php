@@ -46,9 +46,7 @@
 			<br>
 		</div>
 	</div>
-	<div id="content-right">
-	<?php get_sidebar(); ?>
-	</div><div style='clear:both;'></div>
+	<div style='clear:both;'></div>
 </div>
 <!--wrapper end-->
 <div style='clear:both;'></div>
