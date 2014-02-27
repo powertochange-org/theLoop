@@ -53,9 +53,9 @@
 	</div>
     <div id="content-left">
 	<div id="main-content">
-		<table style='width:100%;border:0;'>
+		<table style='width:100%;'>
 			<tr>
-				<td>
+				<td style="border:0;">
 					<hr>
 					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
 						News &amp; Update</span><BR>
@@ -80,9 +80,9 @@
 							<?php
 							endwhile; endif; ?>
 				</td>
-				<td style='width:46px;'>
+				<td style='width:46px;border:0;'>
 				</td>
-				<td>
+				<td  style="border:0;">
 					<hr>
 					<?php 
 						$idObj = get_category_by_slug('leonards-updates'); 
@@ -101,12 +101,12 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan='3' style='height:46px;'>
+				<td colspan='3' style='height:46px;border:0;'>
 				</td>
 			</tr>
 			<tr>
 				
-				<td>
+				<td  style="border:0;">
 					<hr>
 					<?php 
 						$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
@@ -121,8 +121,8 @@
 							<?php
 							endwhile; endif; ?>
 				</td>
-				<td></td>
-				<td>
+				<td  style="border:0;"></td>
+				<td  style="border:0;">
 					<hr>
 					<?php 
 						$idObj = get_category_by_slug('prayer-requests'); 
