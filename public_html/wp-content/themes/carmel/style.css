@@ -57,6 +57,7 @@ table {
 
 td {
 	border:solid 1px;
+	padding:5px;
 }
 
 p{
@@ -439,6 +440,7 @@ footer .copy{
 
 .crumbs{
 	padding:0;
+	border:0;
 	vertical-align:middle;
 	background-color:#adafb2;
 	padding-left:24px;
