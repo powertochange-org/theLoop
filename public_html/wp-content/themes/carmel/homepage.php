@@ -53,7 +53,7 @@
 	</div>
     <div id="content-left">
 	<div id="main-content">
-		<table style='width:100%;'>
+		<table style='width:100%;border:0;'>
 			<tr>
 				<td>
 					<hr>
