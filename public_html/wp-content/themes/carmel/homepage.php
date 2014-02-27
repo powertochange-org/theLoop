@@ -76,7 +76,7 @@
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
-							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+							<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo strtoupper(the_title('', '', false)); ?></a></h2>
 							<?php
 							endwhile; endif; ?>
 				</td>
@@ -84,14 +84,14 @@
 				</td>
 				<td>
 					<hr>
-					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Leonard's Updates</span><BR>
-						<?php 
-							$idObj = get_category_by_slug('leonards-updates'); 
-							$id = $idObj->term_id;
-							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-							?>
+					<?php 
+						$idObj = get_category_by_slug('leonards-updates'); 
+						$id = $idObj->term_id;
+						$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+						if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+						?>
+							<a href='<?php echo get_permalink() ?>'><span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+							Leonard's Updates</span></a><BR>
 							<BR>
 							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
 							<BR>
@@ -108,12 +108,12 @@
 				
 				<td>
 					<hr>
-					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Staff Stories</span><BR>
-						<?php 
-							$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
-							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-							?>
+					<?php 
+						$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
+						if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+						?>
+						<a href='<?php echo get_permalink() ?>'><span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+							Staff Stories</span></a><BR>
 							<BR>
 							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
 							<BR>
@@ -124,14 +124,14 @@
 				<td></td>
 				<td>
 					<hr>
-					<span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Prayer Requests</span><BR>
-						<?php 
-							$idObj = get_category_by_slug('prayer-requests'); 
-							$id = $idObj->term_id;
-							$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-							?>
+					<?php 
+						$idObj = get_category_by_slug('prayer-requests'); 
+						$id = $idObj->term_id;
+						$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+						if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+						?>
+						<a href='<?php echo get_permalink() ?>'><span class='heading'><img src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+							Prayer Requests</span></a><BR>
 							<BR>
 							<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
 							<BR>

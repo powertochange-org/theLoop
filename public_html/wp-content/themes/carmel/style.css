@@ -442,6 +442,7 @@ footer .copy{
 }
 
 .crumbs{
+	padding:0;
 	vertical-align:middle;
 	background-color:#adafb2;
 	padding-left:24px;
