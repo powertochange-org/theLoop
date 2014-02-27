@@ -150,8 +150,6 @@
     <div id="content-right">
 		<div id="sidebar">
 			<div class="sidebaritem">
-				<a href='/staff-directory/'>Staff Directory</a><BR>
-				<hr>
 				<h1>Search the Loop</h1><BR>
 				<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>
 					<input name="s" id="s" class='search-input' placeholder='Search' type='text' />
