@@ -144,7 +144,8 @@
 	</div>
 </div>
 <div id="content-right">   
-	<?php include('pro_sidebar.php') ?>
+	<?php the_content();
+	include('pro_sidebar.php') ?>
 </div><div style='clear:both;'></div>
 <?php
 	function objectToArray($d) {
