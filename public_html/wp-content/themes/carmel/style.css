@@ -277,7 +277,7 @@ hr{
 	float:right
 }
 
-#sidebar p, #sidebar li {
+#sidebar p, #sidebar ol, #sidebar ul {
 	margin-bottom:5px;
 	margin-left:0;
 }
@@ -359,7 +359,7 @@ hr{
 	background-color:#f4f4f4;
 }
 
-#comments  li {
+#comments  ul, #comments  ol{
 	margin-left:0;
 }
 
