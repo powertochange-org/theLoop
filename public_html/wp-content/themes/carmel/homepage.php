@@ -90,7 +90,7 @@
 				</td>
 				<td style='width:46px;border:0;width:50%;'>
 				</td>
-				<td  style="border:0;">
+				<td  style="border:0;width:50%;">
 					<hr>
 					<?php 
 						$idObj = get_category_by_slug('leonards-updates'); 
@@ -114,7 +114,7 @@
 			</tr>
 			<tr>
 				
-				<td  style="border:0;width:50%;">
+				<td  style="border:0;">
 					<hr>
 					<?php 
 						$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
