@@ -279,7 +279,7 @@ hr{
 
 #sidebar p, #sidebar ol, #sidebar ul {
 	margin-bottom:5px;
-	margin-left:0;
+	padding-left:0;
 }
 
 #sidebar p {
@@ -360,7 +360,7 @@ hr{
 }
 
 #comments  ul, #comments  ol{
-	margin-left:0;
+	padding-left:0;
 }
 
 footer{
