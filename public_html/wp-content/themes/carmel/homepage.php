@@ -6,7 +6,7 @@
  get_header(); ?>
 <div id="content">
 	<div style='position:relative; top:-43px;'>
-		<a id='slideshow_link'><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
+		<a id='slideshow_link' target="_blank"><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
 			$pictures = array('/wp-content/uploads/house.png', '/wp-content/uploads/untitled.png', '/wp-content/uploads/two.png');
