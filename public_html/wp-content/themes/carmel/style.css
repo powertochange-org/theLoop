@@ -55,7 +55,7 @@ q:before, q:after {
 	content: none;
 }
 
-.heading, h1{
+.heading, h1, .sidebaritem h1{
 	font-family:Roboto Slab;
 	font-weight:300;
 }
