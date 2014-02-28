@@ -440,7 +440,10 @@ footer .copy{
 	background-color:#f7941d;
 	padding:20px 0;
 	font-size:11pt;
-	border-radius:5px
+	border-radius:5px;
+	text-transform:uppercase;
+	letter-spacing:1px;
+	
 }
 
 #content-right.download a{
