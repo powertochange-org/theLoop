@@ -20,13 +20,17 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font: inherit;
-	line-height:1.3pt;
-	font-size: 14pt;
 	vertical-align: baseline;
 	text-decoration:none;
 	font-family: 'Open Sans', sans-serif;
 	color:#4a4d4e;	
 }	
+
+p{
+	line-height:1.3pt;
+	font-size: 14pt;
+}
+
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 	display: block;
