@@ -88,7 +88,7 @@
 							<?php
 							endwhile; endif; ?>
 				</td>
-				<td style='width:46px;border:0;'>
+				<td style='width:46px;border:0;width:50%;'>
 				</td>
 				<td  style="border:0;">
 					<hr>
@@ -114,7 +114,7 @@
 			</tr>
 			<tr>
 				
-				<td  style="border:0;">
+				<td  style="border:0;width:50%;">
 					<hr>
 					<?php 
 						$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
