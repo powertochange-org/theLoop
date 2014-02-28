@@ -156,8 +156,8 @@
 	</div>
     </div>
     <div id="content-right">
-		<a class='orange_button' href="/staff-directory/"><center style='color:#ffffff;'>Staff Directory</center></a>
-		<a class='orange_button' href="/reports/"><center style='color:#ffffff;'>Reports</center></a>
+		<a class='orange_button' href="/staff-directory/" style="width:280px; margin-bottom:20px;"><center style='color:#ffffff;'>Staff Directory</center></a>
+		<a class='orange_button' href="/reports/" style="width:280px; margin-bottom:20px;><center style='color:#ffffff;'>Reports</center></a>
 		<div id="sidebar">
 			<div class="sidebaritem">
 				<h1>Search the Loop</h1><BR>
