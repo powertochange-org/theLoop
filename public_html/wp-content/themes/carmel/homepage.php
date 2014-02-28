@@ -167,7 +167,7 @@
 				<?php 
 					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_update'));
 					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					echo "<a href='".get_permalink()."'><h2 style='color:inherit'>".strtoupper(the_title('', '', false))."</h2></a>"; 
+					echo "<a href='".get_permalink()."'><h2>".strtoupper(the_title('', '', false))."</h2></a>"; 
 					endwhile; endif; ?>
 				
 				<hr>
@@ -175,7 +175,7 @@
 				<?php 
 					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('upcoming_event'));
 					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					echo "<a href='".get_permalink()."'><h2 style='color:inherit'>".strtoupper(the_title('', '', false))."</h2></a>"; 
+					echo "<a href='".get_permalink()."'><h2>".strtoupper(the_title('', '', false))."</h2></a>"; 
 					endwhile; endif; ?>
 				
 				<hr>
