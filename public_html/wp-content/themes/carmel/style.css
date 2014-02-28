@@ -27,8 +27,8 @@ time, mark, audio, video {
 }	
 
 p{
-	line-height:1.3pt;
-	font-size: 14pt;
+	line-height:130%;
+	font-size: 12pt;
 }
 
 article, aside, details, figcaption, figure, 
@@ -435,12 +435,11 @@ footer .copy{
 
 #main-content .homepage p{
 	margin:0;
-	line-height:15px;
 }
 
 .arrow{
 	position:relative;
-	top:6;
+	top:6px;
 }
 
 .orange_button, #content-right.download a{
@@ -448,6 +447,7 @@ footer .copy{
 	width:100%;
 	background-color:#f7941d;
 	padding:20px 0;
+	font-size:11pt;
 	border-radius:5px
 }
 
