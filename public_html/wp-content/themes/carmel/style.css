@@ -279,6 +279,7 @@ hr{
 
 #sidebar p, #sidebar li {
 	margin-bottom:5px;
+	margin-left:0;
 }
 
 #sidebar p {
@@ -358,6 +359,9 @@ hr{
 	background-color:#f4f4f4;
 }
 
+#comments  li {
+	margin-left:0;
+}
 
 footer{
 	background:#0079c1;
