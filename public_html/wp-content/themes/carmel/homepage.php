@@ -6,10 +6,11 @@
  get_header(); ?>
 <div id="content">
 	<div style='position:relative; top:-43px;'>
-		<img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'>
+		<a id='slideshow_link'><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
 			$pictures = array('/wp-content/uploads/house.png', '/wp-content/uploads/untitled.png', '/wp-content/uploads/two.png');
+			$links = array('powertochange.com', 'powertochange.org', 'p2c.com');
 			foreach($pictures as $pic=>$x){
 				?>
 				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
@@ -28,6 +29,7 @@
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#ffffff';
 				select_pic = picture;
 				document.getElementById('slideshow').src = pics_array[select_pic];
+				document.getElementById('slideshow_link').href = links_array[select_pic];
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#fdbb30';
 			}
 			
@@ -44,6 +46,12 @@
 			var pics_array = new Array (<?php
 			foreach($pictures as &$pic){
 				echo " '$pic',";
+			}
+			?> null);
+			
+			var link_array = new Array (<?php
+			foreach($link as &$l){
+				echo " '$l',";
 			}
 			?> null);
 			
