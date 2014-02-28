@@ -29,7 +29,7 @@
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#ffffff';
 				select_pic = picture;
 				document.getElementById('slideshow').src = pics_array[select_pic];
-				document.getElementById('slideshow_link').href = link_array[select_pic];
+				document.getElementById('slideshow_link').href = links_array[select_pic];
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#fdbb30';
 			}
 			
@@ -49,8 +49,8 @@
 			}
 			?> null);
 			
-			var link_array = new Array (<?php
-			foreach($link as &$l){
+			var links_array = new Array (<?php
+			foreach($links as &$l){
 				echo " '$l',";
 			}
 			?> null);
