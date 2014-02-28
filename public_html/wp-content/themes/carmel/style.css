@@ -430,7 +430,7 @@ footer .copy{
 	margin:0;
 }
 
-#main-content .homepage h2{
+#main-content  h2.homepage{
 	font-size:14pt;
 	color:#828486;
 }
