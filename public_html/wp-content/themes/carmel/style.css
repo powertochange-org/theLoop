@@ -327,7 +327,7 @@ hr{
 
 .sidebaritem *{
 	font-family:'Open Sans', sans-serif;
-	font-size:20px;
+	font-size:11pt;
 	color:#4a4d4e;
 }
 
@@ -431,6 +431,8 @@ footer .copy{
 }
 
 #main-content .homepage h2{
+	font-size:14pt;
+	color:#828486;
 }
 
 #main-content .homepage p{
