@@ -10,7 +10,7 @@
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
 			$pictures = array('/wp-content/uploads/house.png', '/wp-content/uploads/untitled.png', '/wp-content/uploads/two.png');
-			$links = array('powertochange.com', 'powertochange.org', 'p2c.com');
+			$links = array('http://powertochange.com', 'http://powertochange.org', 'http://p2c.com');
 			foreach($pictures as $pic=>$x){
 				?>
 				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
