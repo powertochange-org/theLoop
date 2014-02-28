@@ -55,6 +55,11 @@ q:before, q:after {
 	content: none;
 }
 
+.heading, h1{
+	font-family:Roboto Slab;
+	font-weight:300;
+}
+
 table {
 	border-collapse: collapse;
 	border-spacing:0 10px;
@@ -395,22 +400,7 @@ footer .bottom div{
 footer .bottom a{
 	color:#c4c4c4;
 }
-/*
-footer .connect{
-	float:right;
-	font-family:'Open sans', sans-serif;
-	font-weight:bold;
-}
 
-footer .connect a img{
-	vertical-align:middle;
-}
-
-footer .cluster{
-	margin-left:25px;
-	margin-bottom:10px;
-}
-	*/
 footer .privacy{
 	font-family: 'Open sans', sans-serif;
 	font-size:13px;
@@ -510,6 +500,7 @@ footer .copy{
 	padding-left: 15px;
 	padding-right: 15px;
 	color:#858585;
+	width: 33%;
 }
 
 #main-content.form  .post a {
