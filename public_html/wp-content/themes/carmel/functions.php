@@ -50,7 +50,7 @@ function themename_customize_register($wp_customize){
     ));
     $wp_customize->add_control( 'select_feature_post', array(
         'settings' => 'feature_post',
-        'label'   => 'Feature Post:',
+        'label'   => 'Staff Stories:',
         'section' => 'static_front_page',
         'type'    => 'select',
         'choices'    => $postArray
