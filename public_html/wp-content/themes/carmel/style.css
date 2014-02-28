@@ -81,7 +81,7 @@ p{
 	
 }
 
-a, .sidebaritem a h2{
+a {
 	font-family:'Open Sans', sans-serif;
 	color: #0079C1;
 }
