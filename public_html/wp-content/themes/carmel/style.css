@@ -73,6 +73,7 @@ p{
 
 a{
 	font-family:'Open Sans', sans-serif;
+	color: #0079C1;
 }
 
 p strong{
@@ -428,6 +429,11 @@ footer .copy{
 	line-height:15px;
 }
 
+.arrow{
+	position:relative;
+	top:6;
+}
+
 .orange_button, #content-right.download a{
 	display:block;
 	width:100%;
@@ -483,56 +489,43 @@ footer .copy{
 	margin-top:40px;
 }
 
-#main-content.form  .post p, #main-content.ministries  .post p, #main-content.form-item .post p{
+#main-content.form  .post p, #main-content.form-item .post p{
 	color:inherit;
 }
 
-#main-content.form  .post td:hover, #main-content.ministries  .post td:hover{
+#main-content.form  .post td:hover {
 	background-color:#f7941d;
 	color:#ffffff;
 }
 
-#main-content.form  .post td, #main-content.ministries  .post td{
+#main-content.form  .post td{
+	vertical-align:middle;
 	background-color:#eeeeee;
 	border:solid 1px #eaeae8;
 	text-align:center;
 	width:299px;
 	height:147px;
-	padding-top:40px;
-	padding-left:6px;
-	padding-right:6px;
-	padding:0;
+	padding:auto 20;
 	color:#858585;
 }
 
-#main-content.form  .post a, #main-content.ministries  .post a{
+#main-content.form  .post a {
 	text-align:center;
 	display:block;
 	width:287px;
-	height:100%;
+	height:147px;
 	position:absolute;
 }
 
 
-#main-content.form .post a, #main-content.form-item .post a, #main-content.ministries  .post a {
+#main-content.form .post a, #main-content.form-item .post a {
 	color:inherit;
 }
 
-#main-content.form .post p, #main-content.form-item .post p, #main-content.ministries  .post p {
+#main-content.form .post p, #main-content.form-item .post p {
 	margin:10px;
 }
 
-#main-content.ministries  .post td, #main-content.form  .post td{
+#main-content.form  .post td{
 	position:relative
-}
-#main-content.ministries  .post p {
-	background-color:#e0e0e0; 
-	width:287px; 
-	display:block; 
-	color:#000000;
-	font-weight:bold;
-	vertical-align:baseline;
-	position:absolute;
-	bottom:6px;
-	left:6px;
 }
