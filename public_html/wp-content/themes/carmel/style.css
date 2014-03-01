@@ -439,11 +439,11 @@ footer .copy{
 	width:100%;
 	background-color:#f7941d;
 	padding:20px 0;
-	font-size:11pt;
+	font-size:12pt;
 	border-radius:5px;
 	text-transform:uppercase;
 	letter-spacing:1px;
-	
+	font-weight:bold;
 }
 
 #content-right.download a{
