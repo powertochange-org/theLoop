@@ -460,6 +460,10 @@ footer .copy{
 	height:37px;
 }
 
+.crumbs img{
+	float: right;
+}
+
 #main-content .crumbs a{
 	color:#ffffff;
 }
