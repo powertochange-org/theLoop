@@ -127,7 +127,7 @@
 							<BR>
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
-							endwhile; endif; ?>
+							endwhile; endif; ?><BR><BR>
 						<a class='orange_button' href="mailto:staffstory@example.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 				<td  style="border:0;"></td>
