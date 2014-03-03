@@ -175,7 +175,7 @@
 				<?php 
 					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('upcoming_event'));
 					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					echo "<a href='/worldwide-day-of-prayer/'><h2>Worldwide Day of Prayer</h2></a>"; 
+					echo "<a href='/worldwide-day-of-prayer/'><h2>WORLDWIDE DAY OF PRAYER</h2></a>"; 
 					// to change back, comment this line and delete previous line // echo "<a href='".get_permalink()."'><h2>".strtoupper(the_title('', '', false))."</h2></a>"; 
 					endwhile; endif; ?>
 				
