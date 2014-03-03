@@ -19,7 +19,6 @@ time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font: inherit;
 	vertical-align: baseline;
 	text-decoration:none;
 	font-family: 'Open Sans', sans-serif;
@@ -516,7 +515,7 @@ footer .copy{
 }
 
 
-#main-content.form .post a, #main-content.form-item .post a {
+#main-content.form .post a {
 	color:inherit;
 }
 

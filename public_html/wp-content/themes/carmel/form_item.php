@@ -40,9 +40,6 @@
 		</tr></table>
 		<div id="content-left">
 			<div class="post">
-				 <h2 style="font-size:20px;font-weight:bold;margin-bottom:20px;"><a style='color:#f7941d;' href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
-				 <hr>
-				 <BR>
 				<?php the_post_thumbnail();
 				$content = get_the_content();
 				$content = apply_filters('the_content', $content);
