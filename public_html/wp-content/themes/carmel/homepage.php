@@ -9,8 +9,8 @@
 		<a id='slideshow_link' target="_blank"><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
-			$pictures = array('/wp-content/uploads/house.png', '/wp-content/uploads/untitled.png', '/wp-content/uploads/two.png');
-			$links = array('http://powertochange.com', 'http://powertochange.org', 'http://p2c.com');
+			$pictures = array('/wp-content/uploads/slide/Fellowship_Web_Loop_Banner.png');
+			$links = array('http://p2c.com/students/event-category/fellowship-dinner');
 			foreach($pictures as $pic=>$x){
 				?>
 				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
