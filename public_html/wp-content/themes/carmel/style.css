@@ -39,6 +39,11 @@ footer, header, hgroup, menu, nav, section {
 	margin-left:60px;
 }
 
+h2{
+	color:#f7941d;
+	font-weight:bold;
+}
+
 body {
 	/*line-height: 1;*/
 }
