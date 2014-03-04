@@ -1,4 +1,4 @@
-Theme Name: Classic Copy #1
+Theme Name: carmel
 Theme URI: http://www.bravenewcode.com/products/wptouch-pro/
 Description: The original WPtouch theme, re-written for WPtouch Pro with all-new features.
 Version: 2.6

@@ -3026,6 +3026,16 @@ a.nav-fwd {
 	background-size: 11px;
 }
 
+/* clickable form td*/
+
+#main-content.form  .post a {
+	text-align:center;
+	display:block;
+	width:287px;
+	height:147px;
+	position:absolute;
+}
+
 /* @end */
 
 
