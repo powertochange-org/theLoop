@@ -6,29 +6,17 @@
  get_header(); ?>
 <div id="content">
 	<div style='position:relative; top:-43px;'>
-		<?php 
-			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png', '/wp-content/uploads/slides/1.jpg', '/wp-content/uploads/slides/2.jpg', '/wp-content/uploads/slides/3.jpg', '/wp-content/uploads/slides/b4.jpg');
-			$links = array('http://p2c.com/students/event-category/fellowship-dinner', '/', '/', '/', '/');
-		?>
-		<a id='slideshow_link' target="_blank">
-		<?php foreach($pictures as $pic=>$src){
-			?>
-			<div id='slideshow_<?php echo $pic ?>'  width='976' height='400' style='border:solid 12px #d6d7d4;' src='<?php echo $src ?>' style='display:none'>
-			</div>
-			<?php
-		}
-		?>
-		
-		</a>
+		<a id='slideshow_link' target="_blank"><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
-			
-		foreach($pictures as $pic=>$x){
-			?>
-			<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
-			</div>
-			<?php
-		}
+			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png', '/wp-content/uploads/slides/1.jpg', '/wp-content/uploads/slides/2.jpg', '/wp-content/uploads/slides/3.jpg', '/wp-content/uploads/slides/b4.jpg');
+			$links = array('http://p2c.com/students/event-category/fellowship-dinner', '/', '/', '/', '/');
+			foreach($pictures as $pic=>$x){
+				?>
+				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
+				</div>
+				<?php
+			}
 		?>
 		</div>
 		<script type="text/javascript">
@@ -39,9 +27,8 @@
 			
 			function showPicture(picture){
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#ffffff';
-				document.getElementById('slideshow_' + select_pic).style.display = 'none';
 				select_pic = picture;
-				document.getElementById('slideshow_' + select_pic).style.display = 'block';
+				document.getElementById('slideshow').src = pics_array[select_pic];
 				document.getElementById('slideshow_link').href = links_array[select_pic];
 				document.getElementById('div_pic_' + select_pic).style.backgroundColor = '#fdbb30';
 			}
