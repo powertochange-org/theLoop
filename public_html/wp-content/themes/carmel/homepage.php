@@ -85,7 +85,7 @@
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 							?>
 							<BR>
-							<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo strtoupper(the_title('', '', false)); ?></a></h2>
+							<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo the_title('', '', false); ?></a></h2>
 							<?php
 							endwhile; endif; ?>
 						</span>
