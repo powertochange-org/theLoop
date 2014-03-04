@@ -9,8 +9,8 @@
 		<a id='slideshow_link' target="_blank"><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
-			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png');
-			$links = array('http://p2c.com/students/event-category/fellowship-dinner');
+			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png', '/wp-content/uploads/slides/1.jpg', '/wp-content/uploads/slides/2.jpg', '/wp-content/uploads/slides/3.jpg'. , '/wp-content/uploads/slides/b4.jpg');
+			$links = array('http://p2c.com/students/event-category/fellowship-dinner', '/', '/', '/', '/');
 			foreach($pictures as $pic=>$x){
 				?>
 				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
@@ -128,7 +128,7 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?><BR><BR>
-						<a class='orange_button' href="mailto:staffstory@example.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
+						<a class='orange_button' href="mailto:hr@powertochange.org"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 				<td  style="border:0;"></td>
 				<td  style="border:0;">
