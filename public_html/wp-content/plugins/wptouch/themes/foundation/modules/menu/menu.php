@@ -37,7 +37,7 @@ function foundation_get_page_walker( $walker, $menu_name ) {
 	}
 
 	return $walker;
-//	$wptouch_pro->theme_menus[] = $menu;	
+//	$wptouch_pro->theme_menus[] = $menu;
 }
 
 function foundation_menu_get_style_deps() {
@@ -45,26 +45,26 @@ function foundation_menu_get_style_deps() {
 
 	if ( defined( 'WPTOUCH_MODULE_RESET_INSTALLED' ) ) {
 		$style_deps[] = 'foundation_reset';
-	}	
+	}
 
 	return $style_deps;
 }
 
 function foundation_menu_init() {
 	/*
-	wp_enqueue_style( 
-		'foundation_menu', 
-		foundation_get_base_module_url() . '/menu/menu.css', 
-		foundation_menu_get_style_deps(), 
+	wp_enqueue_style(
+		'foundation_menu',
+		foundation_get_base_module_url() . '/menu/menu.css',
+		foundation_menu_get_style_deps(),
 		FOUNDATION_VERSION
 	);
 	*/
 
-	wp_enqueue_script( 
-		'foundation_menu', 
-		foundation_get_base_module_url() . '/menu/menu.js', 
-		array( 'jquery' ), 
+	wp_enqueue_script(
+		'foundation_menu',
+		foundation_get_base_module_url() . '/menu/menu.js',
+		array( 'jquery' ),
 		FOUNDATION_VERSION,
-		true 
+		true
 	);
 }

@@ -1,3 +1,5 @@
+/* @override http://wptp3.local.com/wp-content/plugins/wptouch-pro-3/themes/foundation/default/style.css?ver=3.1.6 */
+
 /* @group Reset */
 
 html,body,div,span,applet,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,strike,strong,sub,sup,var,b,u,i,center,ol,ul,li,caption {
@@ -86,7 +88,7 @@ blockquote {
 	font-style: italic;
 }
 
-.aligncenter,  
+.aligncenter,
 .alignnone {
 	text-align: center !important;
 	margin-left: auto !important;
@@ -146,7 +148,7 @@ code, pre {
 	text-align: center;
 }
 
-img.wp-smiley { 
+img.wp-smiley {
 	margin: 0;
 }
 
@@ -287,7 +289,7 @@ to {
 }
 
 @-webkit-keyframes slideInPanel {
-	from { 
+	from {
 	-webkit-transform: translateY(-20%);
 	opacity: 0;
 	}
@@ -409,7 +411,7 @@ to {
 }
 
 .swipe * {
-	-webkit-tap-highlight-color: rgba(0,0,0,0);	
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	-webkit-touch-callout: none;
 }
 
@@ -688,7 +690,7 @@ body.web-app-mode.translucent {
 }
 
 .dark-body #switch div {
-	border: 1px solid rgba(255,255,255,.15);	
+	border: 1px solid rgba(255,255,255,.15);
 }
 
 /* @end */
@@ -725,7 +727,7 @@ li .social-footer-badges   {
 }
 
 .dark-body .social-footer-badges {
-	background-color: rgba(0,0,0,.3);	
+	background-color: rgba(0,0,0,.3);
 	box-shadow: inset rgba(255,255,255,.2) 0px 1px 0px;
 	border-width: 0;
 }
@@ -770,7 +772,7 @@ form#commentform input:focus, form#commentform textarea:focus {
 }
 
 form#commentform input, form#commentform textarea {
-	padding: 2%;
+	padding: 4px;
 	border: 1px solid rgba(0,0,0,.3);
 	font-size: 100%;
 	-webkit-appearance: none;
@@ -786,7 +788,7 @@ form#commentform textarea {
 }
 
 form#commentform textarea:focus {
-	min-height: 120px;	
+	min-height: 120px;
 }
 
 form#commentform button#submit {
@@ -915,11 +917,11 @@ form#commentform button#submit {
 
 .wptouch-login-wrap, .wptouch-login-wrap a {
 	color: rgba(0,0,0,.8);
-	text-shadow: rgba(255,255,255,.2) 0 1px 0;	
+	text-shadow: rgba(255,255,255,.2) 0 1px 0;
 }
 
 .tablet .wptouch-login-wrap {
-	width: 30%;	
+	width: 30%;
 }
 
 .wptouch-login-wrap .login-close {
@@ -959,7 +961,7 @@ p.login-remember {
 
 .wptouch-login-inner input[type="text"]:focus, .wptouch-login-inner input[type="password"]:focus {
 	background: white;
-	
+
 }
 
 .wptouch-login-inner input[type="submit"] {
@@ -976,7 +978,7 @@ p.login-remember {
 }
 
 .wptouch-login-inner input[type="submit"]:active {
-	box-shadow: inset rgba(0,0,0,.5) 0px 2px 4px;	
+	box-shadow: inset rgba(0,0,0,.5) 0px 2px 4px;
 }
 
 /* @group Links */
@@ -1001,7 +1003,7 @@ p.login-remember {
 }
 
 .sign-up {
-	border-right: 1px solid rgba(0,0,0,.2);	
+	border-right: 1px solid rgba(0,0,0,.2);
 }
 
 /* @end */
@@ -1089,4 +1091,14 @@ p.login-remember {
 	}
 }
 
+/* @end */
+
+/* @group Jetpack Stats compatibility - hide tracker image */
+img#wpstats {
+	position: absolute;
+	top: 0;
+	width: 0px;
+	height: 0px;
+	overflow: hidden
+}
 /* @end */

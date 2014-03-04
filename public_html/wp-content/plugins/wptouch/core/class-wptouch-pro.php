@@ -391,23 +391,32 @@ class WPtouchProThree {
 	}
 
 	function set_cache_cookie() {
-		global $wptouch_pro;
+		if ( !is_admin() && function_exists( 'wptouch_cache_admin_bar' ) ) {
+			global $wptouch_pro;
 
-		$cookie_value = 'desktop';
-		if ( $this->is_mobile_device ) {
-			if ( $this->showing_mobile_theme ) {
-				$cookie_value = 'mobile';
-			} else {
-				$cookie_value = 'mobile-desktop';
+			$cookie_value = 'desktop';
+
+			if ( $this->is_mobile_device ) {
+				if ( $this->showing_mobile_theme ) {
+					$cookie_value = 'mobile';
+				} else {
+					$cookie_value = 'mobile-desktop';
+				}
 			}
-		}
 
- 		if ( !isset( $_COOKIE[ WPTOUCH_CACHE_COOKIE ] ) || ( isset( $_COOKIE[ WPTOUCH_CACHE_COOKIE ] ) && $_COOKIE[ WPTOUCH_CACHE_COOKIE] != $cookie_value ) ) {
-			setcookie( WPTOUCH_CACHE_COOKIE, $cookie_value, time() + 3600, '/' );
-			$_COOKIE[ WPTOUCH_CACHE_COOKIE ] = $cookie_value;
-		}
+			if ( function_exists( 'wptouch_addon_should_cache_desktop' ) ) {
+				$cache_desktop = wptouch_addon_should_cache_desktop();
+			} else {
+				$cache_desktop = false;
+			}
 
-		if ( !is_admin() ) {
+			if ( $this->is_mobile_device || $cache_desktop === true ) {
+		 		if ( !isset( $_COOKIE[ WPTOUCH_CACHE_COOKIE ] ) || ( isset( $_COOKIE[ WPTOUCH_CACHE_COOKIE ] ) && $_COOKIE[ WPTOUCH_CACHE_COOKIE] != $cookie_value ) ) {
+					setcookie( WPTOUCH_CACHE_COOKIE, $cookie_value, time() + 3600, '/' );
+					$_COOKIE[ WPTOUCH_CACHE_COOKIE ] = $cookie_value;
+				}
+			}
+
 			do_action( 'wptouch_cache_page' );
 		}
 	}
@@ -2067,6 +2076,8 @@ class WPtouchProThree {
 	function delete_theme_add_on_cache() {
 		delete_transient( '_wptouch_available_cloud_addons' );
 		delete_transient( '_wptouch_available_cloud_themes' );
+		delete_transient( '_wptouch_bncid_latest_version' );
+		delete_transient( '_wptouch_bncid_has_license' );
 	}
 
 	function activate_license() {
@@ -2351,20 +2362,6 @@ class WPtouchProThree {
 
 		wp_enqueue_style( 'wptouch-theme-css', wptouch_check_url_ssl( $css_file ), 'wptouch-parent-theme-css', WPTOUCH_VERSION );
 
-		// Load child RTL css file
-		if ( wptouch_should_load_rtl() && file_exists( WP_CONTENT_DIR . '/' . $settings->current_theme_location . '/' . $settings->current_theme_name . '/' . $this->get_active_device_class() . '/' . $settings->current_theme_name . '-rtl.css' ) ) {
-			wp_enqueue_style(
-				'wptouch-rtl',
-				wptouch_check_url_ssl( $this->check_and_use_css_file(
-					$settings->current_theme_location . '/' . $settings->current_theme_name . '/' . $this->get_active_device_class() . '/' . $settings->current_theme_name . '-rtl.css',
-					WP_CONTENT_DIR,
-					WP_CONTENT_URL
-				) ),
-	 			array( 'wptouch-theme-css' ),
-	 			WPTOUCH_VERSION
-	 		);
-
-		}
 	}
 
 	function setup_child_theme_styles() {
@@ -2384,7 +2381,7 @@ class WPtouchProThree {
 				echo "<!-- Powered by WPtouch: " . WPTOUCH_VERSION . " -->";
 			} else {
 				echo "<!-- Powered by WPtouch Pro: " . WPTOUCH_VERSION . " -->";
-			}			
+			}
 		}
 	}
 
@@ -2470,6 +2467,7 @@ class WPtouchProThree {
 
 		require_once( WPTOUCH_DIR . '/core/admin-settings.php' );
 		wptouch_settings_process( $this );
+		$this->delete_theme_add_on_cache();
 	}
 
 	function get_theme_copy_num( $base ) {

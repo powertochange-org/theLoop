@@ -42,6 +42,14 @@ function foundation_social_links_settings( $page_options ) {
 			),
 			wptouch_add_setting(
 				'text',
+				'social_instagram_url',
+				'Instagram',
+				__( 'Full URL to your Instagram profile', 'wptouch-pro' ),
+				WPTOUCH_SETTING_BASIC,
+				'1.0'
+			),
+			wptouch_add_setting(
+				'text',
 				'social_tumblr_url',
 				__( 'Tumblr', 'wptouch-pro' ),
 				__( 'Full URL to your Tumblr profile', 'wptouch-pro' ),
@@ -128,6 +136,9 @@ function foundation_social_links(){
 	}
 	if ( $settings->social_google_url ) {
 		foundation_social_show_one_link( $settings->social_google_url, 'google-plus', 'Google+' );
+	}
+	if ( $settings->social_instagram_url ) {
+		foundation_social_show_one_link( $settings->social_instagram_url, 'instagram', 'Instagram' );
 	}
 	if ( $settings->social_tumblr_url ) {
 		foundation_social_show_one_link( $settings->social_tumblr_url, 'tumblr', 'Tumblr' );

@@ -294,7 +294,7 @@ function wptouch_get_bloginfo( $setting_name ) {
 			$setting = $wptouch_pro->get_current_theme_uri();
 			break;
 		case 'site_title':
-			$setting = $settings->site_title;
+			$setting = stripslashes( $settings->site_title );
 			break;
 		case 'wptouch_directory':
 			$setting = WPTOUCH_DIR;

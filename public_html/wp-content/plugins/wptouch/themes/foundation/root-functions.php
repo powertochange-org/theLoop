@@ -1,6 +1,6 @@
 <?php
 
-define( 'FOUNDATION_VERSION', '2.0.3' );
+define( 'FOUNDATION_VERSION', '2.0.4' );
 
 define( 'FOUNDATION_DIR', WPTOUCH_DIR . '/themes/foundation' );
 define( 'FOUNDATION_URL', WPTOUCH_URL . '/themes/foundation' );
@@ -23,7 +23,7 @@ add_filter( 'wptouch_admin_page_render_wptouch-admin-theme-settings', 'foundatio
 add_filter( 'wptouch_setting_version_compare', 'foundation_setting_version_compare', 10, 2 );
 add_filter( 'wptouch_body_classes', 'foundation_body_classes' );
 add_filter( 'wptouch_the_content', 'foundation_insert_multipage_links');
-add_filter( 'wp_die_handler', 'foundation_custom_die_handler' );
+//add_filter( 'wp_die_handler', 'foundation_custom_die_handler' );
 
 add_action( 'wptouch_post_head', 'foundation_setup_smart_app_banner' );
 add_action( 'wptouch_post_head', 'foundation_setup_viewport' );
@@ -146,6 +146,7 @@ function foundation_setting_defaults( $settings ) {
 	$settings->social_facebook_url = '';
 	$settings->social_twitter_url = '';
 	$settings->social_google_url = '';
+	$settings->social_instagram_url = '';
 	$settings->social_tumblr_url = '';
 	$settings->social_pinterest_url = '';
 	$settings->social_vimeo_url = '';
@@ -251,7 +252,7 @@ function foundation_get_settings() {
 }
 
 function foundation_posts_per_page( $query ) {
-	if ( wptouch_is_showing_mobile_theme_on_mobile_device() && ( $query->is_home() || is_archive() ) ) {
+	if ( wptouch_is_showing_mobile_theme_on_mobile_device() && $query->is_main_query() && ( $query->is_home() || is_archive() ) ) {
 		$settings = foundation_get_settings();
 
 		set_query_var( 'posts_per_page', $settings->posts_per_page );
@@ -526,19 +527,19 @@ function foundation_maybe_output_homescreen_icon( $image, $width, $height, $pixe
 function foundation_setup_homescreen_icons() {
 	$settings = foundation_get_settings();
 	if ( wptouch_is_device_real_ipad() ) {
-		// Default (if no icon added in admin, or icon isn't formatted correctly, and as a catch-all)
-		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
 		// iPad home screen icons
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 152, 152, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 144, 144, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 57, 57, 1 );
-	} else {
 		// Default (if no icon added in admin, or icon isn't formatted correctly, and as a catch-all)
 		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
+	} else {
 		// iPhone / Android home screen icons
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 120, 120, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 114, 114, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->android_others_icon, 57, 57, 1 );
+		// Default (if no icon added in admin, or icon isn't formatted correctly, and as a catch-all)
+		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
 	}
 
 
@@ -909,6 +910,7 @@ function wptouch_fdn_ordered_cat_list( $num, $include_count = true ) {
 	$settings = wptouch_get_settings( 'foundation' );
 
 	$excluded_cats = 0;
+
 	if ( $settings->excluded_categories ) {
 		$new_cats = _foundation_explode_and_trim_taxonomy( $settings->excluded_categories, 'category' );
 
@@ -943,6 +945,7 @@ function wptouch_fdn_ordered_tag_list( $num ) {
 	$settings = wptouch_get_settings( 'foundation' );
 
 	$excluded_tags = 0;
+
 	if ( $settings->excluded_tags ) {
 		$new_tags = _foundation_explode_and_trim_taxonomy( $settings->excluded_tags, 'post_tag' );
 
@@ -1101,11 +1104,13 @@ function foundation_inline_styles() {
 	}
 }
 
-function foundation_custom_die_handler() {
+function foundation_custom_die_handler( $function ) {
 	$error_template = FOUNDATION_DIR . '/default/formerror.php';
 
 	if ( !is_admin() && file_exists( $error_template ) ) {
 			require_once( $error_template );
 			die();
 	}
+
+	return $function;
 }

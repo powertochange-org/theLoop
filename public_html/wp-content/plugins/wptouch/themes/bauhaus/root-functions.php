@@ -1,6 +1,6 @@
 <?php
 
-define( 'BAUHAUS_THEME_VERSION', '1.0.8' );
+define( 'BAUHAUS_THEME_VERSION', '1.1' );
 define( 'BAUHAUS_SETTING_DOMAIN', 'bauhaus' );
 define( 'BAUHAUS_DIR', wptouch_get_bloginfo( 'theme_root_directory' ) );
 define( 'BAUHAUS_URL', wptouch_get_bloginfo( 'theme_root_url' ) );
@@ -21,10 +21,10 @@ add_filter( 'wptouch_post_classes', 'bauhaus_post_classes' );
 add_filter( 'wptouch_admin_page_render_wptouch-admin-theme-settings', 'bauhaus_render_theme_settings' );
 add_filter( 'foundation_settings_blog', 'bauhaus_blog_settings' );
 // add_filter( 'foundation_settings_pages', 'bauhaus_page_settings' );
+add_filter( 'wptouch_post_footer', 'bauhaus_footer_version' );
 
 add_filter( 'wptouch_has_post_thumbnail', 'bauhaus_handle_has_thumbnail' );
 add_filter( 'wptouch_the_post_thumbnail', 'bauhaus_handle_the_thumbnail' );
-
 add_filter( 'wptouch_setting_version_compare', 'bauhaus_setting_version_compare', 10, 2 );
 
 function bauhaus_setting_domain( $domain ) {
@@ -42,6 +42,10 @@ function bauhaus_setting_version_compare( $version, $domain ) {
 	}
 
 	return $version;
+}
+
+function bauhaus_footer_version(){
+	echo '<!--Bauhaus v' . BAUHAUS_THEME_VERSION . '-->';
 }
 
 function bauhaus_setting_defaults( $settings ) {

@@ -123,7 +123,7 @@ function foundation_determine_images() {
 		case 'posts':
 			$post_ids = explode( ',', str_replace( ' ', '', $settings->featured_post_ids ) );
 			if ( is_array( $post_ids ) && count( $post_ids ) ) {
-				$new_posts = new WP_Query( array( 'post__in'  => $post_ids, 'posts_per_page' => $args[ 'max_search' ], 'post_type' => 'any' ) );
+				$new_posts = new WP_Query( array( 'post__in'  => $post_ids, 'posts_per_page' => $args[ 'max_search' ], 'post_type' => 'any', 'orderby' => 'post__in' ) );
 			}
 			break;
 		case 'latest':

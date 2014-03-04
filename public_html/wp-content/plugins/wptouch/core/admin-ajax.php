@@ -141,6 +141,14 @@ function wptouch_admin_handle_ajax( $wptouch_pro, $ajax_action ) {
 			}
 
 			break;
+		case 'load-upgrade-area':
+			$content = wp_remote_get( 'http://wptouch-pro-3.s3.amazonaws.com/WPtouchBoard/upgrade/page.xhtml' );
+
+			if ( !is_wp_error( $content ) ) {
+				echo $content['body'];
+			}
+
+			break;
 		case 'download-icon-set':
 			global $wptouch_pro;
 

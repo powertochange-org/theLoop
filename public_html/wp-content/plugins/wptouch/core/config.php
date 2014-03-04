@@ -86,9 +86,10 @@ define( 'WPTOUCH_PRO_README_FILE', 'http://www.bravenewcode.com/wptouch-pro-3/re
 
 define( 'ADDON_SETTING_DOMAIN', 'addons' );
 
-define( 'WPTOUCH_API_CHECK_INTERVAL', 3600*2 );
+define( 'WPTOUCH_API_GENERAL_CACHE_TIME', 3600 );
+define( 'WPTOUCH_API_CHECK_INTERVAL', 3600*4 );
 define( 'WPTOUCH_API_CHECK_FAILURES', 4 );
 
-define( 'WPTOUCH_THEME_ADDON_TRANSIENT_TIME', 30 );
+define( 'WPTOUCH_THEME_ADDON_TRANSIENT_TIME', 90 );
 
 require_once( 'mobile-user-agents.php' );
