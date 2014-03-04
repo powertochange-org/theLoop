@@ -20,7 +20,7 @@ register_sidebar(array(
 
 // custom 'read more' link
 function excerpt_ellipse($text) {
-    return str_replace(' [&hellip;]', ' <BR><BR><a href="'.get_permalink().'">Read more</a>', $text);
+    return str_replace(' [&hellip;]', '... <BR><BR><a href="'.get_permalink().'">Read more</a>', $text);
 }
 add_filter('the_excerpt', 'excerpt_ellipse');
 
