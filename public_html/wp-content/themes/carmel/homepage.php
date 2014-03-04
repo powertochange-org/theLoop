@@ -74,11 +74,11 @@
 							// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
 							if ($result->ministry == "Power to Change - Students") {
 								// Show any posts
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 4));
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6));
 							} else {					
 								// Query posts associated with any category in our list. Posts that are only
 								// in the P2C Students category won't get selected.
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 4, 'category__not_in' => array(7))); //7 is the category ID for P2C Students
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6, 'category__not_in' => array(7))); //7 is the category ID for P2C Students
 							}
 							
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
