@@ -2960,3 +2960,11 @@ ol.commentlist .com-down-arrow {
 
 
 /* @end */
+
+#main-content.form  .post a {
+	text-align:center;
+	display:block;
+	width:287px;
+	height:147px;
+	position:absolute;
+}
