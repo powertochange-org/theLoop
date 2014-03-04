@@ -432,6 +432,11 @@ footer .copy{
 	margin:0;
 }
 
+.newsUpdate a{
+	font-size: 83%;
+	line-height: 153%;
+}
+
 .arrow{
 	position:relative;
 	top:6px;
