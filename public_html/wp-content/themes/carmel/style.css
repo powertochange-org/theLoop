@@ -473,7 +473,7 @@ footer .copy{
 	color:#ffffff;
 }
 
-#main-content.form  * {
+#main-content.form  *, #main-content.form-item * {
 	margin:0;
 }
 
