@@ -13,8 +13,7 @@
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
 			?>
-			<div id='slideshow_<?php echo $pic ?>'  width='976' height='400' style='border:solid 12px #d6d7d4;/*display:none;*/' src='<?php echo $src ?>'>
-			</div>
+			<img id='slideshow_<?php echo $pic ?>'  width='976' height='400' style='border:solid 12px #d6d7d4;/*display:none;*/' src='<?php echo $src ?>'>
 			<?php
 		}
 		?>
