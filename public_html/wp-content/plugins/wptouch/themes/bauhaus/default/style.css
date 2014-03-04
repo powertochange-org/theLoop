@@ -1,4 +1,4 @@
-/* @override http://wptp3.local.com/wp-content/wptouch-data/themes/bauhaus/default/style.css?ver=3.1.4 */
+/* @override http://wptp3.local.com/wp-content/wptouch-data/themes/bauhaus/default/style.css?ver=3.1.7 */
 
 /* Bauhaus CSS */
 
@@ -577,7 +577,6 @@ ul.dots {
 .post-page-content > p, .post-page-content > div > p {
 	padding-left: 20px;
 	padding-right: 20px;
-	overflow: hidden;
 }
 
 .wptouch-shortcode-webapp-mobile, .wptouch-shortcode-webapp-only, .wptouch-shortcode-webapp-only {
@@ -627,10 +626,10 @@ ul.dots {
 .post-page-head-area.bauhaus h2.post-title {
 	color: rgba(0,0,0,.7);
 	letter-spacing: -2px;
-	font-size: 160%;
+	font-size: 180%;
 	font-weight: normal;
 	margin: 0 !important;
-	padding: 10px 15px;
+	padding: 10px 12px;
 }
 
 .post-page-content blockquote {
@@ -794,8 +793,7 @@ form#commentform input, form#commentform textarea {
 
 .search span.select-wrap {
 	display: block;
-	margin-bottom: -20px;
-	margin-top: 40px;
+	margin-top: 25px;
 }
 
 .search span.select-wrap .search-select {

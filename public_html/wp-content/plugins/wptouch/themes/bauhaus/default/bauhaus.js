@@ -9,6 +9,7 @@ function doBauhausReady() {
 	bauhausWebAppMenu();
 	bauhausVideoUnwrap();
 	bauhausHandleSearch();
+	bauhausHandlePostImgs();
 }
 
 // Spice up the appearance of Foundation's Featured Slider
@@ -47,7 +48,7 @@ function bauhausBindTappableLinks(){
 // In Web-App Mode, dynamically ensure that the Menu height is correct and scrollable
 function bauhausWebAppMenu(){
 	if ( navigator.standalone ) {
-		jQuery( window ).resize( function() { 
+		jQuery( window ).resize( function() {
 			var windowHeight = jQuery( window ).height() - 74;
 			if ( jQuery( 'body.web-app-mode.ios7.smartphone.portrait' ).length ) {
 				jQuery( '#menu' ).css( 'max-height', windowHeight );
@@ -67,13 +68,22 @@ if ( pTags.parent().is( 'p' ) ) {
   }
 }
 
+function bauhausHandlePostImgs(){
+var img = jQuery( '.post-page-content p img' );
+	jQuery( img ).each( function(){
+		if ( !jQuery( this ).is( '.aligncenter, .alignleft, .alignright' ) ) {
+			jQuery( this ).addClass( 'aligncenter' );
+		}
+	});
+}
+
 function bauhausHandleSearch() {
 	if ( jQuery( '.search' ).length ) {
 		jQuery( '.search-select' ).change( function( e ) {
 			var sectionName = ( '#' + jQuery( this ).find( ':selected' ).attr( 'data-section' ) + '-results' );
 			jQuery( '#content > div:not(.post-page-head-area)' ).hide();
 			jQuery( sectionName ).show();
-			e.preventDefault();		
+			e.preventDefault();
 		}).trigger( 'change' );
 	}
 }

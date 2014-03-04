@@ -8,6 +8,7 @@ define( 'WPTOUCH_PRO_ADMIN_MENUS', 'wptouch-admin-menus' );
 define( 'WPTOUCH_PRO_ADMIN_MENUS_DISABLED', 'wptouch-admin-menus-disabled' );
 define( 'WPTOUCH_PRO_ADMIN_WARNINGS', 'wptouch-admin-warnings' );
 define( 'WPTOUCH_PRO_ADMIN_LICENSE', 'wptouch-admin-license' );
+define( 'WPTOUCH_PRO_ADMIN_UPGRADE', 'wptouch-admin-upgrade' );
 
 define( 'WPTOUCH_PRO_ADMIN_THEMES_AND_ADDONS', 'wptouch-admin-themes-and-addons' );
 define( 'WPTOUCH_PRO_ADMIN_THEME_OPTIONS', 'wptouch-admin-theme-settings' );
@@ -57,6 +58,11 @@ function wptouch_admin_get_predefined_menus( $network_only = false ) {
 	// Check multisite
 	if ( !defined( 'WPTOUCH_IS_FREE' ) && ( wptouch_can_show_license_menu() || defined( 'WPTOUCH_FORCE_SHOW_LICENSE_PANEL' ) ) ) {
 		$available_menus[ WPTOUCH_PRO_ADMIN_LICENSE ] = wptouch_admin_create_menu( WPTOUCH_PRO_ADMIN_LICENSE, __( 'License', 'wptouch-pro' ), WPTOUCH_PRO_ADMIN_CUSTOM_PAGE );
+	}
+
+	// Check multisite
+	if ( defined( 'WPTOUCH_IS_FREE' ) ) {
+		$available_menus[ WPTOUCH_PRO_ADMIN_UPGRADE ] = wptouch_admin_create_menu( WPTOUCH_PRO_ADMIN_UPGRADE, __( 'Upgrade to Pro', 'wptouch-pro' ), WPTOUCH_PRO_ADMIN_CUSTOM_PAGE );
 	}
 
 	return apply_filters( 'wptouch_available_menus', $available_menus );

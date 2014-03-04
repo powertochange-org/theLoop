@@ -48,6 +48,10 @@ function wptouchHandleLicensePanel() {
 
 	if ( jQuery( '#license-settings-area' ).length ) {
 
+		if ( jQuery( '#wptouch-settings-area.licensed' ).length ) {
+			jQuery( '#license_key' ).attr( 'type', 'password' );
+		}
+
 		// See if we have a license already
 		if ( bncHasLicense == 0 ) {
 			jQuery( activate ).show();
@@ -893,7 +897,7 @@ function wptouchSetupColorPicker() {
 	);
 }
 
-function wptouchLoadTouchBoardImages() {
+function wptouchLoadTouchBoardArea() {
 	var touchboard = jQuery( '#touchboard-left' );
 	if ( touchboard.length ) {
 		if ( !navigator.onLine ) {
@@ -902,9 +906,20 @@ function wptouchLoadTouchBoardImages() {
 			var ajaxParams = {};
 			wptouchAdminAjax( 'load-touchboard-area', ajaxParams, function( result ) {
 				touchboard.html( result );
-				setTimeout( function(){ wptouchAdminResize() }, 200 );
+				setTimeout( function(){ wptouchAdminResize(); }, 200 );
 			});
 		}
+	}
+}
+
+function wptouchLoadUpgradeArea() {
+	var upgrade = jQuery( '#upgrade-area' );
+	if ( upgrade.length ) {
+		var ajaxParams = {};
+		wptouchAdminAjax( 'load-upgrade-area', ajaxParams, function( result ) {
+			upgrade.html( result );
+			setTimeout( function(){ wptouchAdminResize(); }, 200 );
+		});
 	}
 }
 
@@ -1107,7 +1122,8 @@ function wptouchAdminReady() {
 	wptouchPreviewWindow();
 	wptouchHandlePreviewWindow();
 
-	wptouchLoadTouchBoardImages();
+	wptouchLoadTouchBoardArea();
+	wptouchLoadUpgradeArea();
 	wptouchHandleDownloadIconSets();
 	wptouchSetupNews();
 	wptouchLoadChangeLog();

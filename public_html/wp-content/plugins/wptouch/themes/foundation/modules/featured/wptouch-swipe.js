@@ -60,11 +60,6 @@ function foundationCreateDots() {
 
 	sliderEl.before( dots );
 
-	if ( jQuery( 'body' ).hasClass( 'rtl' ) ) {
-		var slideCount = jQuery( '.dots li' ).length;
-		slideNumber = slideCount - 1;
-	}
-
 	jQuery( '.dots' ).find( 'li[data-pos="'+slideNumber+'"]' ).addClass( 'active' );
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-define( 'BNC_API_VERSION', '3.3' );
+define( 'BNC_API_VERSION', '3.5' );
 define( 'BNC_API_URL', 'http://api.bravenewcode.com/v/' . BNC_API_VERSION );
 define( 'BNC_API_TIMEOUT', 10 );
 
@@ -88,7 +88,7 @@ class BNCAPI {
         $options['headers'] = array(
             'Content-Type' => 'application/x-www-form-urlencoded; charset=' . get_option('blog_charset'),
             'Content-Length' => strlen( $body ),
-            'User-Agent' => 'WordPress/' . get_bloginfo("version") . '/WPtouch-Pro',
+            'User-Agent' => 'WordPress/' . get_bloginfo("version") . '/WPtouch-Pro/' . WPTOUCH_VERSION,
             'Referer' => get_bloginfo("url")
         );
 

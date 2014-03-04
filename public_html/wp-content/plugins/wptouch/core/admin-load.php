@@ -276,6 +276,8 @@ function wptouch_admin_panel_get_classes( $classes = false ) {
 
 	if ( wptouch_should_show_license_nag() ) {
 		$final_classes[] = 'unlicensed';
+	} else {
+		$final_classes[] = 'licensed';
 	}
 
 	if ( defined( 'WPTOUCH_IS_FREE' ) ) {

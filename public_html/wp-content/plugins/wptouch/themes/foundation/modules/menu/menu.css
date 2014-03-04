@@ -1,3 +1,5 @@
+/* @override http://wptp3.local.com/wp-content/plugins/wptouch-pro-3/themes/foundation/modules/menu/menu.css?ver=2.0.4 */
+
 /* Default WPtouch Pages Menu Styling */
 
 .wptouch-menu .menu-tree a, .wptouch-menu .menu-tree span {
@@ -15,7 +17,7 @@
 	line-height: 100%;
 }
 
-.menu-tree ul {
+.wptouch-menu ul ul {
 	display: none;
 }
 
@@ -44,11 +46,7 @@
 	font-style: normal;
 }
 
-.menu-tree ul span  {
-	display: none;
-}
-
-ul.menu-tree.no-parent-links span {
+ul.menu-tree.no-parent-links span, ul.menu-tree ul span {
 	border: none;
 	box-shadow: none;
 }
@@ -85,10 +83,6 @@ ul.menu-tree.no-parent-links span {
 
 .menu-tree li.no-icon {
 	padding-left: 10px;
-}
-
-.menu-tree ul ul  {
-	display: block;
 }
 
 .menu-tree ul li {

@@ -2,8 +2,8 @@
 Contributors: bravenewcode, duanestorey, dalemugford
 Tags: wptouch, iphone, ipod, bravenewcode, mobile, android, blackberry, smartphone, responsive, design, mobile plugin, ios, mobile theme
 Requires at least: 3.6
-Stable tag: 3.1.5
-Tested up to: 3.8
+Stable tag: 3.1.8
+Tested up to: 3.8.1
 License: GPLv2
 
 Create a slick mobile WordPress website with just a few clicks.
@@ -39,6 +39,18 @@ For more information visit the [WPtouch Pro 3 Product Page](http://www.bravenewc
 11. WPtouch admin - Menu Setup
 
 == Changelog ==
+
+= Version 3.1.8 (Feb 28th, 2013) =
+
+* Changed: Added caching to API requests to minimize external HTTP queries
+* Added: Firefox OS mobile support
+* Added: Instagram to footer social links
+* Fixed: An issue with WPTOUCH_CACHE_COOKIE that could cause issues on servers with high load
+* Fixed: An issue with the WPtouch custom die handler
+* Fixed: Issue with Simple Sitemap Plugin and the number of posts per page
+* Fixed: Featured Slider now respects post/page ID order, better RTL behaviour
+* Fixed: Rare issue with slashes appearing in the site title
+* Fixed: Various RTL issues
 
 = Version 3.1.5 (Dec 21st, 2013) =
 
