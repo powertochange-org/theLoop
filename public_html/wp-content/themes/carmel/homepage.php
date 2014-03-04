@@ -67,7 +67,7 @@
 					<hr>
 					<span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
 						News &amp; Update</span><BR>
-						<span style="font-size: 83%;line-height: 153%;">
+						<span class="newsUpdate">
 						<?php
 							$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 							$result = $results[0];
