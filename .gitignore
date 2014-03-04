@@ -32,3 +32,5 @@ public_html/wp-content/themes/*
 public_html/wp-content/uploads/*
 !public_html/wp-content/uploads/index.php
 !public_html/wp-content/uploads/.htaccess
+!public_html/wp-content/wptouch-data
+!public_html/wp-content/wptouch-data/*
