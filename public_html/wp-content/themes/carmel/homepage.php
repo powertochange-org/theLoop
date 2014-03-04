@@ -9,7 +9,7 @@
 		<a id='slideshow_link' target="_blank"><img id='slideshow' width='976' height='400' style='border:solid 12px #d6d7d4;'></a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
 		<?php
-			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png', '/wp-content/uploads/slides/1.jpg', '/wp-content/uploads/slides/2.jpg', '/wp-content/uploads/slides/3.jpg'. , '/wp-content/uploads/slides/b4.jpg');
+			$pictures = array('/wp-content/uploads/slides/Fellowship_Web_Loop_Banner.png', '/wp-content/uploads/slides/1.jpg', '/wp-content/uploads/slides/2.jpg', '/wp-content/uploads/slides/3.jpg', '/wp-content/uploads/slides/b4.jpg');
 			$links = array('http://p2c.com/students/event-category/fellowship-dinner', '/', '/', '/', '/');
 			foreach($pictures as $pic=>$x){
 				?>
