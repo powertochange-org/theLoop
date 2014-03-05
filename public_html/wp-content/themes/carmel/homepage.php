@@ -142,7 +142,6 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?><BR><BR>
-						<a class='orange_button' href="mailto:hr@powertochange.org"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 				<td  style="border:0;"></td>
 				<td  style="border:0;">
@@ -161,7 +160,15 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?><BR><BR>
-						<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+				</td>
+			</tr>
+			<tr>
+				<td  style="border:0;">
+					<a class='orange_button' href="mailto:hr@powertochange.org"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
+				</td>
+				<td  style="border:0;"></td>
+				<td  style="border:0;">
+					<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 				</td>
 			</tr>
 		</table>
