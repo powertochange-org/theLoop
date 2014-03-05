@@ -101,8 +101,8 @@
 							<?php
 							endwhile; endif; ?>
 							<BR>
-							<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
 						</span>
+						<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
 				</td>
 				<td style='width:46px;border:0;'>
 				</td>
