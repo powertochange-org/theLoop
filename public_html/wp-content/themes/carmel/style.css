@@ -249,11 +249,24 @@ hr{
 	margin-bottom:5px;
 }
 
- .comment_text, .comment_meta{
+#comments ol {
+	list-style-type: none;
+}
+
+.comment_text, .comment_meta{
+	padding-right: 10px;
 	float:left;
  }
+ 
+.comment_meta {
+	width: 115px;
+}
+ 
+.comment_text {
+	width: 100px;
+}
 
- .right{
+.right{
 	float:right;
 	display:inline;
  }
