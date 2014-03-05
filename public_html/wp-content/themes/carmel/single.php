@@ -14,7 +14,7 @@
 						<h1 ><a href="<?php echo get_permalink() ?>" rel="bookmark"><?php  if($is_pray) {echo 'Prayer Reqeust'; } else { the_title();} ?></a></h1>
 						<hr>
 						<?php if ($is_pray){ ?>
-						If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, please send them to <a href="mailto:prayersupport@powertochange.org">prayersupport@powertochange.org</a>.
+						If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, select the "Submit A Prayer Request" button or email them to <a href="prayer.support@p2c.com">prayer.support@p2c.com</a>.
 						<hr>
 						<div style='width:40px;height:35px;background-color:#f7941d;display:inline;float:left;text-align:center;padding-top:5px;padding-bottom: 5px;'>
 							<span style='color:#ffffff;'><?php echo strtoupper(get_the_time('M')) ?></span><BR>
