@@ -476,7 +476,7 @@ include('functions/js_functions.php'); ?>
 			mpd = get_value_float("input_mpd");
 			expenses = get_value_float("input_expenses");
 			
-			subtotal = salary + cpp + salary_s + cpp_s + health + medical + /*hcsa +*/ workers + conference + mpd + expenses;
+			subtotal = salary + cpp + salary_s + cpp_s + health + medical + hcsa + workers + conference + mpd + expenses;
 			set_value("output_subtotal", subtotal);
 			total = subtotal / (1 - cr_charge);
 			set_value("output_total", total);
