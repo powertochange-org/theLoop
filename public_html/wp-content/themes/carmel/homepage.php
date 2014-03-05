@@ -125,7 +125,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan='3' style='height:46px;border:0;'>
+				<td colspan='3' style='height:30px;border:0;'>
 				</td>
 			</tr>
 			<tr>
