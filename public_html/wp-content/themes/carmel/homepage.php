@@ -141,7 +141,7 @@
 							<BR>
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
-							endwhile; endif; ?><BR><BR>
+							endwhile; endif; ?>
 				</td>
 				<td  style="border:0;"></td>
 				<td  style="border:0;">
@@ -159,7 +159,7 @@
 							<BR>
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
-							endwhile; endif; ?><BR><BR>
+							endwhile; endif; ?>
 				</td>
 			</tr>
 			<tr>
