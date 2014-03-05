@@ -28,6 +28,7 @@ time, mark, audio, video {
 p{
 	line-height:130%;
 	font-size: 12pt;
+	padding-bottom: 10px;
 }
 
 article, aside, details, figcaption, figure, 
