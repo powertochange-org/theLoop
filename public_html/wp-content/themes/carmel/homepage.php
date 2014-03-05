@@ -100,6 +100,8 @@
 							<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo the_title('', '', false); ?></a></h2>
 							<?php
 							endwhile; endif; ?>
+							<BR>
+							<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
 						</span>
 				</td>
 				<td style='width:46px;border:0;'>
