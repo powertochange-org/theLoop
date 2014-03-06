@@ -72,29 +72,16 @@
 	<?php } ?>
 			
 	<div class="<?php wptouch_content_classes(); ?> <?php if ( 1 == $first && !is_paged() ) { echo 'first-post'; } ?>">
-		<?php if ( classic_mobile_first_full_post() && 1 == $first && !is_paged() ) { ?>
-			<? echo "2272014"; ?>
-			<?php echo get_page_template(); ?> 
-			<?php the_content(); ?>
-			<a href="<?php wptouch_the_permalink(); ?>#comments" class="read-entry"><?php _e( "Comment On This Article", "wptouch-pro" ); ?></a>				
+		<?php $parts = explode('<table>', get_the_content());
+			echo $parts[0].'<table>';
+			$cells = explode('<td>', $parts[1]);
+			for ($i = 1; $i < count($i); $i += 2){
+				$content = explode('</td>', $cells[$i]);
+				echo '<tr><td>'.$content[0].'</td></tr>';
+			} ?>
+			</table>
+		<a href="<?php wptouch_the_permalink(); ?>#comments" class="read-entry"><?php _e( "Comment On This Article", "wptouch-pro" ); ?></a>				
 
-		<?php } elseif ( classic_mobile_show_all_full_post() ) { ?>
-			<?php $parts = explode('<table>', get_the_content());
-				echo $parts[0].'<table>';
-				$cells = explode('<td>', $parts[1]);
-				for ($i = 1; $i < count($i); $i += 2){
-					$content = explode('</td>', $cells[$i]);
-					echo '<tr><td>'.$content[0].'</td></tr>';
-				} ?>
-				</table>
-			<a href="<?php wptouch_the_permalink(); ?>#comments" class="read-entry"><?php _e( "Comment On This Article", "wptouch-pro" ); ?></a>				
-
-		<?php } else { ?>
-
-			<?php the_excerpt(); ?>
-			<a href="<?php wptouch_the_permalink(); ?>" class="read-entry"><?php _e( "Read This Article", "wptouch-pro" ); ?></a>
-
-		<?php } ?>				
 	</div>
 
 </div><!-- .wptouch_posts_classes() -->
