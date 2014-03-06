@@ -71,13 +71,14 @@
 		<?php } ?>
 	<?php } ?>
 			
-	<div class="<?php wptouch_content_classes(); ?> <?php if ( 1 == $first && !is_paged() ) { echo 'first-post'; } ?>">
+	<div class="<?php wptouch_content_classes(); ?> ">
+		blah-one
 		<?php $parts = explode('<table>', get_the_content());
 			echo $parts[0].'<table>';
 			$cells = explode('<td>', $parts[1]);
-			for ($i = 1; $i < count($i); $i += 2){
+			for ($i = 1; $i < count($cells); $i += 2){
 				$content = explode('</td>', $cells[$i]);
-				echo '<tr><td>'.$content[0].'</td></tr>';
+				echo '<tr><td style="border: solid 1px #000000;border-radius: 10px;padding: 10px;">'.$content[0].'</td></tr>';
 			} ?>
 			</table>
 		<a href="<?php wptouch_the_permalink(); ?>#comments" class="read-entry"><?php _e( "Comment On This Article", "wptouch-pro" ); ?></a>				
