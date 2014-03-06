@@ -6,7 +6,7 @@
 			<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
 		</div></form>
 		<hr>
-		<h1>Post by Caterory</h1><BR>
+		<h1>Post by Category</h1><BR>
 		<?php wp_dropdown_categories(array('hide_empty' => 0, 'name' => 'cat', 'orderby' => 'name', 'selected' => $category->parent, 'hierarchical' => true, 'show_option_none' => __('Select Category'))); ?>
 		<script type="text/javascript">/*  */
 			var dropdown = document.getElementById("cat");
