@@ -82,7 +82,7 @@
 			<?php $parts = explode('<table>', get_the_content());
 				echo $parts[0].'<table>';
 				$cells = explode('<td>', $parts[1]);
-				for ($i = 1; $i < count($i); i += 2){
+				for ($i = 1; $i < count($i); i = i + 2){
 					$content = explode('</td>', $cells[$i]);
 					echo '<tr><td>'.$content[0].'</td></tr>';
 				} ?>
