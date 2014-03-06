@@ -72,7 +72,6 @@
 			
 	<div class="<?php wptouch_content_classes(); ?> <?php if ( 1 == $first && !is_paged() ) { echo 'first-post'; } ?>">
 		<?php if ( classic_mobile_first_full_post() && 1 == $first && !is_paged() ) { ?>
-
 			<?php the_content(); ?>
 			<a href="<?php wptouch_the_permalink(); ?>#comments" class="read-entry"><?php _e( "Comment On This Article", "wptouch-pro" ); ?></a>				
 
