@@ -11,7 +11,7 @@
 								<span style='color:#ffffff;font-size:20px;'><strong style='color:#ffffff;'><?php the_time('d') ?></strong></span>
 							</div>
 						<?php } ?>
-						<h1 ><a href="<?php echo get_permalink() ?>" rel="bookmark"><?php  if($is_pray) {echo 'Prayer Reqeust'; } else { the_title();} ?></a></h1>
+						<h1 ><a href="<?php echo get_permalink() ?>" rel="bookmark"><?php  if($is_pray) {echo 'Prayer Request'; } else { the_title();} ?></a></h1>
 						<hr>
 						<?php if ($is_pray){ ?>
 						If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, select the "Submit A Prayer Request" button or email them to <a href="prayer.support@p2c.com">prayer.support@p2c.com</a>.
