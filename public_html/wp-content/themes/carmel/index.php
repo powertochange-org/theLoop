@@ -4,7 +4,6 @@
 	<div id="main-content">
 	    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 	    <h1 class="replace">Latest News</h1>
-		<?php echo get_page_template(); ?> 
 		<div class="post">
 		    <h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
 		    <?php the_post_thumbnail(); ?>
