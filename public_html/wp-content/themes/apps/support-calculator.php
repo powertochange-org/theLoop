@@ -206,10 +206,10 @@ include('functions/js_functions.php'); ?>
 			//save data in table
 			
 			for($i = 0; $i < count($i); $i ++){
-				$data[$i] = parseFloat($data[$i]);
+				$data[$i] = floatval($data[$i]);
 			}
 			
-			$sql = "UPDATE `support_calculator` SET `hours`=".$data[0].",`hours_s`=".$data[1].",`coverage`=".$data[2].",`decline`=".$data[3].",`salary`=".$data[4].",`salary_s`=".$data[5].",`hcsa`=".$data[6].",`conference`=".$data[7].",`mpd`=".$data[8].",`expenses`=".$data[9].",`support`=".$data[10]." WHERE `id`=".$dataID;
+			$sql = "UPDATE `support_calculator` SET `hours`=".$data[0].",`hours_s`=".$data[1].",`coverage`=".$data[2].",`decline`=".$data[3].",`salary`=".$data[4].",`salary_s`=".$data[5].",`hcsa`=".$data[6].",`conference`=".$data[7].",`mpd`=".$data[8].",`expenses`=".$data[9].",`support`=".$data[10]." WHERE `id`=".$support_dataID;
 			$wpdb->get_results($sql);
 			
 			
