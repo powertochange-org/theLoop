@@ -99,6 +99,8 @@
 								array_push($cat_all, $c->cat_ID);
 							}
 							array_push($cat_students, $id_students);
+							var_dum($cat_all);
+							var_dum($cat_students);
 
 							// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
 							if ($result->ministry == "Power to Change - Students") {
