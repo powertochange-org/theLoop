@@ -83,15 +83,20 @@
 						<?php
 							$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 							$result = $results[0];
+							
+							$idObj = get_category_by_slug('all-staff'); 
+							$id_allStaff = $idObj->term_id;
+							$idObj = get_category_by_slug('staff-stories'); 
+							$id_staffStories = $idObj->term_id;
 
 							// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
 							if ($result->ministry == "Power to Change - Students") {
 								// Show any posts
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 6));
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => array( id_allStaff), 'category__not_in' => array(id_staffStories)));
 							} else {					
 								// Query posts associated with any category in our list. Posts that are only
 								// in the P2C Students category won't get selected.
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 6, 'category__not_in' => array(7))); //7 is the category ID for P2C Students
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => array(id_allStaff ), 'category__not_in' => array(7, id_staffStories))); //7 is the category ID for P2C Students
 							}
 							
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
@@ -133,7 +138,9 @@
 				<td  style="border:0;">
 					<hr>
 					<?php 
-						$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_post'));
+						$idObj = get_category_by_slug('staff-stories'); 
+						$id = $idObj->term_id;
+						$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
 						if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 						?>
 						<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
