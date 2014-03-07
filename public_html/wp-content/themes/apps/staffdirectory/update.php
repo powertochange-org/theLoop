@@ -1,4 +1,4 @@
-<?php
+<?php include 'countryToNumber.php';
 		//$test = $wpdb->get_row('SELECT * from approval_address_change where user_login="' . $user->user_login . '"');
 		//if(!isset($test->user_login)){ //we use updates to update the sync table. so if they don't have a sync record just make a blank one
 		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
