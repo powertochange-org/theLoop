@@ -84,19 +84,30 @@
 							$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 							$result = $results[0];
 							
-							$idObj = get_category_by_slug('all-staff'); 
-							$id_allStaff = $idObj->term_id;
 							$idObj = get_category_by_slug('staff-stories'); 
 							$id_staffStories = $idObj->term_id;
+							$idObj = get_category_by_slug('p2cstudents'); 
+							$id_students = $idObj->term_id;
+							
+							$cat_students = array();
+							$cat_all = array();
+							foreach(get_categories() as $c){
+								if ($c->cat_ID == $id_staffStories or $c->cat_ID == $id_students){
+									continue;
+								}
+								array_push($cat_students, $c->cat_ID);
+								array_push($cat_all, $c->cat_ID);
+							}
+							array_push($cat_students, $id_students);
 
 							// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
 							if ($result->ministry == "Power to Change - Students") {
 								// Show any posts
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => array( id_allStaff), 'category__not_in' => array(id_staffStories)));
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => cat_students));
 							} else {					
 								// Query posts associated with any category in our list. Posts that are only
 								// in the P2C Students category won't get selected.
-								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => array(id_allStaff ), 'category__not_in' => array(7, id_staffStories))); //7 is the category ID for P2C Students
+								$latest_cat_post = new WP_Query( array('posts_per_page' => 6,  'category__in' => cat_all));
 							}
 							
 							if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
