@@ -11,7 +11,8 @@
 </div>
 <div class="<?php wptouch_post_classes(); ?> rounded-corners-8px">
 	<div class="<?php wptouch_content_classes(); ?> ">
-		<?php $parts = explode('<table>', get_the_content());
+		<?php //this part changes it so that each td is within its own tr
+		$parts = explode('<table>', get_the_content());
 			echo $parts[0].'<table>';
 			$cells = explode('<td>', $parts[1]);
 			for ($i = 1; $i < count($cells); $i += 2){
