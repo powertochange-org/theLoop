@@ -95,8 +95,8 @@
 								if ($c->cat_ID == $id_staffStories or $c->cat_ID == $id_students){
 									continue;
 								}
-								array_push($cat_students, $c->cat_ID);
-								array_push($cat_all, $c->cat_ID);
+								array_push($cat_students, (int) $c->cat_ID);
+								array_push($cat_all, (int) $c->cat_ID);
 							}
 							array_push($cat_students, $id_students);
 							var_dump($cat_all);
