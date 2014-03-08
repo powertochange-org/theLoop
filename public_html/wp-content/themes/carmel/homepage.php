@@ -81,6 +81,8 @@
 						News &amp; Update</span><BR>
 						<span class="newsUpdate">
 						<?php
+							$post_number = 6;
+						
 							$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 							$result = $results[0];
 							
