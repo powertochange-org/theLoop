@@ -42,19 +42,6 @@ foreach($posts_array as $post){
 function themename_customize_register($wp_customize){
     
 	global $postArray;
-     $wp_customize->add_setting('feature_post', array(
-        'default'        => null,
-        'capability'     => 'edit_theme_options',
-        'type'           => 'theme_mod',
- 
-    ));
-    $wp_customize->add_control( 'select_feature_post', array(
-        'settings' => 'feature_post',
-        'label'   => 'Staff Stories:',
-        'section' => 'static_front_page',
-        'type'    => 'select',
-        'choices'    => $postArray
-    ));
 	
 	   $wp_customize->add_setting('feature_update', array(
         'default'        => null,
