@@ -7,7 +7,7 @@
 ?>
 <?php get_header(); ?>
 <div id="content">
-	<div id="main-content" class='form'>
+	<div id="main-content" class='form-box'>
 	    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 		<h1><?php the_title() ?></h1>
 		<hr>
