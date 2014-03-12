@@ -188,46 +188,33 @@
 				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
 				$email = $emails[0];
 				$address = strtolower(strip_tags($value['min_email']));
-				if ($address == ""){
-					$wpdb->insert( 'sync',
-							array(  'table_name'    => 'email_address',
-									'record_id'     => $value['external_id'],
-									'sync_action'   => 'delete',
-									'field_changed' => $id,
-									'changed_date'	=>	date('Y-m-d H-i-s'),
-									'user_login'	=> $user->user_login,
-							));
-					$wpdb->query("DELETE FROM email_address WHERE email_address_id='" . $id . "'");
+				if (isMinistryAddress($address)) {
+					   $ministry = '1';
+					   $shared = '1';
+				} else {
+						$ministry = '0';
+						$shared = $value['shared'];
 				}
-				else{
-					if (isMinistryAddress($address)) {
-						   $ministry = '1';
-						   $shared = '1';
-					} else {
-							$ministry = '0';
-							$shared = $value['shared'];
-					}
-					$wpdb->insert( 'sync',
-									array(  'table_name'    => 'email_address',
-											'record_id'     => $value['email_address_id'],
-											'sync_action'   => 'update',
-											'field_changed' => '',
-											'changed_date'	=>	date('Y-m-d H-i-s'),
-											'user_login'	=> $user->user_login
-									));
-					if ($address != $email->email_address 
-							|| $ministry != $email->is_ministry
-							|| $shared != $email->share_email) {
-								
-						$wpdb->update( 'email_address', 
-								array( 'email_address' => $address,
-										'is_ministry'	=> $ministry,
-										'share_email' => $shared),
-								array( 'email_address_id' => $value['email_address_id']  ) 
-							);
-					
-					
-					}
+				$wpdb->insert( 'sync',
+								array(  'table_name'    => 'email_address',
+										'record_id'     => $value['email_address_id'],
+										'sync_action'   => 'update',
+										'field_changed' => '',
+										'changed_date'	=>	date('Y-m-d H-i-s'),
+										'user_login'	=> $user->user_login
+								));
+				if ($address != $email->email_address 
+						|| $ministry != $email->is_ministry
+						|| $shared != $email->share_email) {
+							
+					$wpdb->update( 'email_address', 
+							array( 'email_address' => $address,
+									'is_ministry'	=> $ministry,
+									'share_email' => $shared),
+							array( 'email_address_id' => $value['email_address_id']  ) 
+						);
+				
+				
 				}
 			}
 		}
