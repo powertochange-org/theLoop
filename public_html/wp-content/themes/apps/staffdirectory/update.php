@@ -110,12 +110,12 @@
 					$isMinistry = 1;
 				}
 				if (!empty($value['phonenumber1'])) {
-					$country = strip_tags($_POST['phonecountry']);
+					$country = strip_tags($value['phonecountry']);
 					$countrycode = countryToNumber($country);
-					$areacode = strip_tags($_POST['phonearea']);
-					$extension = strip_tags($_POST['phoneextension']);
-					$phonetype = strip_tags($_POST['phonetype']);
-					$phonenumber = strip_tags($_POST['phonenumber1']) . '-' . strip_tags($_POST['phonenumber2']);
+					$areacode = strip_tags($value['phonearea']);
+					$extension = strip_tags($value['phoneextension']);
+					$phonetype = strip_tags($value['phonetype']);
+					$phonenumber = strip_tags($value['phonenumber1']) . '-' . strip_tags($value['phonenumber2']);
 					
 					//check if dirty
 					
@@ -187,7 +187,7 @@
 				$id = $key;
 				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
 				$email = $emails[0];
-				$address = strtolower(strip_tags($_POST['min_email']));
+				$address = strtolower(strip_tags($value['min_email']));
 				if (isMinistryAddress($address)) {
 					   $ministry = '1';
 					   $shared = '1';
@@ -197,7 +197,7 @@
 				}
 				$wpdb->insert( 'sync',
 								array(  'table_name'    => 'email_address',
-										'record_id'     => $_POST['email_address_id'],
+										'record_id'     => $value['email_address_id'],
 										'sync_action'   => 'update',
 										'field_changed' => '',
 										'changed_date'	=>	date('Y-m-d H-i-s'),
@@ -211,7 +211,7 @@
 							array( 'email_address' => $address,
 									'is_ministry'	=> $ministry,
 									'share_email' => $shared),
-							array( 'email_address_id' => $_POST['email_address_id']  ) 
+							array( 'email_address_id' => $value['email_address_id']  ) 
 						);
 				
 				
