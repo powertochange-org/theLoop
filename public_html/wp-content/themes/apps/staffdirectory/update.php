@@ -209,7 +209,7 @@
 					}
 					$wpdb->insert( 'sync',
 									array(  'table_name'    => 'email_address',
-											'record_id'     => $value['email_address_id'],
+											'record_id'     => $id,
 											'sync_action'   => 'update',
 											'field_changed' => '',
 											'changed_date'	=>	date('Y-m-d H-i-s'),
@@ -223,7 +223,7 @@
 								array( 'email_address' => $address,
 										'is_ministry'	=> $ministry,
 										'share_email' => $shared),
-								array( 'email_address_id' => $value['email_address_id']  ) 
+								array( 'email_address_id' => $id  ) 
 							);
 					
 					
