@@ -205,7 +205,7 @@
 						   $shared = '1';
 					} else {
 							$ministry = '0';
-							$shared = $value['shared'];
+							$shared = $value['share'];
 					}
 					$wpdb->insert( 'sync',
 									array(  'table_name'    => 'email_address',
