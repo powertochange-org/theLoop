@@ -164,7 +164,7 @@
 						$shared = '1';
 					} else {
 						$ministry = '0';
-						$shared = $value['shared'];
+						$shared = $value['share'];
 					}
 					$wpdb->insert( 'email_address', 
 						array( 'employee_id' => $user->external_id,
