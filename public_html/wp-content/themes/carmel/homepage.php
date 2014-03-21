@@ -186,7 +186,7 @@
 			</tr>
 			<tr>
 				<td  style="border:0;">
-					<a class='orange_button' href="mailto:hr@powertochange.org"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
+					<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 				<td  style="border:0;"></td>
 				<td  style="border:0;">
