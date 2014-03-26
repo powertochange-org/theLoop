@@ -87,8 +87,8 @@ Purposes, in order of importance
 											</select>
 											<select name="yearOpen">
 												<?php
-													//this grabs the current year then allows you to enter a date (either this year or next year)	 
-													for($i = date("Y"); $i < date("Y")+2; $i++){
+													//this grabs the last year then allows you to select a new year
+													for($i = date("Y")-1; $i < date("Y")+2; $i++){
 														if($defaultOY==$i){
 															echo '<option value="'.$i.'" selected="selected">'.$i.'</option>';
 														}
@@ -288,7 +288,7 @@ Purposes, in order of importance
 														FROM employee, wp_users, healthplan
 														WHERE wp_users.user_login = employee.user_login
 														AND wp_users.id = healthplan.userid
-														GROUP BY last_name ');
+														ORDER BY last_name, first_name ');
 														
 						$opendate  = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "opendate"');
 						$closedate = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "closedate"');
