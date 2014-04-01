@@ -39,7 +39,7 @@
 				<div id='popUp' onmouseout='popUpHide();' onmouseover='popUpShow();' style='display:none;position:absolute;background-color:#f4f4f4;padding:10px 40px;right:10px;top:69px;z-index:1;border:1px solid #d6d7d4;'>
 					<center><ul class='popupMenu'>
 						<?php //may turn into wordpress menu */ ?>
-						<table>
+						<table border="0">
 							<tr>
 								<td>
 									<a href='https://absences.powertochange.org'>
