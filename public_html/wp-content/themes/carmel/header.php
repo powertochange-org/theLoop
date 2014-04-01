@@ -39,11 +39,36 @@
 				<div id='popUp' onmouseout='popUpHide();' onmouseover='popUpShow();' style='display:none;position:absolute;background-color:#f4f4f4;padding:10px 40px;right:10px;top:69px;z-index:1;border:1px solid #d6d7d4;'>
 					<center><ul class='popupMenu'>
 						<?php //may turn into wordpress menu */ ?>
-						<li class='popupMenu'><a class='popupMenu' href='https://absences.powertochange.org'>ABSENCE TRACKER</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='mailto:helpdesk@powertochange.org'>HELPDESK</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='https://wiki.powertochange.org/help'>SELF-HELP WIKI</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='/wp-admin/admin.php?page=s2'>MY SETTINGS</a></li>
-						<li class='popupMenu'><a class='popupMenu' href='https://www.mygcx.org/system/screen/home'>MYGCX</a></li>
+						<table>
+							<tr>
+								<td>
+									<a href='https://absences.powertochange.org'>
+									<img src='<?php bloginfo('template_url'); ?>/img/Absence-Tracker-Icon.png' alt='Absence Tracker' /></a>
+								</td>
+								<td>
+									<a href='/reports/'>
+									<img src='<?php bloginfo('template_url'); ?>/img/Reports-Icon.png' alt='Reports' /></a>
+								</td>
+								<td>
+									<a href='/wp-admin/admin.php?page=s2'>
+									<img src='<?php bloginfo('template_url'); ?>/img/My-Settings-Icon.png' alt='My Settings' /></a>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<a href='/staff-directory/'>
+									<img src='<?php bloginfo('template_url'); ?>/img/Staff-Directory-Icon.png' alt='Staff Directory' /></a>
+								</td>
+								<td>
+									<a href='mailto:helpdesk@powertochange.org'>
+									<img src='<?php bloginfo('template_url'); ?>/img/HelpDesk-Icon.png' alt='Help Desk' /></a>
+								</td>
+								<td>
+									<a href='https://wiki.powertochange.org/help'>
+									<img src='<?php bloginfo('template_url'); ?>/img/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' /></a>
+								</td>
+							</tr>
+						</table>
 					</ul></center>
 				</div>
 			</div>
