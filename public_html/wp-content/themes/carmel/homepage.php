@@ -8,8 +8,8 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'Fellowship_Web_Loop_Banner.png',						$folder.'1.jpg',	$folder.'2.jpg',	$folder.'3.jpg',	$folder.'b4.jpg',	$folder.'LoopBanner.jpg',		$folder.'Banner.png');
-			$links    = array('http://p2c.com/students/event-category/fellowship-dinner', 	'/',				'/',				'/',				'/',				'/worldwide-day-of-prayer/',	'/training-development/staff-engagement/');
+			$pictures = array($folder.'Fellowship_Web_Loop_Banner.png',						$folder.'Staff_Conference_Loop_Banner.png',		$folder.'LoopBanner.jpg',		$folder.'Banner.png');
+			$links    = array('http://p2c.com/students/event-category/fellowship-dinner', 	'http://staffconference.com/',					'/worldwide-day-of-prayer/',	'/training-development/staff-engagement/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
