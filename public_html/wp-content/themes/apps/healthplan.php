@@ -36,7 +36,8 @@ $plans = array(
 						$opendate  = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "opendate"');
 						$closedate = $wpdb->get_var('SELECT option_value FROM wp_options WHERE option_name = "closedate"');
 						//post the open and close dates so the user is aware of when they can edit their health plan
-						echo "You will be able to choose your health plan between <strong>" . $opendate . "</strong> and <strong>" . $closedate . "</strong>.";
+						//echo "You will be able to choose your health plan between <strong>" . $opendate . "</strong> and <strong>" . $closedate . "</strong>.";
+						echo "The enrollment period for 2014 Medical Allowance has passed. If you would like to make changes to your enrollment, please email <a href='mailto:payrollandbenefits@powertochange.org'>payrollandbenefits@powertochange.org</a>."
 					?>
 					<div class="entry">
 						<?php the_content(); ?>
