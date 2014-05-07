@@ -8,8 +8,8 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'Excellence_Awards.jpg',						$folder.'Staff_Conference_Loop_Banner.png',	$folder.'RBC.jpg');
-			$links    = array('https://staff.powertochange.org/training-development/excellence-awards/', 	'http://staffconference.com/',			'https://staff.powertochange.org/corporate-discounts/discounts-across-canada/rbc-group-banking/');
+			$pictures = array($folder.'Excellence_Awards.jpg',		$folder.'Staff_Conference_Loop_Banner.png',	$folder.'RBC.jpg');
+			$links    = array('/training-development/excellence-awards/', 	'http://staffconference.com/',			'https://staff.powertochange.org/corporate-discounts/discounts-across-canada/rbc-group-banking/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
