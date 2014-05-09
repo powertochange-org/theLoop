@@ -102,10 +102,10 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					// a http:// in front of a website let's the browser know it's an absolute address. the user may or may not have
 					// included it. So we just make sure it's there
 					if(strpos($user->ministry_website, "http")===0){
-						echo '<strong>Ministry Website</strong><a href="' . $user->ministry_website . '" target=_blank>$user->ministry_website</a><BR>';
+						echo '<strong>Ministry Website</strong><a href="' . $user->ministry_website . '" target=_blank>' . $user->ministry_website . '</a><BR>';
 					}
 					else{
-						echo '<strong>Ministry Website</strong><a href=http://' . $user->ministry_website . ' target=_blank>ministry$user->ministry_website</a><BR>';
+						echo '<strong>Ministry Website</strong><a href=http://' . $user->ministry_website . ' target=_blank>' . $user->ministry_website . '</a><BR>';
 					}
 				}
 				if(!empty($user->ministry_twitter_handle)){
@@ -189,10 +189,10 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					// a http:// in front of a website let's the browser know it's an absolute address. the user may or may not have
 					// included it. So we just make sure it's there
 					if(strpos($user->website, "http")===0){
-						echo '<strong>Website:</strong> <a href="' . $user->website . '" target=_blank>$user->website </a><BR>';
+						echo '<strong>Website:</strong> <a href="' . $user->website . '" target=_blank>' . $user->website . '</a><BR>';
 					}
 					else{
-						echo '<strong>Website:</strong> <a href=http://' . $user->website . ' target=_blank>$user->website </a><BR>';
+						echo '<strong>Website:</strong> <a href=http://' . $user->website . ' target=_blank>' . $user->website . '</a><BR>';
 					}
 				}
 				if(!empty($user->twitter_handle)){
