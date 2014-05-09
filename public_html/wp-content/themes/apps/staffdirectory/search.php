@@ -99,7 +99,7 @@
 						$queryPart4 = $queryPart4 . $concatquery . " LIKE '%%%s%%' ";
 					}
 					$queryPart3 = " AS relevance FROM employee ";
-					$queryPart5 = " ORDER BY relevance DESC ";
+					$queryPart5 = " ORDER BY relevance DESC, first_name ";
 					//echo $queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5 ;
 					$results = $wpdb-> get_results($wpdb->prepare($queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5  , Search::twice($names)));
 
