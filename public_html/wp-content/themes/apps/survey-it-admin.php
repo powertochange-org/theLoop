@@ -17,7 +17,7 @@ div.search {
 </style>
 <div id="content">
 	<div id="main-content">
-		<h1 class="replace" style="float:left"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
+		<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 		<?php
 			function isAdmin(){
 				$current_user = wp_get_current_user();
@@ -31,10 +31,26 @@ div.search {
 			
 			if (isAdmin()){ 
 				global $wpdb;
-				$sql = "SELECT * FROM `it_survey` ORDER BY  `it_survey`.`time` DESC";
+				$whereClause = '';
+				if (isset($_GET['filter'])) {
+					if ($_GET['filter'] == 'comments') {
+						$whereClause = "WHERE comment <> ''";
+					} else if ($_GET['filter'] == '3andunder') {
+						$whereClause = "WHERE how_well <= 3";
+					}
+				}
+				$sql = "SELECT * FROM `it_survey` $whereClause ORDER BY  `it_survey`.`time` DESC";
 				$results = $wpdb->get_results($sql);
 				$headers = $array_key = array_keys(get_object_vars($results[0]));
 				?>
+				<form method="GET" action="">
+				  <select name="filter">
+				    <option value="all">All responses</option>
+					<option value="comments">Only responses with comments</option>
+					<option value="3andunder">Score of 3 and under</option>
+				  </select>
+				  <input type="submit" value="Filter" />
+				</form>
 				<table>
 					<tr>
 						<?php foreach($headers as $head){
