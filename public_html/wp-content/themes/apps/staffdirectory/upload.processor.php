@@ -52,16 +52,9 @@ while(file_exists($uploadFilename = $uploadsDirectory.$now.'-'.$_FILES[$fieldnam
 } 
 $wpdb->update( 'employee', array('photo' => $now.'-'.$_FILES[$fieldname]['name']), array('user_login' => $current_user->user_login), 
 	array('%s'), array('%s') );
-
-// Save the image thumbnail
-@saveImage($_FILES[$fieldname]['tmp_name'], $uploadFilename)
-    or error('Saving file failed; please ensure you are using a supported file type (.gif, .jpeg, .jpg, .png)', $uploadForm);
-
-// TODO: Can remove this part, I believe
 // now let's move the file to its final location and allocate the new filename to it 
-//@move_uploaded_file($_FILES[$fieldname]['tmp_name'], $uploadFilename) 
-//    or error('receiving directory insuffiecient permission', $uploadForm); 
-
+@move_uploaded_file($_FILES[$fieldname]['tmp_name'], $uploadFilename) 
+    or error('receiving directory insuffiecient permission', $uploadForm); 
      
 // If you got this far, everything has worked and the file has been successfully saved. 
 // We are now going to redirect the client to a success page. 
@@ -72,14 +65,13 @@ $wpdb->update( 'employee', array('photo' => $now.'-'.$_FILES[$fieldname]['name']
 					array('%d')
 			);	
 			$directory_self = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']); 
-			header( 'Location: ' . site_url() . $directory_self . 'staff-directory/?page=profile' ) ;
+			header( 'Location: https://' . $_SERVER['HTTP_HOST'] . $directory_self . 'staff-directory/?page=profile' ) ;
 	?>
-<!-- TODO: Do we even need this div? I'm pretty sure the user never sees it... -->
 <div id="Upload"> 
             <h1>File upload</h1> 
             <p />Congratulations! Your file upload was successful
 			<p /><a href=
-					<?php echo $directory_self . 'staff-directory/?page=profile'; ?>
+					<?php echo 'https://' . $_SERVER['HTTP_HOST'] . $directory_self . 'staff-directory/?page=profile'; ?>
 				>Return to Profile</a>
         </div> 
 <?php
@@ -106,47 +98,5 @@ function error($error, $location, $seconds = 5)
     '</html>'; 
     exit; 
 } // end error handler 
-
-// This function, given a source image and destination location, saves a crop of
-// the image set to 440 px wide, in the destination location. 
-function saveImage($src, $dest)
-{
-    // Maximum width for the image; we'll calculate the height appropriately
-    $target_width = 440;
-    // Make sure we have width and height set in the post variables
-    if ((int)$_POST['width'] > 0 && (int)$_POST['height'] > 0) {
-        // Use post variables
-        $source_width = $_POST['width'];
-        $source_height = $_POST['height'];
-    } else { // No post variables set
-        // Just use the entire images width / height
-        list($source_width, $source_height) = getimagesize($src);
-    }
-    $target_height = ($target_width / $source_width * $source_height);
-    switch (exif_imagetype($src)) { 
-        // Determine what type of image we're working with, and create the image
-        case IMAGETYPE_GIF:
-            $img_src = imagecreatefromgif($src);
-            break;
-        case IMAGETYPE_JPEG:
-            $img_src = imagecreatefromjpeg($src);
-            break;
-        case IMAGETYPE_PNG:
-            $img_src = imagecreatefrompng($src);
-            break;
-        default: // Handle bad files
-            error_log("Error: Attempted to upload an image of type " . exif_imagetype($src) . ", which is unsupported");
-            return false;
-    }
-    // Create the image that will be used as the destination
-    $img_dest = ImageCreateTrueColor($target_width,$target_height);
-
-    // Copy the image over
-	imagecopyresampled($img_dest,$img_src,0,0,$_POST['x'],$_POST['y'],
-	    $target_width,$target_height,$source_width,$source_height);
-    // Return the result of imagejpeg; if it's successful, this will be true. 
-    // Otherwise, false
-    return imagejpeg($img_dest, $dest, 100);
-}
 
 ?>
