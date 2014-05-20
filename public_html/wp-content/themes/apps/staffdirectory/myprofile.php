@@ -24,6 +24,7 @@ $uploadHandler = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'upload.p
 $max_file_size = 30000000; // size in bytes
 
 ?>
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/jquery.Jcrop.css" type="text/css" />
 	<style type="text/css">
 			#main-content div.form {
 				margin-bottom:10px;
@@ -76,30 +77,87 @@ $max_file_size = 30000000; // size in bytes
 		<div id="main-content">
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
+            <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/jquery.Jcrop.min.js"></script>
 			<script type="text/javascript">
+                var jcrop_api;
 
-				function submitFile(){
+				function chooseFile(){
 					$("#file").click();
-					jQuery("#file").change(function () {
-						document.getElementById("upload").submit();
+
+                    jQuery("#file").change(function () {
+                        // Toggle the buttons
+                        $(".changepic").toggle();
+                        // Set up the jcrop:
+                        jQuery(function($) {
+                            $('#photo').Jcrop({
+                                bgColor: 'white',
+                                boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
+                            },function(){
+                                jcrop_api = this;
+                                jcrop_api.disable();
+                            });
+                        });
+                        // Create a new filereader
+                        var fRead = new FileReader();
+
+                        // Get the first file
+                        fRead.readAsDataURL($("#file")[0].files[0]);
+                        
+                        // Once we're done loading...
+                        fRead.onload = function () {
+                            // Set the source of the preview image to this new image
+                            jcrop_api.setImage(fRead.result, function() {
+                                jcrop_api.enable();
+                                jcrop_api.setOptions({
+                                    // TODO: Test on older browsers :P
+                                    trueSize: [
+                                        $('.jcrop-holder img')[0].naturalWidth,
+                                        $('.jcrop-holder img')[0].naturalHeight
+                                    ]
+                                });
+                            });
+                        }
 					});
 				}
+
+                // Submit the chosen file, after doing cropping
+                function submitFile() {
+                    // Update the coordinates of our crop
+                    updateCoords(jcrop_api.tellSelect());
+					document.getElementById("upload").submit();
+                }
+
+                // This function updates the coordinates of some form values, 
+                // based off of a passed-in object that has the values of the
+                // crop values
+                function updateCoords(c) {
+                    $('#x').val(c.x);
+                    $('#y').val(c.y);
+                    $('#width').val(c.w);
+                    $('#height').val(c.h);
+                }
+
 
 			</script>
 				<form style=" width:220px" id="upload" action="?page=upload_processor" enctype="multipart/form-data" method="post">
 					<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
-					<input id="file" type="file" name="file" style='display:none;'>
-
+					<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
+                    <!-- Hidden inputs for coordinates -->
+	                <input type="hidden" id="x" name="x" />
+	                <input type="hidden" id="y" name="y" />
+	                <input type="hidden" id="width" name="width" />
+	                <input type="hidden" id="height" name="height" />
 				</form>
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
-					echo '<img style="display:block" src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
+					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
+					<input class='orange changepic' id="addpic" type="button" onclick='chooseFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
 				<?php }
 				else { //we have a photo and can share it
-					echo '<img style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
-					<input class='orange' id="submitpic" type="button" onclick='submitFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
+					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
+					<input class='orange changepic' id="addpic" type="button" onclick='chooseFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
 				<?php } ?>
+				<input class='orange changepic' id="submitpic" type="button" onclick='submitFile();' value="SUBMIT IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;display:none'>
 			</div>
 
 			<div style='float:left;padding-left:23px;width:457px'>
