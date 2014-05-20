@@ -42,7 +42,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			<h4>MINISTRY INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php 
-			if(!empty($user->address_line1)){
+			if(!empty($user->ministry_address_line1)){
 				echo "<strong>Address:</strong> $user->ministry_address_line1";
 				if (!empty($user->ministry_address_line2))  {
 					echo ", $user->ministry_address_line2";
@@ -124,7 +124,8 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			<h4>PERSONAL INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php
-			if($user->share_address == 'FULL'){
+            /* Ensure user wants to share address, and has at least the first line */
+			if($user->share_address == 'FULL' && (!empty($user->address_line1))){
 				echo "<strong>Address:</strong> $user->address_line1";
 				if (!empty($user->address_line2)) {
 					echo ", $user->address_line2";
