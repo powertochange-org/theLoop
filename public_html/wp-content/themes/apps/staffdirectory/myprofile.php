@@ -340,7 +340,7 @@ $max_file_size = 30000000; // size in bytes
 						<option value="FAX">Fax</option>
 						<option value="OTHER">Other</option>
 					</select></td>
-					<td><?php $width=100; $name = 'phone[-2][share]'; require("countrycodes.php"); ?></td>
+					<td><?php $width=100; $name = 'phone[-2][country]'; require("countrycodes.php"); ?></td>
 					 <td>(</td>
 					 <td><input type="text" name="phone[-2][area]" value="" maxlength="3" style="width:27px" /></td>
 					 <td>)</td>
@@ -367,8 +367,8 @@ $max_file_size = 30000000; // size in bytes
 						<td><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
 						<td><input type="text" name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address ?>" style="width:260px"/></td>
 						<td style='width:100%'><select style='width:100%' name="email[<?php echo $id; ?>][share]">
-							<option value="true" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
-							<option value="false" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
+							<option value="1" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
+							<option value="0" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
 						</select></td>
 					</tr></table>
 					<?php
@@ -384,8 +384,8 @@ $max_file_size = 30000000; // size in bytes
 				<table><tr>
 					<td><input type="text" placeholder='Personal Email' name="email[-2][email]" style="width:350px"/></td>
 					<td><select name="email[-2][share]" style='width:100%'>
-						<option value="true" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
-						<option value="false" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
+						<option value="1" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
+						<option value="0" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
 					</select></td>
 				</tr></table>
 			</div>

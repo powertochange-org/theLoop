@@ -37,8 +37,8 @@
 						'ministry_address_line2' => strip_tags($_POST['ministryAddress']['line2']),
 						'ministry_city' => strip_tags($_POST['ministryAddress']['city']),
 						'ministry_province' => strip_tags($_POST['ministryAddress']['pr']),
-						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['country']),
-						'ministry_country' => strip_tags($_POST['ministryAddress']['pc'])),
+						'ministry_country' => strip_tags($_POST['ministryAddress']['country']),
+						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['pc'])),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
 		}
@@ -278,12 +278,12 @@
 						'user_login'	=> $user->user_login
 				));
 			$wpdb->update( 'employee', 
-				array( 'ministry_address_line1' => strip_tags($_POST['personalAddress']['line1']),
-						'ministry_address_line2' => strip_tags($_POST['personalAddress']['line2']),
-						'ministry_city' => strip_tags($_POST['personalAddress']['city']),
-						'ministry_province' => strip_tags($_POST['personalAddress']['pr']),
-						'ministry_postal_code' => strip_tags($_POST['personalAddress']['country']),
-						'ministry_country' => strip_tags($_POST['personalAddress']['pc']),
+				array( 'address_line1' => strip_tags($_POST['personalAddress']['line1']),
+						'address_line2' => strip_tags($_POST['personalAddress']['line2']),
+						'city' => strip_tags($_POST['personalAddress']['city']),
+						'province' => strip_tags($_POST['personalAddress']['pr']),
+						'postal_code' => strip_tags($_POST['personalAddress']['pc']),
+						'country' => strip_tags($_POST['personalAddress']['country']),
 						'share_address' => $_POST['personalAddress']['share']),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
