@@ -109,13 +109,13 @@
 					$phoneshare = 1;
 					$isMinistry = 1;
 				}
-				if (!empty($value['phonenumber1'])) {
-					$country = strip_tags($value['phonecountry']);
+				if (!empty($value['part1'])) {
+					$country = strip_tags($value['country']);
 					$countrycode = countryToNumber($country);
-					$areacode = strip_tags($value['phonearea']);
-					$extension = strip_tags($value['phoneextension']);
-					$phonetype = strip_tags($value['phonetype']);
-					$phonenumber = strip_tags($value['phonenumber1']) . '-' . strip_tags($value['phonenumber2']);
+					$areacode = strip_tags($value['area']);
+					$extension = strip_tags($value['ext']);
+					$phonetype = strip_tags($value['type']);
+					$phonenumber = strip_tags($value['part1']) . '-' . strip_tags($value['part2']);
 					
 					//check if dirty
 					
@@ -240,7 +240,7 @@
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
 				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook){
 			$wpdb->update( 'employee', 
-							array( 'ministry_website' => strip_tags($_POST['["ministryWebsite"]']),
+							array( 'ministry_website' => strip_tags($_POST['ministryWebsite']),
 									'ministry_twitter_handle' => strip_tags($_POST['ministryTwitter']),
 									'ministry_skype' => strip_tags($_POST['ministrySkype']),
 									'ministry_facebook' => strip_tags($_POST['ministryFacebook'])),

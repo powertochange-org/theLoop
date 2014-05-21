@@ -57,11 +57,6 @@ $wpdb->update( 'employee', array('photo' => $now.'-'.$_FILES[$fieldname]['name']
 @saveImage($_FILES[$fieldname]['tmp_name'], $uploadFilename)
     or error('Saving file failed; please ensure you are using a supported file type (.gif, .jpeg, .jpg, .png)', $uploadForm);
 
-// TODO: Can remove this part, I believe
-// now let's move the file to its final location and allocate the new filename to it 
-//@move_uploaded_file($_FILES[$fieldname]['tmp_name'], $uploadFilename) 
-//    or error('receiving directory insuffiecient permission', $uploadForm); 
-
      
 // If you got this far, everything has worked and the file has been successfully saved. 
 // We are now going to redirect the client to a success page. 
@@ -74,7 +69,6 @@ $wpdb->update( 'employee', array('photo' => $now.'-'.$_FILES[$fieldname]['name']
 			$directory_self = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']); 
 			header( 'Location: ' . site_url() . $directory_self . 'staff-directory/?page=profile' ) ;
 	?>
-<!-- TODO: Do we even need this div? I'm pretty sure the user never sees it... -->
 <div id="Upload"> 
             <h1>File upload</h1> 
             <p />Congratulations! Your file upload was successful

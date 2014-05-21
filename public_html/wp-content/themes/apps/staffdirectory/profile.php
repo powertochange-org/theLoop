@@ -84,7 +84,8 @@ $profile = $_GET['person']; //grab from URL the profile we want
 						$type = 'Other';
 					}
 					echo "<strong>" . $type . ':</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
-					if (isSet($phone->extension)) {
+                    // Make sure we have an extension before adding the dash
+					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo "-$phone->extension";
 					}
 					echo '<BR>';
@@ -171,7 +172,8 @@ $profile = $_GET['person']; //grab from URL the profile we want
 						$type = 'Other';
 					}
 					echo '<strong>' . $type . '</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
-					if (isSet($phone->extension)) {
+                    // Make sure we have an extension before adding the dash
+					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo '-' . $phone->extension;
 					}
 				}
