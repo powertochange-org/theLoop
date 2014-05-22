@@ -95,28 +95,28 @@ $max_file_size = 30000000; // size in bytes
                             },function(){
                                 jcrop_api = this;
                                 jcrop_api.disable();
+                                // Create a new filereader
+                                var fRead = new FileReader();
+
+                                // Get the first file
+                                fRead.readAsDataURL($("#file")[0].files[0]);
+                                
+                                // Once we're done loading...
+                                fRead.onload = function () {
+                                    // Set the source of the preview image to this new image
+                                    jcrop_api.setImage(fRead.result, function() {
+                                        jcrop_api.enable();
+                                        jcrop_api.setOptions({
+                                            // TODO: Test on older browsers :P
+                                            trueSize: [
+                                                $('.jcrop-holder img')[0].naturalWidth,
+                                                $('.jcrop-holder img')[0].naturalHeight
+                                            ]
+                                        });
+                                    });
+                                }
                             });
                         });
-                        // Create a new filereader
-                        var fRead = new FileReader();
-
-                        // Get the first file
-                        fRead.readAsDataURL($("#file")[0].files[0]);
-                        
-                        // Once we're done loading...
-                        fRead.onload = function () {
-                            // Set the source of the preview image to this new image
-                            jcrop_api.setImage(fRead.result, function() {
-                                jcrop_api.enable();
-                                jcrop_api.setOptions({
-                                    // TODO: Test on older browsers :P
-                                    trueSize: [
-                                        $('.jcrop-holder img')[0].naturalWidth,
-                                        $('.jcrop-holder img')[0].naturalHeight
-                                    ]
-                                });
-                            });
-                        }
 					});
 				}
 
