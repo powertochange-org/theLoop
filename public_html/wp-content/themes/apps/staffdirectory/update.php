@@ -37,8 +37,8 @@
 						'ministry_address_line2' => strip_tags($_POST['ministryAddress']['line2']),
 						'ministry_city' => strip_tags($_POST['ministryAddress']['city']),
 						'ministry_province' => strip_tags($_POST['ministryAddress']['pr']),
-						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['country']),
-						'ministry_country' => strip_tags($_POST['ministryAddress']['pc'])),
+						'ministry_country' => strip_tags($_POST['ministryAddress']['country']),
+						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['pc'])),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
 		}
@@ -109,13 +109,13 @@
 					$phoneshare = 1;
 					$isMinistry = 1;
 				}
-				if (!empty($value['phonenumber1'])) {
-					$country = strip_tags($value['phonecountry']);
+				if (!empty($value['part1'])) {
+					$country = strip_tags($value['country']);
 					$countrycode = countryToNumber($country);
-					$areacode = strip_tags($value['phonearea']);
-					$extension = strip_tags($value['phoneextension']);
-					$phonetype = strip_tags($value['phonetype']);
-					$phonenumber = strip_tags($value['phonenumber1']) . '-' . strip_tags($value['phonenumber2']);
+					$areacode = strip_tags($value['area']);
+					$extension = strip_tags($value['ext']);
+					$phonetype = strip_tags($value['type']);
+					$phonenumber = strip_tags($value['part1']) . '-' . strip_tags($value['part2']);
 					
 					//check if dirty
 					
@@ -240,7 +240,7 @@
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
 				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook){
 			$wpdb->update( 'employee', 
-							array( 'ministry_website' => strip_tags($_POST['["ministryWebsite"]']),
+							array( 'ministry_website' => strip_tags($_POST['ministryWebsite']),
 									'ministry_twitter_handle' => strip_tags($_POST['ministryTwitter']),
 									'ministry_skype' => strip_tags($_POST['ministrySkype']),
 									'ministry_facebook' => strip_tags($_POST['ministryFacebook'])),
@@ -278,12 +278,12 @@
 						'user_login'	=> $user->user_login
 				));
 			$wpdb->update( 'employee', 
-				array( 'ministry_address_line1' => strip_tags($_POST['personalAddress']['line1']),
-						'ministry_address_line2' => strip_tags($_POST['personalAddress']['line2']),
-						'ministry_city' => strip_tags($_POST['personalAddress']['city']),
-						'ministry_province' => strip_tags($_POST['personalAddress']['pr']),
-						'ministry_postal_code' => strip_tags($_POST['personalAddress']['country']),
-						'ministry_country' => strip_tags($_POST['personalAddress']['pc']),
+				array( 'address_line1' => strip_tags($_POST['personalAddress']['line1']),
+						'address_line2' => strip_tags($_POST['personalAddress']['line2']),
+						'city' => strip_tags($_POST['personalAddress']['city']),
+						'province' => strip_tags($_POST['personalAddress']['pr']),
+						'postal_code' => strip_tags($_POST['personalAddress']['pc']),
+						'country' => strip_tags($_POST['personalAddress']['country']),
 						'share_address' => $_POST['personalAddress']['share']),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
