@@ -81,18 +81,20 @@ $max_file_size = 30000000; // size in bytes
 			<script type="text/javascript">
                 var jcrop_api;
 
-				function chooseFile(){
-					$("#file").click();
-
+                $(document).ready(function() {
+                    // Set up the change function for the file element 
                     jQuery("#file").change(function () {
+                        console.log("File has been changed");
                         // Toggle the buttons
                         $(".changepic").toggle();
+                        console.log("The buttons have now been toggled");
                         // Set up the jcrop:
                         jQuery(function($) {
                             $('#photo').Jcrop({
                                 bgColor: 'white',
                                 boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
                             },function(){
+                                console.log("Photo has been jcropped");
                                 jcrop_api = this;
                                 jcrop_api.disable();
                                 // Create a new filereader
@@ -105,6 +107,7 @@ $max_file_size = 30000000; // size in bytes
                                 fRead.onload = function () {
                                     // Set the source of the preview image to this new image
                                     jcrop_api.setImage(fRead.result, function() {
+                                        console.log("Image has been set");
                                         jcrop_api.enable();
                                         jcrop_api.setOptions({
                                             // TODO: Test on older browsers :P
@@ -117,7 +120,11 @@ $max_file_size = 30000000; // size in bytes
                                 }
                             });
                         });
-					});
+				    });
+                });
+
+				function chooseFile(){
+					$("#file").click();
 				}
 
                 // Submit the chosen file, after doing cropping
