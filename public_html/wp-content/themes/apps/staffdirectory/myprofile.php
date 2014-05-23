@@ -84,42 +84,44 @@ $max_file_size = 30000000; // size in bytes
                 $(document).ready(function() {
                     // Set up the change function for the file element 
                     jQuery("#file").change(function () {
-                        console.log("File has been changed");
-                        // Toggle the buttons
-                        $(".changepic").toggle();
-                        console.log("The buttons have now been toggled");
-                        // Set up the jcrop:
-                        jQuery(function($) {
-                            $('#photo').Jcrop({
-                                bgColor: 'white',
-                                boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
-                            },function(){
-                                console.log("Photo has been jcropped");
-                                jcrop_api = this;
-                                jcrop_api.disable();
-                                // Create a new filereader
-                                var fRead = new FileReader();
+                        // If this browser supports the FileReader API
+                        if (window.FileReader) {
+                            // Toggle the buttons
+                            $(".changepic").toggle();
+                            // Set up the jcrop:
+                            jQuery(function($) {
+                                $('#photo').Jcrop({
+                                    bgColor: 'white',
+                                    boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
+                                },function(){
+                                    jcrop_api = this;
+                                    jcrop_api.disable();
 
-                                // Get the first file
-                                fRead.readAsDataURL($("#file")[0].files[0]);
-                                
-                                // Once we're done loading...
-                                fRead.onload = function () {
-                                    // Set the source of the preview image to this new image
-                                    jcrop_api.setImage(fRead.result, function() {
-                                        console.log("Image has been set");
-                                        jcrop_api.enable();
-                                        jcrop_api.setOptions({
-                                            // TODO: Test on older browsers :P
-                                            trueSize: [
-                                                $('.jcrop-holder img')[0].naturalWidth,
-                                                $('.jcrop-holder img')[0].naturalHeight
-                                            ]
+                                    // Create a new filereader
+                                    var fRead = new FileReader();
+
+                                    // Get the first file
+                                    fRead.readAsDataURL($("#file")[0].files[0]);
+                                    
+                                    // Once we're done loading...
+                                    fRead.onload = function () {
+                                        // Set the source of the preview image to this new image
+                                        jcrop_api.setImage(fRead.result, function() {
+                                            jcrop_api.enable();
+                                            jcrop_api.setOptions({
+                                                trueSize: [
+                                                    $('.jcrop-holder img')[0].naturalWidth,
+                                                    $('.jcrop-holder img')[0].naturalHeight
+                                                ]
+                                            });
                                         });
-                                    });
-                                }
+                                    }
+                                });
                             });
-                        });
+                        } else { // browser doesn't support filereader
+                            // Immediately upload; don't support any cropping
+                            document.getElementById("upload").submit();
+                        }
 				    });
                 });
 
