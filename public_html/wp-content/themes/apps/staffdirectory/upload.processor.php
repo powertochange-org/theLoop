@@ -136,8 +136,12 @@ function saveImage($src, $dest)
     $img_dest = ImageCreateTrueColor($target_width,$target_height);
 
     // Copy the image over
-	imagecopyresampled($img_dest,$img_src,0,0,$_POST['x'],$_POST['y'],
-	    $target_width,$target_height,$source_width,$source_height);
+	imagecopyresampled($img_dest,$img_src,
+        0,0, // Destination x and y values
+        (empty($_POST['x']) ? 0 : $_POST['x']), // Source x coord
+        (empty($_POST['y']) ? 0 : $_POST['y']), // Source y coord
+	    $target_width,$target_height, // Destination width and height
+        $source_width,$source_height); // Source width and height
     // Return the result of imagejpeg; if it's successful, this will be true. 
     // Otherwise, false
     return imagejpeg($img_dest, $dest, 100);
