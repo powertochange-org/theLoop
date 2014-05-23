@@ -42,24 +42,34 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			<h4>MINISTRY INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php 
-			if(!empty($user->address_line1)){
-				echo "<strong>Address:</strong> $user->ministry_address_line1";
-				if (!empty($user->ministry_address_line2))  {
-					echo ", $user->ministry_address_line2";
-				}
-				if (!empty($user->ministry_address_line3)) {
-					echo ", $user->ministry_address_line3"; 
-				}
-				if (!empty($user->ministry_city)) {
-					echo ", $user->ministry_city";
-				}
-				if (!empty($user->ministry_province)) {
-					echo ", $user->ministry_province";
-				}
-				if (!empty($user->ministry_postal_code)) {
-					echo ", $user->ministry_postal_code";
-				}
-				if (!empty($user->minstry_country)) {
+			if(!empty($user->ministry_address_line1) || !empty($user->ministry_city)){
+				echo "<strong>Address:</strong> ";
+                // If we have the first line
+                if (!empty($user->ministry_address_line1))  {
+                    echo $user->ministry_address_line1;
+				    if (!empty($user->ministry_address_line2))  {
+				    	echo ", $user->ministry_address_line2";
+				    }
+				    if (!empty($user->ministry_address_line3)) {
+				    	echo ", $user->ministry_address_line3"; 
+				    }
+				    if (!empty($user->ministry_city)) {
+				    	echo ", $user->ministry_city";
+				    }
+				    if (!empty($user->ministry_province)) {
+				    	echo ", $user->ministry_province";
+				    }
+				    if (!empty($user->ministry_postal_code)) {
+				    	echo ", $user->ministry_postal_code";
+				    }
+                }
+                else { // We don't have the first line, meaning we do have the city
+                    echo "$user->ministry_city";
+				    if (!empty($user->ministry_province)) {
+				    	echo ", $user->ministry_province";
+				    }
+                }
+				if (!empty($user->ministry_country)) {
 					echo ", $user->ministry_country";
 				}
 				echo "<BR>";
@@ -84,7 +94,8 @@ $profile = $_GET['person']; //grab from URL the profile we want
 						$type = 'Other';
 					}
 					echo "<strong>" . $type . ':</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
-					if (isSet($phone->extension)) {
+                    // Make sure we have an extension before adding the dash
+					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo "-$phone->extension";
 					}
 					echo '<BR>';
@@ -124,7 +135,8 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			<h4>PERSONAL INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php
-			if($user->share_address == 'FULL'){
+            /* Ensure user wants to share address, and has at least the first line */
+			if($user->share_address == 'FULL' && (!empty($user->address_line1))){
 				echo "<strong>Address:</strong> $user->address_line1";
 				if (!empty($user->address_line2)) {
 					echo ", $user->address_line2";
@@ -169,12 +181,13 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					else if($phone->phone_type == 'OTHER'){
 						$type = 'Other';
 					}
-					echo '<strong>' . $type . '</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
-					if (isSet($phone->extension)) {
+					echo '<strong>' . $type . ':</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
+                    // Make sure we have an extension before adding the dash
+					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo '-' . $phone->extension;
 					}
+				    echo '<BR>';
 				}
-				echo '<BR>';
 			}
 			//grab emails that are shared, then display them
 			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND (email_address.share_email=1 OR email_address.is_ministry=1) AND email_address.is_ministry = 0 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
