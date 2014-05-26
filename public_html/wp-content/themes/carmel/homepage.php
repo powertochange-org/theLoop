@@ -9,7 +9,7 @@
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
 			$pictures = array($folder.'cycling_4_water_banner.png',		$folder.'Staff_Conference_Loop_Banner.png',	$folder.'RBC.jpg');
-			$links    = array('/cycling-4-water-needs-your-help/',		'http://staffconference.com/',			'/corporate-discounts/discounts-across-canada/rbc-group-banking/');
+			$links    = array('/all-staff/cycling-4-water-needs-your-help/',		'http://staffconference.com/',			'/corporate-discounts/discounts-across-canada/rbc-group-banking/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
