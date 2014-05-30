@@ -114,11 +114,13 @@ global $SERVER_FIRST_CHRONICLES, $SERVER_SQL2012;
   if ($renderFormat == 'PDF') {
     // This line usually gets the PDF opened right in the browser, but doesn't
     // work in all browsers. So, we'll do the download instead.
-    header("Content-type: application/pdf");
+    header('Content-type: application/pdf');
     header('Content-Disposition: attachment; filename="'.$customfilename.'.pdf"');
   } else if ($renderFormat == 'Excel') {
+    header('Content-type: application/vnd.ms-excel');
     header('Content-Disposition: attachment; filename="'.$customfilename.'.xls"');
   } else if ($renderFormat == 'EXCELOPENXML') {
+    header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="'.$customfilename.'.xlsx"');
   } else if ($renderFormat == 'CSV') {
     header('Content-type: text/csv');
