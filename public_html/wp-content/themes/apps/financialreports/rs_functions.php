@@ -121,6 +121,7 @@ global $SERVER_FIRST_CHRONICLES, $SERVER_SQL2012;
   } else if ($renderFormat == 'EXCELOPENXML') {
     header('Content-Disposition: attachment; filename="'.$customfilename.'.xlsx"');
   } else if ($renderFormat == 'CSV') {
+    header('Content-type: text/csv');
     header('Content-Disposition: attachment; filename="'.$customfilename.'.csv"');
   } else if ($renderFormat == 'MHTML') {
     // Find 2 line returns in a row, meaning a blank line. Everything before that
