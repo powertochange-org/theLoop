@@ -46,6 +46,15 @@ $max_file_size = 30000000; // size in bytes
 				font-size:12px;
 			}
 
+            .changepic {
+                padding:10px;
+                letter-spacing:1px;
+                font-weight:bold;
+                font-size:16pt;
+                background-color:#adafb2;
+                width:220px;
+            }
+
 			#main-content form input[type=text], #main-content form input[type=textbox], #main-content form select{
 				background-color:#f4f4f4;
 				border:solid #adafb2 1px;
@@ -70,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><BR><BR><BR><BR>
+		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='updateCoords(jcrop_api.tellSelect()); getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><BR><BR><BR><BR>
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
@@ -120,21 +129,10 @@ $max_file_size = 30000000; // size in bytes
                             });
                         } else { // browser doesn't support filereader
                             // Immediately upload; don't support any cropping
-                            document.getElementById("upload").submit();
+                            document.getElementById("theForm").submit();
                         }
 				    });
                 });
-
-				function chooseFile(){
-					$("#file").click();
-				}
-
-                // Submit the chosen file, after doing cropping
-                function submitFile() {
-                    // Update the coordinates of our crop
-                    updateCoords(jcrop_api.tellSelect());
-					document.getElementById("upload").submit();
-                }
 
                 // This function updates the coordinates of some form values, 
                 // based off of a passed-in object that has the values of the
@@ -148,30 +146,44 @@ $max_file_size = 30000000; // size in bytes
 
 
 			</script>
-				<form style=" width:220px" id="upload" action="?page=upload_processor" enctype="multipart/form-data" method="post">
-					<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
-					<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
-                    <!-- Hidden inputs for coordinates -->
-	                <input type="hidden" id="x" name="x" />
-	                <input type="hidden" id="y" name="y" />
-	                <input type="hidden" id="width" name="width" />
-	                <input type="hidden" id="height" name="height" />
-				</form>
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
 					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
-					<input class='orange changepic' id="addpic" type="button" onclick='chooseFile();' value="ADD IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
+					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="ADD IMAGE">
 				<?php }
 				else { //we have a photo and can share it
 					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
-					<input class='orange changepic' id="addpic" type="button" onclick='chooseFile();' value="CHANGE IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;'>
+					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="CHANGE IMAGE" >
 				<?php } ?>
-				<input class='orange changepic' id="submitpic" type="button" onclick='submitFile();' value="SUBMIT IMAGE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;background-color:#adafb2;width:220px;display:none'>
+                <div style="border-radius:5px; margin: 2px 0px; box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box; display: none;" class="changepic">
+                    <p>Notes:</p>
+                    <ul style='list-style-position: inside; font-size: 12px; line-height:normal;' class='orange'>
+                        <li>
+                            You can click and drag on the photo to crop it 
+                        </li>
+                        <li>
+                            To reset your cropping area, click on the image somewhere outside the current crop area
+                        </li>
+                        <li>
+                            When you're finished, click on "Save & View Profile"
+                        </li>
+                    </ul>
+                </div>
 			</div>
 
 			<div style='float:left;padding-left:23px;width:457px'>
 
-			<form id='theForm' action="?page=profile" method="post" enctype="multitype/form-data">
+			<form onsubmit="updateCoords(jcrop_api.tellSelect());" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
+			
+            <!-- These are fields for the photo upload stuff -->
+            <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
+			<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
+            <!-- Hidden inputs for coordinates -->
+	        <input type="hidden" id="x" name="x" />
+	        <input type="hidden" id="y" name="y" />
+	        <input type="hidden" id="width" name="width" />
+	        <input type="hidden" id="height" name="height" />
+
 			<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 			<div class='form'>
 				<table><tr>
