@@ -31,7 +31,7 @@
 		<body>
 			<div style='top: 300px; position: relative;'>
 				Thank you for completing the IT survey.<BR><BR>
-				Merry Christmas and Happy New Year!
+				We appreciate your feedback!
 			</div>
 
 			<table id="list-of-sites-container" style='top: 220px'>
