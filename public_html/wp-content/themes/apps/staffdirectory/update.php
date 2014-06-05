@@ -3,6 +3,10 @@
 		//if(!isset($test->user_login)){ //we use updates to update the sync table. so if they don't have a sync record just make a blank one
 		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
 		//}
+
+        if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
+            include ('upload.processor.php');
+        }
 		
 		//all these ifs check if the user changed something. then it updates the database (including to a sync table so we can send it back to HRIS
 		// Remove Photo
