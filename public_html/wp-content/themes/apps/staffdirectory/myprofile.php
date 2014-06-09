@@ -79,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='updateCoords(jcrop_api.tellSelect()); getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><BR><BR><BR><BR>
+		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='updateCoords(jcrop_api.tellSelect()); document.getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
@@ -294,7 +294,7 @@ $max_file_size = 30000000; // size in bytes
 					<td><input type="textbox" placeholder='Address Line #1' name="personalAddress[line1]" value="<?php echo $user->address_line1 ?>" style="width:205px"></td>
 					<td style='width:100%'><input type="textbox" style='width:100%' placeholder='Address Line #2' name="personalAddress[line2]" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' ></td>
 				</tr></table><table><tr>
-					<td><input type="textbox"placeholder='City' name="personalAddress[city]" value="<?php echo $user->city ?>" style="width:130px"></td>
+					<td><input type="textbox" placeholder='City' name="personalAddress[city]" value="<?php echo $user->city ?>" style="width:130px"></td>
 					<td><input type="textbox" placeholder='Pr.' name="personalAddress[pr]" value="<?php echo $user->province ?>" maxlength="2" style="width:30px"></td>
 					<td><input type="textbox" placeholder='Country' name="personalAddress[country]" value="<?php echo $user->country ?>" maxlength="2" style="width:30px"></td>
 					<td><input type="textbox" placeholder='PC' name="personalAddress[pc]" value="<?php echo $user->postal_code ?>" style="width:110px"></td>
