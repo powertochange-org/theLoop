@@ -143,7 +143,7 @@
 		?>
 	</div>
 </div>
-<div id="content-right" class='download' style='width: 240px;'>   
+<div id="content-right" class='download staff-directory' style='width: 240px;'>   
 	<?php the_content();
 	include('pro_sidebar.php') ?>
 </div><div style='clear:both;'></div>
