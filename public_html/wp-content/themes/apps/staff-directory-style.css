@@ -33,3 +33,15 @@ h4{
 	background-color: #f4f4f4;
 	border: #adafb2 solid 1px;
 }
+
+div#Upload {
+    border: 10px solid #f7941d;
+    position: relative;
+    top: 10px;
+    margin-bottom: -10px;
+}
+
+div#Upload * {
+    color:#ffffff;
+    background-color:#f7941d;
+}
