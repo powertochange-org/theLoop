@@ -4,6 +4,10 @@
 		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
 		//}
 
+        // This keeps track of all the changes that need to be made, so we can
+        // send out an email with the changes
+        $changes = array();
+
         if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
             include ('upload.processor.php');
         }
@@ -45,6 +49,24 @@
 						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['pc'])),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
+
+            // Add to the changes
+            $changes['Ministry Address'] = array(
+                'old' => 
+		            getField($user->ministry_address_line1) . " <br/>" .
+		            getField($user->ministry_address_line2) . " <br/>" .
+		            getField($user->ministry_city) . " <br/>" .
+		            getField($user->ministry_province) . " <br/>" .
+		            getField($user->ministry_country) . " <br/>" .
+		            getField($user->ministry_postal_code),
+                'new' => 
+				    getField(strip_tags($_POST['ministryAddress']['line1']))  . "<br/>" .
+				    getField(strip_tags($_POST['ministryAddress']['line2']))  . "<br/>" .
+				    getField(strip_tags($_POST['ministryAddress']['city']))  . "<br/>" .
+				    getField(strip_tags($_POST['ministryAddress']['pr']))  . "<br/>" .
+				    getField(strip_tags($_POST['ministryAddress']['country']))  . "<br/>" .
+				    getField(strip_tags($_POST['ministryAddress']['pc']))
+                );
 		}
 		
 		//Phone
@@ -98,6 +120,21 @@
 										'user_login'	=> $user->user_login
 								));
 					}
+                        // NOTE: I originally had begun to create code that would include changes to
+                        // phone numbers in the email of changes. For now, however, we're going to
+                        // ignore those changes, and ONLY email notifications for ministry or
+                        // personal address changes. I'm only leaving this code here for future
+                        // reference, if we decide we want to add it in at some point
+
+                        //// Add to the changes
+                        //$changes['Phone'] = array(
+                        //    'old' => "None (New Phone)",
+                        //    'new' => "
+                        //    <strong>" . ($type == 'BUS' ? 'Office' : ucfirst(strtolower($type))) . ": </strong>+" . countryToNumber($country) . " ($area) $number" . (empty($extension) ? "" : "-" . $extension) . 
+                        //    "<br />" . ($phoneshare ? "Shared" : "Not Shared") . 
+                        //    "<br />" . ($isMinistry ? "Ministry" : "Non-Ministry")
+                        //    );
+					    //}
 					
 				}
 			}
@@ -291,6 +328,26 @@
 						'share_address' => $_POST['personalAddress']['share']),
 				array( 'user_login' => $current_user->user_login  ) 
 				);
+            
+            // Add to the changes
+            $changes['Personal Address'] = array(
+                'old' => 
+		            getField($user->address_line1) . " <br/>" .
+		            getField($user->address_line2) . " <br/>" .
+		            getField($user->city) . " <br/>" .
+		            getField($user->province) . " <br/>" .
+		            getField($user->country) . " <br/>" .
+		            getField($user->postal_code) . " <br/>" .
+                    ($user->share_address == 'FULL' ? 'Shared' : 'Not shared'),
+                'new' => 
+				    getField(strip_tags($_POST['personalAddress']['line1']))  . "<br/>" .
+				    getField(strip_tags($_POST['personalAddress']['line2']))  . "<br/>" .
+				    getField(strip_tags($_POST['personalAddress']['city']))  . "<br/>" .
+				    getField(strip_tags($_POST['personalAddress']['pr']))  . "<br/>" .
+				    getField(strip_tags($_POST['personalAddress']['country']))  . "<br/>" .
+				    getField(strip_tags($_POST['personalAddress']['pc']))  . "<br/>" .
+                    ($_POST['personalAddress']['share'] == 'FULL' ? "Shared" : "Not shared")
+                );
 		}
 		
 		//Ministry Social Media
@@ -336,6 +393,9 @@
 			
 									
 		}
+
+        // Send email notification for changes
+        sendEmail($changes, "$user->first_name $user->last_name");
 		// Re-read user, in case values changed
 		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
 
@@ -363,4 +423,86 @@ function endsWith($haystack, $needle) {
 	}
 
 	return (substr($haystack, -$length) === $needle);
+}
+
+function sendEmail($changes, $userName) {
+    // If we have changes; don't send any email if there's no changes!
+    if (!empty($changes)) {
+        if (defined('DEV_ENV') && DEV_ENV) { // We're in dev environment
+            $to = "brent.nesbitt@p2c.com";
+            $subject = "Staff Directory: User " . $userName . " changed info [Dev Environment]";
+        }
+        else {
+            // TODO: At some point, change to a mailing list (ie, hradmins@p2c.com)
+            $to = "Rachel.janz@p2c.com, Leoni.anderson@p2c.com, Cherie.rodway@p2c.com, Marian.ocampo@p2c.com, Cam.ludwig@p2c.com";
+            $subject = "Staff Directory: User " . $userName . " changed info";
+        }
+        // Set up the headers
+        $headers = "From: staff-directory@powertochange.org\r\n";
+        $headers .= "Reply-To: helpdesk@powertochange.org\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+        // Add the message prelude
+        $message = "
+        <html>
+            <head>
+                <!-- Set up the style for the email -->
+                <style>
+                    body {
+                        text-decoration:none;
+                        font-family: 'Open Sans', sans-serif;
+                        color:#4a4d4e;
+                    }
+                    h1 {
+                        color:#ffffff;
+                        background-color:#f7941d;
+                        padding:5px;
+                        line-height:normal;
+                        margin:0;
+                        font-size:125%;
+                    }
+                    table {
+                        border-collapse: collapse;
+                        border: 1px solid #f7941d;
+                    }
+                    th, td {
+                        border: 1px solid #f7941d;
+                        padding: 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Changes:</h1>
+                <table>
+                    <tr>
+                        <th>Field changed:</th>
+                        <th>Old info:</th>
+                        <th>Updated info:</th>
+                    </tr>";
+        // iterate through each of the changes and add them to the table
+        foreach ($changes as $key => $value) {
+            $message .= "
+            <tr>
+                <td>" . $key . "</td>
+                <td>" . $value['old'] . "</td>
+                <td>" . $value['new'] . "</td>
+            </tr>";
+        }
+        // Add closing tags, and a note so that users understand it might take
+        // a bit before they see the changes in HRIS and StudioEnterprise
+        $message .= "</table>
+                <p><i><b>Note: </b>This address change from the Staff Directory will be
+                automatically synced to HRIS and StudioEnterprise within the next
+                hour</i></p>
+            </body>
+        </html>";
+
+        // Do the email sending
+        mail($to, $subject, $message, $headers);
+    }
+} 
+
+// Quick function to return either the field value, or "[Field Empty]"
+function getField($field) {
+    return empty($field) ? "[Field Empty]" : $field;
 } ?>
