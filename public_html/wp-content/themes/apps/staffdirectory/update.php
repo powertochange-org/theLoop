@@ -488,8 +488,12 @@ function sendEmail($changes, $userName) {
                 <td>" . $value['new'] . "</td>
             </tr>";
         }
-        // Add closing tags
+        // Add closing tags, and a note so that users understand it might take
+        // a bit before they see the changes in HRIS and StudioEnterprise
         $message .= "</table>
+                <p><i><b>Note: </b>This address change from the Staff Directory will be
+                automatically synced to HRIS and StudioEnterprise within the next
+                hour</i></p>
             </body>
         </html>";
 
