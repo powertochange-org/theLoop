@@ -79,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='updateCoords(jcrop_api.tellSelect()); document.getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
+		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='if (jcrop_api) { updateCoords(jcrop_api.tellSelect()); } document.getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
