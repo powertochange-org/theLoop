@@ -34,3 +34,7 @@ public_html/wp-content/uploads/*
 !public_html/wp-content/uploads/.htaccess
 !public_html/wp-content/wptouch-data
 !public_html/wp-content/wptouch-data/*
+
+# This is a file type created by Mac OS that stores folder attributes
+# Should have no impact on code
+.DS_Store
