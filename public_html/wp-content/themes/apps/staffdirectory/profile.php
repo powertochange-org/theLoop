@@ -113,10 +113,10 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					// a http:// in front of a website let's the browser know it's an absolute address. the user may or may not have
 					// included it. So we just make sure it's there
 					if(strpos($user->ministry_website, "http")===0){
-						echo '<strong>Ministry Website</strong><a href="' . $user->ministry_website . '" target=_blank>' . $user->ministry_website . '</a><BR>';
+						echo '<strong>Ministry Website:</strong> <a href="' . $user->ministry_website . '" target=_blank>' . $user->ministry_website . '</a><BR>';
 					}
 					else{
-						echo '<strong>Ministry Website</strong><a href=http://' . $user->ministry_website . ' target=_blank>' . $user->ministry_website . '</a><BR>';
+						echo '<strong>Ministry Website:</strong> <a href=http://' . $user->ministry_website . ' target=_blank>' . $user->ministry_website . '</a><BR>';
 					}
 				}
 				if(!empty($user->ministry_twitter_handle)){
@@ -219,10 +219,9 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			?>
-			<p style='margin:  5px 0'>
-			A personal message:
-			<?php echo $user->notes ?>
-			</p>
+            <?php if (!empty($user->notes)){
+                echo "<p style='margin:  5px 0'><strong>A personal message:</strong> " . $user->notes . "</p>";
+            } ?>
 			</div><div style='clear:both;'></div>
 		</div>
 	</div>
