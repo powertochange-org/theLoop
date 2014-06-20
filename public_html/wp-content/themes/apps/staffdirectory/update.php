@@ -434,7 +434,7 @@ function sendEmail($changes, $userName) {
         }
         else {
             // TODO: At some point, change to a mailing list (ie, hradmins@p2c.com)
-            $to = "Rachel.janz@p2c.com, Leoni.anderson@p2c.com, Cherie.rodway@p2c.com, Marian.ocampo@p2c.com, Cam.ludwig@p2c.com";
+            $to = "Rachel.janz@p2c.com, Leoni.anderson@p2c.com, Cherie.rodway@p2c.com, Marian.ocampo@p2c.com, cam.ludwig@powertochange.org";
             $subject = "Staff Directory: User " . $userName . " changed info";
         }
         // Set up the headers
