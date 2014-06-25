@@ -10,13 +10,6 @@ $directory_self = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_
 // make a note of the directory that will recieve the uploaded file 
 $uploadsDirectory = $_SERVER['DOCUMENT_ROOT'] . $directory_self . 'wp-content/uploads/staff_photos/'; 
 
-// make a note of the location of the upload form in case we need it 
-$uploadForm = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'staff-directory/?page=profile'; 
-
-// make a note of the location of the success page 
-$uploadSuccess = 'http://' . $_SERVER['HTTP_HOST'] . $directory_self . 'upload.success.php'; 
-$uploadSuccess = 'http://' . $_SERVER['HTTP_HOST'] . '/staffdirectory/?page=upload_success';
-
 // fieldname used within the file <input> of the HTML form 
 $fieldname = 'file'; 
 
@@ -38,11 +31,14 @@ if ($_FILES[$fieldname]['error'] == 0) {
         if (getimagesize($_FILES[$fieldname]['tmp_name'])) {
             // At this point, we have passed almost all of the necessary validation
 
+            // Replace all whitespace with underscore in filename
+            $filename = preg_replace('/\s+/', '_', $_FILES[$fieldname]['name']);
+
             // make a unique filename for the uploaded file and check it is not already 
             // taken... if it is already taken keep trying until we find a vacant one 
             // sample filename: 1140732936-filename.jpg 
             $now = time(); 
-            while(file_exists($uploadFilename = $uploadsDirectory.$now.'-'.$_FILES[$fieldname]['name'])) 
+            while(file_exists($uploadFilename = $uploadsDirectory.$now.'-'.$filename)) 
             { 
                 $now++; 
             } 
@@ -50,7 +46,7 @@ if ($_FILES[$fieldname]['error'] == 0) {
             if (saveImage($_FILES[$fieldname]['tmp_name'], $uploadFilename)) {
                 // If you got this far, everything has worked and the file has been successfully saved. 
                 // Update database fields
-                $wpdb->update( 'employee', array('photo' => $now.'-'.$_FILES[$fieldname]['name']), array('user_login' => $current_user->user_login), 
+                $wpdb->update( 'employee', array('photo' => $now.'-'.$filename), array('user_login' => $current_user->user_login), 
                 	array('%s'), array('%s') );
             
 
