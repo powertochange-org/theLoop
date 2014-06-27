@@ -148,7 +148,24 @@ $max_file_size = 30000000; // size in bytes
 			</script>
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
-					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/anonymous.jpg" width=220 />';?>
+                    // Attempt to use their public giving site photo
+                    $url = "http://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
+                    // Check to see if that url is valid
+                    // Use curl to test validity of URL; init the handle
+                    $handle = curl_init($url);
+                    // Set the option so that it returns the response to a variable
+                    // (which we don't actually use), as opposed to printing out the
+                    // response to the page
+                    curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+                    // Actually try to get the response from the url
+                    curl_exec($handle);
+                    // Check the response code
+                    if (curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
+                        // It's INVALID (ie, user doesn't have a giving site image)
+                        // Use the standard image
+                        $url = "/wp-content/uploads/staff_photos/anonymous.jpg";
+                    } 
+					echo '<img id="photo" style="display:block" src="'. $url . '" width=220 />';?>
 					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="ADD IMAGE">
 				<?php }
 				else { //we have a photo and can share it
