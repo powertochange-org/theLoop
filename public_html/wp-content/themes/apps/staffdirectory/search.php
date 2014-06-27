@@ -112,6 +112,7 @@
 						$alldata[$j]['role_title'] = $data['role_title'];
 						$alldata[$j]['ministry'] = $data['ministry'];
 						$alldata[$j]['share_photo'] = $data['share_photo'];
+						$alldata[$j]['staff_account'] = $data['staff_account'];
 						$j++;
 					}	
 				}
@@ -124,7 +125,24 @@
 						echo "<div class='person'>";
 							if(is_null($alldata[$i]['photo']) || $alldata[$i]['share_photo'] == 0){ //if we do not have a picture for this user
 								//echo $alldata[$i]['share_photo'];
-								echo '<img style=\'display:inline;float:left;\' src="../../wp-content/uploads/staff_photos/anonymous.jpg" width=50 />';
+                                // Attempt to use their public giving site photo; use the smaller "icon" image for search results
+                                $url = "http://secure.powertochange.org/images/Product/icon/" . $alldata[$i]['staff_account'] . ".jpg";
+                                // Check to see if that url is valid
+                                // Use curl to test validity of URL; init the handle
+                                $handle = curl_init($url);
+                                // Set the option so that it returns the response to a variable
+                                // (which we don't actually use), as opposed to printing out the
+                                // response to the page
+                                curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+                                // Actually try to get the response from the url
+                                curl_exec($handle);
+                                // Check the response code
+                                if (curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
+                                    // It's INVALID (ie, user doesn't have a giving site image)
+                                    // Use the standard image
+                                    $url = "../../wp-content/uploads/staff_photos/anonymous.jpg";
+                                } 
+				                echo '<img style=\'display:inline;float:left;\' src="' . $url . '" width=50 />';
 							}
 							else { //if we do have a picture for this user
 								echo '<a style=\'display:inline;float:left;\' href ="?page=profile&person=' . $alldata[$i]['user_login'] . '"><img src="../../wp-content/uploads/staff_photos/' . $alldata[$i]['photo'] . '" width=50 /></a>';
