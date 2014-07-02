@@ -19,6 +19,7 @@ get_header(); ?>
 		
 		<div id='preview'></div>
 		<textarea id='code' readonly></textarea>
+		<button type="button" onclick='refreshSignature();'>Click Me!</button> 
 		
 		<script type="text/javascript">
 			var signature = "";
@@ -47,10 +48,10 @@ get_header(); ?>
 				}
 				signature += "</span></div>" +
 					"<div ><a href='http://powertochange.org/' target='_blank'><img src='http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email.png' height='80'  /><img src='http://powertochange.com/wp-content/uploads/" +
-					"<?php echo 'section'?>' height='80'  /></a></div></div>";
+					"<?php echo 'section'?>' height='80'  /></a></div></div></div>";
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
-</div>"
+
 			}
 		</script>
     <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
