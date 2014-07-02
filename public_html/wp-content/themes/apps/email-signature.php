@@ -27,20 +27,20 @@ get_header(); ?>
 			function refreshSignature(){
 				signature = "<div style='font-family:verdana,sans-serif;color:#444444;width:1000px;'>" +
 					"<div style='font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block'>" +
-						document.getElementById('name') + "</div>" +
+						document.getElementById('name').value + "</div>" +
 					"<div><span style='font-size: 11px;'><?php echo 'jobtitle' ?><span style='color:#c0c0c0;'>|</span><?php echo 'department' ?>" +
 					"</span></div>" +
 					"<div><span style='font-size: 11px;'>T&#x2e; ";
-				var phone = document.getElmentById('phone');
-				if (phone.trim() = ""){
+				var phone = document.getElementById('phone').value;
+				if (phone.trim() == ""){
 					signature += "ptcphone";
 				}
 				else {
 					signature += phone;
 				}
 				signature += "<span style='color:#c0c0c0;'>|</span>";
-				var cell = document.getElmentById('cell');
-				if (cell.trim() = ""){
+				var cell = document.getElementById('cell').value;
+				if (cell.trim() == ""){
 					signature += "Toll Free: 1&#x2e;855.722&#x2e;4483";
 				}
 				else {
