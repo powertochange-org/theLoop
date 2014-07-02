@@ -284,7 +284,7 @@ $max_file_size = 30000000; // size in bytes
 						if(strpos(strtolower($email->email_address),'powertochange.org') === false) { ?>
 							<td style='width:100%'><input type="text" style='width:100%' name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address; ?>" /></td>
 						<?php }	else{ ?>
-							<td style='width:100%'><input type="text" style='width:100%' value='<?php echo $email->email_address; ?>' disabled /></td>
+							<td title="Note: @powertochange.org email addresses cannot be edited or removed" style='width:100%'><input type="text" style='width:100%' value='<?php echo $email->email_address; ?>' disabled /></td>
 						<?php }
 					echo "</tr></table>";
 					echo "</div>";
