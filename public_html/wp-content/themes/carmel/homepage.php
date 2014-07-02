@@ -8,7 +8,7 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'Staff_Conference_Loop_Banner.png', $folder.'RBC.jpg', $folder.'RRSP/jpg', $folder.'Branding.jpg');
+			$pictures = array($folder.'Staff_Conference_Loop_Banner.png', $folder.'RBC.jpg', $folder.'RRSP.jpg', $folder.'Branding.jpg');
 			$links    = array('http://staffconference.com/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', 		'/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
 		?>
 		<a id='slideshow_link' target="_blank">
