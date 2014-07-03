@@ -88,18 +88,18 @@ get_header(); ?>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		</table>
 		<div class="resetCSS" id='preview'></div>
-		<textarea style='width:100%;height:200px;' id='code' readonly></textarea>
+		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
 		 
 		
 		<script type="text/javascript">
 			function refreshSignature(){
-				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;width:1000px;min-width:1000px;" cellspacing="0" cellpadding="0">\n' +
+				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">\n' +
 					'<td style="font-family:verdana,sans-serif;" >\n' +
 						document.getElementById('name').value + '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">|</span><?php echo "$user->ministry" ?></td>\n' +
+					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">&nbsp|&nbsp</span><?php echo "$user->ministry" ?></td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">\n' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">\n';
@@ -110,7 +110,7 @@ get_header(); ?>
 				else {
 					signature += phone + '\n';
 				}
-				signature += "</a>&nbsp;<span style='color:#c0c0c0;'>|</span>&nbsp;\n";
+				signature += "</a><span style='color:#c0c0c0;'>|</span>\n";
 				var cell = document.getElementById('cell').value;
 				if (cell.trim() == ""){
 					signature += 'Toll&nbsp;Free:&nbsp;<a style="text-decoration:none;color:#444444;"><?php echo "1".$delimiter."855".$delimiter."722".$delimiter."4483" ?>\n';
