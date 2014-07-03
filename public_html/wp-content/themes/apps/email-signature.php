@@ -6,7 +6,7 @@
 *
 */
 
-$delimiter = '&#x2e;'
+$delimiter = '&#x2e;';
 
 $current_user = wp_get_current_user();
 $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
