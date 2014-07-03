@@ -72,9 +72,9 @@ get_header(); ?>
 	<div id="main-content">
 		<script src="https://code.jquery.com/jquery-latest.js"></script>
 		
-		<label for='name'>Name:</label><input type='text' id='name' onchange='refreshSignature();' value='<?php echo '$user->first_name $user->last_name'?>'/>
-		<label for='phone'>Phone:</label><input type='text' id='phone' onchange='refreshSignature();' value='<?php echo '$phone[number]'?>'/>
-		<label for='cell'>Cell:</label><input type='text' id='cell' onchange='refreshSignature();' value='<?php echo '$cell[number]'?>'/>
+		<label for='name'>Name:</label><input type='text' id='name' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/>
+		<label for='phone'>Phone:</label><input type='text' id='phone' onchange='refreshSignature();' value='<?php echo "$phone[number]"?>'/>
+		<label for='cell'>Cell:</label><input type='text' id='cell' onchange='refreshSignature();' value='<?php echo "$cell[number]"?>'/>
 		<button type="button" onclick='refreshSignature();'>Click Me!</button>
 		<div id='preview'></div>
 		<textarea id='code' readonly></textarea>
@@ -88,7 +88,7 @@ get_header(); ?>
 						document.getElementById('name').value + '</td>' +
 					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo '$user->role_title' ?><span style='color:#c0c0c0;'>|</span><?php echo '$user->ministry' ?></td>' +
+					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style='color:#c0c0c0;'>|</span><?php echo "$user->ministry" ?></td>' +
 					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
@@ -102,7 +102,7 @@ get_header(); ?>
 				signature += "</a>&nbsp;<span style='color:#c0c0c0;'>|</span>&nbsp;";
 				var cell = document.getElementById('cell').value;
 				if (cell.trim() == ""){
-					signature += '<?php echo 'Toll&nbsp;Free:&nbsp;<a style="text-decoration:none;color:#444444;">1&#x2e;855$delimiter722&#x2e;4483' ?>';
+					signature += 'Toll&nbsp;Free:&nbsp;<a style="text-decoration:none;color:#444444;">1&#x2e;855<?php echo "$delimiter" ?>722&#x2e;4483';
 				}
 				else {
 					signature += 'Cell:&nbsp;<a style="text-decoration:none;color:#444444;">' + cell;
