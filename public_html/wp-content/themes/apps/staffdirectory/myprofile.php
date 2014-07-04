@@ -87,65 +87,7 @@ $max_file_size = 30000000; // size in bytes
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div style='float:left'>
             <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/jquery.Jcrop.min.js"></script>
-			<script type="text/javascript">
-                var jcrop_api;
-
-                $(document).ready(function() {
-                    // Set up the change function for the file element 
-                    jQuery("#file").change(function () {
-                        // If this browser supports the FileReader API
-                        if (window.FileReader) {
-                            // Toggle the buttons
-                            $(".changepic").toggle();
-                            // Set up the jcrop:
-                            jQuery(function($) {
-                                $('#photo').Jcrop({
-                                    bgColor: 'white',
-                                    boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
-                                },function(){
-                                    jcrop_api = this;
-                                    jcrop_api.disable();
-
-                                    // Create a new filereader
-                                    var fRead = new FileReader();
-
-                                    // Get the first file
-                                    fRead.readAsDataURL($("#file")[0].files[0]);
-                                    
-                                    // Once we're done loading...
-                                    fRead.onload = function () {
-                                        // Set the source of the preview image to this new image
-                                        jcrop_api.setImage(fRead.result, function() {
-                                            jcrop_api.enable();
-                                            jcrop_api.setOptions({
-                                                trueSize: [
-                                                    $('.jcrop-holder img')[0].naturalWidth,
-                                                    $('.jcrop-holder img')[0].naturalHeight
-                                                ]
-                                            });
-                                        });
-                                    }
-                                });
-                            });
-                        } else { // browser doesn't support filereader
-                            // Immediately upload; don't support any cropping
-                            document.getElementById("theForm").submit();
-                        }
-				    });
-                });
-
-                // This function updates the coordinates of some form values, 
-                // based off of a passed-in object that has the values of the
-                // crop values
-                function updateCoords(c) {
-                    $('#x').val(c.x);
-                    $('#y').val(c.y);
-                    $('#width').val(c.w);
-                    $('#height').val(c.h);
-                }
-
-
-			</script>
+			<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/staffdirectory.js" ></script>
 				<?php
 				if(is_null($user->photo)){ //if we don't have a photo
                     // Attempt to use their public giving site photo
@@ -240,6 +182,7 @@ $max_file_size = 30000000; // size in bytes
 						<td>-</td>
 						<td><input type="text" name="phone[<?php echo $id; ?>][part2]" value="<?php echo $contact[1] ?>" maxlength="4"style="width:60px" /></td>
 						<td style='width:100%'> <input type="text" style='width:100%' placeholder='Ext' name="phone[<?php echo $id; ?>][ext]" value="<?php echo $phone->extension ?>" maxlength="10"/></td>
+						<td><input title="Delete this phone number" style="color:red;" type="button" value="✖" onclick="deleteItem('phone number', <?php echo $id ?>);"/></td>
 					 </tr></table>
 			 <?php
 					echo '</div>';
@@ -277,12 +220,13 @@ $max_file_size = 30000000; // size in bytes
 						echo "<div style='position:relative;'>";
 					}
 					$id = $email->email_address_id;	?>
-					<div class="form">
+					<div class="form" id="editEmail<?php echo $id ?>">
 					<table><tr>
 						<td><span style="font-weight:600;">Ministry&nbsp;Email: </span></td>
 						<?php	//don't allow editing of powertochange.org address
 						if(strpos(strtolower($email->email_address),'powertochange.org') === false) { ?>
 							<td style='width:100%'><input type="text" style='width:100%' name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address; ?>" /></td>
+						    <td><input title="Delete this email address" style="color:red;" type="button" value="✖" onclick="deleteItem('email address', <?php echo $id ?>);"/></td>
 						<?php }	else{ ?>
 							<td title="Note: @powertochange.org email addresses cannot be edited or removed" style='width:100%'><input type="text" style='width:100%' value='<?php echo $email->email_address; ?>' disabled /></td>
 						<?php }
@@ -356,6 +300,7 @@ $max_file_size = 30000000; // size in bytes
 						<td>-</td>
 						<td><input type="text" name="phone[<?php echo $id; ?>][part2]" value="<?php echo $contact[1] ?>" maxlength="4" style="width:35px" /></td>
 						<td style='width:100%'><input type="text" style='width:100%' placeholder="Ext." name="phone[<?php echo $id; ?>][ext]" value="<?php echo $phone->extension ?>" maxlength="10" /></td>
+						<td><input title="Delete this phone number" style="color:red;" type="button" value="✖" onclick="deleteItem('phone number', <?php echo $id ?>);"/></td>
 					</tr></table>
 					 <?php
 					echo '</div>';
@@ -400,7 +345,7 @@ $max_file_size = 30000000; // size in bytes
 						echo "<div style='position:relative;'>";
 					}
 					$id = $email->email_address_id; ?>
-					<div class="form">
+					<div class="form" id="editEmail<?php echo $id ?>">
 					<table><tr>
 						<td><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
 						<td><input type="text" name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address ?>" style="width:260px"/></td>
@@ -408,13 +353,14 @@ $max_file_size = 30000000; // size in bytes
 							<option value="1" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
 							<option value="0" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
 						</select></td>
+						<td><input title="Delete this email address" style="color:red;" type="button" value="✖" onclick="deleteItem('email address', <?php echo $id ?>);"/></td>
 					</tr></table>
 					<?php
+					echo '</div>';
 					if ($isLast){
 						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addEmail\").slideToggle()'>";
 						echo "</div>";
 					}
-					echo '</div>';
 				}
 			}
 			?>
