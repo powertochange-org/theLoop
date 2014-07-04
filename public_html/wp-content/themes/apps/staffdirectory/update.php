@@ -207,6 +207,8 @@
 						$ministry = '0';
 						$shared = $value['share'];
 					}
+                    // Let the user know if the type of email was automatically changed
+                    echo getEmailNoticeAdd($key, $ministry, $address);
 					$wpdb->insert( 'email_address', 
 						array( 'employee_id' => $user->external_id,
 								'email_address' => $address,
@@ -259,6 +261,8 @@
 					if ($address != $email->email_address 
 							|| $ministry != $email->is_ministry
 							|| $shared != $email->share_email) {
+                        // Let the user know if the type of email was automatically changed
+                        echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
 								
 						$wpdb->update( 'email_address', 
 								array( 'email_address' => $address,
@@ -505,4 +509,41 @@ function sendEmail($changes, $userName) {
 // Quick function to return either the field value, or "[Field Empty]"
 function getField($field) {
     return empty($field) ? "[Field Empty]" : $field;
+}
+
+// A function that will return an email notice message to the page in the event
+// that the system automatically added a personal email address as a ministry,
+// or vice versa. Doesn't return anything otherwise
+function getEmailNoticeAdd($key, $ministry, $address) {
+    // It's a ministry email, but it was added as a personal
+    if ($ministry == 1 && $key == -2) {
+        return "<br/><br/><br/><br/><p class='orange-box' style='margin-bottom:
+        -50px; background-color: rgb(229, 226, 5);'>NOTE: The address
+        '$address' was recognized as a ministry address, and has been added as
+        one</p>"; 
+    } else if ($ministry == 0 && $key == -1) { // Not ministry, but added as one 
+        return "<br/><br/><br/><br/><p class='orange-box'
+        style='margin-bottom: -50px; background-color: rgb(229, 226, 5);'>NOTE:
+        The address '$address' was not recognized as a ministry address, so it
+        was added as a personal address</p>";
+    }
+    return; // Don't return anything if no changes were made
+} 
+
+// A function to return a notice to the page if the email address type
+// was automatically changed
+function getEmailNoticeChange($orig_ministry, $new_ministry, $address) {
+    // Used to be ministry; isn't anymore
+    if ($orig_ministry > $new_ministry) {
+        return "<br/><br/><br/><br/><p class='orange-box'
+        style='margin-bottom: -50px; background-color: rgb(229, 226, 5);'>NOTE:
+        The address '$address' was not recognized as a ministry address, so it
+        was changed to a personal address</p>";
+    } else if ($new_ministry > $orig_ministry) { // Used to be personal, now ministry
+        return "<br/><br/><br/><br/><p class='orange-box'
+        style='margin-bottom: -50px; background-color: rgb(229, 226, 5);'>NOTE:
+        The address '$address' was recognized as a ministry address, so it
+        was automatically changed to one</p>";
+    }
+    return; // Don't return anything if no changes were made
 } ?>
