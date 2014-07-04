@@ -10,7 +10,7 @@ include('functions/functions.php');
 *Description: A calculator to find out how much allowance a person has to raise.
 
 req:
-	tables-allowance-questiom/answser
+	tables-allowance-question/answer
 		  -support constant
 		  -string constant
 	
@@ -25,7 +25,7 @@ there is one spot that has hardcoded numbers since, for two questions
 		(such as What is the scope of ministry operations for which the staff member is  responsible? 
 		(which what level a person is)), for a specific person (such as for you or your spouse), you can not choose the answer
 		but for anyone you can choose the answer for the question.
-	since the question uses hardcoded numbers then some of the edit capabilites have been disable in the admin interface
+	since the question uses hardcoded numbers then some of the edit capabilities have been disable in the admin interface
 		from the admin interface you should not be able to change anything that would need the hardcoded numbers to change
 	the hardcoded values are in function setUserValues()
 	
