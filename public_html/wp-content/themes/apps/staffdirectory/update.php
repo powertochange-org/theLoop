@@ -187,7 +187,19 @@
 										'is_ministry' => $isMinistry),
 								array(	'phone_number_id' => $id));
 					}
-				}
+				} else if (empty($value['part2']) && empty($value['country']) &&
+                           empty($value['area']) && empty($value['ext'])) {
+                    // Phone number is empty; need to delete
+					$wpdb->insert( 'sync',
+							array(  'table_name'    => 'phone_number',
+									'record_id'     => $phone->phone_number_id,
+									'sync_action'   => 'delete',
+									'changed_date'	=>	date('Y-m-d H-i-s'),
+									'user_login'	=> $user->user_login
+							));
+                    // Delete from database
+					$wpdb->query("DELETE FROM phone_number WHERE phone_number_id ='" . $phone->phone_number_id . "'");
+                }
 			}
 		}
 		
