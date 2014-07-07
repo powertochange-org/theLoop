@@ -381,7 +381,7 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 			<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">
 				Personal Message:
-				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo str_replace("\\", "", $user->notes); ?></textarea>
+				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo $user->notes ?></textarea>
 				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
 			</div>
 			</form>
