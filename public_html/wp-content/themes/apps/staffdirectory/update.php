@@ -8,6 +8,10 @@
         // send out an email with the changes
         $changes = array();
 
+        // Wordpress by default adds slashes to escape strings. How we are using
+        // them, however, prefers that they are not escaped
+        $_POST = stripslashes_deep($_POST);
+
         if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
             include ('upload.processor.php');
         }
@@ -198,7 +202,9 @@
 									'user_login'	=> $user->user_login
 							));
                     // Delete from database
-					$wpdb->query("DELETE FROM phone_number WHERE phone_number_id ='" . $phone->phone_number_id . "'");
+                    $wpdb->delete( 'phone_number',
+                            array( 'phone_number_id' => $phone->phone_number_id
+                    ));
                 }
 			}
 		}
@@ -252,7 +258,9 @@
 									'changed_date'	=>	date('Y-m-d H-i-s'),
 									'user_login'	=> $user->user_login,
 							));
-					$wpdb->query("DELETE FROM email_address WHERE email_address_id='" . $id . "'");
+                    $wpdb->delete( 'email_address',
+                            array( 'email_address_id' => $id
+                    ));
 				}
 				else{
 					if (isMinistryAddress($address)) {
