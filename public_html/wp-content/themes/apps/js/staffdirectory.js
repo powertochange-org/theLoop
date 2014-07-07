@@ -1,5 +1,11 @@
 var jcrop_api;
 
+// This variable is to keep track of whether or not we have a variable at all.
+// Unfortunately, the jcrop coordinates do NOT get reset if we 'release' the
+// selection, so we have to manually keep track of whether or not we have a
+// selection
+var selection = true;
+
 $(document).ready(function() {
     // Set up the change function for the file element 
     jQuery("#file").change(function () {
@@ -11,6 +17,8 @@ $(document).ready(function() {
             jQuery(function($) {
                 $('#photo').Jcrop({
                     bgColor: 'white',
+                    onRelease: releaseSelection,
+                    onSelect: setSelection,
                     boxWidth: $("#photo").width() // Limit the width to the same as the current image being displayed
                 },function(){
                     jcrop_api = this;
@@ -48,10 +56,23 @@ $(document).ready(function() {
 // based off of a passed-in object that has the values of the
 // crop values
 function updateCoords(c) {
-    $('#x').val(c.x);
-    $('#y').val(c.y);
-    $('#width').val(c.w);
-    $('#height').val(c.h);
+    // Ensure that we had a selection
+    if (selection) {
+        $('#x').val(c.x);
+        $('#y').val(c.y);
+        $('#width').val(c.w);
+        $('#height').val(c.h);
+    }
+}
+
+// This function sets selection to false
+function releaseSelection() {
+    selection = false;
+}
+
+// This function sets selection to true
+function setSelection() {
+    selection = true;
 }
 
 // This function prompts for confirmation before 'deleting' an item (phone
