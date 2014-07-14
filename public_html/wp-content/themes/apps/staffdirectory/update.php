@@ -18,12 +18,12 @@
 		
 		//all these ifs check if the user changed something. then it updates the database (including to a sync table so we can send it back to HRIS
 		// Remove Photo
-		if(isset($_POST['remove'])){ //user clicked remove photo button
-			$wpdb->update( 'employee', 
-							array( 'share_photo' => 0 	),
-							array( 'user_login' => $current_user->user_login  ),
-							array('%d')
-						);
+		if($_POST['deleteImage'] == 1){ //user clicked remove photo button
+            // Update the row, setting share_photo to 0 and photo to NULL. 
+            // The standard $wpdb->update call doesn't work with nulls, so this
+            // is the only way to insert a null into the table; it should be
+            // safe though, because there are no user-input parameters.
+            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$current_user->user_login'");
 		}
 		
 		//Ministry Address
