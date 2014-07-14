@@ -113,6 +113,7 @@ $max_file_size = 30000000; // size in bytes
 				else { //we have a photo and can share it
 					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
 					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="CHANGE IMAGE" >
+                    <input class='orange changepic' style="display: block;" title='Remove this image, and revert to the image on your public staff giving site (if you have one)' type="button" id="removepic" value="REMOVE IMAGE" onclick="deleteImage()"/>
 				<?php } ?>
                 <div style="border-radius:5px; margin: 2px 0px; box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box; display: none;" class="changepic">
                     <p>Notes:</p>
@@ -142,6 +143,8 @@ $max_file_size = 30000000; // size in bytes
 	        <input type="hidden" id="y" name="y" />
 	        <input type="hidden" id="width" name="width" />
 	        <input type="hidden" id="height" name="height" />
+	        <!-- Remove photo -->
+            <input type="hidden" id="deleteImage" name="deleteImage" />
 
 			<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 			<div class='form'>
