@@ -13,7 +13,12 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_
 $sql = "SELECT CONCAT(
 		`area_code`, '$delimiter', 
 		REPLACE(`contact_number`,'-', '$delimiter'),
-		IFNULL(CONCAT('$delimiter', `extension`),'')) as number
+		CASE
+			WHEN `extension` is null THEN ''
+			WHEN `extension` = '' THEN ''
+			ELSE CONCAT('$delimiter', `extension`)
+		END
+		) as number
 			FROM phone_number 
 			WHERE 
 				`employee_id` = '$user->external_id' and 
@@ -24,10 +29,14 @@ $sql = "SELECT CONCAT(
 //echo $sql;
 $phone = $wpdb->get_row($sql);
 $cell = $wpdb->get_row("SELECT CONCAT(
-		IFNULL(`country_phone_code`, '1'), '$delimiter', 
 		`area_code`, '$delimiter', 
 		REPLACE(`contact_number`,'-', '$delimiter'),
-		IFNULL(CONCAT('$delimiter', `extension`),'')) as number
+		CASE
+			WHEN `extension` is null THEN ''
+			WHEN `extension` = '' THEN ''
+			ELSE CONCAT('$delimiter', `extension`)
+		END
+		) as number
 			FROM phone_number 
 			WHERE 
 				`employee_id` = '$user->external_id' and
@@ -85,7 +94,7 @@ get_header(); ?>
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
-		<tr><td><label for='ministry'>Ministry:</label></td><td><input type='text' id='ministry'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
+		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
 		<div class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
