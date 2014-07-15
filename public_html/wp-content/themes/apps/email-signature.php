@@ -92,13 +92,13 @@ get_header(); ?>
 			margin-bottom:5px;
 		}
 		</style>
-		<table>
+		<table style="border: 2px red solid">
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
-		<div style="padding:50px;" class="resetCSS" id='preview'></div>
+		<div  style="border: 2px blue solid" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
 		 
 		
@@ -106,8 +106,8 @@ get_header(); ?>
 			function refreshSignature(){
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">\n' +
-					'<td style="font-family:verdana,sans-serif;" >\n' +
-					document.getElementById('name').value.toUpperCase() + '</td>\n' +
+					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >\n' +
+					document.getElementById('name').value + '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">\n' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">\n';
