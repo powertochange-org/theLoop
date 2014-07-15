@@ -78,8 +78,6 @@ get_header(); ?>
 	<hr>
     <div id="content-left">
 	<div id="main-content">
-	
-		<?php the_content(); ?>
 		
 		<style type='text/css'>
 		.resetCSS *{
@@ -145,6 +143,7 @@ get_header(); ?>
 			}
 			window.onload = refreshSignature;
 		</script>
+		 <?php the_content(); ?>
 	</div></div>
     <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
     <?php endwhile; endif; ?>
