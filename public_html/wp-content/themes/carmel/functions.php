@@ -70,6 +70,55 @@ function themename_customize_register($wp_customize){
         'type'    => 'select',
         'choices'    => $postArray
     ));
+
+    // Add section for survey settings
+    $wp_customize->add_section('survey_settings', array(
+        'title'       => 'Survey Settings',
+        'description' => 'Here you can set up a survey that will prompt staff on
+                          the homepage of The Loop. You can use various formats for the survey
+                          start date, and you can choose to set it to begin in the future.',
+    ));
+
+    // URL Setting 
+    $wp_customize->add_setting('survey_url', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+ 
+    $wp_customize->add_control('input_survey_url', array(
+        'label'      => 'Survey URL',
+        'section'    => 'survey_settings',
+        'settings'   => 'survey_url',
+    ));
+
+    // Date setting
+    $wp_customize->add_setting('survey_date', array(
+        'default'           => date('m/d/Y'),
+        'capability'        => 'edit_theme_options',
+        'type'              => 'theme_mod',
+        'sanitize_callback' => 'sanitize_date',
+    ));
+ 
+    $wp_customize->add_control('input_survey_date', array(
+        'label'      => 'Survey start date',
+        'section'    => 'survey_settings',
+        'settings'   => 'survey_date',
+    ));
+    
+    // Active flag
+    $wp_customize->add_setting('survey_active', array(
+        'capability' => 'edit_theme_options',
+        'type'       => 'theme_mod',
+    ));
+ 
+    $wp_customize->add_control('survey_active_checkbox', array(
+        'settings' => 'survey_active',
+        'label'    => 'Survey Active',
+        'section'  => 'survey_settings',
+        'type'     => 'checkbox',
+    ));
 }
  
 add_action('customize_register', 'themename_customize_register');
@@ -101,5 +150,17 @@ function wp_admin_bar_my_custom_account_menu( $wp_admin_bar ) {
 		) );
 
 	}
+}
+
+function sanitize_date($string) {
+    // Attempt to get a date from it
+    $date = strtotime($string);
+    if ($date) {
+        // When storing dates related to the survey in the database, they are
+        // all stored as strings containing month, day, and year
+        return date('m/d/Y', $date);
+    }
+    // Just return original string
+    return $string;
 }
 ?>
