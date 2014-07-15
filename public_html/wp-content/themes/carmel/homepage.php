@@ -3,7 +3,34 @@
 *Template Name: HomePage
 *
 */
- get_header(); ?>
+ get_header(); 
+
+ // Check to see if we need to display a survey
+ if (get_theme_mod('survey_active')) {
+    $last_survey_date = get_theme_mod('survey_date');
+ 
+    $user_survey_date = get_user_meta($current_user->ID, 'last_survey_date', true);
+    
+    //Check to see if there's a new survey since the last time we did one (and that the new survey is not for sometime in the future)
+    if (strtotime($last_survey_date) > strtotime($user_survey_date) && strtotime($last_survey_date) <= time()) {
+        // We have a new survey! Get the URL and display the dialog
+        $survey_url = get_theme_mod('survey_url');
+        echo '<div id="survey">
+                  <div>
+                      <h1>Hello there!</h1>
+                      <p>We\'re always trying to make this site better, and, since you\'re
+                      here, it means you use this site.<br/> Will you help us make it better by
+                      participating in a survey?</p>
+                      <div>
+                          <a class="surveyButtons" target="_blank" href="'.$survey_url.'" onclick="decideSurvey()" title="Take the Survey">Yes</a>
+                          <a class="surveyButtons" href="#" onclick="decideSurvey();" title="Don\'t Ask Me Again">No</a>
+                          <a class="surveyButtons" href="#" onclick="dismissSurvey()" title="Ask Me Again Next Time">Maybe Later</a>
+                      </div>
+                  </div>
+              </div>';
+    }
+ }
+ ?>
 <div id="content">
 	<div style='position:relative; top:-43px;'>
 		<?php 
@@ -55,6 +82,27 @@
 					showPicture(select_pic + 1);
 				}
 			}
+            
+            // Helper function to hide the survey
+            function dismissSurvey() {
+                $("#survey").hide();
+            }
+
+            // This function updates the database to reflect that a user as
+            // "decided" on a survey. 
+            // Please note that this can either mean that the user took the
+            // survey, or that the user decided not to participate in this
+            // survey at all
+            function decideSurvey() {
+                // Perform an ajax call to a separate php page to update the
+                // database to reflect that the user has either taken the
+                // survey, or chosen to ignore it
+                $.post("<?php echo get_template_directory_uri()?>/updateSurvey.php", { 
+                    user_id: <?php echo $current_user->ID ?>
+                });
+                // Close out of dialog
+                dismissSurvey();
+            }
 			
 			var pics_array = new Array (<?php
 			foreach($pictures as &$pic){
