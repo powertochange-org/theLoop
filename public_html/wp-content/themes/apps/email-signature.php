@@ -11,7 +11,6 @@ $delimiter = '&#x2e;';
 $current_user = wp_get_current_user();
 $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
 $sql = "SELECT CONCAT(
-		IFNULL(`country_phone_code`, '1'), '$delimiter', 
 		`area_code`, '$delimiter', 
 		REPLACE(`contact_number`,'-', '$delimiter'),
 		IFNULL(CONCAT('$delimiter', `extension`),'')) as number
@@ -37,30 +36,30 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 			ORDER BY `is_primary` DESC
 			LIMIT 0,1");
 
-$division = array( 'Athletes in Action' => array('', ''),
-	'Breakthrough Prayer Ministry' =>  array('', ''),
-	'Christian Embassy' =>  array('', ''),
-	'Connecting Streams' =>  array('', ''),
-	'Corporate Services' =>  array('', ''),
-	'Development' =>  array('2014/07/Advancement-Email.png', 'http://powertochange.org/'),
-	'DRIME' =>  array('', ''),
-	'FamilyLife' =>  array('', ''),
-	'Finance' =>  array('', ''),
-	'GAiN' =>  array('', ''),
-	'Human Resources' =>  array('', ''),
-	'Information Technology' =>  array('2014/07/Advancement-Email.png', 'http://powertochange.org/'),
-	'International' =>  array('', ''),
-	'LeaderImpact' =>  array('', ''),
+$division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', 'http://athletesinaction.com/'),
+	'Breakthrough Prayer Ministry' =>  array('2014/07/Breakthrough-Email.png', 'http://powertochange.com/breakthroughprayer/'),
+	'Christian Embassy' =>  array('uploads/2014/07/ChristianEmbassy-Email1.png', 'http://www.christianembassy.ca/'),
+	'Connecting Streams' =>  array('2014/07/Connecting-Streams-Email.png', 'http://www.connectingstreams.com/'),
+	'Corporate Services' =>  array('2014/07/Corporate-Services-Email.png', ''),
+	'Development' =>  array('2014/07/Advancement-Email1.png', ''),
+	'DRIME' =>  array('2014/07/DRIME-Email.png', 'http://powertochange.com/drime/'),
+	'FamilyLife' =>  array('2014/07/FamilyLife-Email.png', 'http://powertochange.com/familylife'),
+	'Finance' =>  array('2014/07/Ministry-Services-Email.png', ''),
+	'GAiN' =>  array('2014/07/GAiN-Email.png', 'http://globalaid.net/'),
+	'Human Resources' =>  array('2014/07/Ministry-Services-Email.png', ''),
+	'Information Technology' =>  array('2014/07/Ministry-Services-Email.png', ''),
+	'International' =>  array('2014/07/International-Email.png', ''),
+	'LeaderImpact' =>  array('2014/07/LeaderImpact-Email.png', 'http://www.leaderimpactgroup.com/'),
 	'Ministries Office' =>  array('', ''),
-	'Office of the EDA' =>  array('', ''),
-	'Office of the EDMS' =>  array('', ''),
-	'Power to Change - Students' =>  array('', ''),
-	'President\'s Office' =>  array('', ''),
+	'Office of the EDA' =>  array('2014/07/Advancement-Email1.png', ''),
+	'Office of the EDMS' =>  array('2014/07/Ministry-Services-Email.png', ''),
+	'Power to Change - Students' =>  array('2014/07/Office-President-Email.png', 'http://p2c.com/students'),
+	'President\'s Office' =>  array('2014/07/Office-President-Email.png', ''),
 	'Project Services' =>  array('', ''),
-	'PTC Resource Centre' =>  array('', ''),
-	'The Life Project' =>  array('', ''),
-	'WHEN' =>  array('', ''),
-	'Zones Teams' =>  array('', ''));
+	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
+	'PTC Resource Centre' =>  array('2014/07/Resource-Centre.png', 'http://store.powertochange.org/'),
+	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''));
+	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
 
 
 get_header(); ?>
@@ -86,6 +85,7 @@ get_header(); ?>
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
+		<tr><td><label for='ministry'>Ministry:</label></td><td><input type='text' id='ministry'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ 'Advancement'} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
 		<div class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -105,7 +105,7 @@ get_header(); ?>
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">\n';
 				var phone = document.getElementById('phone').value;
 				if (phone.trim() == ""){
-					signature += "<?php echo "1".$delimiter."604".$delimiter."514".$delimiter."2000" ?>\n";
+					signature += "<?php echo "604".$delimiter."514".$delimiter."2000" ?>\n";
 				}
 				else {
 					signature += phone + '\n';
@@ -120,7 +120,7 @@ get_header(); ?>
 				}
 				signature += '</a></td></tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email.png" height="80"  /></a><a href="<?php echo $division[$user->ministry][1]?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/\n' +
+					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/'} else { echo $division[$user->ministry][1] } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/\n' +
 					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>\n';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
