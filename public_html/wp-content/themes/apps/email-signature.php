@@ -73,6 +73,7 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 
 get_header(); ?>
 <div id="content">
+	<?php if (have_posts()) : while (have_posts()) : the_post();  ?>
 	<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 	<hr>
     <div id="content-left">
@@ -99,7 +100,7 @@ get_header(); ?>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
-		<div class="resetCSS" id='preview'></div>
+		<div style="padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
 		 
 		
@@ -141,13 +142,12 @@ get_header(); ?>
 					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>\n';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
-
 			}
-			
 			window.onload = refreshSignature;
 		</script>
 	</div></div>
     <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <?php endwhile; endif; ?>
 </div>
 <!--content end-->
 <!--Popup window-->
