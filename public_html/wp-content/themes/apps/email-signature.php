@@ -77,6 +77,9 @@ get_header(); ?>
 	<hr>
     <div id="content-left">
 	<div id="main-content">
+	
+		<?php the_content(); ?>
+		
 		<style type='text/css'>
 		.resetCSS *{
 			border:none;
