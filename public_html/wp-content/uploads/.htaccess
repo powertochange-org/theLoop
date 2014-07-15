@@ -3,8 +3,8 @@ IndexIgnore *
 RewriteEngine On
 
 #if can not find file looks for it on live site
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule . https://staff.powertochange.org%{REQUEST_URI} [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . https://staff.powertochange.org%{REQUEST_URI} [L]
 
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
