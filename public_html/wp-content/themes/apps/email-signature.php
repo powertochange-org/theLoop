@@ -94,24 +94,7 @@ get_header(); ?>
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
-		<tr><td><label for='ministry'>Ministry/Department:</label></td><td>
-			<select id='ministry'  onchange='refreshSignature();'>
-				<?php 
-				echo "<option value='Advancement' ";
-				if($user->ministry == 'Development'){
-					echo 'selected';
-				}
-				echo ">Advancement</option>";
-				$ministries = $wpdb->get_results('SELECT DISTINCT `ministry` FROM `employee` WHERE `ministry` is not NULL ORDER BY `ministry` ASC');
-				foreach ($ministries as $m) {
-					echo "<option value='$m->ministry' ";
-					if ($user->ministry == $m->ministry and $user->ministry != 'Development'){
-						echo 'selected';
-					}
-					echo ">$m->ministry</option>";
-				}
-				?>
-			</select>
+		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
 		<div class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -125,8 +108,12 @@ get_header(); ?>
 					document.getElementById('name').value.toUpperCase() + '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">&nbsp|&nbsp</span>\n' + 
-					document.getElementById('ministry').value + '</td>\n' +
+					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">\n';
+				var ministry = document.getElementById('ministry').value;
+				if (ministry.trim() != ""){
+					signature += '&nbsp|&nbsp</span>' + ministry + '\n';
+				}
+				signature += '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">\n' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">\n';
@@ -143,7 +130,7 @@ get_header(); ?>
 					signature += 'Toll&nbsp;Free&nbsp;<a style="text-decoration:none;color:#444444;"><?php echo "1".$delimiter."855".$delimiter."722".$delimiter."4483" ?>\n';
 				}
 				else {
-					signature += 'C:&nbsp;<a style="text-decoration:none;color:#444444;">' + cell + '\n';
+					signature += 'C.&nbsp;<a style="text-decoration:none;color:#444444;">' + cell + '\n';
 				}
 				signature += '</a></td></tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;">\n' +
