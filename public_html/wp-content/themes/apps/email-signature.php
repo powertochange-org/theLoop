@@ -58,8 +58,8 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'Project Services' =>  array('', ''),
 	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
 	'PTC Resource Centre' =>  array('2014/07/Resource-Centre.png', 'http://store.powertochange.org/'),
-	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''));
 	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
+	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''));
 
 
 get_header(); ?>
