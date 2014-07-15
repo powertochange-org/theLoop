@@ -105,7 +105,7 @@ get_header(); ?>
 				$ministries = $wpdb->get_results('SELECT DISTINCT `ministry` FROM `employee` WHERE `ministry` is not NULL ORDER BY `ministry` ASC');
 				foreach ($ministries as $m) {
 					echo "<option value='$m->ministry' ";
-					if ($user->ministry == $m->ministry){
+					if ($user->ministry == $m->ministry and $user->ministry != 'Development'){
 						echo 'selected';
 					}
 					echo ">$m->ministry</option>";
