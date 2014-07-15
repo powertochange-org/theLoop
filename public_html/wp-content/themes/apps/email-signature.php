@@ -50,12 +50,12 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'Information Technology' =>  array('2014/07/Ministry-Services-Email.png', ''),
 	'International' =>  array('2014/07/International-Email.png', ''),
 	'LeaderImpact' =>  array('2014/07/LeaderImpact-Email.png', 'http://www.leaderimpactgroup.com/'),
-	'Ministries Office' =>  array('', ''),
+	'Ministries Office' =>  array('2014/07/Ministry-Office-Email.png', ''),
 	'Office of the EDA' =>  array('2014/07/Advancement-Email1.png', ''),
 	'Office of the EDMS' =>  array('2014/07/Ministry-Services-Email.png', ''),
 	'Power to Change - Students' =>  array('2014/07/Office-President-Email.png', 'http://p2c.com/students'),
 	'President\'s Office' =>  array('2014/07/Office-President-Email.png', ''),
-	'Project Services' =>  array('', ''),
+	'Project Services' =>  array('2014/07/Project-Services-Email.png', ''),
 	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
 	'PTC Resource Centre' =>  array('2014/07/Resource-Centre.png', 'http://store.powertochange.org/'),
 	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
@@ -96,10 +96,11 @@ get_header(); ?>
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">\n' +
 					'<td style="font-family:verdana,sans-serif;" >\n' +
-						document.getElementById('name').value + '</td>\n' +
+					document.getElementById('name').value + '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">&nbsp|&nbsp</span><?php echo "$user->ministry" ?></td>\n' +
+					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">&nbsp|&nbsp</span>\n' + 
+					document.getElementById('ministry').value + '</td>\n' +
 					'</tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">\n' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">\n';
