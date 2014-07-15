@@ -102,7 +102,7 @@ get_header(); ?>
 					echo 'selected';
 				}
 				echo ">Advancement</option>";
-				$ministries = $wpdb->get_results('SELECT DISTINCT `ministry` FROM `employee`');
+				$ministries = $wpdb->get_results('SELECT DISTINCT `ministry` FROM `employee` WHERE `ministry` is not NULL ORDER BY `ministry` ASC');
 				foreach ($ministries as $m) {
 					echo "<option value='$m->ministry' ";
 					if ($user->ministry == $m->ministry){
