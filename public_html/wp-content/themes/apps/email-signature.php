@@ -85,7 +85,7 @@ get_header(); ?>
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
-		<tr><td><label for='ministry'>Ministry:</label></td><td><input type='text' id='ministry'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ 'Advancement'} else {echo $user->ministry;} ?>'/></td></tr>
+		<tr><td><label for='ministry'>Ministry:</label></td><td><input type='text' id='ministry'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
 		<div class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -120,7 +120,7 @@ get_header(); ?>
 				}
 				signature += '</a></td></tr>\n' +
 					'<tr style="font-family:verdana,sans-serif;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/'} else { echo $division[$user->ministry][1] } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/\n' +
+					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/\n' +
 					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>\n';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
