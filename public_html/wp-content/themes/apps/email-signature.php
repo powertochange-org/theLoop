@@ -92,32 +92,18 @@ get_header(); ?>
 			margin-bottom:5px;
 		}
 		
-		#inputTable table {
-			border: 1px solid #F7941D;
-		}
-
-		#inputTable tr {
-			border-top: 1px solid #F7941D;
-		}
-
-		#inputTable tr + tr {
-			border-top: 1px solid black;
-		}
-
-		#inputTable td {
-			border-left: 1px solid #F7941D;
-		}
-
-		#inputTable td + td {
-			border-left: 1px solid black;
+		#inputTable table, #inputTable tr, #inputTable td {
+			border: 0;
 		}
 		</style>
+		<div  style="border: 1px #F7941D solid;">
 		<table id="inputTable">
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		</table>
+		</div>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
 		 
