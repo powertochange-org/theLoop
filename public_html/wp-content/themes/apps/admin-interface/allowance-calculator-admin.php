@@ -136,9 +136,9 @@ function printQuestions(){
 			foreach ($results as $result){
 				echo "<tr class='quest_".$result->id."'><th class='title' colspan='3'>Question ID:".$result->id."</th></tr>\n";
 				if ($result->pull_data){
-					echo "<tr class='quest_".$result->id."'><td colspan='3'>This question pulls data from the database.  Deleteing the question and changing the numbers of answers and changing the roles for the question have been disable.</td></tr>\n";
+					echo "<tr class='quest_".$result->id."'><td colspan='3'>This question pulls data from the database.  Deleting the question and changing the numbers of answers and changing the roles for the question have been disable.</td></tr>\n";
 				}
-				echo "<tr class='quest_".$result->id."'><th colspan='3'><input type='text 'class='label' name='q-".$result->id."-label' value='".$result->label."'></th></tr>\n";
+				echo "<tr class='quest_".$result->id."'><th colspan='3'><input type='text 'class='label' name='q-".$result->id."-label' value='".htmlentities($result->label)."'></th></tr>\n";
 				echo "<tr class='quest_".$result->id."'><td colspan='3'>".
 					printCheckbox("q", $result->id,$allowance_constant['fieldIndividual'], intval($result->role) & (1 << $allowance_constant['fieldIndividual']), $result->pull_data).
 					printCheckbox("q", $result->id,$allowance_constant['fieldLeader'], intval($result->role) & (1 << $allowance_constant['fieldLeader']), $result->pull_data).
