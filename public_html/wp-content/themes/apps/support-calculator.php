@@ -99,7 +99,12 @@ function generate_pdf(){
 				}
 				$border = 0;
 				$pdf->Cell($labelBotMaxWidth, 6,  $label[$i], $border, 0, 'L', $fill);
-				$pdf->Cell($dataMaxWidth, 6,  $data[$i], $border, 0, 'R', $fill);
+				if ($i == 25){
+					$pdf->Cell($dataMaxWidth, 6,  ($data[$i] * 100).'%', $border, 0, 'R', $fill);
+				}
+				else {
+					$pdf->Cell($dataMaxWidth, 6,  $data[$i], $border, 0, 'R', $fill);
+				}
 			}
 			
 			if (($i + 1) % 2 == 0 or $i > 7){
