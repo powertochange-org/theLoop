@@ -549,6 +549,7 @@ include('functions/js_functions.php'); ?>
 		
 		function downloadData(){
 			document.getElementById("download").value=getDownloadData();
+			document.getElementById("downloadDataForm").target = '_blank';
 			document.getElementById("downloadDataForm").submit();
 		}
 		
