@@ -8,18 +8,22 @@
         // send out an email with the changes
         $changes = array();
 
+        // Wordpress by default adds slashes to escape strings. How we are using
+        // them, however, prefers that they are not escaped
+        $_POST = stripslashes_deep($_POST);
+
         if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
             include ('upload.processor.php');
         }
 		
 		//all these ifs check if the user changed something. then it updates the database (including to a sync table so we can send it back to HRIS
 		// Remove Photo
-		if(isset($_POST['remove'])){ //user clicked remove photo button
-			$wpdb->update( 'employee', 
-							array( 'share_photo' => 0 	),
-							array( 'user_login' => $current_user->user_login  ),
-							array('%d')
-						);
+		if($_POST['deleteImage'] == 1){ //user clicked remove photo button
+            // Update the row, setting share_photo to 0 and photo to NULL. 
+            // The standard $wpdb->update call doesn't work with nulls, so this
+            // is the only way to insert a null into the table; it should be
+            // safe though, because there are no user-input parameters.
+            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$current_user->user_login'");
 		}
 		
 		//Ministry Address
@@ -198,7 +202,9 @@
 									'user_login'	=> $user->user_login
 							));
                     // Delete from database
-					$wpdb->query("DELETE FROM phone_number WHERE phone_number_id ='" . $phone->phone_number_id . "'");
+                    $wpdb->delete( 'phone_number',
+                            array( 'phone_number_id' => $phone->phone_number_id
+                    ));
                 }
 			}
 		}
@@ -252,7 +258,9 @@
 									'changed_date'	=>	date('Y-m-d H-i-s'),
 									'user_login'	=> $user->user_login,
 							));
-					$wpdb->query("DELETE FROM email_address WHERE email_address_id='" . $id . "'");
+                    $wpdb->delete( 'email_address',
+                            array( 'email_address_id' => $id
+                    ));
 				}
 				else{
 					if (isMinistryAddress($address)) {
