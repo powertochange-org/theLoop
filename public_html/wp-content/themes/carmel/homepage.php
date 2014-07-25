@@ -18,9 +18,7 @@
         echo '<div id="survey">
                   <div>
                       <h1>Hello there!</h1>
-                      <p>We\'re always trying to make this site better, and, since you\'re
-                      here, it means you use this site.<br/> Will you help us make it better by
-                      participating in a survey?</p>
+                      <p>We told you there would be a time to give feedback on the design for this site.<br/>The time has come; will you help us improve our site by participating in a survey?</p>
                       <div>
                           <a class="surveyButtons" target="_blank" href="'.$survey_url.'" onclick="decideSurvey()" title="Take the Survey">Yes</a>
                           <a class="surveyButtons" href="#" onclick="decideSurvey();" title="Don\'t Ask Me Again">No</a>
