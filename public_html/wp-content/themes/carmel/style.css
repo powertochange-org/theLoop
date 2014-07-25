@@ -549,3 +549,25 @@ footer .copy{
 #main-content.form .post p, #main-content.form-item .post p {
 	margin:10px;
 }
+
+#survey {
+    position: fixed; 
+    top: 0px;
+    width: 100%; 
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    text-align: center;
+    /* This is the minimum z-index we can have to still be over the admin bar */
+    z-index: 100000;
+}
+
+#survey > div {
+    position:relative; 
+    top: 30%;
+}
+
+.surveyButtons {
+    color: white;
+    background-color: grey;
+    padding: 10px 20px;
+}
