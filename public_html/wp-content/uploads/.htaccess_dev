@@ -1,4 +1,3 @@
-#This is the dev-specific version of the .htaccess file
 IndexIgnore *
 #Options +FollowSymlinks
 RewriteEngine On
