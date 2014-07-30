@@ -1,5 +1,7 @@
 #this only includes (in public_html/):
-#	.htaccess		in public_html/ and public_html/wp-content/uploads/
+#	.htaccess		in public_html/
+#   .htaccess_dev   in public_html/wp-content/uploads/; dev version of .htaccess
+#   .htaccess_prod  in public_html/wp-content/uploads/; prod version of .htaccess
 #	faviconblue.ico in public_html/
 #	everything 		in public_html/custom-pages/
 #	everything		in public_html/wp-content/plugins/
@@ -31,7 +33,7 @@ public_html/wp-content/themes/*
 !public_html/wp-content/uploads
 public_html/wp-content/uploads/*
 !public_html/wp-content/uploads/index.php
-!public_html/wp-content/uploads/.htaccess
+!public_html/wp-content/uploads/.htaccess_*
 !public_html/wp-content/wptouch-data
 !public_html/wp-content/wptouch-data/*
 

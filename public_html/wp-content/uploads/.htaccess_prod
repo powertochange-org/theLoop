@@ -1,0 +1,17 @@
+IndexIgnore *
+#Options +FollowSymlinks
+RewriteEngine On
+
+#if can not find file looks for it on live site
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule . https://staff.powertochange.org%{REQUEST_URI} [L]
+
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule . /wp-content/uploads/index.php?file=%{REQUEST_URI} [L]
+
+#RewriteCond %{HTTP_REFERER} !^(https://)?staff.powertochange.org/ [NC]
+#RewriteCond %{HTTP:Cookie} !wordpress_logged_in_ [NC]
+#RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC]
+#RewriteRule .*\.(gif|png|jpg|doc|xls|pdf|html|htm|xlsx|docx)$ https://devstaff.powertochange.org/wp-login.php?redirect_to=%{REQUEST_URI} [NC]
