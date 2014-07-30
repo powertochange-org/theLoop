@@ -1,3 +1,4 @@
+#Another test comment
 IndexIgnore *
 #Options +FollowSymlinks
 RewriteEngine On
