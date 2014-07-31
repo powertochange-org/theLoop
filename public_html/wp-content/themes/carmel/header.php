@@ -69,9 +69,7 @@ if (get_theme_mod('survey_active')) {
                 // Perform an ajax call to a separate php page to update the
                 // database to reflect that the user has either taken the
                 // survey, or chosen to ignore it
-                $.post("<?php echo get_template_directory_uri()?>/updateSurvey.php", { 
-                    user_id: <?php echo $current_user->ID ?>
-                });
+                $.post("<?php echo get_template_directory_uri()?>/updateSurvey.php");
                 // Close out of dialog
                 dismissSurvey();
             }
