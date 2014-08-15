@@ -135,10 +135,13 @@ function insertPlaceholders() {
         }
         // When it gets focus...
         $(this).focus(function() {
-            // Reset the value
-            $(this).val($(this).attr('value'));
-            // Remove the placeholder class
-            $(this).removeClass("placeholder");
+            // If this is a placeholder
+            if ($(this).hasClass("placeholder")) {
+                // Reset the value
+                $(this).val($(this).attr('value'));
+                // Remove the placeholder class
+                $(this).removeClass("placeholder");
+            }
         });
         // When it loses focus...
         $(this).blur(function() {
