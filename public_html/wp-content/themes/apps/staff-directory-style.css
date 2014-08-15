@@ -49,3 +49,7 @@ div#Upload * {
 #content-right.staff-directory a{
 	background-color:#005e90
 }
+
+.placeholder {
+    color: grey;
+}
