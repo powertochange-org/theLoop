@@ -79,7 +79,8 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='if (jcrop_api) { updateCoords(jcrop_api.tellSelect()); } document.getElementById("theForm").submit()' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
+		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='preSubmit(); document.getElementById("theForm").submit();' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
+    
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
 	<div id="content-left">
@@ -133,7 +134,7 @@ $max_file_size = 30000000; // size in bytes
 
 			<div style='float:left;padding-left:23px;width:457px'>
 
-			<form onsubmit="updateCoords(jcrop_api.tellSelect());" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
+			<form onsubmit="preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
 			
             <!-- These are fields for the photo upload stuff -->
             <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
