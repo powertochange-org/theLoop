@@ -54,7 +54,10 @@ $(document).ready(function() {
                 });
             });
         } else { // browser doesn't support filereader
-            // Immediately upload; don't support any cropping
+            // Perform some processing before submitting
+            preSubmit();
+            // Submit without giving the user the opportunity to crop, 
+            // since it's not supported
             document.getElementById("theForm").submit();
         }
     });
