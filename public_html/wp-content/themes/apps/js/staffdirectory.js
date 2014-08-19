@@ -6,7 +6,15 @@ var jcrop_api;
 // selection
 var selection = true;
 
+// Do we have support for the placeholder feature?
+var placeholderSupport = 'placeholder' in document.createElement("input");
+
 $(document).ready(function() {
+    // If we don't have access to the placeholder feature
+    if (!placeholderSupport) {
+        console.log("Manually handling placeholders...");
+        insertPlaceholders();
+    }
     // Set up the change function for the file element 
     jQuery("#file").change(function () {
         // If this browser supports the FileReader API
@@ -46,7 +54,10 @@ $(document).ready(function() {
                 });
             });
         } else { // browser doesn't support filereader
-            // Immediately upload; don't support any cropping
+            // Perform some processing before submitting
+            preSubmit();
+            // Submit without giving the user the opportunity to crop, 
+            // since it's not supported
             document.getElementById("theForm").submit();
         }
     });
@@ -110,5 +121,69 @@ function deleteImage () {
         $('#deleteImage').val(1);
         // Hide the related elements, without affecting the layout of the page
         $('#photo, .changepic').css("visibility", "hidden");
+    }
+}
+
+//  This function is designed for IE 9 or lower, and provides a placeholder-like
+//  experience for those browsers that don't actually support it
+function insertPlaceholders() {
+    // Foreach input element with a placeholder
+    $("input[placeholder]").each(function() {
+        // If we don't have a value in it already...
+        if (!$(this).attr('value')) {
+            // Set the css styling to be placeholder
+            $(this).addClass("placeholder");
+            // Set the value to the placeholder
+            $(this).val($(this).attr("placeholder"));
+        }
+        // When it gets focus...
+        $(this).focus(function() {
+            // If this is a placeholder
+            if ($(this).hasClass("placeholder")) {
+                // Reset the value
+                $(this).val($(this).attr('value'));
+                // Remove the placeholder class
+                $(this).removeClass("placeholder");
+            }
+        });
+        // When it loses focus...
+        $(this).blur(function() {
+            // Set the value attribute to the current value
+            $(this).attr('value', $(this).val());
+            // If we don't have any value in it currently
+            if (!$(this).val()) {
+                // Reset it to the placeholder
+                $(this).val($(this).attr("placeholder"));
+                // Add css class
+                $(this).addClass("placeholder");
+            } 
+        });
+    });
+}
+
+// A function to remove the placeholder values when submitting
+function removePlaceholderValues() {
+    // Iterate through each input that we modified earlier
+    $("input[placeholder]").each(function() {
+        // If it's currently supposed to be a placeholder
+        if ($(this).hasClass("placeholder")) {
+            // Set the value to nothing. This prevents the form from
+            // submitting values that were supposed to just be placeholders
+            $(this).val('');
+        }
+    });
+}
+
+// A function for processing before submission
+function preSubmit() {
+    // If we have the jcrop api
+    if (jcrop_api) { 
+        // Update coordinates
+        updateCoords(jcrop_api.tellSelect()); 
+    } 
+    // If we don't have native placeholder support
+    if (!placeholderSupport) {
+        // Need to remove values
+        removePlaceholderValues();
     }
 }
