@@ -4,9 +4,13 @@
 		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
 		//}
 
-        // This keeps track of all the changes that need to be made, so we can
-        // send out an email with the changes
+        // This keeps track of all the changes that were made that require
+        // notifications, so we can send out an email with the changes
         $changes = array();
+        
+        // These is a variable to track all needed changes to the employee
+        // table, so we only have to update it once
+        $employeeChanges = array();
 
         // Wordpress by default adds slashes to escape strings. How we are using
         // them, however, prefers that they are not escaped
@@ -44,17 +48,16 @@
 						'changed_date'	=>	date('Y-m-d H-i-s'),
 						'user_login'	=> $user->user_login
 				));
-			$wpdb->update( 'employee', 
-				array( 'ministry_address_line1' => strip_tags($_POST['ministryAddress']['line1']),
-						'ministry_address_line2' => strip_tags($_POST['ministryAddress']['line2']),
-						'ministry_city' => strip_tags($_POST['ministryAddress']['city']),
-						'ministry_province' => strip_tags($_POST['ministryAddress']['pr']),
-						'ministry_country' => strip_tags($_POST['ministryAddress']['country']),
-						'ministry_postal_code' => strip_tags($_POST['ministryAddress']['pc'])),
-				array( 'user_login' => $current_user->user_login  ) 
-				);
 
-            // Add to the changes
+            // Store all of the changes needed
+			$employeeChanges['ministry_address_line1'] = strip_tags($_POST['ministryAddress']['line1']);
+			$employeeChanges['ministry_address_line2'] = strip_tags($_POST['ministryAddress']['line2']);
+			$employeeChanges['ministry_city'] = strip_tags($_POST['ministryAddress']['city']);
+			$employeeChanges['ministry_province'] = strip_tags($_POST['ministryAddress']['pr']);
+			$employeeChanges['ministry_country'] = strip_tags($_POST['ministryAddress']['country']);
+			$employeeChanges['ministry_postal_code'] = strip_tags($_POST['ministryAddress']['pc']);
+
+            // Add to the changes for the email
             $changes['Ministry Address'] = array(
                 'old' => 
 		            getField($user->ministry_address_line1) . " <br/>" .
@@ -304,13 +307,6 @@
 				|| strip_tags($_POST['ministryTwitter']) != $user->ministry_twitter_handle
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
 				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook){
-			$wpdb->update( 'employee', 
-							array( 'ministry_website' => strip_tags($_POST['ministryWebsite']),
-									'ministry_twitter_handle' => strip_tags($_POST['ministryTwitter']),
-									'ministry_skype' => strip_tags($_POST['ministrySkype']),
-									'ministry_facebook' => strip_tags($_POST['ministryFacebook'])),
-							array( 'external_id' => $user->external_id)
-						);
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
@@ -319,6 +315,10 @@
 									'changed_date'	=>	date('Y-m-d H-i-s'),
 									'user_login'	=> $user->user_login
 							));
+			$employeeChanges['ministry_website'] = strip_tags($_POST['ministryWebsite']);
+			$employeeChanges['ministry_twitter_handle'] = strip_tags($_POST['ministryTwitter']);
+			$employeeChanges['ministry_skype'] = strip_tags($_POST['ministrySkype']);
+			$employeeChanges['ministry_facebook'] = strip_tags($_POST['ministryFacebook']);
 		}
 		
 		
@@ -342,16 +342,14 @@
 						'changed_date'	=>	date('Y-m-d H-i-s'),
 						'user_login'	=> $user->user_login
 				));
-			$wpdb->update( 'employee', 
-				array( 'address_line1' => strip_tags($_POST['personalAddress']['line1']),
-						'address_line2' => strip_tags($_POST['personalAddress']['line2']),
-						'city' => strip_tags($_POST['personalAddress']['city']),
-						'province' => strip_tags($_POST['personalAddress']['pr']),
-						'postal_code' => strip_tags($_POST['personalAddress']['pc']),
-						'country' => strip_tags($_POST['personalAddress']['country']),
-						'share_address' => $_POST['personalAddress']['share']),
-				array( 'user_login' => $current_user->user_login  ) 
-				);
+			
+            $employeeChanges['address_line1'] = strip_tags($_POST['personalAddress']['line1']);
+			$employeeChanges['address_line2'] = strip_tags($_POST['personalAddress']['line2']);
+			$employeeChanges['city'] = strip_tags($_POST['personalAddress']['city']);
+			$employeeChanges['province'] = strip_tags($_POST['personalAddress']['pr']);
+			$employeeChanges['country'] = strip_tags($_POST['personalAddress']['country']);
+			$employeeChanges['postal_code'] = strip_tags($_POST['personalAddress']['pc']);
+			$employeeChanges['share_address'] = $_POST['personalAddress']['share'];
             
             // Add to the changes
             $changes['Personal Address'] = array(
@@ -381,13 +379,10 @@
 				|| strip_tags($_POST['personalTwitter']) != $user->twitter_handle
 				|| strip_tags($_POST['personalSkype']) != $user->skype
 				|| strip_tags($_POST['personalFacebook']) != $user->facebook){
-			$wpdb->update( 'employee', 
-							array( 'website' => strip_tags($_POST['personalWebsite']),
-									'twitter_handle' => strip_tags($_POST['personalTwitter']),
-									'skype' => strip_tags($_POST['personalSkype']),
-									'facebook' => strip_tags($_POST['personalFacebook'])),
-							array( 'external_id' => $user->external_id)
-						);
+			$employeeChanges['website'] = strip_tags($_POST['personalWebsite']);
+			$employeeChanges['twitter_handle'] = strip_tags($_POST['personalTwitter']);
+			$employeeChanges['skype'] = strip_tags($_POST['personalSkype']);
+			$employeeChanges['facebook'] = strip_tags($_POST['personalFacebook']);
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
@@ -410,13 +405,18 @@
 							));
 			
 			
-			$wpdb->update(	'employee',
-							array( 'notes' => substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,255) ),
-							array( 'user_login' => $current_user->user_login  )
-						);
 			
-									
+			$employeeChanges['notes'] = substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,255);
 		}
+
+        // If we have changes to the employee table
+        if (!empty($employeeChanges)) {
+            // Update the employee table with all of the changes we have collected
+		    $wpdb->update(	'employee',
+		    				$employeeChanges,
+                            array( 'user_login' => $current_user->user_login  )
+		    			);
+        }
 
         // Send email notification for changes
         sendEmail($changes, "$user->first_name $user->last_name");
