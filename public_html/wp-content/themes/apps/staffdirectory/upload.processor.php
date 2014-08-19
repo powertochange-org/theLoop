@@ -34,6 +34,9 @@ if ($_FILES[$fieldname]['error'] == 0) {
             // Replace all whitespace with underscore in filename
             $filename = preg_replace('/\s+/', '_', $_FILES[$fieldname]['name']);
 
+            // Remove single quotes
+            $filename = preg_replace('/\'+/', '', $filename);
+
             // make a unique filename for the uploaded file and check it is not already 
             // taken... if it is already taken keep trying until we find a vacant one 
             // sample filename: 1140732936-filename.jpg 

@@ -119,7 +119,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND (email_address.share_email=1 OR email_address.is_ministry=1) AND email_address.is_ministry = 1 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.is_ministry = 1 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo "<strong>Email:</strong> $email->email_address<BR>";
@@ -207,7 +207,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			//grab emails that are shared, then display them
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND (email_address.share_email=1 OR email_address.is_ministry=1) AND email_address.is_ministry = 0 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.share_email=1 AND email_address.is_ministry = 0 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo '<strong>Email:</strong> '. $email->email_address . '<BR>';
