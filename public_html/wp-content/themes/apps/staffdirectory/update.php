@@ -307,14 +307,14 @@
 				|| strip_tags($_POST['ministryTwitter']) != $user->ministry_twitter_handle
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
 				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook){
-			$wpdb->insert( 'sync',
-							array(  'table_name'    => 'employee',
-									'record_id'     => $user->external_id,
-									'sync_action'   => 'update',
-									'field_changed' => 'ministry_social_media',
-									'changed_date'	=>	date('Y-m-d H-i-s'),
-									'user_login'	=> $user->user_login
-							));
+			//$wpdb->insert( 'sync',
+			//				array(  'table_name'    => 'employee',
+			//						'record_id'     => $user->external_id,
+			//						'sync_action'   => 'update',
+			//						'field_changed' => 'ministry_social_media',
+			//						'changed_date'	=>	date('Y-m-d H-i-s'),
+			//						'user_login'	=> $user->user_login
+			//				));
 			$employeeChanges['ministry_website'] = strip_tags($_POST['ministryWebsite']);
 			$employeeChanges['ministry_twitter_handle'] = strip_tags($_POST['ministryTwitter']);
 			$employeeChanges['ministry_skype'] = strip_tags($_POST['ministrySkype']);
@@ -372,7 +372,7 @@
                 );
 		}
 		
-		//Ministry Social Media
+		//Personal Social Media
 		
 		//checking if anything is different
 		if (strip_tags($_POST['personalWebsite']) != $user->website 
@@ -383,14 +383,14 @@
 			$employeeChanges['twitter_handle'] = strip_tags($_POST['personalTwitter']);
 			$employeeChanges['skype'] = strip_tags($_POST['personalSkype']);
 			$employeeChanges['facebook'] = strip_tags($_POST['personalFacebook']);
-			$wpdb->insert( 'sync',
-							array(  'table_name'    => 'employee',
-									'record_id'     => $user->external_id,
-									'sync_action'   => 'update',
-									'field_changed' => 'ministry_social_media',
-									'changed_date'	=>	date('Y-m-d H-i-s'),
-									'user_login'	=> $user->user_login
-							));
+			//$wpdb->insert( 'sync',
+			//				array(  'table_name'    => 'employee',
+			//						'record_id'     => $user->external_id,
+			//						'sync_action'   => 'update',
+			//						'field_changed' => 'ministry_social_media',
+			//						'changed_date'	=>	date('Y-m-d H-i-s'),
+			//						'user_login'	=> $user->user_login
+			//				));
 		}
 		
 		//Personal Note
