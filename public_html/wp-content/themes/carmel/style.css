@@ -515,12 +515,12 @@ footer .copy{
 	color:inherit;
 }
 
-#main-content.form  .post td:hover {
+#main-content.form  .post td:hover, #main-content.form .post div.nav-option:hover {
 	background-color:#f7941d;
 	color:#ffffff;
 }
 
-#main-content.form  .post td{
+#main-content.form  .post td, #main-content.form .post div.nav-option{
 	vertical-align:middle;
 	background-color:#eeeeee;
 	border:solid 1px #eaeae8;
@@ -531,6 +531,30 @@ footer .copy{
 	color:#858585;
 	width: 33%;
 	width: 279px;
+}
+
+#main-content.form .post div.nav-option {
+    display: inline-block;
+    margin: 0px 17.5px 35px 17.5px;
+    min-height:157px;
+    padding: 0px;
+    width: 308px;
+}
+
+#main-content.form .post div.nav-option > a {
+    display: block;
+    height: inherit;
+    width: inherit;
+}
+
+#main-content.form .post div.nav-option > a > * {
+    padding: 1px 15px;
+}
+
+#main-content.form .post > div {
+    margin-left: -17.5px;
+    width: 1035px;
+    margin-top:35px;
 }
 
 #main-content.form  .post a {
