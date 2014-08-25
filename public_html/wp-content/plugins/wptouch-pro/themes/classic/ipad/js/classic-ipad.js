@@ -38,6 +38,12 @@ if ( typeof ontouchstart != 'undefined' && typeof ontouchend != 'undefined' ) {
 };
 
 function doClassiciPadReady() {
+    // Set up the staff apps link
+    touchJS("a#staff-apps").click(function() {
+        touchJS("#staff-apps-menu").animate({ opacity: 'toggle' }, 380);
+        touchJS("#staff-apps").toggleClass('active');
+        return false;
+    });
 
 	/* Prevent default touchmove function for iScrolls */	
 	if ( iOS5 ) {

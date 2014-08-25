@@ -17,6 +17,7 @@
 	</div>
 	
 	<div class="head-right">
+    <a id="staff-apps" href="#" class="no-ajax">Staff Apps</a>
 	<?php if ( classic_ipad_show_wordtwit_button() ) { ?>
 		<div class="menubar-button wptouch-button" id="wordtwit"><p class="wordtwit-icon"></p></div>
 	<?php } if ( classic_ipad_show_flickr_button() ) { ?>

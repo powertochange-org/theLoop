@@ -39,6 +39,12 @@ if ( window.top != window.self ) {
 }
 
 function doClassicReady() {
+    // Set up the staff apps link
+    touchJS("a#staff-apps").click(function() {
+        touchJS("#staff-apps-menu").opacityToggle(380);
+        touchJS("#staff-apps").toggleClass('active');
+        return false;
+    });
 
 	/*  Header #tab-bar tabs */
 	touchJS( function() {

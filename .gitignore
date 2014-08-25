@@ -8,6 +8,7 @@
 #	only apps/, carmel/ LOP
 #					in public_html/wp-content/theme/
 #	index.php		in public_html/wp-content/uploads/
+#      images              in wp-content/
 #some of themes and plugins may have their own .gitignore
 
 public_html/*
@@ -31,6 +32,7 @@ public_html/wp-content/themes/*
 !public_html/wp-content/themes/LOP
 !public_html/wp-content/themes/LOP/*
 !public_html/wp-content/uploads
+!public_html/wp-content/images/
 public_html/wp-content/uploads/*
 !public_html/wp-content/uploads/index.php
 !public_html/wp-content/uploads/.htaccess_*
