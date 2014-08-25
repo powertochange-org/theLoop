@@ -3040,3 +3040,27 @@ a.nav-fwd {
 	height:147px;
 	position:absolute;
 }
+
+#staff-apps{
+	padding:5.5px;
+	margin-right:5px;
+	background-color:rgb(245,130,32);
+	border:1px solid rgb(235,133,40);
+}
+#staff-apps.active{
+	background-color:#f4f4f4;
+	border:1px solid #d6d7d4;
+}
+#staff-apps-menu {
+	width:inherit;
+	display:none;
+	position:fixed;
+	background-color:rgb(244,244,244);
+	border: 1px solid rgb(214,215,212);
+	z-index:10;
+}
+#staff-apps-menu > div {
+	display: inline-block;
+	width:33%;
+	/*Force three per line*/text-align:center;
+}
