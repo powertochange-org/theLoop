@@ -34,6 +34,38 @@
 
 		<!-- Rock N' Scroll! -->
 			<div id="iscroll-wrapper" class="iscroller">
+			<div id="staff-apps-menu" class="closed">
+				<div>
+                    <a href='https://absences.powertochange.org'>
+                        <img src='/wp-content/images/Absence-Tracker-Icon.png' alt='Absence Tracker' />
+                    </a>
+                </div>
+				<div>
+                    <a href='/reports/'>
+                        <img src='/wp-content/images/Reports-Icon.png' alt='Reports' />
+                    </a>
+                </div>
+				<div>
+                    <a href='/wp-admin/admin.php?page=s2'>
+                        <img src='/wp-content/images/My-Settings-Icon.png' alt='My Settings' />
+                    </a>
+                </div>
+				<div>
+                    <a href='/staff-directory/'>
+                        <img src='/wp-content/images/Staff-Directory-Icon.png' alt='Staff Directory' />
+                    </a>
+                </div>
+				<div>
+                    <a href='mailto:helpdesk@powertochange.org'>
+                        <img src='/wp-content/images/HelpDesk-Icon.png' alt='Help Desk' />
+                    </a>
+                </div>
+				<div>
+                    <a href='https://wiki.powertochange.org/help'>
+                        <img src='/wp-content/images/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' />
+                    </a>
+                </div>
+			</div>
 			<div id="iscroll-content">
 				<div id="content">
 						<?php do_action( 'wptouch_advertising_top' ); ?>

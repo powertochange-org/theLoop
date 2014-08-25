@@ -105,29 +105,29 @@ if (get_theme_mod('survey_active')) {
 							<tr>
 								<td style="border:0;">
 									<a href='https://absences.powertochange.org'>
-									<img src='<?php bloginfo('template_url'); ?>/img/Absence-Tracker-Icon.png' alt='Absence Tracker' /></a>
+									<img src='/wp-content/images/Absence-Tracker-Icon.png' alt='Absence Tracker' /></a>
 								</td>
 								<td style="border:0;">
 									<a href='/reports/'>
-									<img src='<?php bloginfo('template_url'); ?>/img/Reports-Icon.png' alt='Reports' /></a>
+									<img src='/wp-content/images/Reports-Icon.png' alt='Reports' /></a>
 								</td>
 								<td style="border:0;">
 									<a href='/wp-admin/admin.php?page=s2'>
-									<img src='<?php bloginfo('template_url'); ?>/img/My-Settings-Icon.png' alt='My Settings' /></a>
+									<img src='/wp-content/images/My-Settings-Icon.png' alt='My Settings' /></a>
 								</td>
 							</tr>
 							<tr>
 								<td style="border:0;">
 									<a href='/staff-directory/'>
-									<img src='<?php bloginfo('template_url'); ?>/img/Staff-Directory-Icon.png' alt='Staff Directory' /></a>
+									<img src='/wp-content/images/Staff-Directory-Icon.png' alt='Staff Directory' /></a>
 								</td>
 								<td style="border:0;">
 									<a href='mailto:helpdesk@powertochange.org'>
-									<img src='<?php bloginfo('template_url'); ?>/img/HelpDesk-Icon.png' alt='Help Desk' /></a>
+									<img src='/wp-content/images/HelpDesk-Icon.png' alt='Help Desk' /></a>
 								</td>
 								<td style="border:0;">
 									<a href='https://wiki.powertochange.org/help'>
-									<img src='<?php bloginfo('template_url'); ?>/img/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' /></a>
+									<img src='/wp-content/images/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' /></a>
 								</td>
 							</tr>
 						</table>

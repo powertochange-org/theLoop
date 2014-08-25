@@ -246,8 +246,7 @@ a#logo-title {
 	-o-text-overflow: ellipsis;
 	-ms-text-overflow: ellipsis;
 	text-overflow: ellipsis;
-	width: 75%;
-	display: block;
+	display: inline-block;
 	letter-spacing: -1px;
 	position: relative;
 	margin-left: -9px;
@@ -2968,3 +2967,35 @@ ol.commentlist .com-down-arrow {
 	height:147px;
 	position:absolute;
 }
+
+#staff-apps{
+	margin-top: 8px;
+	padding: 2px;
+	float: right;
+	display: inline-block;
+	color: black;
+	margin-right: 45px;
+	background-color: rgb(245,130,32);
+	border: 1px solid rgb(235,133,40);
+}
+
+#staff-apps.active{
+	background-color: #f4f4f4;
+	border: 1px solid #d6d7d4;
+}
+
+#staff-apps-menu {
+	width: 100%;
+	display: none;
+	position: absolute;
+	background-color: rgb(244,244,244);
+	border: 1px solid rgb(214,215,212);
+	z-index: 10;
+}
+
+#staff-apps-menu > div {
+	display: inline-block;
+	width: 33%; /*Force three per line*/
+    text-align: center;
+}
+
