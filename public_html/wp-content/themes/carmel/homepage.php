@@ -8,8 +8,8 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'SES_Banner_Loop.jpg', $folder.'Summer.jpg', $folder.'RBC.jpg', $folder.'Health_Wellness.jpg', $folder.'RRSP.jpg', $folder.'Branding.jpg');
-			$links    = array('/training-development/staff-engagement/staff-engagement-survey-2014/', '/all-staff/summer-fun/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/training-development/healthwellness/', '/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
+			$pictures = array($folder.'SES_Banner_Loop.jpg', $folder.'RBC.jpg', $folder.'Health_Wellness.jpg', $folder.'RRSP.jpg', $folder.'Branding.jpg');
+			$links    = array('/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/training-development/healthwellness/', '/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
