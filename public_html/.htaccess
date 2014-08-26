@@ -18,6 +18,7 @@ RewriteEngine On
 # Add Expires headers
 ExpiresActive On
 ExpiresDefault "access plus 5 days"
+ExpiresByType text/css "modified"
 # ETags
 FileETag none
 # WP-AVOID-SLOW END
