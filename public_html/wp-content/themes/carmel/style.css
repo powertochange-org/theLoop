@@ -536,19 +536,26 @@ footer .copy{
 #main-content.form .post div.nav-option {
     display: inline-block;
     margin: 0px 17.5px 35px 17.5px;
+    height: 157px;
     min-height:157px;
     padding: 0px;
     width: 308px;
 }
 
 #main-content.form .post div.nav-option > a {
-    display: block;
+    display: table;
     height: inherit;
     width: inherit;
 }
 
 #main-content.form .post div.nav-option > a > * {
+    display: table-row;
     padding: 1px 15px;
+}
+
+#main-content.form .post div.nav-option.image {
+    /* Increase div height for those containing an image */
+    height: 345px;
 }
 
 #main-content.form .post > div {
