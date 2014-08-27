@@ -139,12 +139,12 @@ get_header(); ?>
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
 					document.getElementById('name').value + '</td>' +
-					'</tr>\n' +
+					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
 				var ministry = document.getElementById('ministry').value;
 				if (ministry.trim() != ""){
-					signature += '&nbsp|&nbsp</span>' + ministry;
+					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
 				signature += '</td>' +
 					'</tr>' +
@@ -157,7 +157,7 @@ get_header(); ?>
 				else {
 					signature += phone;
 				}
-				signature += "</a><span style='color:#c0c0c0;'>|</span>";
+				signature += "</a><span style='color:#c0c0c0;'>&nbsp;&nbsp;|&nbsp;&nbsp;</span>";
 				var cell = document.getElementById('cell').value.replace(".", "<?php echo $delimiter ?>");
 				if (cell.trim() == ""){
 					signature += 'Toll&nbsp;Free&nbsp;<a style="text-decoration:none;color:#444444;"><?php echo "1".$delimiter."800".$delimiter."563".$delimiter."1106" ?>';
