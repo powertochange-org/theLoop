@@ -135,40 +135,40 @@ get_header(); ?>
 		
 		<script type="text/javascript">
 			function refreshSignature(){
-				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">\n' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">\n' +
-					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >\n' +
-					document.getElementById('name').value + '</td>\n' +
+				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
+					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
+					document.getElementById('name').value + '</td>' +
 					'</tr>\n' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">\n';
+					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
+					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
 				var ministry = document.getElementById('ministry').value;
 				if (ministry.trim() != ""){
-					signature += '&nbsp|&nbsp</span>' + ministry + '\n';
+					signature += '&nbsp|&nbsp</span>' + ministry;
 				}
-				signature += '</td>\n' +
-					'</tr>\n' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">\n' +
-					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">\n';
+				signature += '</td>' +
+					'</tr>' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
+					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
 				if (phone.trim() == ""){
-					signature += "<?php echo "604".$delimiter."514".$delimiter."2000" ?>\n";
+					signature += "<?php echo "604".$delimiter."514".$delimiter."2000" ?>";
 				}
 				else {
-					signature += phone + '\n';
+					signature += phone;
 				}
-				signature += "</a><span style='color:#c0c0c0;'>|</span>\n";
+				signature += "</a><span style='color:#c0c0c0;'>|</span>";
 				var cell = document.getElementById('cell').value.replace(".", "<?php echo $delimiter ?>");
 				if (cell.trim() == ""){
-					signature += 'Toll&nbsp;Free&nbsp;<a style="text-decoration:none;color:#444444;"><?php echo "1".$delimiter."800".$delimiter."563".$delimiter."1106" ?>\n';
+					signature += 'Toll&nbsp;Free&nbsp;<a style="text-decoration:none;color:#444444;"><?php echo "1".$delimiter."800".$delimiter."563".$delimiter."1106" ?>';
 				}
 				else {
-					signature += 'C.&nbsp;<a style="text-decoration:none;color:#444444;">' + cell + '\n';
+					signature += 'C.&nbsp;<a style="text-decoration:none;color:#444444;">' + cell;
 				}
-				signature += '</a></td></tr>\n' +
-					'<tr style="font-family:verdana,sans-serif;">\n' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/\n' +
-					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>\n';
+				signature += '</a></td></tr>' +
+					'<tr style="font-family:verdana,sans-serif;">' +
+					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
+					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
