@@ -2080,11 +2080,11 @@ ul.iphone-list li span {
 	position: absolute;
 
 	background-image: -webkit-gradient(linear,0 0,100% 100%,color-stop(0,rgba(204,204,204,0)),color-stop(0.4,rgba(204,204,204,0)),color-stop(0.4,#ccc));
-	background-image: -webkit-linear-gradient(, rgba(204 0.4, #ccc 0.4);
-	background-image: -moz-linear-gradient(, rgba(204 0.4, #ccc 0.4);
-	background-image: -o-linear-gradient(, rgba(204 0.4, #ccc 0.4);
-	background-image: -ms-linear-gradient(, rgba(204 0.4, #ccc 0.4);
-	background: linear-gradient(, rgba(204 0.4, #ccc 0.4);
+	background-image: -webkit-linear-gradient(, rgba(204 0.4, #ccc 0.4));
+	background-image: -moz-linear-gradient(, rgba(204 0.4, #ccc 0.4));
+	background-image: -o-linear-gradient(, rgba(204 0.4, #ccc 0.4));
+	background-image: -ms-linear-gradient(, rgba(204 0.4, #ccc 0.4));
+	background: linear-gradient(, rgba(204 0.4, #ccc 0.4));
 	border-width: 0 1px 1px 0;
 	border-style: solid;
 	border-color: #505050;
@@ -2114,11 +2114,11 @@ ul.iphone-list li span {
 	transform: rotateZ(-135deg);
 
 	background-image: -webkit-gradient(linear,0 0,100% 100%,color-stop(0,rgba(238,238,238,0)),color-stop(0.4,rgba(238,238,238,0)),color-stop(0.4,#eee));
-	background-image: -webkit-linear-gradient(, rgba(238 0.4, #eee 0.4);
-	background-image: -moz-linear-gradient(, rgba(238 0.4, #eee 0.4);
-	background-image: -o-linear-gradient(, rgba(238 0.4, #eee 0.4);
-	background-image: -ms-linear-gradient(, rgba(238 0.4, #eee 0.4);
-	background: linear-gradient(, rgba(238 0.4, #eee 0.4);
+	background-image: -webkit-linear-gradient(, rgba(238 0.4, #eee 0.4));
+	background-image: -moz-linear-gradient(, rgba(238 0.4, #eee 0.4));
+	background-image: -o-linear-gradient(, rgba(238 0.4, #eee 0.4));
+	background-image: -ms-linear-gradient(, rgba(238 0.4, #eee 0.4));
+	background: linear-gradient(, rgba(238 0.4, #eee 0.4));
 
 	-webkit-box-shadow: inset -1px -1px 0 #fff;
 	-moz-box-shadow: inset -1px -1px 0 #fff;
