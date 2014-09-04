@@ -3,8 +3,8 @@ Contributors: chschenk
 Donate link: http://www.christianschenk.org/donation/
 Tags: thickbox, smoothbox, gallery, pictures, images
 Requires at least: 2.5
-Tested up to: 3.4.1
-Stable tag: 1.6
+Tested up to: 3.9.1
+Stable tag: 1.6.1
 
 Embed ThickBox into your posts and pages.
 
@@ -30,6 +30,9 @@ are some of its features:
 2. If you click on a picture you'll see the larger image.
 
 == Changelog ==
+
+= 1.6.1 =
+* Added a translation for the Serbo-Croatian language (thanks to <a href="http://www.webhostinghub.com/">Web Hosting Hub</a>)
 
 = 1.6 =
 * Confirmed compatibility with most recent version of WordPress

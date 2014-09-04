@@ -3,7 +3,7 @@
 Plugin Name: ThickBox
 Plugin URI: http://www.christianschenk.org/projects/wordpress-thickbox-plugin/
 Description: Embed ThickBox into your posts and pages.
-Version: 1.6
+Version: 1.6.1
 Author: Christian Schenk
 Author URI: http://www.christianschenk.org/
 */
