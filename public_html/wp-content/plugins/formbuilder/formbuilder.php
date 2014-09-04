@@ -1,17 +1,16 @@
 <?php
 /*
 Plugin Name: FormBuilder
-Plugin URI: http://truthmedia.com/wordpress/formbuilder
+Plugin URI: http://wordpress.org/plugins/formbuilder/
 Description: The FormBuilder plugin allows the administrator to create contact forms of a variety of types for use on their WordPress blog.  The FormBuilder has built-in spam protection and can be further protected by installing the Akismet anti-spam plugin.  Uninstall instructions can be found <a href="http://truthmedia.com/wordpress/formbuilder/documentation/uninstall/">here</a>.  Forms can be included on your pages and posts either by selecting the appropriate form in the dropdown below the content editing box, or by adding them directly to the content with [formbuilder:#] where # is the ID number of the form to be included.
-Author: TruthMedia Internet Group
-Version: 0.891
-Author URI: http://truthmedia.com/
+Author: James Warkentin
+Version: 1.01
+Author URI: http://warkior.com/
 
-Created by the TruthMedia Internet Group
-(website: truthmedia.com       email : editor@truthmedia.com)
+Originally created by the TruthMedia Internet Group
 
 Plugin Programming and Design by James Warkentin
-http://www.warkensoft.com/about-me/
+http://warkior.com/
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 	
-	define("FORMBUILDER_VERSION_NUM", "0.891");
+	define("FORMBUILDER_VERSION_NUM", "1.01");
 
 	// Define FormBuilder Related Tables
 	global $table_prefix;
@@ -144,7 +143,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		define('FORMBUILDER_SITE_URL', get_bloginfo('url'));
 		define('FORMBUILDER_BLOG_URL', get_bloginfo('wpurl'));
 	}
-	define("FORMBUILDER_PLUGIN_URL", FORMBUILDER_BLOG_URL . str_replace(ABSOLUTE_PATH, "/", FORMBUILDER_PLUGIN_PATH));
+	define("FORMBUILDER_PLUGIN_URL", plugins_url() . '/' . rawurlencode(basename(dirname(__FILE__))) . '/');
   
 	// Define Regular Expressions used throughout.
 	define("FORMBUILDER_CONTENT_TAG", '\[ *formbuilder *\: *([0-9]+) *\]');
@@ -254,7 +253,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 				$fb_do_js_manually = true;
 			}
 	
-			session_start();
+			if(session_id() == '') session_start();
 			
 			// Check to see if we have POST data to process.
 			formbuilder_checkPOSTData();
@@ -407,7 +406,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	function clean_field_name($text)
 	{
 		$text = str_replace(" ", "_", $text);
-		$text = eregi_replace("[^a-z0-9_]", "", $text);
+		$text = preg_replace("#[^a-z0-9_]#isU", "", $text);
 		return($text);
 	}
 
@@ -640,23 +639,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	function formbuilder_user_can($capability)
 	{
 		$fb_permissions = get_option('formbuilder_permissions');
-		
+		$_GET += array('fbaction' => NULL);
 		if(!$fb_permissions AND $_GET['fbaction'] != 'uninstall') 
 		{
-			$fb_permissions[level_10] = array(
+			$fb_permissions['level_10'] = array(
 				'connect' => 'yes',
 				'create' => 'yes',
 				'manage' => 'yes'
 			);
 			
-			$fb_permissions[level_7] = array(
+			$fb_permissions['level_7'] = array(
 				'connect' => 'yes',
 				'create' => 'yes',
 				'manage' => 'no'
 			);
 			
-			$fb_permissions[level_2] = array(
+			$fb_permissions['level_2'] = array(
 				'connect' => 'yes',
+				'create' => 'no',
+				'manage' => 'no'
+			);
+			
+			$fb_permissions['level_0'] = array(
+				'connect' => 'no',
 				'create' => 'no',
 				'manage' => 'no'
 			);
@@ -673,7 +678,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		else
 			$level = 'level_0';
 		
-		if($fb_permissions[$level][$capability] == 'yes')
+		if(isset($fb_permissions[$level][$capability]) && $fb_permissions[$level][$capability] == 'yes')
 			return(true);
 		else
 			return(false);
@@ -892,12 +897,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 			$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FORMS . " WHERE id IN ({$insert});";
 			$forms = $wpdb->get_results($sql, ARRAY_A);
 
-			// Add the Parent link.
-			$url = get_admin_url(null, '/tools.php?page=formbuilder.php&fbaction=editForm&fbid=' . $form['id']);
-			$wp_admin_bar->add_menu( array(
-				'title' => 'Edit Form',
-				'id' => 'formbuilder_forms'
-			));
+			if(count($forms) > 0)
+			{
+				// Add the Parent link.
+				$wp_admin_bar->add_menu( array(
+					'title' => 'Edit Form',
+					'id' => 'formbuilder_forms'
+				));
+			}
 			
 			foreach($formIDs as $id)
 			{

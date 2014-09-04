@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	function formbuilder_activation() {
 		
 		global $wpdb;
+		$error_status = FALSE;
 		$charset_collate = formbuilder_getCharSet();
 		
 		// Run this in the event that no previous or current version of formBuilder is installed.
@@ -1009,6 +1010,113 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				update_option('formbuilder_version', "0.89");
 			}
 			
+		
+			
+			// Upgrade to version 0.891
+			if(get_option('formbuilder_version') < 0.891)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.891", nl2br("
+* Bug Fix: Fixed warning that was appearing on pages.
+					"));
+					
+				update_option('formbuilder_version', "0.891");
+			}
+			
+		
+			
+			// Upgrade to version 0.892
+			if(get_option('formbuilder_version') < 0.892)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.892", nl2br("
+* Bug Fix: Additional minor bug fixes
+					"));
+					
+				update_option('formbuilder_version', "0.892");
+			}
+			
+		
+			
+			// Upgrade to version 0.90
+			if(get_option('formbuilder_version') < 0.90)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.90", nl2br("
+* Feature: Allow ~variable~ fields in email subject lines.  Generously contributed by maihde in github.
+* Clean Up: Quite a few bug fixes and tidying changes generously contributed by outis in github.
+* Bug Fix: Allow showing of thankyou text when using modules.
+					"));
+					
+				update_option('formbuilder_version', "0.90");
+			}
+			
+		
+			
+			// Upgrade to version 0.91
+			if(get_option('formbuilder_version') < 0.91)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.91", nl2br("
+* Security Fix: Resolved XSS vulnerability with the referer functionality.
+					"));
+					
+				update_option('formbuilder_version', "0.91");
+			}
+			
+		
+			
+			// Upgrade to version 0.92
+			if(get_option('formbuilder_version') < 0.92)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.92", nl2br("
+* Cleanup: Cleaning up small bugs and deprecated code in more recent versions of WordPress.
+* Bug Fix: Switched referrer field to populate using JS rather than PHP, to allow better functionality on cached sites.
+					"));
+					
+				update_option('formbuilder_version', "0.92");
+			}
+			
+		
+			
+			// Upgrade to version 0.93
+			if(get_option('formbuilder_version') < 0.93)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.93", nl2br("
+* Ownership Change: TruthMedia will no longer be maintaining this plugin. Ongoing development will be handled by James Warkentin.
+* Better Email Handling: Switching forms to send from predefined email address, rather than from the visitor. This avoids many spam false positives and complies properly with new DMARK policy rules.
+WARNING! This update will change how the email FROM address is created. You may adjust the default on the settings page.
+					"));
+				
+				// Updating db to use the shortcode to leave things functioning as they did before.
+				update_option('formBuilder_Default_from', '[SENDER_EMAIL]');
+				
+				update_option('formbuilder_version', "0.93");
+			}
+			
+		
+			
+			// Upgrade to version 1.00
+			if(get_option('formbuilder_version') < 1.00)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.00", nl2br("
+* It's high-time we hit the 1.0 mark with this plugin. With the change in ownership, this is a good time to do it.
+* NEW! FormBuilder Extensions - Find them on the main FormBuilder navigation bar.
+* Fixed or removed a number of links that connected to the old site.
+* Added some action hooks in preparation for future enhancements.
+					"));
+				
+				update_option('formbuilder_version', "1.00");
+			}
+			
+		
+			
+			// Upgrade to version 1.01
+			if(get_option('formbuilder_version') < 1.01)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.01", nl2br("
+* Fixed an unpleasant bug introduced in v. 1.00
+					"));
+				
+				update_option('formbuilder_version', "1.01");
+			}
+			
 			
 			
 			
@@ -1244,6 +1352,16 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 		
 		// Set referrer info to be collected by default.
 		update_option('formBuilder_referrer_info', 'Enabled');
+		
+		// Get the site domain and get rid of www.
+		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
+		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
+			$sitename = substr( $sitename, 4 );
+		}
+		
+		// Set the default from address to wordpress@sitename.com
+		$formBuilder_Default_from = 'wordpress@' . $sitename;
+		update_option('formBuilder_Default_from', $formBuilder_Default_from);
 	}
 	
 	

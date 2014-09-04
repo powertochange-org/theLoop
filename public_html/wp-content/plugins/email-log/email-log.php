@@ -5,7 +5,7 @@ Plugin URI: http://sudarmuthu.com/wordpress/email-log
 Description: Logs every email sent through WordPress
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Author: Sudar
-Version: 1.6.2
+Version: 1.7.4
 Author URI: http://sudarmuthu.com/
 Text Domain: email-log
 Domain Path: languages/
@@ -29,6 +29,18 @@ Check readme file for full release notes
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+/**
+ * Plugin Root File
+ *
+ * @since 1.7.2
+ */
+if ( ! defined( 'EMAIL_LOG_PLUGIN_FILE' ) ) {
+    define( 'EMAIL_LOG_PLUGIN_FILE', __FILE__ );
+}
+
+// handle installation and table creation
+require_once dirname( __FILE__ ) . '/include/install.php';
 
 /**
  * The main Plugin class
@@ -55,9 +67,6 @@ class EmailLog {
      * Initalize the plugin by registering the hooks
      */
     function __construct() {
-
-        global $wpdb;
-
         // Load localization domain
         $this->translations = dirname(plugin_basename(__FILE__)) . '/languages/' ;
         load_plugin_textdomain( 'email-log', false, $this->translations);
@@ -68,7 +77,7 @@ class EmailLog {
         // Register Filter
         add_filter('wp_mail', array(&$this, 'log_email'));
         add_filter('set-screen-option', array(&$this, 'save_screen_options'), 10, 3);
-        add_filter( 'plugin_row_meta', array( &$this, 'add_plugin_links' ), 10, 2 );  
+        add_filter( 'plugin_row_meta', array( &$this, 'add_plugin_links' ), 10, 2 );
 
         $plugin = plugin_basename(__FILE__);
         add_filter("plugin_action_links_$plugin", array(&$this, 'add_action_links'));
@@ -78,8 +87,6 @@ class EmailLog {
 
         // Add our javascript in the footer
         add_action( 'admin_footer', array(&$this, 'include_js') );
-
-        $this->table_name = $wpdb->prefix . self::TABLE_NAME;
     }
 
     /**
@@ -89,7 +96,7 @@ class EmailLog {
         $plugin = plugin_basename(__FILE__);
 
         if ($file == $plugin) // only for this plugin
-            return array_merge( $links, 
+            return array_merge( $links,
             array( '<a href="http://sudarmuthu.com/wordpress/email-log/pro-addons" target="_blank">' . __('Buy Addons', 'email-log') . '</a>' )
         );
         return $links;
@@ -123,7 +130,7 @@ class EmailLog {
             } else {
                 echo "<div class = 'updated'><p>" . __( 'There was some problem in deleting the email logs' , 'email-log') . "</p></div>";
             }
-            unset($this->logs_deleted); 
+            unset($this->logs_deleted);
         }
 ?>
         <form id="email-logs-search" method="get">
@@ -135,7 +142,7 @@ class EmailLog {
 
         <form id="email-logs-filter" method="get">
             <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-<?php        
+<?php
             wp_nonce_field( self::DELETE_LOG_ACTION, self::DELETE_LOG_NONCE_FIELD );
             $this->logs_table->display();
 ?>
@@ -148,15 +155,15 @@ class EmailLog {
 
     /**
      * Add settings Panel
-     */ 
+     */
 	function create_settings_panel() {
- 
-		/** 
+
+		/**
 		 * Create the WP_Screen object against your admin page handle
 		 * This ensures we're working with the right admin page
 		 */
 		$this->admin_screen = WP_Screen::get($this->admin_page);
- 
+
 		/**
 		 * Content specified inline
 		 */
@@ -168,7 +175,7 @@ class EmailLog {
 				'callback' => false
 			)
 		);
- 
+
         // Add help sidebar
 		$this->admin_screen->set_help_sidebar(
             '<p><strong>' . __('More information', 'email-log') . '</strong></p>' .
@@ -176,15 +183,15 @@ class EmailLog {
             '<p><a href = "http://sudarmuthu.com/blog">' . __("Plugin author's blog", 'email-log') . '</a></p>' .
             '<p><a href = "http://sudarmuthu.com/wordpress/">' . __("Other Plugin's by Author", 'email-log') . '</a></p>'
         );
- 
+
         // Add screen options
-		$this->admin_screen->add_option( 
-			'per_page', 
+		$this->admin_screen->add_option(
+			'per_page',
 			array(
-				'label' => __('Entries per page', 'email-log'), 
-				'default' => 20, 
+				'label' => __('Entries per page', 'email-log'),
+				'default' => 20,
 				'option' => 'per_page'
-			) 
+			)
 		);
 
         if(!class_exists('WP_List_Table')){
@@ -205,6 +212,7 @@ class EmailLog {
      * @since 1.6
      */
     function include_js() {
+        // TODO: Move this to a separate js file
 ?>
         <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -221,9 +229,8 @@ class EmailLog {
 
             $.post(ajaxurl, data, function (response) {
               $(w.document.body).html(response);
-            }); 
-
-          }); 
+            });
+          });
         });
         </script>
 <?php
@@ -235,13 +242,14 @@ class EmailLog {
      * @since 1.6
      */
     function display_content_callback() {
-      global $wpdb; 
-      global $EmailLog;
-      $email_id = absint( $_POST['email_id'] );
+      global $wpdb;
+
+      $table_name = $wpdb->prefix . self::TABLE_NAME;
+      $email_id   = absint( $_POST['email_id'] );
 
       // Select the matching item from the database
-      $query = $wpdb->prepare( "SELECT * FROM " . $EmailLog->table_name . " WHERE id = %d", $email_id );
-	  $content = $wpdb->get_results( $query );
+      $query      = $wpdb->prepare( "SELECT * FROM " . $table_name . " WHERE id = %d", $email_id );
+	  $content    = $wpdb->get_results( $query );
 
       // Write the message content to the screen
       echo $content[0]->message;
@@ -258,7 +266,7 @@ class EmailLog {
 
     /**
      * Get the per page option
-     * 
+     *
      * @static
      * @access public
      * @return int $per_page Number of logs a user wanted to be displayed in a page
@@ -267,16 +275,16 @@ class EmailLog {
     public static function get_per_page() {
         $screen = get_current_screen();
         $option = $screen->get_option('per_page', 'option');
-        
+
         $per_page = get_user_meta(get_current_user_id(), $option, TRUE);
-        
+
         if ( empty ( $per_page) || $per_page < 1 ) {
             $per_page = $screen->get_option( 'per_page', 'default' );
         }
 
         return $per_page;
     }
-        
+
     /**
      * hook to add action links
      *
@@ -299,26 +307,38 @@ class EmailLog {
     }
 
     /**
-     * Log all email to database
+     * Log email to database
      *
      * @global object $wpdb
-     * @param array $mail_info Information about email
-     * @return array Information about email
+     * @param  array  $mail_info Information about email
+     * @return array             Information about email
      */
     function log_email($mail_info) {
-
         global $wpdb;
 
         $attachment_present = (count ($mail_info['attachments']) > 0) ? "true" : "false";
 
         // return filtered array
-        $mail_info = apply_filters(self::FILTER_NAME, $mail_info);
+        $mail_info  = apply_filters(self::FILTER_NAME, $mail_info);
+        $table_name = $wpdb->prefix . self::TABLE_NAME;
+
+        if ( isset( $mail_info['message'] ) ) {
+            $message = $mail_info['message'];
+        } else {
+            // wpmandrill plugin is changing "message" key to "html". See https://github.com/sudar/email-log/issues/20
+            // Ideally this should be fixed in wpmandrill, but I am including this hack here till it is fixed by them.
+            if ( isset( $mail_info['html'] ) ) {
+                $message = $mail_info['html'];
+            } else {
+                $message = '';
+            }
+        }
 
         // Log into the database
-        $wpdb->insert($this->table_name, array(
+        $wpdb->insert( $table_name, array(
                 'to_email'    => is_array($mail_info['to']) ? $mail_info['to'][0] : $mail_info['to'],
                 'subject'     => $mail_info['subject'],
-                'message'     => $mail_info['message'],
+                'message'     => $message,
                 'headers'     => is_array($mail_info['headers']) ? implode("\n", $mail_info['headers']) : $mail_info['headers'],
                 'attachments' => $attachment_present,
                 'sent_date'   => current_time('mysql')
@@ -328,58 +348,19 @@ class EmailLog {
     }
 
     /**
-    * Check whether a key is present. If present returns the value, else returns the default value
-    *
-    * @param <array> $array - Array whose key has to be checked
-    * @param <string> $key - key that has to be checked
-    * @param <string> $default - the default value that has to be used, if the key is not found (optional)
-    *
-    * @return <mixed> If present returns the value, else returns the default value
-    * @author Sudar
-    */
+     * Check whether a key is present. If present returns the value, else returns the default value
+     *
+     * @param <array> $array - Array whose key has to be checked
+     * @param <string> $key - key that has to be checked
+     * @param <string> $default - the default value that has to be used, if the key is not found (optional)
+     *
+     * @return <mixed> If present returns the value, else returns the default value
+     * @author Sudar
+     */
     private function array_get($array, $key, $default = NULL) {
         return isset($array[$key]) ? $array[$key] : $default;
     }
 }
-
-/**
- * Helper class to create and maintain tables
- */
-class EmailLogInit {
-
-    /**
-     * Create database table when the Plugin is installed for the first time
-     *
-     * @global object $wpdb
-     * @global string $smel_table_name Table Name
-     */
-    public static function on_activate() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . EmailLog::TABLE_NAME;
-
-        if($wpdb->get_var("show tables like '{$table_name}'") != $table_name) {
-
-            $sql = "CREATE TABLE " . $table_name . " (
-                id mediumint(9) NOT NULL AUTO_INCREMENT,
-                to_email VARCHAR(100) NOT NULL,
-                subject VARCHAR(250) NOT NULL,
-                message TEXT NOT NULL,
-                headers TEXT NOT NULL,
-                attachments TEXT NOT NULL,
-                sent_date timestamp NOT NULL,
-                PRIMARY KEY  (id)
-            );";
-
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            dbDelta($sql);
-
-            add_option(EmailLog::DB_OPTION_NAME, EmailLog::DB_VERSION);
-        }
-    }
-}
-
-// When the Plugin installed
-register_activation_hook(__FILE__, array('EmailLogInit', 'on_activate'));
 
 // Start this plugin once all other plugins are fully loaded
 add_action( 'init', 'EmailLog' ); function EmailLog() { global $EmailLog; $EmailLog = new EmailLog(); }

@@ -2,8 +2,8 @@
 Plugin Name: Device Theme Switcher
 Contributors: jamesmehorter
 Requires at least: 3.0
-Tested up to: 3.6.1
-Stable tag: 2.3
+Tested up to: 3.9.1
+Stable tag: 2.8
 Tags: Theme, Switch, Change, Mobile, Mobile Theme, Handheld, Tablet, iPad, iPhone, Android, Blackberry, Tablet Theme, Different Themes, Device Theme
 Author URI: http://www.jamesmehorter.com/
 Donate Link: http://www.jamesmehorter.com/donate/
@@ -11,7 +11,7 @@ Plugin URI: https://github.com/jamesmehorter/device-theme-switcher
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Set a theme for handhelds and a theme for tablets
+Set a separate theme for handheld and tablet devices under Appearance > Device Themes
 
 == Description ==
 
@@ -26,7 +26,9 @@ Device Theme Switcher is a WordPress plugin which delivers one of your WordPress
 
 = How to Install = 
 
-Install and activate in your WordPress 'Plugins > Add New' section by searching for 'Device Theme Switcher', or download the plugin zip (Big orange button up and to the right which says 'Download Version 2.0') and upload it manually in the 'WordPress Plugins > Add New > Upload' section. After activation you'll have a new menu: 'Appearance > Device Themes'-where you set which theme is given to which visitor device.
+Install and activate in your WordPress Dashboard 'Plugins > Add New' section by searching for 'Device Theme Switcher'.
+
+After activation you'll have a new menu: 'Appearance > Device Themes'--where you set which theme is given to which visitor device.
 
 = URL Switching - NEW in Version 2.0! =
 
@@ -185,6 +187,26 @@ Tablet theme page.php
 `dynamic_sidebar('Tablet Theme Sidebar');`
 
 == Changelog ==
+
+= Version 2.8 - Released 5/18/2014 =
+* FIX - Removed an empty space (whitespace) preceding <?php which caused numerous issues for people by PHP throwing PHP Warning: Cannot modify header information - headers already sent by (output started at /my-home/wp-content/plugins/device-theme-switcher/inc/class.switcher.php:1) in /my-home/wp-content/plugins/device-theme-switcher/inc/class.switcher.php on line 176 -- thanks @jontroth
+
+= Version 2.7 - Released 05/11/2014 =
+* IMPROVEMENT - Ensure the ?theme= GET variables added to each link via DTS_Switcher::build_html_link() preserve the existing GET variables already in place.
+* FIX - An issue where the DTS Widgets would produce a PHP Warning
+
+= Version 2.6 - Released 05/8/2014 =
+* FIX - An issue where the 2.4php update script wouldn't load properly on some setups
+
+= Version 2.5 - Released 05/7/2014 =
+* FIX - An issue where dts_cookie_name would not be set properly on update
+
+= Version 2.4 - Released 05/10/2014 =
+* IMPROVEMENT - Replaced the use of PHP Sessions with Cookies (This is gonna fix a lot of past issues!)
+* IMPROVEMENT - Refactored all plugin code to contain proper Docblock commenting and be more legible 
+* FIX - Corrected an issue where X UA Device fallback was handheld, not active. Thanks @Dachande663!
+* FIX - Corrected an issue where DTS_Switcher would not execute during an ajax request to admin_ajax. Thanks Ray @ qStudio!
+* REMOVAL - Removed the Dashboard Right Now DTS Output, it wasn't that cool to begin with..
 
 = Version 2.3 - Released 09/16/2013 = 
 * FIX - Corrected an issue which caused a PHP error to be thrown under odd conditions. Thanks Davis Wuolle! 

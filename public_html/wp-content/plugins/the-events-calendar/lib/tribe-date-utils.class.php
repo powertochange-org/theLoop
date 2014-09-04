@@ -92,7 +92,7 @@ if(!class_exists('TribeDateUtils')) {
 		 */
 		public static function endOfDay( $date, $isTimestamp = false ) {
 			$date = $isTimestamp ? $date : strtotime($date);
-			$date = date(TribeDateUtils::DBDATEFORMAT, $date );
+			$date = date( TribeDateUtils::DBDATEFORMAT, $date );
 			$date = strtotime($date . ' 23:59:59');
 			return date(TribeDateUtils::DBDATETIMEFORMAT, $date );
 		}
@@ -131,9 +131,28 @@ if(!class_exists('TribeDateUtils')) {
 	  	 * @return int The number of seconds between the dates.
 	  	 */
 		public static function timeBetween( $date1, $date2 ) {
-		 return abs(strtotime($date1) - strtotime($date2));
+			return abs(strtotime($date1) - strtotime($date2));
 		}
-		
+
+		/**
+		 * The number of days between two arbitrary dates.
+		 *
+		 * @param string $date1 The first date.
+		 * @param string $date2 The second date.
+		 * @return int The number of days between two dates.
+		 */
+		public static function dateDiff( $date1, $date2 ) {
+
+			$start = new DateTime( $date1 );
+			$end   = new DateTime( $date2 );
+
+			// Get number of days between by finding seconds between and dividing by # of seconds in a day
+			$days  = round( ( $end->format( 'U' ) - $start->format( 'U' ) ) / ( 60 * 60 * 24 ) );
+
+			return $days;
+
+		}
+
 		/**
 		 * Returns the last day of the month given a php date.
 		 *
@@ -236,13 +255,44 @@ if(!class_exists('TribeDateUtils')) {
 		 * @return string The ordinal for that number.
 		 */
 		public static function numberToOrdinal($number) {
-			return $number.(((strlen($number)>1)&&(substr($number,-2,1)=='1'))?
-				'th' : date("S",mktime(0,0,0,0,substr($number,-1),0)));
+			$output = $number . ( ( ( strlen( $number ) > 1 ) && ( substr ( $number, -2, 1 ) == '1' ) ) ?
+				'th' : date( 'S', mktime( 0, 0, 0, 0, substr( $number, -1 ), 0 ) ) );
+
+			return apply_filters( 'tribe_events_number_to_ordinal', $output, $number );
 		}
 
 		public static function numberToDay($number) {
 			$days = array(1 => "Monday", 2 => "Tuesday", 3 => "Wednesday", 4 => "Thursday", 5 => "Friday", 6 => "Saturday", 7 => "Sunday");
 			return $days[$number];
+		}
+
+		/**
+		 * check if a given string is a timestamp
+		 *
+		 * @param $timestamp
+		 *
+		 * @return bool
+		 */
+		public static function isTimestamp( $timestamp ) {
+			if ( is_numeric( $timestamp ) && (int) $timestamp == $timestamp && date( 'U', $timestamp ) == $timestamp ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
+		 * Accepts a string representing a date/time and attempts to convert it to
+		 * the specified format, returning an empty string if this is not possible.
+		 *
+		 * @param $dt_string
+		 * @param $new_format
+		 * @return string
+		 */
+		public static function reformat( $dt_string, $new_format ) {
+			$timestamp = strtotime( $dt_string );
+			$revised = date( $new_format, $timestamp );
+			return $revised ? $revised : '';
 		}
 	}
 }
