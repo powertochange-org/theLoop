@@ -1,0 +1,16 @@
+{
+    "page": "index.html",
+    "title": "Yellow Sawhorse",
+    "description": "Simple sign on yellow/green showing your site is temporarily down.",
+    "screenshot": "images/screenshot.png",
+    "author_name": "Easy Pie WP",
+    "website_url": "http://easypiewp.com/about/",
+    "google_plus_author_url": "https://plus.google.com/+RobertRiley/posts",
+    "original_release_date": "2013/10/20", 
+    "latest_version_date": "2013/11/11",
+    "version": "1.1.0",
+    "release_notes": "Updated metadata",
+    "autodownload" : true,
+    "responsive" : true,
+    "downloaded": false 
+}
