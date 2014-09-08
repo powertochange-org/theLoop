@@ -3,8 +3,8 @@
 		<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1><BR>
 		
 		<div id='simple-search-staff'>
-			<form id='s_s_s' method="post" action="?"><div class='search-box' style='border-color:#adafb2'>
-				<input class='search-input' type='textbox' name='fullname' placeholder='Search' />
+			<form id='s_s_s' method="post" action=""><div class='search-box' style='border-color:#adafb2'>
+				<input class='search-input' type='textbox' name='search' placeholder='Search' />
 				<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
 			</div></form>
 			<BR>

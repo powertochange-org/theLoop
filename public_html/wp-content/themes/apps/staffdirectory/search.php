@@ -13,10 +13,14 @@
 <div id="content-left">
 	<div id="main-content">
 		<?php
-				$fullname = "";
-				if (isset($_POST['fullname'])) {
-					$fullname = $_POST['fullname'] ; //the entire thing that was searched for
-					echo "<p class='orange-box'  style='padding: 9px;'>SEARCH RESULTS FOR: \"".strtoupper($fullname)."\"</p> <p /><p/>";
+				$search = "";
+				if (isset($_POST['search']) || isset($_GET['search'])) {
+					if (isset($_POST['search'])) {
+						$search = $_POST['search'];
+					} elseif (isset($_GET['search'])) {
+						$search = $_GET['search'];
+					}
+					echo "<p class='orange-box'  style='padding: 9px;'>SEARCH RESULTS FOR: \"".strtoupper($search)."\"</p> <p /><p/>";
 				}
 				else { //display welcome message if nothing being search for
 					?><p class='orange-box' style='padding: 9px;'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
@@ -26,8 +30,8 @@
 		Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.<p/>
 <?php
 				}
-				$names = preg_split("/[\s,]+/", $fullname);  // split the phrase by any number of commas or space characters,
-				if(! empty($_POST['fullname'])){ //if user searched something, it'll live in post
+				if(! empty($search)){ 
+					$names = preg_split("/[\s,]+/", $search);  // split the search string by any number of commas or space characters,
 					//this is where my intelligent search kicks in. here we try to identify some input
 					//check if ministry
 					$j=0;
