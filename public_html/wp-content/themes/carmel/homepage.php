@@ -9,7 +9,7 @@
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
 			$pictures = array($folder.'SES_Banner_Loop.jpg', $folder.'RBC.jpg', $folder.'WDOP.jpg', $folder.'RRSP.jpg', $folder.'Branding.jpg');
-			$links    = array('/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/', '/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
+			$links    = array('/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/worldwide-day-of-prayer/', '/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
