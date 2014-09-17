@@ -6,8 +6,6 @@
  * Override this template in your own theme by creating a file at [your-theme]/tribe-events/list/loop.php
  *
  * @package TribeEventsCalendar
- * @since  3.0
- * @author Modern Tribe Inc.
  *
  */
 
@@ -18,7 +16,7 @@ global $more;
 $more = false;
 ?>
 
-<div class="tribe-events-loop hfeed vcalendar">
+<div class="tribe-events-loop vcalendar">
 
 	<?php while ( have_posts() ) : the_post(); ?>
 		<?php do_action( 'tribe_events_inside_before_loop' ); ?>

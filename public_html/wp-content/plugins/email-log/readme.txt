@@ -1,11 +1,11 @@
-﻿=== Email Log ===
+=== Email Log ===
 Contributors: sudar  
-Tags: email, wpmu, wordpress-mu, log  
+Tags: email, log, multisite  
 Requires at least: 3.3  
-Tested up to: 3.8.1  
-Stable tag: 1.6.2  
+Tested up to: 3.9.1  
+Stable tag: 1.7.4  
 
-Logs every email sent through WordPress
+Logs every email sent through WordPress. Works with WordPress Multisite as well
 
 == Description ==
 
@@ -55,8 +55,8 @@ If you are looking for ideas, then you can start with one of the following TODO 
 The following are the features that I am thinking of adding to the Plugin, when I get some free time. If you have any feature request or want to increase the priority of a particular feature, then let me know.
 
 - Add option to automatically delete the logs periodically
-- Make it MU compatible
 - Add the ability to resend the emails
+- <strike>Make it MU compatible</strike>. Done in v1.7
 
 ### Support
 
@@ -95,6 +95,12 @@ The pot file is available with the Plugin. If you are willing to do translation 
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
+== Frequently Asked Questions ==
+
+### The content of the email is not getting logged when I am using wpmandrill plugin
+
+wpmandrill plugin has a bug that prevents this plugin from logging the content of the email. More details about the bug is available at http://wordpress.org/support/topic/mandrill-is-changing-the-names-of-args-in-the-filter?replies=1. I have asked the author of the plugin to fix it and it might get fixed it the next release. Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. So if the content is not getting logged, then upgrade to v1.7.3.
+
 == Screenshots ==
 
 1. The above screenshot shows how the logged emails will be displayed by the Plugin
@@ -111,6 +117,24 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v1.7.4  (2014-07-24) - (Dev time: 0.5 hours) =
+- Fix: Handle cases where `date_format` or `time_format` are empty (issue #23)
+- Tweak: Remove excessive comments from include/class-email-log-list-table.php (issue #10)
+
+= v1.7.3  (2014-05-14) - (Dev time: 0.5 hours) =
+- Fix: Fixed a compatibility issue with wpmandrill plugin (issue #20)
+
+= v1.7.2  (2014-04-16) - (Dev time: 0.5 hours) =
+- Fix: Fix issue in register_activation_hook
+
+= v1.7.1  (2014-04-02) - (Dev time: 0.5 hours) =
+- Fix: Fix the issue that was preventing the tables to be created
+
+= v1.7  (2014-03-29) - (Dev time: 2.5 hours) =
+- Fix: Fix whitespace
+- New: Add support for WordPress Multisite (issue #18)
+- New: Add ability to delete all logs at once (issue #19)
 
 = v1.6.2  (2014-01-27) - (Dev time: 0.5 hours) =
 - Fix: Fix unexpected output while activating the plugin
@@ -175,7 +199,7 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 = v0.6 (2012-04-29) (Dev time: 2 hours) =
 - Added option to delete individual email logs
 - Moved pages per screen option to Screen options panel
-- Added information to the screen help tab                   
+- Added information to the screen help tab
 - Added Lithuanian translations
 
 = v0.5 (2012-01-01) =
@@ -194,6 +218,15 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 1.7.4 =
+Handle cases where `date_format` or `time_format` are empty
+
+= 1.7.2 =
+Fix the bug that was introduced in v1.7
+
+= 1.7.1 =
+Fix the bug that was introduced in v1.7
 
 = 1.6 =
 Ability to view content of the email

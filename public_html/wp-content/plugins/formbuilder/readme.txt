@@ -1,22 +1,21 @@
 === FormBuilder ===
-Contributors: truthmedia, warkior
-Donate link: http://truthmedia.com/engage/giving
+Contributors: warkior
 Tags: form, forms, email, comments, contact, input, spam, form to email, email form, contact form
 Requires at least: 2.7
-Tested up to: 3.2.1
-Stable tag: 0.891
+Tested up to: 3.9
+Stable tag: 1.01
 
-Allows WordPress bloggers to easily create customised forms for use on pages or posts.
+Allows WordPress bloggers to easily create customised contact forms for use on pages or posts.
 
 == Description ==
-The Form Builder Plugin for WordPress allows you to build complex forms in
+The Form Builder Plugin for WordPress allows you to build contact forms in
 the WordPress administrative interface without needing to know PHP or HTML.
 We've tried to make it simple enough for anyone to make them, yet customisable
-enough to use for the most difficult job.
+enough to satisfy the needs of experienced web developers.
 
 ** Features: **
 
-* Easily build complex forms without any HTML or coding.
+* Easily build complex contact forms without any HTML or coding.
 * Pre-made contact forms for quick and easy setup.
 * Put forms anywhere on your site.
 * Put multiple forms on a single page.
@@ -31,9 +30,7 @@ enough to use for the most difficult job.
 * Permissions control
 * and LOTS more...
 
-Created by [TruthMedia](http://truthmedia.com)
-
-Programming and Design by [James Warkentin](http://www.warkensoft.com/about-me/)
+Programming and Design by [James Warkentin](http://www.warkior.com/)
 
 == Installation ==
 1.	Upload the /formbuilder/ folder and files to your WordPress plugins folder,
@@ -58,10 +55,10 @@ Programming and Design by [James Warkentin](http://www.warkensoft.com/about-me/)
 	site, you may add additional CSS information in the additional_styles.css
 	file.  Styles in this file will cascade and over-ride the preset defaults.
 
-7.	Have fun, enjoy using the FormBuilder plugin, and don't forget to come
-	[visit us](http://truthmedia.com "TruthMedia.com"). For the
-	latest	version, more extensive documentation or to stay updated see
-	[our FormBuilder blog](http://truthmedia.com/wordpress/formbuilder/ "TruthMedia FormBuilder Blog").
+7.	Have fun, enjoy using the FormBuilder plugin.
+
+8.  For technical support and bleeding edge versions, find FormBuilder on GitHub:
+    https://github.com/warkior/FormBuilder-Development
 
 == Screenshots ==
 
@@ -71,11 +68,36 @@ Programming and Design by [James Warkentin](http://www.warkensoft.com/about-me/)
 
 == Changelog ==
 
-= 0.891 =  
+= 1.00 =
+* It's high-time we hit the 1.0 mark with this plugin. With the change in ownership, this is a good time to do it.
+* NEW! FormBuilder Extensions - Find them on the main FormBuilder navigation bar.
+* Fixed or removed a number of links that connected to the old site.
+* Added some action hooks in preparation for future enhancements.
+
+= 0.93 =
+* Ownership Change: TruthMedia will no longer be maintaining this plugin. Ongoing development will be handled by James Warkentin.
+* Better Email Handling: Switching forms to send from predefined email address, rather than from the visitor. This avoids many spam false positives and complies properly with new DMARK policy rules.
+WARNING! This update will change how the email FROM address is created. You may adjust the default on the settings page.
+ 
+= 0.92 =
+* Cleanup: Cleaning up small bugs and deprecated code in more recent versions of WordPress.
+* Bug Fix: Switched referrer field to populate using JS rather than PHP to allow better functionality on cached sites.
+
+= 0.91 =
+* Security Fix: Resolved XSS vulnerability with the referer functionality.
+
+= 0.90 =
+* Feature: Allow ~variable~ fields in email subject lines.  Generously contributed by maihde in github.
+* Clean Up: Quite a few bug fixes and tidying changes generously contributed by outis in github.
+* Bug Fix: Allow showing of thankyou text when using modules.
+
+= 0.892 =
+* Bug Fix: Additional minor bug fixes
+
+= 0.891 =
 * Bug Fix: Fixed warning that was appearing on pages.
 
-
-= 0.89 =  
+= 0.89 =
 * Feature: Allow ~variable~ fields in thankyou text.
 * Feature: Option to show all fields in autoresponder.
 * Feature: Allow admin bar to show all forms on the current page/index.
@@ -88,10 +110,10 @@ Programming and Design by [James Warkentin](http://www.warkensoft.com/about-me/)
 * Bug Fix: Forms with followup_url fields now bounce straight to the followup url without re-showing the original page first.
 
 
-= 0.881 =  
+= 0.881 =
 * Bug Fix: Catchable fatal error in FormBuilder repaired.
 
-= 0.880 =  
+= 0.880 =
 * Feature: Ability to search for forms.
 * Feature: New field type: required checkbox.
 * Feature: New field type: required password.
