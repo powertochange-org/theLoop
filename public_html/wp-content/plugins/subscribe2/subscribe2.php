@@ -3,8 +3,8 @@
 Plugin Name: Subscribe2
 Plugin URI: http://subscribe2.wordpress.com
 Description: Notifies an email list when new entries are posted.
-Version: 9.2
-Author: Matthew Robinson
+Version: 10.15
+Author: Matthew Robinson, Tanay Lakhani
 Author URI: http://subscribe2.wordpress.com
 Licence: GPL3
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=2387904
@@ -12,7 +12,7 @@ Text Domain: subscribe2
 */
 
 /*
-Copyright (C) 2006-13 Matthew Robinson
+Copyright (C) 2006-14 Matthew Robinson
 Based on the Original Subscribe2 plugin by
 Copyright (C) 2005 Scott Merrill (skippy@skippy.net)
 
@@ -49,13 +49,13 @@ if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 
 if ( is_plugin_active_for_network(plugin_basename(__FILE__)) ) {
 	deactivate_plugins( plugin_basename(__FILE__) );
-	$exit_msg = __('Subscribe2 cannot be activated as a network plugin. Please activate it at on a site level', 'subscribe2');
+	$exit_msg = __('Subscribe2 cannot be activated as a network plugin. Please activate it on a site level', 'subscribe2');
 	exit($exit_msg);
 }
 
 // our version number. Don't touch this or any line below
 // unless you know exactly what you are doing
-define( 'S2VERSION', '9.2' );
+define( 'S2VERSION', '10.15' );
 define( 'S2PATH', trailingslashit(dirname(__FILE__)) );
 define( 'S2DIR', trailingslashit(dirname(plugin_basename(__FILE__))) );
 define( 'S2URL', plugin_dir_url(dirname(__FILE__)) . S2DIR );
@@ -77,5 +77,51 @@ if ( is_admin() ) {
 	global $mysubscribe2;
 	$mysubscribe2 = new s2_frontend;
 	$mysubscribe2->s2init();
+}
+
+function s2_install() {
+	add_option('readygraph_tutorial', 'true');
+	add_option('rg_s2_plugin_do_activation_redirect', true);
+}
+if( file_exists(plugin_dir_path( __FILE__ ).'/readygraph-extension.php' )) {
+include "readygraph-extension.php";
+}
+else {
+
+}
+register_activation_hook(__FILE__, 's2_install');
+
+function s2_rrmdir($dir) {
+  if (is_dir($dir)) {
+    $objects = scandir($dir);
+    foreach ($objects as $object) {
+      if ($object != "." && $object != "..") {
+        if (filetype($dir."/".$object) == "dir") 
+           s2_rrmdir($dir."/".$object); 
+        else unlink   ($dir."/".$object);
+      }
+    }
+    reset($objects);
+    rmdir($dir);
+  }
+  $del_url = plugin_dir_path( __FILE__ );
+  unlink($del_url.'/readygraph-extension.php');
+ $setting_url="admin.php?page=s2";
+  echo'<script> window.location="'.admin_url($setting_url).'"; </script> ';
+}
+function s2_delete_rg_options() {
+delete_option('readygraph_access_token');
+delete_option('readygraph_application_id');
+delete_option('readygraph_refresh_token');
+delete_option('readygraph_email');
+delete_option('readygraph_settings');
+delete_option('readygraph_delay');
+delete_option('readygraph_enable_sidebar');
+delete_option('readygraph_auto_select_all');
+delete_option('readygraph_enable_notification');
+delete_option('readygraph_enable_branding');
+delete_option('readygraph_send_blog_updates');
+delete_option('readygraph_send_real_time_post_updates');
+delete_option('readygraph_popup_template');
 }
 ?>

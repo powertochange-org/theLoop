@@ -47,6 +47,7 @@ $min_enableBuilder = false;
 //$min_cachePath = '/tmp';
 //$min_cachePath = preg_replace('/^\\d+;/', '', session_save_path());
 //###WPM-CACHE-PATH-BEFORE###
+$min_cachePath = '/home/powertochange/domains/staff.powertochange.org/public_html/wp-content/plugins/wp-minify/cache/';
 //###WPM-CACHE-PATH-AFTER###
 
 /**
@@ -93,6 +94,7 @@ $min_serveOptions['bubbleCssImports'] = false;
  */
 $min_serveOptions['maxAge'] = 1800;
 //###WPM-CACHE-AGE-BEFORE###
+$min_serveOptions['maxAge'] = 2592000;
 //###WPM-CACHE-AGE-AFTER###
 
 /**

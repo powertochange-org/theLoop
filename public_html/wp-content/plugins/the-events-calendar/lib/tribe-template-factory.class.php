@@ -4,9 +4,6 @@
  *
  * The parent class for managing the view methods in core and addons
  *
- * @since  3.0
- * @author tim@imaginesimplicity.com
- * @author jessica@
  */
 
 if ( !defined('ABSPATH') )
@@ -63,7 +60,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Run include packages, set up hooks
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function __construct() {
 			$this->hooks();
@@ -74,7 +70,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Set up hooks for this template
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		protected function hooks() {
 
@@ -119,7 +114,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Manage the asset packages defined for this template
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		protected function asset_packages()	{
 			foreach ($this->asset_packages as $asset_package) {
@@ -132,7 +126,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 *
 		 * @param array $classes
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function body_class($classes = array() )	{
 
@@ -161,8 +154,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Add classes to events on this view
 		 *
 		 * @return array
-		 * @author Jessica Yazbek
-		 * @since 3.0
 		 **/
 		public function event_classes( $classes ) {
 		   return $classes;
@@ -172,7 +163,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Setup meta display in this template
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function setup_meta() {
 
@@ -200,7 +190,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Set up the notices for this template
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function set_notices() {
 			global $wp_query;
@@ -238,10 +227,14 @@ if( !class_exists('Tribe_Template_Factory') ) {
 				TribeEvents::setNotice( 'events-not-found', sprintf( __('No upcoming events listed under %s. Check out upcoming events for this category or view the full calendar.', 'tribe-events-calendar'), $tax_term ) );
 			}
 			elseif ( ! empty( $tax_term ) && tribe_is_upcoming() ) {
-				TribeEvents::setNotice( 'events-not-found', sprintf( __('No matching events listed under %s. Check out upcoming events for this category or view the full calendar.', 'tribe-events-calendar'), $tax_term ) );
+				TribeEvents::setNotice( 'events-not-found', sprintf( __('No matching events listed under %s. Please try viewing the full calendar for a complete list of events.', 'tribe-events-calendar'), $tax_term ) );
 			}
 			elseif ( ! empty( $tax_term ) && tribe_is_past() ) {
 				TribeEvents::setNotice( 'events-past-not-found', __('No previous events ', 'tribe-events-calendar') );
+			}
+			// if on any other view and attempting to view a category archive.
+			elseif ( ! empty( $tax_term ) ) {
+				TribeEvents::setNotice( 'events-not-found', sprintf( __('No matching events listed under %s. Please try viewing the full calendar for a complete list of events.', 'tribe-events-calendar'), $tax_term ) );
 			}
 			else {
 				TribeEvents::setNotice( 'event-search-no-results', __( 'There were no results found.', 'tribe-events-calendar' ) );
@@ -252,7 +245,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Setup the view, query hijacking, etc. This happens right before the view file is included
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function setup_view() {
 
@@ -269,7 +261,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Echo open tags for wrapper around view
 		 *
 		 * @return void
-		 * @since
 		 **/
 		public function view_wrapper_open() {
 			echo '<div id="tribe-events-content-wrapper" class="tribe-clearfix">';
@@ -279,7 +270,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Output an input to store the hash for the current query
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function add_input_hash() {
 			echo '<input type="hidden" id="tribe-events-list-hash" value="">';
@@ -289,7 +279,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Echo open tags for wrapper around view
 		 *
 		 * @return void
-		 * @since
 		 **/
 		public function view_wrapper_close() {
 			echo '</div> <!-- #tribe-events-content-wrapper -->';
@@ -299,7 +288,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Shutdown the view, restore the query, etc. This happens right after the view file is included
 		 *
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function shutdown_view() {
 			$this->unhook();
@@ -309,7 +297,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * Unhook all the hooks set up on this view
 		 *
 		 * @return void
-		 * @author 
 		 **/
 		protected function unhook() {
 
@@ -359,12 +346,11 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 *
 		 * @param WP_Post $post
 		 * @return void
-		 * @since 3.0
 		 **/
 		public function manage_sensitive_info( $post ) {
 			if ( post_password_required( $post ) ) {
 				add_filter( 'tribe_events_event_schedule_details', '__return_null' );
-				add_filter( 'tribe_events_event_recurring_info_tooltip', '__return_null' );
+				add_filter( 'tribe_events_recurrence_tooltip', '__return_null' );
 				add_filter( 'tribe_event_meta_venue_name', '__return_null' );
 				add_filter( 'tribe_event_meta_venue_address', '__return_null' );
 				add_filter( 'tribe_event_featured_image', '__return_null' );
@@ -372,7 +358,7 @@ if( !class_exists('Tribe_Template_Factory') ) {
 				add_filter( 'tribe_get_venue', '__return_null' );
 			} else {
 				remove_filter( 'tribe_events_event_schedule_details', '__return_null' );
-				remove_filter( 'tribe_events_event_recurring_info_tooltip', '__return_null' );
+				remove_filter( 'tribe_events_recurrence_tooltip', '__return_null' );
 				remove_filter( 'tribe_event_meta_venue_name', '__return_null' );
 				remove_filter( 'tribe_event_meta_venue_address', '__return_null' );
 				remove_filter( 'tribe_event_featured_image', '__return_null' );
@@ -386,7 +372,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 *
 		 * @param string $template
 		 * @return string
-		 * @since 3.0
 		 **/
 		public function remove_comments_template( $template ) {
 			return TribeEvents::instance()->pluginPath . 'admin-views/no-comments.php';
@@ -398,7 +383,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * @param $length
 		 *
 		 * @return int
-		 * @since 3.0
 		 */
 		public function excerpt_length( $length ) {
 			return $this->excerpt_length;
@@ -410,7 +394,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * @param int $more
 		 *
 		 * @return int
-		 * @since 3.0
 		 */
 		public function excerpt_more( $more ) {
 			return $this->excerpt_more;
@@ -422,7 +405,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * @param int $more
 		 *
 		 * @return int
-		 * @since 3.0
 		 */
 		public function comments_off( $option_value, $option_name ) {
 			if ( $option_name != 'showComments')
@@ -450,6 +432,7 @@ if( !class_exists('Tribe_Template_Factory') ) {
 			$resources_url = trailingslashit( $tec->pluginUrl ) . 'resources/';
 			$vendor_url = trailingslashit( $tec->pluginUrl ) . 'vendor/';
 
+			// @TODO make this more DRY
 			switch( $name ) {
 				case 'jquery-resize':
 					$path = self::getMinFile( $vendor_url . 'jquery-resize/jquery.ba-resize.js', true );
@@ -554,40 +537,79 @@ if( !class_exists('Tribe_Template_Factory') ) {
 					wp_enqueue_script( 'tribe-events-list', $path, $deps, apply_filters( 'tribe_events_js_version', TribeEvents::VERSION ), true );
 					wp_localize_script( 'tribe-events-list', 'TribeList', $ajax_data );
 					break;
+				case 'ajax-dayview':
+					$ajax_data = array( "ajaxurl"   => admin_url( 'admin-ajax.php', ( is_ssl() ? 'https' : 'http' ) ),
+										'post_type' => TribeEvents::POSTTYPE );
+					$path = self::getMinFile( $resources_url . 'tribe-events-ajax-day.js', true );
+					wp_enqueue_script( 'tribe-events-ajax-day', $path, array('tribe-events-bar'), apply_filters( 'tribe_events_js_version', TribeEvents::VERSION ), true );
+					wp_localize_script( 'tribe-events-ajax-day', 'TribeCalendar', $ajax_data );
+					break;
 				case 'events-css':
-					// Tribe Events CSS filename
-					$event_file = 'tribe-events.css';
-					$stylesheet_option = tribe_get_option( 'stylesheetOption', 'tribe' );
 
-					// What Option was selected
-					switch( $stylesheet_option ) {
+					// check if responsive should be killed
+					if ( apply_filters( 'tribe_events_kill_responsive', false ) ) {
+						add_filter( 'tribe_events_mobile_breakpoint', '__return_zero' );
+					}
+
+					$stylesheets  = array();
+					$mobile_break = tribe_get_mobile_breakpoint();
+
+					// Get the selected style option
+					$style_option = tribe_get_option( 'stylesheetOption', 'tribe' );
+
+					// Determine the stylesheet files for the selected option
+					switch ( $style_option ) {
 						case 'skeleton':
+							$stylesheets['tribe-events-calendar-style'] = 'tribe-events-skeleton.css';
+							break;
 						case 'full':
-							$event_file_option = 'tribe-events-'. $stylesheet_option .'.css';
+							$stylesheets['tribe-events-calendar-style']        = 'tribe-events-full.css';
+							if ($mobile_break > 0) {
+								$stylesheets['tribe-events-calendar-mobile-style'] = 'tribe-events-full-mobile.css';
+							}
 							break;
-						default:
-							$event_file_option = 'tribe-events-theme.css';
+						default: // tribe styles
+							$stylesheets['tribe-events-full-calendar-style']   = 'tribe-events-full.css';
+							$stylesheets['tribe-events-calendar-style']        = 'tribe-events-theme.css';
+							if ($mobile_break > 0) {
+								$stylesheets['tribe-events-calendar-full-mobile-style'] = 'tribe-events-full-mobile.css';
+								$stylesheets['tribe-events-calendar-mobile-style'] = 'tribe-events-theme-mobile.css';
+							}
 							break;
 					}
 
-					$styleUrl = trailingslashit( $tec->pluginUrl ) . 'resources/' . $event_file_option;
-					$styleUrl = self::getMinFile( $styleUrl, true );
-					$styleUrl = apply_filters( 'tribe_events_stylesheet_url', $styleUrl );
+					// put override css at the end of the array
+					$stylesheets['tribe-events-calendar-override-style'] = 'tribe-events/tribe-events.css';
 
-					// Is there a core override file in the theme?
-					$styleOverrideUrl = TribeEventsTemplates::locate_stylesheet('tribe-events/'.$event_file);
+					// do the enqueues
+					foreach ( $stylesheets as $name => $css_file ) {
+						if ( $name == 'tribe-events-calendar-override-style' ) {
+							$user_stylesheet_url = TribeEventsTemplates::locate_stylesheet( 'tribe-events/tribe-events.css' );
+							if ( $user_stylesheet_url ) {
+								wp_enqueue_style( $name, $user_stylesheet_url );
+							}
+						} else {
 
-					// Load up stylesheet from theme or plugin
-					if( $styleUrl && $stylesheet_option == 'tribe' ) {
-						$full_path = self::getMinFile( trailingslashit( $tec->pluginUrl ) . 'resources/tribe-events-full.css', true );
-						wp_enqueue_style( 'full-calendar-style', $full_path, array(), apply_filters( 'tribe_events_css_version', TribeEvents::VERSION ) );
-						wp_enqueue_style( TribeEvents::POSTTYPE . '-calendar-style', $styleUrl, array(), apply_filters( 'tribe_events_css_version', TribeEvents::VERSION ) );
-					} else {
-						wp_enqueue_style( TribeEvents::POSTTYPE . '-calendar-style', $styleUrl, array(), apply_filters( 'tribe_events_css_version', TribeEvents::VERSION ) );
+							// get full URL
+							$url = tribe_events_resource_url( $css_file );
+
+							// get the minified file
+							$url = self::getMinFile( $url, true );
+
+							// apply filters
+							$url = apply_filters( 'tribe_events_stylesheet_url', $url, $name );
+
+							// set the $media attribute
+							if ( $name == 'tribe-events-calendar-mobile-style' || $name == 'tribe-events-calendar-full-mobile-style' ) {
+								$media = "(max-width: {$mobile_break}px)";
+								wp_enqueue_style( $name, $url, array('tribe-events-calendar-style'), TribeEvents::VERSION, $media );
+							} else {
+								wp_register_style( $name, $url, array(), TribeEvents::VERSION );
+								wp_enqueue_style( $name );
+							}
+						}
 					}
-					if( $styleOverrideUrl ) {
-						wp_enqueue_style( TribeEvents::POSTTYPE . '-calendar-override-style', $styleOverrideUrl );		
-					}
+
 					break;
 				default :
 					do_action($prefix . '-' . $name);
@@ -602,8 +624,6 @@ if( !class_exists('Tribe_Template_Factory') ) {
 		 * @param string $url The path or URL to the un-minified file.
 		 * @param bool $default_to_original Whether to just return original path if min version not found.
 		 * @return string|false The path/url to minified version or false, if file not found.
-		 * @author Paul Hughes
-		 * @since 3.0
 		 */
 		public static function getMinFile( $url, $default_to_original = false ) {
 			if ( !defined( 'SCRIPT_DEBUG' ) || SCRIPT_DEBUG === false ) {
