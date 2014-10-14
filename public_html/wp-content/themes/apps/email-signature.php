@@ -46,6 +46,7 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 			LIMIT 0,1");
 
 $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', 'http://athletesinaction.com/'),
+	'Advancement' =>  array('2014/07/Advancement-Email1.png', ''),
 	'Breakthrough Prayer Ministry' =>  array('2014/07/Breakthrough-Email.png', 'http://powertochange.com/breakthroughprayer/'),
 	'Christian Embassy' =>  array('2014/07/ChristianEmbassy-Email1.png', 'http://www.christianembassy.ca/'),
 	'Connecting Streams' =>  array('2014/07/Connecting-Streams-Email.png', 'http://www.connectingstreams.com/'),
