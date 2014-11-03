@@ -8,8 +8,8 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'westLife.jpg', $folder.'SES_Banner_Loop.jpg', $folder.'RBC.jpg', $folder.'DayOfPrayer.jpg', $folder.'JobBoardBanner.jpg', $folder.'WellnessNews.jpg');
-			$links    = array('/all-staff/take-the-personal-health-assessment/', '/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/worldwide-day-of-prayer/', '/training-development/job-board/', '/training-development/healthwellness/wellness-news/');
+			$pictures = array($folder.'westLife.jpg', $folder.'SES_Banner_Loop.jpg', $folder.'RBC.jpg',  $folder.'JobBoardBanner.jpg', $folder.'WellnessNews.jpg');
+			$links    = array('/all-staff/take-the-personal-health-assessment/', '/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/training-development/job-board/', '/training-development/healthwellness/wellness-news/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
