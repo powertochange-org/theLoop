@@ -671,6 +671,10 @@ body.web-app-mode.translucent {
 	margin-top: 20px;
 }
 
+body.web-app-mode #switch {
+	display: none;
+}
+
 /* @end */
 
 /* @group 404 */
@@ -802,8 +806,10 @@ li .social-footer-badges {
 /* @group Comments */
 
 #comments {
-
 }
+	#comments .children .comment {
+		margin-left: 15px;
+	}
 
 p.comment-awaiting-moderation {
 	font-weight: bold;

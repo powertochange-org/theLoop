@@ -25,7 +25,7 @@
 					<?php _e( 'Your WPtouch Pro license has expired. Renew now at a discount to continue receiving product updates and support.', 'wptouch-pro' ); ?>
 					<a href="http://www.wptouch.com/renew/?utm_campaign=renew-in-product&utm_medium=web&utm_source=wptouch" target="_blank" class="btn btn-small btn-warning"><?php _e( 'Renew Now', 'wptouch-pro' ); ?></a>
 				</div>
-			</div>						
+			</div>
 		<?php } else { ?>
 			<?php if ( wptouch_should_show_license_nag() && $_GET['page'] != 'wptouch-admin-license' ) { ?>
 				<div class="alert-wrap">

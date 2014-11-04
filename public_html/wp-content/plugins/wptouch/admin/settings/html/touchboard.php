@@ -11,8 +11,9 @@
 				<li><a href="//www.wptouch.com/extensions/?utm_campaign=touchboard&utm_source=<?php echo WPTOUCH_UTM_SOURCE; ?>&utm_medium=web"><?php _e( 'Look at Pro Extensions', 'wptouch-pro' ); ?></a></li>
 				<li><a href="//www.wptouch.com/features/?utm_campaign=touchboard&utm_source=<?php echo WPTOUCH_UTM_SOURCE; ?>&utm_medium=web"><?php _e( 'Look at Pro Features', 'wptouch-pro' ); ?></a></li>
 			<?php } ?>
-			<li><a href="//www.wptouch.com/support/" target="_blank"><?php _e( 'Product Support', 'wptouch-pro' ); ?></a></li>
+			
 			<?php if ( !defined( 'WPTOUCH_IS_FREE' ) ) { ?>
+			<li><a href="//www.wptouch.com/support/" target="_blank"><?php _e( 'Product Support', 'wptouch-pro' ); ?></a></li>
 			<li><a href="//www.wptouch.com/support/knowledgebase/?utm_campaign=touchboard&utm_source=<?php echo WPTOUCH_UTM_SOURCE; ?>&utm_medium=web" target="_blank"><?php _e( 'Product Knowledgebase', 'wptouch-pro' ); ?></a></li>
 			<li><a href="//www.wptouch.com/support/profile/" target="_blank"><?php _e( 'Manage Account', 'wptouch-pro' ); ?></a></li>
 			<li><a href="//www.wptouch.com/support/" target="_blank"><?php _e( 'Manage License', 'wptouch-pro' ); ?></a></li>

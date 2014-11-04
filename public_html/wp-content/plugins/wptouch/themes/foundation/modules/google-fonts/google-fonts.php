@@ -94,7 +94,7 @@ function foundation_google_fonts_init() {
 		if ( $family_string ) {
 			wp_enqueue_style(
 				'foundation_google_fonts',
-				'http://fonts.googleapis.com/css?family=' . $family_string,
+				'//fonts.googleapis.com/css?family=' . $family_string,
 				false,
 				FOUNDATION_VERSION,
 				false
