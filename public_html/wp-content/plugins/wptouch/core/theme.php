@@ -403,7 +403,7 @@ function wptouch_use_jquery_2() {
 	$settings = wptouch_get_settings();
 	if ( $settings->use_jquery_2 == true && !is_admin() ) {
 		wp_deregister_script( 'jquery' );
-		wp_register_script( 'jquery', 'http://code.jquery.com/jquery-2.1.1.min.js', false, '2.1.1', 1 );
+		wp_register_script( 'jquery', '//code.jquery.com/jquery-2.1.1.min.js', false, '2.1.1', 1 );
 		wp_enqueue_script( 'jquery' );
 	}
 }

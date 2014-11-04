@@ -1,4 +1,8 @@
-/* @override http://wptp3.local.com/wp-content/plugins/wptouch-pro-3/admin/css/wptouch-admin-3.css?ver=3.4.4 */
+/* @override 
+	http://wptp3.local.com/wp-content/plugins/wptouch-pro-3/admin/css/wptouch-admin-3.css?ver=3.4.4
+	https://wptp3.local.com/wp-content/plugins/wptouch-pro-3/admin/css/wptouch-admin-3.css?ver=3.4.9
+	http://wptp3.local.com/wp-content/plugins/wptouch-pro-3/admin/css/wptouch-admin-3.css?ver=3.5
+*/
 
 /* @group General */
 
@@ -83,7 +87,7 @@
 	font-weight: bold;
 	font-size: 9px;
 	display: inline-block;
-	overflow: hidden;	
+	overflow: hidden;
 	background-color: #369;
 }
 
@@ -942,101 +946,11 @@ input#preview.disabled {
 	float: right;
 }
 
-/* @group Free */
-
 .wptouch-free #touchboard-left {
 	margin-right: 265px;
 	overflow: hidden;
 	text-align: center;
-	background-color: #f9f9fa;
 }
-
-
-.wptouch-free #touchboard-left .phones img {
-	padding-top: 10px;
-	width: auto;
-	max-width: 90%;
-	margin-left: 5%;
-	margin-right: 5%;
-}
-
-.wptouch-free #touchboard-left .hero-text {
-	padding-bottom: 40px;
-}
-
-.wptouch-free #touchboard-left .hero-text h1 {
-	font-weight: 200;
-	font-style: normal;
-	font-size: 400%;
-	margin: 0;
-	padding: 0;
-	line-height: 1.4em;
-	letter-spacing: -2px;
-	color: #565656;
-}
-
-.wptouch-free #touchboard-left .hero-text h2 {
-	color: #888;
-	font-weight: 100;
-	font-style: normal;
-	font-size: 140%;
-	padding: 0;
-}
-
-.wptouch-free #touchboard-left .hero-text h2 em {
-	font-weight: bold;
-}
-
-.wptouch-free #touchboard-left .hero-text h4 {
-	font-weight: 200;
-	font-style: normal;
-	font-size: 14px;
-	color: #888;
-	margin: 15px 0;
-	line-height: 1em;
-}
-
-.wptouch-free #touchboard-left .flex-item h5 {
-	font-weight: 200;
-	font-size: 18px;
-	line-height: 1.2em;
-}
-
-.wptouch-free .flex-container {
-	display: -webkit-flex;
-	display: -moz-flex;
-	display: flex;
-	-webkit-flex-flow: row wrap;
-	-moz-flex-flow: row wrap;
-	flex-flow: row wrap;
-	border-top: 1px dashed #cad2d5;
-	background-color: rgba(255,255,255,.9);
-	padding-bottom: 20px;
-	padding-top: 20px;
-}
-
-.wptouch-free .flex-item {
-	-webkit-flex: 1 0 20%;
-	-moz-flex: 1 0 20%;
-	flex: 1 0 20%;
-	text-align: left;
-	margin-right: 15px;
-	margin-left: 15px;
-	padding: 30px 0 0;
-}
-
-.wptouch-free .flex-item i {
-	color: #abb9c6;
-	line-height: .5em;
-	font-size: 4.5em;
-}
-
-.wptouch-free .flex-item p {
-	line-height: 1.4em;
-	color: #565e63;
-	font-size: 1.1em;
-}
-/* @end */
 
 /* @group Right Side */
 
@@ -2233,6 +2147,9 @@ textarea#homepage_message {
 .cloud-browser .cloud .view {
 	display: none;
 }
+	.cloud-browser .cloud .view.webkit {
+		display: block;
+	}
 
 /* @end */
 
@@ -2545,7 +2462,7 @@ textarea#homepage_message {
 
 /* @group Coffee */
 
-.admin-color-coffee #wptouch-settings-area h2.logo-title,.admin-color-coffee #wptouch-settings-area .wptouch-section h3, 
+.admin-color-coffee #wptouch-settings-area h2.logo-title,.admin-color-coffee #wptouch-settings-area .wptouch-section h3,
 .admin-color-coffee #wptouch-settings-area #license-area-left h3 {
 	color: #46403C;
 }
@@ -2554,7 +2471,7 @@ textarea#homepage_message {
 	color: #9EA476;
 }
 
-.admin-color-coffee #wptouch-settings-area #wptouch-admin-menu a.active, 
+.admin-color-coffee #wptouch-settings-area #wptouch-admin-menu a.active,
 .admin-color-coffee #wptouch-settings-area .advanced {
 	background-color: #59524C;
 }
@@ -2571,7 +2488,7 @@ textarea#homepage_message {
 
 /* @group Ectoplasm */
 
-.admin-color-ectoplasm #wptouch-settings-area h2.logo-title,.admin-color-ectoplasm #wptouch-settings-area .wptouch-section h3, 
+.admin-color-ectoplasm #wptouch-settings-area h2.logo-title,.admin-color-ectoplasm #wptouch-settings-area .wptouch-section h3,
 .admin-color-ectoplasm #wptouch-settings-area #license-area-left h3 {
 	color: #413256;
 }
@@ -2596,7 +2513,7 @@ textarea#homepage_message {
 
 /* @group Midnight */
 
-.admin-color-midnight #wptouch-settings-area h2.logo-title,.admin-color-midnight #wptouch-settings-area .wptouch-section h3, 
+.admin-color-midnight #wptouch-settings-area h2.logo-title,.admin-color-midnight #wptouch-settings-area .wptouch-section h3,
 .admin-color-midnight #wptouch-settings-area #license-area-left h3 {
 	color: #25282b;
 }
@@ -2621,7 +2538,7 @@ textarea#homepage_message {
 
 /* @group Midnight */
 
-.admin-color-ocean #wptouch-settings-area h2.logo-title,.admin-color-ocean #wptouch-settings-area .wptouch-section h3, 
+.admin-color-ocean #wptouch-settings-area h2.logo-title,.admin-color-ocean #wptouch-settings-area .wptouch-section h3,
 .admin-color-ocean #wptouch-settings-area #license-area-left h3 {
 	color: #637c83;
 }
@@ -2646,7 +2563,7 @@ textarea#homepage_message {
 
 /* @group Sunrise */
 
-.admin-color-sunrise #wptouch-settings-area h2.logo-title,.admin-color-sunrise #wptouch-settings-area .wptouch-section h3, 
+.admin-color-sunrise #wptouch-settings-area h2.logo-title,.admin-color-sunrise #wptouch-settings-area .wptouch-section h3,
 .admin-color-sunrise #wptouch-settings-area #license-area-left h3 {
 	color: #b23d3b;
 }
@@ -2672,70 +2589,9 @@ textarea#homepage_message {
 
 /* @end */
 
-/* @group Upgrade */
-
-#upgrade-area {
-	margin-left: -22px;
-	margin-right: -20px;
-	text-align: center;
-}
-
-#upgrade-area img {
-	max-width: 95%;
-}
-
-#upgrade-area h1 {
-	font-size: 5em;
-	font-weight: 300;
-	letter-spacing: -2px;
-	margin-bottom: 20px;
-}
-
-#upgrade-area h2 {
-	color: #7b7b7b;
-	margin-bottom: 25px;
-}
-
-#upgrade-area img.upgrade-button {
-	margin-bottom: 30px;
-}
-
-#upgrade-area h1 span {
-	font-weight: 600;	
-}
-
-#upgrade-area h5 {
-	font-weight: bold;
-	font-size: 1.2em;
-}
-
-#upgrade-area .flex-item {
-	-webkit-flex: 1 0 15%;
-	-moz-flex: 1 0 15%;
-	flex: 1 0 15%;
-	text-align: left;
-	margin-right: 30px;
-	margin-left: 30px;
-	padding: 0;
-}
-
-#upgrade-area .flex-container {
-	margin-bottom: -100px;
-	padding-bottom: 100px;
-}
-
-/* @end */
-
 @media all and (max-width: 700px) {
 	#wptouch-settings-area h2.logo-title{
 	font-size: 20px;
-}
-
-#upgrade-area .flex-item {
-	-webkit-flex: 1 0 90%;
-	-moz-flex: 1 0 90%;
-	flex: 1 0 90%;
-	text-align: center;
 }
 
 .dropdown, #wptouch-settings-content .overview-right-wrap {

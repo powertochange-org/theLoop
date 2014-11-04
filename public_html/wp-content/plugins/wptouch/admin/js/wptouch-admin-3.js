@@ -394,7 +394,7 @@ function wptouchHandleMenuArea(){
 	// Handle "Check All"
 
 	jQuery( '#menu-set-options' ).on( 'click', 'a.check-all', function( e ) {
-		menuEnable.find( 'input' ).each( function() {
+		jQuery( '.menu-item-list:visible' ).find( 'input' ).each( function() {
 			// Check all items that *aren't* checked already
 			if ( !jQuery( this ).is( ':checked' ) ) {
 				jQuery( this ).click();
@@ -404,7 +404,7 @@ function wptouchHandleMenuArea(){
 
 	// Now handle "Check None"
 	}).on( 'click', 'a.check-none', function( e ) {
-		menuEnable.find( 'input' ).each( function() {
+		jQuery( '.menu-item-list:visible' ).find( 'input' ).each( function() {
 			// Check all items that *are* checked already
 			if ( jQuery( this ).is( ':checked' ) ) {
 				jQuery( this ).trigger( 'click' );
@@ -840,7 +840,7 @@ var wptouchPreviewWindow;
 // The Preview Pop-Up Window
 function wptouchPreviewWindow(){
 
-	var previewEl = jQuery( 'input#preview' );
+	var previewEl = jQuery( '.preview-button' );
 
 	if ( wptouchIsWebKit() ) {
 		previewEl.on( 'click', function( e ) {
@@ -1067,6 +1067,9 @@ function wptouchLoadThemes() {
 			} else {
 				themesDiv.find( '.load' ).parent().replaceWith( result );
 
+				wptouchPreviewWindow();
+				wptouchHandleThemePreview();
+
 				jQuery( '#setup-themes-browser' ).on( 'click', 'a.download, a.upgrade', function( e ) {
 					var pressedButton = jQuery( this );
 					var installURL = jQuery( this ).attr( 'data-url' );
@@ -1153,6 +1156,28 @@ function wptouchAdminHandleGeneral() {
 	wptouchCheckToggle( '#show_wptouch_in_footer', '#setting-add_referral_code' );
 }
 
+function wptouchHandleThemePreview() {
+	function triggerPreview( targetImage ) {
+		jQuery( '#' + targetImage.attr( 'id' ) + '-preview' ).trigger( 'click' );
+	}
+
+	if ( wptouchIsWebKit() ) {
+		jQuery( '#setup-themes-browser .view' ).addClass( 'webkit' ).text( WPtouchCustom.open_theme_demo );
+		jQuery( '#setup-themes-browser' ).find( '.image-wrapper' ).on( 'click', 'img' , function( e ) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			triggerPreview( jQuery( this ) );
+		});
+
+		jQuery( '#setup-themes-browser' ).find( '.image-wrapper' ).on( 'click', '.view' , function( e ) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			triggerPreview( jQuery( this ).siblings( 'img' ).first() );
+		});
+
+	}
+}
+
 function wptouchShowProItems() {
 	jQuery( '.wptouch-free #foundation-page-webapp' ).find( 'div, li' ).show();
 	jQuery( '.wptouch-free #foundation-page-webapp div.progress' ).hide();
@@ -1191,6 +1216,8 @@ function wptouchAdminReady() {
 
 	wptouchLoadThemes();
 	wptouchLoadAddons();
+
+	wptouchHandleThemePreview();
 
 	wptouchShowProItems();
 }

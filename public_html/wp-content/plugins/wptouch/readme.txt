@@ -2,8 +2,8 @@
 Contributors: bravenewcode, duanestorey, dalemugford, martin kuplens-ewart
 Tags: wptouch, iphone, ipod, bravenewcode, mobile, android, blackberry, smartphone, responsive, design, mobile plugin, ios, mobile theme
 Requires at least: 3.6
-Stable tag: 3.4.8
-Tested up to: 3.9.2
+Stable tag: 3.5.4
+Tested up to: 4.0
 License: GPLv2
 
 Create a slick mobile WordPress website with just a few clicks.
@@ -18,9 +18,9 @@ The theme also includes the ability for visitors to switch between the theme on 
 
 **Now Available: WPtouch Pro + BraveNewCloud**
 
-With 4 themes and 3 new extensions installed & updated right from our new BraveNewCloud service, it's the best WPtouch yet!
+With six themes and three new extensions installed & updated right from our new BraveNewCloud service, it's the best WPtouch yet!
 
-For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wptouch-front-readme&utm_medium=web&utm_source=wordpressdotorg "WPtouch.com").
+For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wptouch-front-readme&utm_medium=web&utm_source=wordpressdotorg "WPtouch.com").  You may also be interested in [Response](http://wpresponse.com/), a new BraveNewCode service that seamlessly integrates with WPtouch.
 
 'WPtouch' & ’WPtouch Pro' are trademarks of BraveNewCode Inc.
 
@@ -40,9 +40,50 @@ For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wp
 
 == Changelog ==
 
+= Version 3.5.4 (October 27th, 2014) =
+
+* Fixed: Directory structure issues
+
+= Version 3.5.3 (October 10th, 2014) =
+
+* Added: Startup Screen support for iPhone 6 and 6+ (Pro only)
+* Fixed: Removed php warnings
+* Fixed: Minor issues with our new MobileStore theme for WooCommerce (Pro only)
+* Added: New theme MobileStore (eCommerce theme for WooCommerce!) (Pro only)
+* Added: Option to turn off menu output on the Open homepage (Pro only)
+* Added: Open theme now supports custom post type content (Pro only)
+* Added: Optional comment support to Prose (Pro only)
+* Changed: Homescreen icon now recommends 180x180 (best size for iPhone 6, 6+, backwards compatible)
+* Changed: Better home-template.php support in themes
+* Changed: Updated FastClick module to 1.0.3 (fixes form issues)
+* Changed: Theme browser now shows theme demos instead of screenshots for WebKit-based browsers (Safari, Chrome)
+* Changed: Cache timing tweaked to allow filtering of cache behaviour in Infinity Cache (Pro only)
+* Changed: If enabled in WPtouch, comment block is shown on pages only when they either accept comments and/or have comments to display
+* Changed: Better SSL support w/ protocol-independent font and jQuery loading + image embeds
+* Fixed: An issue where Check All/None for menu items would affect all theme menus
+* Fixed: Better off-canvas menu support in Prose, Bauhaus and MobileStore
+* Fixed: Prevent Web App Mode from getting stuck in a logout loop (Pro only)
+* Fixed: Theme preview images causing SSL notices when viewing admin over HTTPS
+* Fixed: Prevent mobile switch link from appearing in Web App Mode when pages are loading from cache (Pro only)
+* Fixed: Bookmark icon not being used when bookmarking on iPad (Pro only)
+
+= Version 3.4.11 (September 24th, 2014) =
+
+* Changed: Backup file information, excluded license information and obfuscated filenames
+
+= Version 3.4.10 (September 23rd, 2014) =
+
+* Fixed: Potential security issue with URLs in comment forms
+
+= Version 3.4.9 (September 5th, 2014) =
+
+* Fixed: Some customers reported ongoing issues with MIME-type detection for uploaded images.
+* Updated: Compatibility with WordPress 4.0
+
 = Version 3.4.8 (August 28th, 2014) =
 
 * Fixed: Issue with uploading image files on servers that don’t advertise MIME type
+* Updated: Compatibility with WordPress 4.0
 
 = Version 3.4.7 (August 27th, 2014)
 
@@ -1053,19 +1094,3 @@ For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wp
 = 3.1.1 =
 
 This is an entirely new release, everyone! It’s completely different… and new : )
-
-= 1.9.8.2 =
-
-An issue with WordPress multisite was addressed
-
-= 1.9.8.1 =
-
-Potential security issues were fixed
-
-= 1.9.8 =
-
-Includes important administration panel updates
-
-= 1.9.7.1 =
-
-Includes a new POT file for Brazilian Portuguese

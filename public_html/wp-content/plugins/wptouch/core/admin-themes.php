@@ -192,7 +192,7 @@ function wptouch_get_theme_location() {
 }
 
 function wptouch_get_theme_url() {
-	echo WP_CONTENT_URL . wptouch_get_theme_location();
+	return WP_CONTENT_URL . wptouch_get_theme_location();
 }
 
 function wptouch_the_theme_url() {
@@ -374,8 +374,7 @@ function wptouch_is_first_theme_preview_image() {
 
 function wptouch_get_theme_preview_url() {
 	global $wptouch_theme_preview_item;
-
-	return wptouch_get_theme_url() . '/preview/' . $wptouch_theme_preview_item;
+	return wptouch_check_url_ssl( wptouch_get_theme_url() . '/preview/' . $wptouch_theme_preview_item );
 }
 
 function wptouch_the_theme_preview_url() {
