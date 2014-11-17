@@ -140,6 +140,7 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
+					<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 			</tr>
 			<tr>
@@ -182,14 +183,6 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
-				</td>
-			</tr>
-			<tr>
-				<td  style="border:0;">
-					<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
-				</td>
-				<td  style="border:0;"></td>
-				<td  style="border:0;">
 					<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 				</td>
 			</tr>
