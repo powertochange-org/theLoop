@@ -183,6 +183,7 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
+					<br>
 					<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 				</td>
 			</tr>
