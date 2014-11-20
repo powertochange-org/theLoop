@@ -100,7 +100,7 @@ get_header(); ?>
     <div id="content-left">
 		<?php the_content(); ?>
 		
-		<link rel="stylesheet" type="text/css" href="\wp-content\themes\apps\business-card\MyFontsWebfontsKit.css">
+		<link rel="stylesheet" type="text/css" href="/wp-content/themes/apps/business-card/MyFontsWebfontsKit.css">
 		<style type="text/css">
 		.front {
 			background-image: url('/wp-content/uploads/2014/09/front.png');
@@ -150,19 +150,11 @@ get_header(); ?>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Fax:</label></td><td><input type='text' id='fax'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($fax != null){echo $fax->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
-		<tr><td><label for='email'>Email Address:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo  $current_user->user_email;} ?>'/></td></tr>
+		<tr><td><label for='email'>Email Address:</label></td><td><input type='text' id='email' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo  $current_user->user_email; ?>'/></td></tr>
 		</table>
 		
 		
-		<div class="front bc">
-<span class="name text">&lt;Name</span>
-<span class="title text">&lt;Title</span>
-<span class="department text">&lt;Department</span>
-<span class="contact text"><span class="tfc">T</span><span class="tfc">F</span><span class="tfc">C</span></span>
-<span class="email text">&lt;email</span>
-		
-		
-		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS front bc" id='preview'></div>
+		<div class="resetCSS front bc" id='preview'></div>
 		<div class="back bc"></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
 		 
@@ -171,24 +163,24 @@ get_header(); ?>
 			function refreshSignature(){
 			
 			
-				var signature = '<div class="front bc">' +
-					'<span class="name text">' + document.getElementById('name').value + '&lt;Name</span>' +
+				var signature = '<span class="name text">' + document.getElementById('name').value + '</span>' +
 					'<span class="title text"><?php echo "$user->role_title" ?></span>' +
 					'<span class="department text">' + document.getElementById('ministry').value + '</span>' +
 					'<span class="contact text">';
 				var phone = document.getElementById('phone').value;
 				if (phone.trim() != ""){
-					signature += '<span class="tfc">T</span>' + phone;
+					signature += '<span class="tfc">T&nbsp;</span>' + phone + '&nbsp;';
 				}
 				var cell = document.getElementById('cell').value;
 				if (cell.trim() != ""){
-					signature += '<span class="tfc">C</span>' + cell;
+					signature += '<span class="tfc">C&nbsp;</span>' + cell + '&nbsp;';
 				}
 				var fax = document.getElementById('fax').value;
 				if (fax.trim() != ""){
-					signature += '<span class="tfc">F</span>' + fax;
+					signature += '<span class="tfc">F&nbsp;</span>' + fax + '&nbsp;';
 				}
-				signature += '<span class="email text">' + document.getElementById('email').value + '</span>';
+				signature += '</span>' +
+					'<span class="email text">' + document.getElementById('email').value + '</span>';
 				
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
@@ -196,7 +188,7 @@ get_header(); ?>
 			window.onload = refreshSignature;
 		</script>
 	</div></div>
-    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <div style='clear:both;'></div>
     <?php endwhile; endif; ?>
 </div>
 <!--content end-->
