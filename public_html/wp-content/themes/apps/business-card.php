@@ -169,15 +169,15 @@ get_header(); ?>
 					'<span class="contact text">';
 				var phone = document.getElementById('phone').value;
 				if (phone.trim() != ""){
-					signature += '<span class="tfc">T&nbsp;</span>' + phone + '&nbsp;';
+					signature += '<span class="tfc">T&nbsp;</span>' + phone + '&emsp;';
 				}
 				var cell = document.getElementById('cell').value;
 				if (cell.trim() != ""){
-					signature += '<span class="tfc">C&nbsp;</span>' + cell + '&nbsp;';
+					signature += '<span class="tfc">C&nbsp;</span>' + cell + '&emsp;';
 				}
 				var fax = document.getElementById('fax').value;
 				if (fax.trim() != ""){
-					signature += '<span class="tfc">F&nbsp;</span>' + fax + '&nbsp;';
+					signature += '<span class="tfc">F&nbsp;</span>' + fax + '&emsp;';
 				}
 				signature += '</span>' +
 					'<span class="email text">' + document.getElementById('email').value + '</span>';
