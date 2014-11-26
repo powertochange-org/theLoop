@@ -84,11 +84,9 @@
 						if (count($errors) == 0) {
 							// Create a time-limited signature token used to call the Yourls API
 							$timestamp = time();
-							$secret = '50bcdc72b4'; // Found on the "Tools" page of the Yourls admin site
-							$signature = md5( $timestamp . $secret );
+							$signature = md5( $timestamp . constant('YOURLS_SECRET') );
 
 							// Set up CURL to call the API
-							$api_url = "http://p2c.sh/yourls-api.php";
 							$post_fields = array(     // Data to POST
 									'action'    => 'shorturl',
 									'url'       => $longurl,
@@ -105,7 +103,7 @@
 								$post_fields['title'] = $title;
 							} 
 							$ch = curl_init();
-							curl_setopt($ch, CURLOPT_URL, $api_url);
+							curl_setopt($ch, CURLOPT_URL, constant('YOURLS_API_URL'));
 							curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
 							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
 							curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
