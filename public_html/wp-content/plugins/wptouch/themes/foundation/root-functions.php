@@ -1,6 +1,6 @@
 <?php
 
-define( 'FOUNDATION_VERSION', '2.1' );
+define( 'FOUNDATION_VERSION', '2.2' );
 
 define( 'FOUNDATION_DIR', WPTOUCH_DIR . '/themes/foundation' );
 define( 'FOUNDATION_URL', WPTOUCH_URL . '/themes/foundation' );
@@ -136,7 +136,7 @@ function foundation_setting_defaults( $settings ) {
 	$settings->webapp_mode_enabled = false;
 	$settings->webapp_enable_persistence = true;
 	$settings->webapp_show_notice = true;
-	$settings->webapp_notice_message = __( 'Install this Web-App on your [device]: tap [icon] then "Add to Home Screen"', 'wptouch-pro' );
+	$settings->webapp_notice_message = __( 'Install this Web-App on your homescreen: tap [icon] then "Add to Home Screen"', 'wptouch-pro' );
 	$settings->webapp_ignore_urls = '';
 	$settings->webapp_notice_expiry_days = 30;
 
@@ -144,6 +144,8 @@ function foundation_setting_defaults( $settings ) {
 	$settings->startup_screen_iphone_2g_3g = false;
 	$settings->startup_screen_iphone_4_4s = false;
 	$settings->startup_screen_iphone_5 = false;
+	$settings->startup_screen_iphone_6 = false;
+	$settings->startup_screen_iphone_6plus = false;
 	$settings->startup_screen_ipad_1_portrait = false;
 	$settings->startup_screen_ipad_1_landscape = false;
 	$settings->startup_screen_ipad_3_portrait = false;
@@ -202,6 +204,7 @@ function foundation_setting_defaults( $settings ) {
 	$settings->posts_per_page = '5';
 	$settings->excluded_categories = '';
 	$settings->excluded_tags = '';
+	$settings->allow_nested_comment_replies = false;
 	$settings->twitter_account = 'none';
 
 	// Pages
@@ -360,6 +363,14 @@ function foundation_render_theme_settings( $page_options ) {
 			WPTOUCH_SETTING_BASIC,
 			'1.0'
 		),
+		wptouch_add_setting(
+			'checkbox',
+			'allow_nested_comment_replies',
+			__( 'Allow nested comment replies from mobile visitors', 'wptouch-pro' ),
+			__( 'Will show a Reply link after each comment', 'wptouch-pro' ),
+			WPTOUCH_SETTING_BASIC,
+			'1.0'
+		),
 	);
 
 	$foundation_blog_settings = apply_filters( 'foundation_settings_blog', $foundation_blog_settings );
@@ -404,7 +415,7 @@ function foundation_render_theme_settings( $page_options ) {
 		__( 'Icon Title', 'wptouch-pro' ),
 		'admin_menu_homescreen_icons_options',
 		array(
-			wptouch_add_setting(
+			wptouch_add_pro_setting(
 				'text',
 				'homescreen_icon_title',
 				__( 'Icon title', 'wptouch-pro' ),
@@ -443,7 +454,7 @@ function foundation_render_theme_settings( $page_options ) {
 			wptouch_add_setting(
 				'image-upload',
 				'iphone_icon_retina',
-				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 120, 120 ),
+				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 180, 180 ),
 				'',
 				WPTOUCH_SETTING_BASIC,
 				'2.0'
@@ -558,14 +569,16 @@ function foundation_setup_homescreen_icons() {
 	$has_icon = $settings->android_others_icon;
 
 	if ( wptouch_is_device_real_ipad() ) {
-		// Default (if no icon added in admin, or icon isn't formatted correctly, and as a catch-all)
-		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
 		// iPad home screen icons
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 152, 152, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 144, 144, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->ipad_icon_retina, 57, 57, 1 );
+
+		// Default (if no icon added in admin, or icon isn't formatted correctly, and as a catch-all)
+		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
 	} else {
 		// iPhone / Android home screen icons
+		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 180, 180, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 120, 120, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 114, 114, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->android_others_icon, 57, 57, 1 );
@@ -736,7 +749,7 @@ function foundation_body_classes( $classes ) {
 		$classes[] = 'rtl';
 	}
 
-	if ( wptouch_fdn_iOS_7() ) {
+	if ( wptouch_fdn_iOS_7() || wptouch_fdn_iOS_8() ) {
 		$classes[] = 'ios7';
 	}
 
@@ -798,22 +811,7 @@ function wptouch_fdn_iOS_7() {
 If we're on iOS8
 */
 function wptouch_fdn_iOS_8() {
-	if ( strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 8_' ) ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-/*
-If we're on iOS5+
-
-We'll setup media queries for client side detection of
-css features for fixed positioning ( -webkit-overflow-scrolling ),
-but if server-side detection is needed, it's here  :)
-*/
-function wptouch_fdn_iOS_5_or_higher() {
-	if ( strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 5_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 6_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 7_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 8_' ) ) {
+	if ( strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 10_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 8_' ) ) {
 		return true;
 	} else {
 		return false;
@@ -954,7 +952,7 @@ function wptouch_fdn_archive_load_more_text() {
 	}
 }
 
-function wptouch_fdn_ordered_cat_list( $num, $include_count = true, $taxonomy = 'category'  ) {
+function wptouch_fdn_ordered_cat_list( $num, $include_count = true, $taxonomy = 'category', $opening_tag = '<ul>', $closing_tag = '</ul>' ) {
 	global $wpdb;
 
 	$settings = wptouch_get_settings( 'foundation' );
@@ -969,7 +967,7 @@ function wptouch_fdn_ordered_cat_list( $num, $include_count = true, $taxonomy = 
 		}
 	}
 
-	echo '<ul>';
+	echo $opening_tag;
 	$sql = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}term_taxonomy INNER JOIN {$wpdb->prefix}terms ON {$wpdb->prefix}term_taxonomy.term_id = {$wpdb->prefix}terms.term_id WHERE taxonomy = '{$taxonomy}' AND {$wpdb->prefix}term_taxonomy.term_id NOT IN ($excluded_cats) AND count >= 1 ORDER BY count DESC LIMIT 0, $num");
 
 	if ( $sql ) {
@@ -992,7 +990,7 @@ function wptouch_fdn_ordered_cat_list( $num, $include_count = true, $taxonomy = 
 			}
 		}
 	}
-	echo '</ul>';
+	echo $closing_tag;
 }
 
 function wptouch_fdn_ordered_tag_list( $num ) {
@@ -1026,6 +1024,8 @@ function wptouch_fdn_ordered_tag_list( $num ) {
 
 function wptouch_fdn_display_comment( $comment, $args, $depth ) {
 	$GLOBALS[ 'comment' ] = $comment;
+	$GLOBALS[ 'comment_args' ] = $args;
+	$GLOBALS[ 'comment_depth' ] = $depth;
 	extract( $args, EXTR_SKIP );
 
 	locate_template( 'one-comment.php', true, false );

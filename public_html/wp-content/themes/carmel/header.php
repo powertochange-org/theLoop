@@ -40,21 +40,7 @@ if (get_theme_mod('survey_active')) {
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
         <?php wp_head(); ?> 
          <script type='text/javascript'>
-			function popUpShow(){
-				$("#popUp").show();
-				var e = document.getElementById('popUpButton');
-				e.style.background = '#f4f4f4';
-				e.style.border = '1px solid #d6d7d4';
-				e.style.borderBottom = '1px solid #f4f4f4';
-			}
-			
-			function popUpHide(){
-				$("#popUp").hide();
-				var e = document.getElementById('popUpButton');
-				e.style.background = '#f58220';
-				e.style.border = '1px solid #eb8528';
-			}
-            
+           
             // Helper function to hide the survey
             function dismissSurvey() {
                 $("#survey").hide();
@@ -75,9 +61,15 @@ if (get_theme_mod('survey_active')) {
             }
 			
 			
-      /* todo  jQuery(document).ready(function(){
-        		
-        });*/
+        jQuery(document).ready(function(){
+          $.ajax({
+            type: "POST",
+            url: "https://apps.powertochange.org/DesktopModules/AgapeConnect/StaffRmb/WebService.asmx/getStaffAppsButton",
+            success: function (data) {
+                $('#staffAppButtonPlaceholder').replaceWith(data);
+            }
+          });           
+        });
         </script>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -96,43 +88,7 @@ if (get_theme_mod('survey_active')) {
 			<div class='inner' style='position:relative;'>
 				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
 				<a href='/'><img style='position:relative;left:37px;top:-5px' class='header-logo' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
-				
-				<a id='popUpButton' class='button related' onmouseout='popUpHide();' onmouseover='popUpShow();'>Staff Apps</a>
-				<div id='popUp' onmouseout='popUpHide();' onmouseover='popUpShow();' style='display:none;position:absolute;background-color:#f4f4f4;padding:10px 40px;right:10px;top:69px;z-index:1;border:1px solid #d6d7d4;'>
-					<center><ul class='popupMenu'>
-						<?php //may turn into wordpress menu */ ?>
-						<table>
-							<tr>
-								<td style="border:0;">
-									<a href='https://absences.powertochange.org'>
-									<img src='/wp-content/images/Absence-Tracker-Icon.png' alt='Absence Tracker' /></a>
-								</td>
-								<td style="border:0;">
-									<a href='/reports/'>
-									<img src='/wp-content/images/Reports-Icon.png' alt='Reports' /></a>
-								</td>
-								<td style="border:0;">
-									<a href='/wp-admin/admin.php?page=s2'>
-									<img src='/wp-content/images/My-Settings-Icon.png' alt='My Settings' /></a>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:0;">
-									<a href='/staff-directory/'>
-									<img src='/wp-content/images/Staff-Directory-Icon.png' alt='Staff Directory' /></a>
-								</td>
-								<td style="border:0;">
-									<a href='mailto:helpdesk@powertochange.org'>
-									<img src='/wp-content/images/HelpDesk-Icon.png' alt='Help Desk' /></a>
-								</td>
-								<td style="border:0;">
-									<a href='https://wiki.powertochange.org/help'>
-									<img src='/wp-content/images/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' /></a>
-								</td>
-							</tr>
-						</table>
-					</ul></center>
-				</div>
+				<div id="staffAppButtonPlaceholder"></div>
 			</div>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>

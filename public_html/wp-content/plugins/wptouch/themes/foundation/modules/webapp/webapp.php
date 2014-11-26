@@ -41,7 +41,7 @@ function foundation_webapp_settings( $page_options ) {
 		'notice-message',
 		array(
 			wptouch_add_pro_setting( 'checkbox', 'webapp_show_notice', __( 'Show a notice message for iPhone, iPod touch & iPad visitors about my Web-App', 'wptouch-pro' ), __( 'WPtouch shows a notice bubble on 1st visit letting users know about your Web-App enabled website on iOS devices.', 'wptouch-pro' ), WPTOUCH_SETTING_BASIC, '1.0' ),
-			wptouch_add_pro_setting( 'textarea', 'webapp_notice_message', __( 'Notice message contents', 'wptouch-pro' ), __( '[device] and [icon] are dynamic and used to determine the device and iOS version. Do not remove these from your message.', 'wptouch-pro' ), WPTOUCH_SETTING_ADVANCED, '1.0' ),
+			wptouch_add_pro_setting( 'textarea', 'webapp_notice_message', __( 'Notice message contents', 'wptouch-pro' ), __( '[icon] is used to display the appropriate bookmark icon for your device. Do not remove it from your message.', 'wptouch-pro' ), WPTOUCH_SETTING_ADVANCED, '1.0' ),
 			wptouch_add_pro_setting(
 				'list',
 				'webapp_notice_expiry_days',
@@ -107,6 +107,43 @@ function foundation_webapp_settings( $page_options ) {
 				'image-upload',
 				'startup_screen_iphone_5',
 				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 640,1096 ),
+				'',
+				WPTOUCH_SETTING_BASIC,
+				'1.0'
+			),
+		),
+		$page_options,
+		FOUNDATION_SETTING_DOMAIN
+	);
+
+
+	wptouch_add_page_section(
+		FOUNDATION_PAGE_WEB_APP,
+		__( 'iPhone 6 Startup Screen', 'wptouch-pro' ),
+		'iphone-6-startup-screen',
+		array(
+			wptouch_add_pro_setting(
+				'image-upload',
+				'startup_screen_iphone_6',
+				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 750,1294 ),
+				'',
+				WPTOUCH_SETTING_BASIC,
+				'1.0'
+			),
+		),
+		$page_options,
+		FOUNDATION_SETTING_DOMAIN
+	);
+
+	wptouch_add_page_section(
+		FOUNDATION_PAGE_WEB_APP,
+		__( 'iPhone 6+ Startup Screen', 'wptouch-pro' ),
+		'iphone-6plus-startup-screen',
+		array(
+			wptouch_add_pro_setting(
+				'image-upload',
+				'startup_screen_iphone_6plus',
+				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 1242,2148 ),
 				'',
 				WPTOUCH_SETTING_BASIC,
 				'1.0'

@@ -1,3 +1,22 @@
+= 10.17.2 =
+
+* Disconnect/Delete Readygraph Link fix
+* Deactivation confirmation message
+
+= 10.17.1 =
+
+* link fix
+
+= 10.17 =
+
+* Bug Fixes
+
+= 10.16 =
+
+* XSS security fix
+* ReadyGraph Premium Features
+* UI Tweaks
+
 = 10.15 =
 
 * Bug Fix - disable popup

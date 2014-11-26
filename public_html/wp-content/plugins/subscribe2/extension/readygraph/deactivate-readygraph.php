@@ -158,42 +158,47 @@ If you have questions or concerns contact us anytime at <a href="mailto:info@rea
 		</div>
 		<div style="clear: both;"></div>
 	</div>
-	<!-- write menu code-->
-	<div class="readygraph-menu">
-	<div class="menu-tabs"><h4>Grow Users</h4>
-		<ul>
-			<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=signup-popup">Signup Popup</a></li>
-			<li><a href="https://readygraph.com/application/insights/" target="_blank">User Statistics</a></li>
-			<li><a href="#"></a></li>
-		</ul>
-	</div>
-	<div class="menu-tabs"><h4>Email Users</h4>
-		<ul>
-			<li><a href="https://readygraph.com/application/customize/settings/email/welcome/" target="_blank">Retention Email</a></li>
-			<li><a href="https://readygraph.com/application/customize/settings/email/invitation/" target="_blank">Invitation Email</a></li>
-			<li><a href="http://readygraph.com/application/insights/" target="_blank">Custom Email</a></li>
-		</ul>
-	</div>
-	<div class="menu-tabs"><h4>Engage Users</h4>
-		<ul>
-			<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=social-feed">Social Feed</a></li>
-			<li><a href="#">Social Followers</a></li>
-			<li><a href="#">Feedback Survey</a></li>
-		</ul>
-	</div>
-	<div class="menu-tabs"><h4>Basic Settings</h4>
-		<ul>
-			<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=site-profile">Site Profile</a></li>
-			<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=feature-settings">Feature Settings</a></li>
-			
-		</ul>
-	</div>
-		<div class="menu-tabs" style="float:right"><h4>&nbsp;</h4>
+		<!-- write menu code-->
+
+	<div class="readygraph-nav-menu">
+	<ul><li>Grow Users
+	  <ul>
+		<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=signup-popup">Signup Popup</a></li>
+		<li><a href="https://readygraph.com/application/insights/" target="_blank">User Statistics</a></li>
+		<li><a href="#"></a></li>
+	  </ul>
+	</li>
+  <li>Email Users
+	<ul>
+		<li><a href="https://readygraph.com/application/customize/settings/email/welcome/" target="_blank">Retention Email</a></li>
+		<li><a href="https://readygraph.com/application/customize/settings/email/invitation/" target="_blank">Invitation Email</a></li>
+		<li><a href="http://readygraph.com/application/insights/" target="_blank">Custom Email</a></li>
+    </ul>
+  </li>
+  <li>
+    Engage Users
+    <ul>
+		<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=social-feed">Social Feed</a></li>
+		<li><a href="#">Social Followers</a></li>
+		<li><a href="#">Feedback Survey</a></li>
+    </ul>
+  </li>
+  <li>Basic Settings
+    <ul>
+		<li><a href="#">Site Profile</a></li>
+		<li><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=feature-settings">Feature Settings</a></li>
+	</ul>
+  </li>
+</ul>
+	<div class="btn-group" style="margin: 8px 10px 0 10px;">
 		<p><a href="mailto:info@readygraph.com" style="color: #b1c1ca" >Help <img src="<?php echo plugin_dir_url( __FILE__ );?>assets/9.png"/></a></p>
+	</div>
+	<div class="btn-group" style="margin: 8px 10px 0 10px;">
 		<p>
 		<a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&ac=faq" style="color: #b1c1ca" >FAQ  <img src="<?php echo plugin_dir_url( __FILE__ );?>assets/10.png" /></a></p>
-			
-		</ul>
+	</div>
+	<div class="btn-group" style="">
+		<p><a href="https://readygraph.com/accounts/payment/?email=<?php echo get_option('readygraph_email', '') ?>" target="_blank" style="color: #b1c1ca" ><img src="<?php echo plugin_dir_url( __FILE__ );?>assets/go-premium.png" height="40px" style="margin:5px" /></a></p>
 	</div>
 	</div>
 	<div style="margin: 0 5%">
@@ -209,12 +214,12 @@ If you have questions or concerns contact us anytime at <a href="mailto:info@rea
 			
 			<h3>I'm sure. What do I do now?</h3>
 			<p>If you are sure you want to deactivate Readygraph, you have two options: </p>
-			<p>Deactivate. This turns ReadyGraph off, but you still have the abiity to reactivate Readygraph in the future should change your mind. <br><a href="#">Deactivate ReadyGraph</a></p>
-			<p>Delete. This will permanently removes all code and files associated with ReadyGraph from your website.<br><a href="#">Permanently Delete ReadyGraph</a></p>
+			<p>Deactivate. This turns ReadyGraph off, but you still have the abiity to reactivate Readygraph in the future should change your mind. <br><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&action=<?php echo base64_encode("changeaccount");?>">Deactivate ReadyGraph</a></p>
+			<p>Delete. This will permanently removes all code and files associated with ReadyGraph from your website.<br><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>&action=<?php echo base64_encode("deleteaccount");?>">Permanently Delete ReadyGraph</a></p>
 			<p>&nbsp;</p>
 			<p>Thanks a lot and good luck with your site!</p>
 			<p>&nbsp;</p>
-			<p><a href="#">Nevermind, I want to keep growing my audience with ReadyGraph</a></p>
+			<p><a href="<?php $current_url = explode("&", $_SERVER['REQUEST_URI']); echo $current_url[0];?>">Nevermind, I want to keep growing my audience with ReadyGraph</a></p>
 	</div>
 </div>
 </form>

@@ -544,8 +544,9 @@ footer .copy{
 
 #main-content.form .post div.nav-option > a {
     display: table;
-    height: inherit;
+    height: 0px;
     width: inherit;
+	margin-top: 34px;
 }
 
 #main-content.form .post div.nav-option > a > * {

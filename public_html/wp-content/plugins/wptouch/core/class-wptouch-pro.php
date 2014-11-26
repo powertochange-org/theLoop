@@ -170,6 +170,9 @@ class WPtouchProThree {
 			add_action( 'wptouch_ajax_desktop_switch', array( &$this, 'handle_desktop_switch_ajax' ) );
 
 			require_once( WPTOUCH_DIR . '/core/cloud-migrate.php' );
+
+		} else {
+			add_action( 'wp', array( &$this, 'set_cache_cookie' ) );
 		}
 
 		// Set up debug log
@@ -202,8 +205,6 @@ class WPtouchProThree {
 
 		// This is where the main user-agent matching happens to determine module or non-mobile
 		$this->analyze_user_agent_string();
-
-		$this->set_cache_cookie();
 
 		// We have a mobile device, so WPtouch Pro could potentially cache it or allow another app to cache
 		if ( $this->is_mobile_device ) {
@@ -595,7 +596,8 @@ class WPtouchProThree {
 				'cloud_download_fail' => __( 'The item failed to download for this reason: %reason%', 'wptouch-pro' ),
 				'remove_license' => __( 'You are about to reset your license information. Proceed?', 'wptouch-pro' ),
 				'upload_complete' => __( 'Upload Complete!', 'wptouch-pro' ),
-				'upload_invalid' => __( 'Upload Failed: Not a valid image.', 'wptouch-pro' )
+				'upload_invalid' => __( 'Upload Failed: Not a valid image.', 'wptouch-pro' ),
+				'open_theme_demo' => __( 'Click to view theme demo', 'wptouch-pro' ),
 			);
 
 			wp_enqueue_script( 'jquery-plugins', WPTOUCH_URL . '/admin/js/wptouch-admin-plugins.js', 'jquery', md5( WPTOUCH_VERSION ) );
@@ -691,14 +693,6 @@ class WPtouchProThree {
 			$this->redirect_to_page( $this->get['redirect'] );
 		}
 
-		// Mobile support is only for clients, not the admin
-		if ( is_admin() && !isset( $this->post[ 'wptouch_switch_location' ] ) ) {
-			$this->is_mobile_device = false;
-			$this->showing_mobile_theme = false;
-
-			return;
-		}
-
 		$settings = $this->get_settings();
 
 		// Settings are reloaded inside this function since themes can augment the user-agent data
@@ -731,10 +725,36 @@ class WPtouchProThree {
 		// Filter to programmatically disable WPtouch Pro on a certain page
 		$this->showing_mobile_theme = apply_filters( 'wptouch_should_show_mobile_theme', $this->showing_mobile_theme );
 
+		// Mobile support is only for clients, not the admin
+		$force_mobile_ajax = false;
+		if ( apply_filters( 'wptouch_force_mobile_ajax', false ) && $this->is_mobile_device && $this->showing_mobile_theme ) {
+			$force_mobile_ajax = true;
+		}
+
+		if ( is_admin() && !$force_mobile_ajax && !isset( $this->post[ 'wptouch_switch_location' ] ) ) {
+			$this->is_mobile_device = false;
+			$this->showing_mobile_theme = false;
+			return;
+		}
+
 		if ( !$this->showing_mobile_theme ) {
 			if ( $settings->switch_link_method == 'automatic' || $settings->switch_link_method == 'ajax' ) {
 				add_action( 'wp_footer', array( &$this, 'show_desktop_switch_link' ) );
 			}
+		}
+
+		add_filter( 'response_modify_cache_key', array( &$this, 'modify_response_key' ) );
+	}
+
+	function modify_response_key( $current_key ) {
+		if ( $this->is_mobile_device ) {
+			if ( $this->showing_mobile_theme ) {
+				return md5( $current_key . 'MobileOnMobile' );
+			} else {
+				return md5( $current_key . 'DesktopOnMobile' );
+			}
+		} else {
+			return $current_key;
 		}
 	}
 
@@ -767,6 +787,8 @@ class WPtouchProThree {
 		add_filter( 'template_directory_uri', array( &$this, 'get_template_directory_uri' ) );
 		add_filter( 'stylesheet_directory', array( &$this, 'get_stylesheet_directory' ) );
 		add_filter( 'stylesheet_directory_uri', array( &$this, 'get_stylesheet_directory_uri' ) );
+
+		add_filter( 'wp_get_attachment_url', array( &$this, 'https_for_ssl' ) );
 
 		add_action( 'template_redirect', array( &$this, 'intercept_template' ), 1 );
 
@@ -835,29 +857,13 @@ class WPtouchProThree {
 	function handle_upload_file() {
 		$this->cleanup_post_and_get();
 
-		$image_mime_types = array( 'image/gif', 'image/jpeg', 'image/jpg', 'image/png', 'image/pjpeg', 'image/svg+xml' );
-		$image_extensions = array( 'png', 'jpg', 'gif', 'svg' );
-
 		header( 'HTTP/1.1 200 OK' );
 		$nonce = $this->post[ 'wp_nonce' ];
 		if( wp_verify_nonce( $nonce, 'wptouch_admin' ) && current_user_can( 'manage_options' ) ) {
-			WPTOUCH_DEBUG( WPTOUCH_INFO, 'MIME type: ' . mime_content_type( $_FILES[ 'myfile' ][ 'tmp_name' ] ) );
-
-			if ( mime_content_type( $_FILES[ 'myfile' ][ 'tmp_name' ] ) != '' ) {
-				$validate_mime = true;
-				$validate_ext = false;
-			} else {
-				$validate_mime = false;
-				$validate_ext = true;
-			}
-
 			switch( $this->post[ 'file_type'] ) {
 				case 'homescreen_image':
 					WPTOUCH_DEBUG( WPTOUCH_INFO, 'Uploading new HOMESCREEN image' );
-					if (
-						( $validate_mime && in_array( mime_content_type( $_FILES[ 'myfile' ][ 'tmp_name' ] ), $image_mime_types ) ) ||
-						( $validate_ext && in_array( strtolower( pathinfo( $_FILES[ 'myfile' ][ 'name' ], PATHINFO_EXTENSION ) ), $image_extensions ) )
-					) {
+					if ( $this->is_image_file( $_FILES[ 'myfile' ][ 'name' ] ) ){
 						// Move uploaded file
 						if ( isset( $_FILES[ 'myfile' ] ) ) {
 							$temp_name = $_FILES[ 'myfile' ][ 'tmp_name' ];
@@ -883,10 +889,7 @@ class WPtouchProThree {
 					}
 					break;
 				case 'custom_image':
-					if (
-						( $validate_mime && in_array( mime_content_type( $_FILES[ 'myfile' ][ 'tmp_name' ] ), $image_mime_types ) ) ||
-						( $validate_ext && in_array( strtolower( pathinfo( $_FILES[ 'myfile' ][ 'name' ], PATHINFO_EXTENSION ) ), $image_extensions ) )
-					) {
+					if ( $this->is_image_file( $_FILES[ 'myfile' ][ 'name' ] ) ){
 						WPTOUCH_DEBUG( WPTOUCH_INFO, 'Uploading new CUSTOM image' );
 						if ( isset( $_FILES[ 'myfile' ] ) ) {
 							$temp_name = $_FILES[ 'myfile' ][ 'tmp_name' ];
@@ -1614,7 +1617,7 @@ class WPtouchProThree {
 
 	function is_image_file( $file_name ) {
 		$file_name = strtolower( $file_name );
-		$allowable_extensions = apply_filters( 'wptouch_image_file_types', array( '.png', '.jpg', '.gif', '.jpeg' ) );
+		$allowable_extensions = apply_filters( 'wptouch_image_file_types', array( '.png', '.jpg', '.gif', '.jpeg', '.svg' ) );
 
 		$is_image = false;
 		foreach( $allowable_extensions as $ext ) {
@@ -2447,6 +2450,10 @@ class WPtouchProThree {
 		die;
 	}
 
+	function https_for_ssl( $content ) {
+		return wptouch_check_url_ssl( $content );
+	}
+
 	function handle_desktop_footer() {
 		if ( !is_feed() ) {
 			if ( defined( 'WPTOUCH_IS_FREE' ) ) {
@@ -2542,7 +2549,7 @@ class WPtouchProThree {
 		require_once( WPTOUCH_DIR . '/core/admin-settings.php' );
 		wptouch_settings_process( $this );
 
-		//$this->delete_theme_add_on_cache();
+		$this->delete_theme_add_on_cache();
 
 		$new_settings = wptouch_get_settings();
 
