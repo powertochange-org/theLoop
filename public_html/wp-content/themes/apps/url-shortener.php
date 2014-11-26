@@ -147,13 +147,16 @@
 					}
 					?>					
 					
+					<div class="form">
 					<form name="shortener" method="POST">
-					  Long URL:<br />
+					  <label for="longurl">Long URL:</label>
 					  <input type="text" name="longurl" size="50" value="<?php if (isset($longurl)) { print $longurl; } ?>" /> <br />
-					  Short URL:<br />
+					  
+					  <label for="keyword">Short URL:</label>
 					  p2c.sh/<input type="text" name="keyword" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (leave blank to have a short link auto-generated) <br />
 					  <input type="submit" name="submit" value="Create Short Link" />
 					</form>
+					</div>
 					
 					<?php
 					
