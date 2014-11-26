@@ -44,6 +44,10 @@ function wptouch_check_api() {
 
 	$current_time = time();
 	if ( $current_time > $bnc_settings->next_update_check_time ) {
+		// Update next check time
+		$bnc_settings->next_update_check_time = $current_time + WPTOUCH_API_CHECK_INTERVAL;
+		$bnc_settings->save();	
+
 		$result = $wptouch_pro->bnc_api->check_api();
 
 		if ( isset( $result[ 'has_valid_license' ] ) ) {
@@ -81,9 +85,7 @@ function wptouch_check_api() {
 			}
 		} 
 
-		// Update next check time
-		$bnc_settings->next_update_check_time = $current_time + WPTOUCH_API_CHECK_INTERVAL;
-		$bnc_settings->save();		
+		$bnc_settings->save();	
 	}
 
 	// We've changed license states here, so clear our theme and add-on transients

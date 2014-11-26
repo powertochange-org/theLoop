@@ -8,8 +8,8 @@
 	<div style='position:relative; top:-43px;'>
 		<?php 
 			$folder = '/wp-content/uploads/slides/';
-			$pictures = array($folder.'SES_Banner_Loop.jpg', $folder.'RBC.jpg', $folder.'WDOP.jpg', $folder.'RRSP.jpg', $folder.'Branding.jpg');
-			$links    = array('/training-development/staff-engagement/staff-engagement-survey-2014/', '/corporate-discounts/discounts-across-canada/rbc-group-banking/', '/worldwide-day-of-prayer/', '/wp-content/uploads/2013/06/Personality-Questionnaire.pdf', '/forms-information/ptc-branding-conference-resources/');
+			$pictures = array($folder.'StaffReview.jpg', $folder.'Christmas.jpg', $folder.'ReimbursementAd.jpg', $folder.'westLife.jpg', $folder.'SES_Banner_Loop.jpg',  $folder.'JobBoardBanner.jpg', $folder.'WellnessNews.jpg');
+			$links    = array('/training-development/position-review/', '/forms-information/ptc-branding-conference-resources/christmas-promotional-material-2/','https://apps.powertochange.org/Reimbursements','/all-staff/take-the-personal-health-assessment/', '/training-development/staff-engagement/staff-engagement-survey-2014/', '/training-development/job-board/', '/training-development/healthwellness/wellness-news/');
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
@@ -140,6 +140,8 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
+					<br>
+					<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
 				</td>
 			</tr>
 			<tr>
@@ -182,14 +184,6 @@
 							<span class="homepage"><?php the_excerpt(); ?></span>
 							<?php
 							endwhile; endif; ?>
-				</td>
-			</tr>
-			<tr>
-				<td  style="border:0;">
-					<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
-				</td>
-				<td  style="border:0;"></td>
-				<td  style="border:0;">
 					<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 				</td>
 			</tr>

@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WPtouch Mobile Plugin package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPtouch Mobile Plugin 3.4.8\n"
+"Project-Id-Version: WPtouch Mobile Plugin 3.5.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wptouch\n"
-"POT-Creation-Date: 2014-08-29 14:55:35+00:00\n"
+"POT-Creation-Date: 2014-10-10 14:28:19+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -48,13 +48,13 @@ msgstr ""
 msgid "No notifications"
 msgstr ""
 
-#: admin/html/plugin-area.php:9
+#: admin/html/plugin-area.php:10
 msgid ""
 "A new product version (%s) is available. %sRenew your license%s to download "
 "this update and receive additional product support."
 msgstr ""
 
-#: admin/html/plugin-area.php:11
+#: admin/html/plugin-area.php:12
 msgid ""
 "A new product version (%s) is available. Please %sactivate your license%s, "
 "or %spurchase a new license%s to enable updates and full product support."
@@ -90,7 +90,7 @@ msgstr ""
 
 #: admin/pages/custom/wptouch-admin-license.php:25
 #: admin/settings/html/extension-browser-item.php:89
-#: admin/settings/html/theme-browser-item.php:129
+#: admin/settings/html/theme-browser-item.php:136
 msgid "Activate"
 msgstr ""
 
@@ -470,6 +470,7 @@ msgstr ""
 
 #: admin/pages/wptouch-admin-general-settings.php:411
 #: admin/settings/html/button.php:5 admin/settings/html/checkbox.php:6
+#: admin/settings/html/checklist.php:13
 #: admin/settings/html/custom-latest-posts.php:4
 #: admin/settings/html/list.php:16 admin/settings/html/numeric.php:12
 #: admin/settings/html/post_type.php:13 admin/settings/html/radiolist.php:13
@@ -550,6 +551,7 @@ msgid "Restore Backup File"
 msgstr ""
 
 #: admin/settings/html/button.php:6 admin/settings/html/checkbox.php:7
+#: admin/settings/html/checklist.php:15
 #: admin/settings/html/custom-latest-posts.php:8
 #: admin/settings/html/list.php:20 admin/settings/html/numeric.php:16
 #: admin/settings/html/post_type.php:14 admin/settings/html/radiolist.php:15
@@ -579,7 +581,7 @@ msgstr ""
 
 #: admin/settings/html/custom_icon_management.php:12
 #: admin/settings/html/image-upload.php:13
-#: admin/settings/html/theme-browser-item.php:137
+#: admin/settings/html/theme-browser-item.php:144
 msgid "Delete"
 msgstr ""
 
@@ -588,7 +590,7 @@ msgid "Upload Icon"
 msgstr ""
 
 #: admin/settings/html/custom_icon_upload.php:4
-#: admin/settings/html/image-upload.php:15 core/class-wptouch-pro.php:597
+#: admin/settings/html/image-upload.php:15 core/class-wptouch-pro.php:598
 msgid "Upload Complete!"
 msgstr ""
 
@@ -605,7 +607,7 @@ msgid "Your Server Configuration"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:37
-#: admin/settings/html/theme-browser-item.php:49
+#: admin/settings/html/theme-browser-item.php:56
 msgid "Updating..."
 msgstr ""
 
@@ -614,14 +616,14 @@ msgid "Upgrade to %s"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:39
-#: admin/settings/html/theme-browser-item.php:54
+#: admin/settings/html/theme-browser-item.php:61
 msgid "Download %s Update"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:47
 #: admin/settings/html/installed_icon_sets_ajax.php:8
 #: admin/settings/html/installed_icon_sets_ajax.php:20
-#: admin/settings/html/theme-browser-item.php:68
+#: admin/settings/html/theme-browser-item.php:75
 msgid "by %s"
 msgstr ""
 
@@ -630,48 +632,48 @@ msgid "Extension location: %s"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:54
-#: admin/settings/html/theme-browser-item.php:76
+#: admin/settings/html/theme-browser-item.php:83
 msgid "Relative to your WordPress wp-content directory."
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:63
-#: admin/settings/html/theme-browser-item.php:88
+#: admin/settings/html/theme-browser-item.php:95
 msgid "Available in WPtouch Pro"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:67
-#: admin/settings/html/theme-browser-item.php:92
+#: admin/settings/html/theme-browser-item.php:99
 msgid "More Info"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:70
-#: admin/settings/html/theme-browser-item.php:96
+#: admin/settings/html/theme-browser-item.php:103
 msgid "Upgrade License"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:72
-#: admin/settings/html/theme-browser-item.php:98
+#: admin/settings/html/theme-browser-item.php:105
 msgid "Get License"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:80
-#: admin/settings/html/theme-browser-item.php:111
+#: admin/settings/html/theme-browser-item.php:118
 msgid "Downloading..."
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:80
 #: admin/settings/html/installed_icon_sets_ajax.php:21
-#: admin/settings/html/theme-browser-item.php:112
+#: admin/settings/html/theme-browser-item.php:119
 msgid "Install"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:82
-#: admin/settings/html/theme-browser-item.php:115
+#: admin/settings/html/theme-browser-item.php:122
 msgid "Download"
 msgstr ""
 
 #: admin/settings/html/extension-browser-item.php:92
-#: admin/settings/html/theme-browser-item.php:125
+#: admin/settings/html/theme-browser-item.php:132
 msgid "Setup"
 msgstr ""
 
@@ -759,8 +761,8 @@ msgid ""
 msgstr ""
 
 #: admin/settings/html/installed_icon_sets_ajax.php:4
-#: core/class-wptouch-pro.php:1593 core/class-wptouch-pro.php:1594
-#: core/config.php:53
+#: core/class-wptouch-pro.php:1596 core/class-wptouch-pro.php:1597
+#: core/config.php:54
 msgid "Custom Icons"
 msgstr ""
 
@@ -777,7 +779,7 @@ msgstr ""
 msgid "Unable to Install"
 msgstr ""
 
-#: admin/settings/html/list.php:24
+#: admin/settings/html/list.php:24 include/html/pro.php:1
 msgid "Pro"
 msgstr ""
 
@@ -812,32 +814,32 @@ msgid ""
 "Please paste your encoded settings below and save to restore your settings."
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:6
 #: admin/settings/html/theme-browser-item.php:10
+#: admin/settings/html/theme-browser-item.php:16
 msgid "Click to view screenshots"
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:51
+#: admin/settings/html/theme-browser-item.php:58
 msgid "Update to %s"
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:63
+#: admin/settings/html/theme-browser-item.php:70
 msgid "This theme supports %s devices"
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:75
+#: admin/settings/html/theme-browser-item.php:82
 msgid "Theme location: %s"
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:103
+#: admin/settings/html/theme-browser-item.php:110
 msgid "Buy Now"
 msgstr ""
 
-#: admin/settings/html/theme-browser-item.php:133
+#: admin/settings/html/theme-browser-item.php:140
 msgid "Copy"
 msgstr ""
 
-#: admin/settings/html/theme-browser.php:14
+#: admin/settings/html/theme-browser.php:22
 msgid "Loading Cloud Themes"
 msgstr ""
 
@@ -861,35 +863,35 @@ msgstr ""
 msgid "Look at Pro Features"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:14
+#: admin/settings/html/touchboard.php:16
 msgid "Product Support"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:16
+#: admin/settings/html/touchboard.php:17
 msgid "Product Knowledgebase"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:17
+#: admin/settings/html/touchboard.php:18
 msgid "Manage Account"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:18
+#: admin/settings/html/touchboard.php:19
 msgid "Manage License"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:20
+#: admin/settings/html/touchboard.php:21
 msgid "WPtouch User Guide"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:27
+#: admin/settings/html/touchboard.php:28
 msgid "WPtouch News"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:28
+#: admin/settings/html/touchboard.php:29
 msgid "Read More"
 msgstr ""
 
-#: admin/settings/html/touchboard.php:46
+#: admin/settings/html/touchboard.php:47
 msgid "%s Change Log"
 msgstr ""
 
@@ -964,7 +966,7 @@ msgstr ""
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: core/admin-page-templates.php:16
+#: core/admin-page-templates.php:17
 msgid "Mobile Page Template"
 msgstr ""
 
@@ -998,82 +1000,86 @@ msgstr ""
 msgid "Reset Settings"
 msgstr ""
 
-#: core/class-wptouch-pro.php:353
+#: core/class-wptouch-pro.php:354
 msgid ""
 "Automatic theme migration from uploads/wptouch-data directory failed. Please "
 "manually move these files to wp-content/wptouch-data, or %scontact support%s "
 "to address this issue."
 msgstr ""
 
-#: core/class-wptouch-pro.php:373
+#: core/class-wptouch-pro.php:374
 msgid ""
 "We were unable to install your WPtouch theme from the Cloud. Please visit %"
 "sthis article%s for more information."
 msgstr ""
 
-#: core/class-wptouch-pro.php:377
+#: core/class-wptouch-pro.php:378
 msgid ""
 "Your server setup is preventing WPtouch from installing your active theme "
 "from the Cloud. Please visit %sthis article%s for more information on how to "
 "fix it."
 msgstr ""
 
-#: core/class-wptouch-pro.php:589
+#: core/class-wptouch-pro.php:590
 msgid "Unsupported Browser"
 msgstr ""
 
-#: core/class-wptouch-pro.php:590
+#: core/class-wptouch-pro.php:591
 msgid "Theme Preview requires Chrome or Safari."
 msgstr ""
 
-#: core/class-wptouch-pro.php:591
+#: core/class-wptouch-pro.php:592
 msgid ""
 "This will reset all WPtouch Pro settings.\n"
 "Are you sure?"
 msgstr ""
 
-#: core/class-wptouch-pro.php:592
+#: core/class-wptouch-pro.php:593
 msgid ""
 "This will reset all WPtouch Pro menu and icon settings.\n"
 "Are you sure?"
 msgstr ""
 
-#: core/class-wptouch-pro.php:593
+#: core/class-wptouch-pro.php:594
 msgid "Offline"
 msgstr ""
 
-#: core/class-wptouch-pro.php:594
+#: core/class-wptouch-pro.php:595
 msgid ""
 "You appear to be offline. Connect to the internet to see available "
 "BraveNewCloud items."
 msgstr ""
 
-#: core/class-wptouch-pro.php:595
+#: core/class-wptouch-pro.php:596
 msgid "The item failed to download for this reason: %reason%"
 msgstr ""
 
-#: core/class-wptouch-pro.php:596
+#: core/class-wptouch-pro.php:597
 msgid "You are about to reset your license information. Proceed?"
 msgstr ""
 
-#: core/class-wptouch-pro.php:598
+#: core/class-wptouch-pro.php:599
 msgid "Upload Failed: Not a valid image."
 msgstr ""
 
-#: core/class-wptouch-pro.php:1164
+#: core/class-wptouch-pro.php:600
+msgid "Click to view theme demo"
+msgstr ""
+
+#: core/class-wptouch-pro.php:1167
 #: themes/foundation/modules/webapp/webapp.php:12
 msgid "Settings"
 msgstr ""
 
-#: core/class-wptouch-pro.php:1200
+#: core/class-wptouch-pro.php:1203
 msgid "%s Changelog"
 msgstr ""
 
-#: core/class-wptouch-pro.php:2374
+#: core/class-wptouch-pro.php:2377
 msgid "Directory Problem"
 msgstr ""
 
-#: core/class-wptouch-pro.php:2375
+#: core/class-wptouch-pro.php:2378
 msgid "One or more required directories could not be created"
 msgstr ""
 
@@ -1186,10 +1192,6 @@ msgstr ""
 
 #: include/html/page-template.php:8
 msgid "Default Template"
-msgstr ""
-
-#: include/html/pro.php:1
-msgid "Go Pro"
 msgstr ""
 
 #: themes/bauhaus/default/header-bottom.php:13
@@ -1499,7 +1501,7 @@ msgstr ""
 msgid "older posts"
 msgstr ""
 
-#: themes/foundation/default/one-comment.php:12
+#: themes/foundation/default/one-comment.php:17
 msgid "Your comment is awaiting moderation"
 msgstr ""
 
@@ -1765,11 +1767,11 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: themes/foundation/modules/login/login-html.php:29
+#: themes/foundation/modules/login/login-html.php:30
 msgid "Sign-up"
 msgstr ""
 
-#: themes/foundation/modules/login/login-html.php:30
+#: themes/foundation/modules/login/login-html.php:31
 msgid "Lost password?"
 msgstr ""
 
@@ -1950,11 +1952,13 @@ msgstr ""
 #: themes/foundation/modules/webapp/webapp.php:91
 #: themes/foundation/modules/webapp/webapp.php:109
 #: themes/foundation/modules/webapp/webapp.php:128
-#: themes/foundation/modules/webapp/webapp.php:136
-#: themes/foundation/modules/webapp/webapp.php:154
-#: themes/foundation/modules/webapp/webapp.php:162
-#: themes/foundation/root-functions.php:428
-#: themes/foundation/root-functions.php:446
+#: themes/foundation/modules/webapp/webapp.php:146
+#: themes/foundation/modules/webapp/webapp.php:165
+#: themes/foundation/modules/webapp/webapp.php:173
+#: themes/foundation/modules/webapp/webapp.php:191
+#: themes/foundation/modules/webapp/webapp.php:199
+#: themes/foundation/root-functions.php:439
+#: themes/foundation/root-functions.php:457
 msgid "%d by %d pixels (PNG)"
 msgstr ""
 
@@ -2003,8 +2007,8 @@ msgstr ""
 
 #: themes/foundation/modules/webapp/webapp.php:44
 msgid ""
-"[device] and [icon] are dynamic and used to determine the device and iOS "
-"version. Do not remove these from your message."
+"[icon] is used to display the appropriate bookmark icon for your device. Do "
+"not remove it from your message."
 msgstr ""
 
 #: themes/foundation/modules/webapp/webapp.php:48
@@ -2040,10 +2044,18 @@ msgid "iPhone 5 Startup Screen"
 msgstr ""
 
 #: themes/foundation/modules/webapp/webapp.php:122
+msgid "iPhone 6 Startup Screen"
+msgstr ""
+
+#: themes/foundation/modules/webapp/webapp.php:140
+msgid "iPhone 6+ Startup Screen"
+msgstr ""
+
+#: themes/foundation/modules/webapp/webapp.php:159
 msgid "iPad Mini and iPad Startup Screens"
 msgstr ""
 
-#: themes/foundation/modules/webapp/webapp.php:148
+#: themes/foundation/modules/webapp/webapp.php:185
 msgid "Retina iPad Startup Screens"
 msgstr ""
 
@@ -2077,155 +2089,164 @@ msgstr ""
 
 #: themes/foundation/root-functions.php:139
 msgid ""
-"Install this Web-App on your [device]: tap [icon] then \"Add to Home Screen\""
+"Install this Web-App on your homescreen: tap [icon] then \"Add to Home Screen"
+"\""
 msgstr ""
 
-#: themes/foundation/root-functions.php:342
+#: themes/foundation/root-functions.php:345
 msgid "Number of posts in post listings"
 msgstr ""
 
-#: themes/foundation/root-functions.php:343
+#: themes/foundation/root-functions.php:346
 msgid ""
 "Overrides the WordPress Reading settings for \"Blog pages show at most\""
 msgstr ""
 
-#: themes/foundation/root-functions.php:350
+#: themes/foundation/root-functions.php:353
 msgid "Excluded categories"
 msgstr ""
 
-#: themes/foundation/root-functions.php:351
+#: themes/foundation/root-functions.php:354
 msgid "Comma separated by category name"
 msgstr ""
 
-#: themes/foundation/root-functions.php:358
+#: themes/foundation/root-functions.php:361
 msgid "Excluded tags"
 msgstr ""
 
-#: themes/foundation/root-functions.php:359
+#: themes/foundation/root-functions.php:362
 msgid "Comma separated by tag name"
 msgstr ""
 
 #: themes/foundation/root-functions.php:369
-msgid "Blog"
+msgid "Allow nested comment replies from mobile visitors"
+msgstr ""
+
+#: themes/foundation/root-functions.php:370
+msgid "Will show a Reply link after each comment"
 msgstr ""
 
 #: themes/foundation/root-functions.php:380
-msgid "Show comments on pages"
-msgstr ""
-
-#: themes/foundation/root-functions.php:381
-msgid "Overrides the WordPress settings for showing comments on pages."
+msgid "Blog"
 msgstr ""
 
 #: themes/foundation/root-functions.php:391
+msgid "Show comments on pages"
+msgstr ""
+
+#: themes/foundation/root-functions.php:392
+msgid "Overrides the WordPress settings for showing comments on pages."
+msgstr ""
+
+#: themes/foundation/root-functions.php:402
 #: themes/foundation/root-functions.php:1136
 msgid "Pages"
 msgstr ""
 
-#: themes/foundation/root-functions.php:404
+#: themes/foundation/root-functions.php:415
 msgid "Icon Title"
 msgstr ""
 
-#: themes/foundation/root-functions.php:410
+#: themes/foundation/root-functions.php:421
 msgid "Icon title"
 msgstr ""
 
-#: themes/foundation/root-functions.php:411
+#: themes/foundation/root-functions.php:422
 msgid "When visitors bookmark your website, this will be the title shown."
 msgstr ""
 
-#: themes/foundation/root-functions.php:422
+#: themes/foundation/root-functions.php:433
 msgid "Android"
 msgstr ""
 
-#: themes/foundation/root-functions.php:440
+#: themes/foundation/root-functions.php:451
 msgid "iPhone & iPod touch"
 msgstr ""
 
-#: themes/foundation/root-functions.php:476
+#: themes/foundation/root-functions.php:487
 msgid "Theme Colors"
 msgstr ""
 
-#: themes/foundation/root-functions.php:488
+#: themes/foundation/root-functions.php:499
 msgid "(Scaled by themes to fit logo areas as needed)"
 msgstr ""
 
-#: themes/foundation/root-functions.php:499
+#: themes/foundation/root-functions.php:510
 msgid "Site Logo"
 msgstr ""
 
-#: themes/foundation/root-functions.php:508
+#: themes/foundation/root-functions.php:519
 msgid "Smart App Banner"
 msgstr ""
 
-#: themes/foundation/root-functions.php:514
+#: themes/foundation/root-functions.php:525
 msgid "Enter your app's %sApp Store ID%s"
 msgstr ""
 
-#: themes/foundation/root-functions.php:515
+#: themes/foundation/root-functions.php:526
 msgid ""
 "Your app's unique identifier. Find your ID from the iTunes Link Maker: "
 "Search for your app. In the link it provides, your app ID is the nine-digit "
 "number in between id and ?mt. For example Angry Birds's ID is 343200656."
 msgstr ""
 
-#: themes/foundation/root-functions.php:527
+#: themes/foundation/root-functions.php:538
 msgid "Theme Footer"
 msgstr ""
 
-#: themes/foundation/root-functions.php:530
+#: themes/foundation/root-functions.php:541
 msgid "Custom footer content (HTML is allowed)"
 msgstr ""
 
-#: themes/foundation/root-functions.php:530
+#: themes/foundation/root-functions.php:541
 msgid ""
 "You can add custom footer content that will be displayed below the switch "
 "link."
 msgstr ""
 
-#: themes/foundation/root-functions.php:916
+#: themes/foundation/root-functions.php:914
 msgid "search results for '%s'"
 msgstr ""
 
-#: themes/foundation/root-functions.php:918
+#: themes/foundation/root-functions.php:916
 msgid "%sCategories &rsaquo;%s %s"
 msgstr ""
 
-#: themes/foundation/root-functions.php:920
+#: themes/foundation/root-functions.php:918
 msgid "Tags &rsaquo; %s"
 msgstr ""
 
+#: themes/foundation/root-functions.php:920
 #: themes/foundation/root-functions.php:922
 #: themes/foundation/root-functions.php:924
-#: themes/foundation/root-functions.php:926
 msgid "Archives &rsaquo; %s"
 msgstr ""
 
-#: themes/foundation/root-functions.php:941
+#: themes/foundation/root-functions.php:939
 msgid "Load more from this category"
 msgstr ""
 
-#: themes/foundation/root-functions.php:943
+#: themes/foundation/root-functions.php:941
 msgid "Load more tagged like this"
 msgstr ""
 
-#: themes/foundation/root-functions.php:945
+#: themes/foundation/root-functions.php:943
 msgid "Load more from this day"
 msgstr ""
 
-#: themes/foundation/root-functions.php:947
+#: themes/foundation/root-functions.php:945
 msgid "Load more from this month"
 msgstr ""
 
-#: themes/foundation/root-functions.php:949
+#: themes/foundation/root-functions.php:947
 msgid "Load more from this year"
 msgstr ""
 
-#: themes/foundation/root-functions.php:951
+#: themes/foundation/root-functions.php:949
 msgid "Load more in this section"
 msgstr ""
 
-#: themes/foundation/root-functions.php:953
+#: themes/foundation/root-functions.php:951
 msgid "Load more entries"
 msgstr ""
 
@@ -2241,9 +2262,9 @@ msgstr ""
 msgid "WPtouch Mobile Plugin"
 msgstr ""
 
-#. #-#-#-#-#  wptouch.pot (WPtouch Mobile Plugin 3.4.8)  #-#-#-#-#
+#. #-#-#-#-#  wptouch.pot (WPtouch Mobile Plugin 3.5.3)  #-#-#-#-#
 #. Plugin URI of the plugin/theme
-#. #-#-#-#-#  wptouch.pot (WPtouch Mobile Plugin 3.4.8)  #-#-#-#-#
+#. #-#-#-#-#  wptouch.pot (WPtouch Mobile Plugin 3.5.3)  #-#-#-#-#
 #. Author URI of the plugin/theme
 msgid "http://www.wptouch.com/"
 msgstr ""

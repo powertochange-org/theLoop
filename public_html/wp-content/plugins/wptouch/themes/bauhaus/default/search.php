@@ -3,7 +3,7 @@
 <div id="content" class="search">
 
 	<div class="post-page-head-area bauhaus">
-		<h2 class="post-title heading-font"><?php echo sprintf( __( 'You searched for "%s"', 'wptouch-pro' ), $_GET['s'] ); ?>:</h2>
+		<h2 class="post-title heading-font"><?php echo sprintf( __( 'You searched for "%s"', 'wptouch-pro' ), esc_attr( $_GET['s'] ) ); ?>:</h2>
 		<span class="select-wrap">
 			<select class="search-select heading-font">
 				<?php
