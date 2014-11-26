@@ -136,7 +136,7 @@
 					
 					// Print out any messages or errors for the user
 					if ($message) {
-						print "<p>$message</p>";
+						print "<p style='color: green'>$message</p>";
 					}
 					if (count($errors) > 0) {
 						print "<p style='color: red'>";
@@ -149,11 +149,11 @@
 					
 					<div class="form">
 					<form name="shortener" method="POST">
-					  <label for="longurl">Long URL:</label>
+					  <label for="longurl" style="font-weight: bold">Long URL:</label>
 					  <input type="text" name="longurl" size="50" value="<?php if (isset($longurl)) { print $longurl; } ?>" /> <br />
 					  
-					  <label for="keyword">Short URL:</label>
-					  p2c.sh/<input type="text" name="keyword" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (leave blank to have a short link auto-generated) <br />
+					  <label for="keyword" style="font-weight: bold">Short URL:</label>
+					  p2c.sh/<input type="text" name="keyword" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (leave blank to have a short link auto-generated) <br /><br />
 					  <input type="submit" name="submit" value="Create Short Link" />
 					</form>
 					</div>
