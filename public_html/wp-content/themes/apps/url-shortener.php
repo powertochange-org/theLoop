@@ -151,7 +151,7 @@
 					  <input type="text" name="longurl" size="50" value="<?php if (isset($longurl)) { print $longurl; } ?>" /> <br />
 					  
 					  <label for="keyword" style="font-weight: bold">Short URL:</label>
-					  p2c.sh/<input type="text" name="keyword" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (leave blank to have a short link auto-generated) <br /><br />
+					  p2c.sh/<input type="text" name="keyword" style="text-transform:lowercase;" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (leave blank to have a short link auto-generated) <br /><br />
 					  <input type="submit" name="submit" value="Create Short Link" />
 					</form>
 					</div>
