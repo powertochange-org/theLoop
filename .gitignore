@@ -38,6 +38,8 @@ public_html/wp-content/uploads/*
 !public_html/wp-content/uploads/.htaccess_*
 !public_html/wp-content/wptouch-data
 !public_html/wp-content/wptouch-data/*
+!public_html/wp-content/serve-ability-course
+!public_html/wp-content/serve-ability-course/*
 
 # This is a file type created by Mac OS that stores folder attributes
 # Should have no impact on code
