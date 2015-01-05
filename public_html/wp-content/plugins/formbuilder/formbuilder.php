@@ -4,7 +4,7 @@ Plugin Name: FormBuilder
 Plugin URI: http://wordpress.org/plugins/formbuilder/
 Description: The FormBuilder plugin allows the administrator to create contact forms of a variety of types for use on their WordPress blog.  The FormBuilder has built-in spam protection and can be further protected by installing the Akismet anti-spam plugin.  Uninstall instructions can be found <a href="http://truthmedia.com/wordpress/formbuilder/documentation/uninstall/">here</a>.  Forms can be included on your pages and posts either by selecting the appropriate form in the dropdown below the content editing box, or by adding them directly to the content with [formbuilder:#] where # is the ID number of the form to be included.
 Author: James Warkentin
-Version: 1.01
+Version: 1.05
 Author URI: http://warkior.com/
 
 Originally created by the TruthMedia Internet Group
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 	
-	define("FORMBUILDER_VERSION_NUM", "1.01");
+	define("FORMBUILDER_VERSION_NUM", "1.05");
 
 	// Define FormBuilder Related Tables
 	global $table_prefix;
@@ -346,7 +346,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		// Only load the custom css if it is enabled.
 		if($custom_css == "Enabled")
 		{
-			$css_path = FORMBUILDER_PLUGIN_URL . "css/formbuilder_styles.css";
+			$css_path = plugins_url( 'css/formbuilder_styles.css', __FILE__ );
 			?>
 			<link rel='stylesheet' href='<?php echo $css_path; ?>' type='text/css' media='all' />
 			<?php
@@ -356,7 +356,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		// Load any additional css needed for the site.
 		if(file_exists(WP_CONTENT_DIR . "/additional_styles.css"))
 		{
-			$css_path = WP_CONTENT_URL . "/additional_styles.css";
+			$css_path = content_url() . "/additional_styles.css";
 			?>
 			<!-- ADDITIONAL CSS CUSTOMIZATION -->
 			<link rel='stylesheet' href='<?php echo $css_path; ?>' type='text/css' media='all' />
@@ -365,7 +365,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		}
 		elseif(file_exists(FORMBUILDER_PLUGIN_PATH . "additional_styles.css"))
 		{
-			$css_path = FORMBUILDER_PLUGIN_URL . "additional_styles.css";
+			$css_path = plugins_url( 'additional_styles.css', __DIR__ );
 			?>
 			<!-- ADDITIONAL CSS CUSTOMIZATION -->
 			<link rel='stylesheet' href='<?php echo $css_path; ?>' type='text/css' media='all' />
@@ -439,7 +439,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 		$counter = 0;
 		$tmp = $content;
 
-		while(eregi(FORMBUILDER_CONTENT_TAG, $tmp, $regs)) {
+		while(preg_match('#' . FORMBUILDER_CONTENT_TAG . '#isU', $tmp, $regs)) {
 			$form_ids[$counter]['id'] = trim($regs[1]);
 			$form_ids[$counter]['tag'] = $regs[0];
 			$tmp = str_replace($regs[0], "", $tmp);
@@ -451,7 +451,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	// Function to strip all form tags from any content.
 	function formbuilder_strip_content($content) {
-		while(eregi(FORMBUILDER_CONTENT_TAG, $content, $regs)) {
+		while(preg_match('#' . FORMBUILDER_CONTENT_TAG . '#isU', $content, $regs)) {
 			$content = str_replace($regs[0], "", $content);
 		}
 		return($content);
@@ -774,7 +774,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	    }
 	    
 	    // Remove extra dots from the list of pages, allowing it to be shortened.
-	    $output = ereg_replace('(\. ){2,}', ' .. ', $output);
+	    $output = preg_replace('#(\. ){2,}#sU', ' .. ', $output);
 	    
 	    // Determine whether to show the HTML, or just return it.
 	    if($show) echo $output;

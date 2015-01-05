@@ -130,7 +130,8 @@
 		
 		$siteurl = get_option('siteurl');
 		$relative_path = str_replace(ABSOLUTE_PATH, "/", FORMBUILDER_PLUGIN_PATH);
-		$page_path = $siteurl . $relative_path;
+		//$page_path = $siteurl . $relative_path;
+		$page_path = plugin_dir_url(__DIR__);
 
 		// Pull the form data from the db for the selected form ID.
 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FORMS . " WHERE id='$form_id';";
@@ -152,8 +153,8 @@
 		// Load the Form Action module, if different than the standard.
 		if($form['action'] != "") {
 			if(include_once(FORMBUILDER_PLUGIN_PATH . "modules/" . $form['action'])) {
-				$startup_funcname = "formbuilder_startup_" . eregi_replace("\..+", "", $form['action']);
-				$processor_funcname = "formbuilder_process_" . eregi_replace("\..+", "", $form['action']);
+				$startup_funcname = "formbuilder_startup_" . preg_replace("#\..+#is", "", $form['action']);
+				$processor_funcname = "formbuilder_process_" . preg_replace("#\..+#is", "", $form['action']);
 
 				if(function_exists("$startup_funcname"))
 					$module_status = $startup_funcname($form);
@@ -193,12 +194,18 @@
 			$formTags = implode(' ', $formTags);
 			
 			$formDisplay = "";
+			$post_errors = '';
 			
 			$formDisplay = apply_filters('formbuilder_prepend_formDisplay', $formDisplay);
 
-			$formDisplay .= "\n<form class='formBuilderForm form-horizontal $formTags' id='formBuilder$formID' " .
+			$formDisplayID = "formBuilder{$formID}";
+			$formDisplayID = apply_filters('formbuilder_formDisplayID', $formDisplayID);
+
+			$formDisplay .= "\n<form class='formBuilderForm form-horizontal $formTags' id='{$formDisplayID}' " .
 					"action='" . $form['action_target'] . "' method='" . strtolower($form['method']) . "' onsubmit='return fb_disableForm(this);'>" .
 					"<input type='hidden' name='formBuilderForm[FormBuilderID]' value='" . $form_id . "' />";
+
+			$formDisplay = apply_filters('formbuilder_formDisplay_formStart', $formDisplay);
 
 			
 			// Paged form related controls for CSS and Javascript
@@ -243,6 +250,10 @@ function toggleVisOff(boxid)
 			$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '" . $form['id'] . "' ORDER BY display_order ASC;";
 			$related = $wpdb->get_results($sql, ARRAY_A);
 
+			// Filter the fields as needed.
+			$related = apply_filters('formbuilder_filter_fields_processing', $related);
+			$formDisplay = apply_filters('formbuilder_formDisplay_post_field_filter', $formDisplay);
+
 			$submit_button_set = false;
 
 			// Check for duplicate form submissions.
@@ -275,7 +286,7 @@ function toggleVisOff(boxid)
 				{
 					$error_msg = "";
 					
-					$divClass = "control-group formBuilderField " . eregi_replace("[^a-z0-9]", "-", $field['field_type']);
+					$divClass = "control-group formBuilderField " . preg_replace("#[^a-z0-9]#isU", "-", $field['field_type']);
 					$divID = "formBuilderField" . clean_field_name($field['field_name']);
 
 					$lb = "<br/>";
@@ -317,7 +328,10 @@ function toggleVisOff(boxid)
 					elseif(isset($_POST['formBuilderForm']['FormBuilderID']) AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 					{
 						// If there is a POST value, assign it to the field.
-						$field['value'] = htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset'));
+						if(!isset($_POST['formBuilderForm'][$field['field_name']]))
+							$field['value'] = '';
+						else
+							$field['value'] = htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset'));
 					}
 					elseif(isset($_GET[$field['field_name']]))
 					{
@@ -361,7 +375,7 @@ function toggleVisOff(boxid)
 							else
 								$option_value = $option_label = $options[$field['value']];
 							
-							if(!eregi(FORMBUILDER_PATTERN_EMAIL, $option_value))
+							if(!preg_match('#' . FORMBUILDER_PATTERN_EMAIL . '#isU', $option_value))
 							{
 								$error_msg = $field['error_message'];
 								$post_errors = true;
@@ -761,21 +775,28 @@ function toggleVisOff(boxid)
 																			. "onblur=\"fb_ajaxRequest('" . $page_path . "php/formbuilder_parser.php', 'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\"/> $formHelpJava</div>";
 						break;
 					}
-					
-					if($field['field_type'] != 'system field' && $field['field_type'] != 'wp user id')
-					{
-						$formDisplay .= "\n<div class='$divClass' id='$divID' title='" . $field['error_message'] . "' $visibility><a name='$divID'></a>";
 
-						if(isset($_POST['formBuilderForm']['FormBuilderID']) AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id) 
-							$formDisplay .= "\n<span id='formBuilderErrorSpace$divID'>$formError</span>";
-						elseif(!isset($_GET['supress_errors']) AND !isset($_GET['suppress_errors'])) 
-							$formDisplay .= "\n<span id='formBuilderErrorSpace$divID'>$formError</span>";
-	
-						$formDisplay .= "\n$formLabel";
-						$formDisplay .= "\n$formInput";
-						$formDisplay .= "\n</div>";
+					// Additional processing of form fields
+					$formFieldDisplay = '';
+					$formFieldDisplay = apply_filters('formbuilder_display_field_filter', $formFieldDisplay, $field);
+
+					if(empty($formFieldDisplay) && $field['field_type'] != 'system field' && $field['field_type'] != 'wp user id')
+					{
+						$formFieldDisplay .= "\n<div class='$divClass' id='$divID' title='" . $field['error_message'] . "' $visibility><a name='$divID'></a>";
+
+						if(isset($_POST['formBuilderForm']['FormBuilderID']) AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
+							$formFieldDisplay .= "\n<span id='formBuilderErrorSpace$divID'>$formError</span>";
+						elseif(!isset($_GET['supress_errors']) AND !isset($_GET['suppress_errors']))
+							$formFieldDisplay .= "\n<span id='formBuilderErrorSpace$divID'>$formError</span>";
+
+						$formFieldDisplay .= "\n$formLabel";
+						$formFieldDisplay .= "\n$formInput";
+						$formFieldDisplay .= "\n</div>";
 					}
-					
+
+					// Allow for other methods of displaying the form field
+					$formDisplay .= $formFieldDisplay;
+
 					// Check for new page of form details.
 					if($new_page == true)
 					{
@@ -786,9 +807,9 @@ function toggleVisOff(boxid)
 					$allFields[] = $field;
 				}
 			}
-			
-			
-			
+
+
+
 			
 			
 			$referrer_info = get_option('formBuilder_referrer_info');
@@ -909,18 +930,32 @@ function toggleVisOff(boxid)
 
 				}
 			}
+
+			// Create extended form variable.
+			$extendedForm = $form;
+			$extendedForm['allFields'] = $allFields;
+
+			if(isset($_POST['formBuilderForm']['FormBuilderID'])
+			   && $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
+			{
+				// Final check of fields before marking form as successfully submitted...
+				$extendedForm = apply_filters('formbuilder_submit_final_check', $extendedForm);
+				$post_errors = apply_filters('formbuilder_final_errors_filter', $post_errors);
+			}
+
 			
 			// Process Form Results if necessary
-			if(!isset($post_errors) 
+			if(empty($post_errors)
 			&& isset($_POST['formBuilderForm']['FormBuilderID']) 
 			&& $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 			{
-			
-			
+
+				// Apply filter to fields after successful form submission.
+				$extendedForm = apply_filters('formbuilder_submit_success_pre_value_parsing', $extendedForm);
 			
 				// Convert numeric selection values to the real form values
 				// Iterate through the form fields to add values to the email sent to the recipient.
-				foreach($allFields as $key=>$field)
+				foreach($extendedForm['allFields'] as $key=>$field)
 				{
 					// If select box or radio buttons, we need to translate the posted value into the real value.
 					if(
@@ -937,19 +972,18 @@ function toggleVisOff(boxid)
 						} else {
 							$option_value = $option_label = $roption;
 						}
-						
-						$allFields[$key]['value'] = trim($option_value);
+
+						$extendedForm['allFields'][$key]['value'] = trim($option_value);
 					}
 				}
-				
-					
-				
-				
+
+				$extendedForm = apply_filters('formbuilder_submit_success_post_value_parsing', $extendedForm);
+
 				$msg = "";
 				// If enabled, put backup copies of the form data into a database.
 				if(get_option('formbuilder_db_xml') != '0')
 				{
-					$msg = formbuilder_process_db($form, $allFields);
+					$msg = formbuilder_process_db($form, $extendedForm['allFields']);
 				}
 				
 				// Check if an alternate form processing system is used.
@@ -957,17 +991,17 @@ function toggleVisOff(boxid)
 				if($form['action'] != "") {
 						if(function_exists("$processor_funcname"))
 						{
-							$msg = $processor_funcname($form, $allFields);
+							$msg = $processor_funcname($form, $extendedForm['allFields']);
 							$func_run = true;
 						}
 						else
-							$msg = formbuilder_process_email($form, $allFields);
+							$msg = formbuilder_process_email($form, $extendedForm['allFields']);
 				}
 				else
-					$msg = formbuilder_process_email($form, $allFields);
+					$msg = formbuilder_process_email($form, $extendedForm['allFields']);
 					
 				// Check for and process any redirections at this point.
-				if(!$msg) formbuilder_check_redirection($form, $allFields);
+				if(!$msg) formbuilder_check_redirection($form, $extendedForm['allFields']);
 
 				if(!isset($func_run))
 				{
@@ -981,7 +1015,7 @@ function toggleVisOff(boxid)
 						
 						// Populate ~variable~ tags in the autoresponse with values submitted by the user.
 						$txtAllFields = ""; 
-						foreach($allFields as $field)
+						foreach($extendedForm['allFields'] as $field)
 						{
 							if(
 								trim($field['field_name']) != "" AND
@@ -1025,7 +1059,7 @@ function toggleVisOff(boxid)
 			}
 			else
 			{
-				if(isset($post_errors) AND isset($missing_post_fields) AND $post_errors AND $missing_post_fields)
+				if(!empty($post_errors) AND !empty($missing_post_fields))
 				{
 					$msg = "\n<div class='formBuilderFailure alert alert-error'><h4>" . $formBuilderTextStrings['form_problem'] . "</h4><p>" . $formBuilderTextStrings['send_mistakes'] . "</p>";
 					$msg .= "\n<ul>";
@@ -1036,7 +1070,7 @@ function toggleVisOff(boxid)
 
 					$formDisplay = $msg;
 				}
-				elseif(isset($post_errors) AND is_string($post_errors))
+				elseif(!empty($post_errors) AND is_string($post_errors))
 				{
 					$msg = "\n<div class='formBuilderFailure alert alert-error'><h4>" . $formBuilderTextStrings['form_problem'] . "</h4>";
 					$msg .= "\n<p>$post_errors</p></div>\n" . $formDisplay;
@@ -1044,6 +1078,8 @@ function toggleVisOff(boxid)
 					$formDisplay = $msg;
 				}
 			}
+
+			$formDisplay = apply_filters('formbuilder_formDisplay_final', $formDisplay);
 
 			return("<div id='$formCSSID'>$formDisplay</div>");
 
@@ -1060,16 +1096,25 @@ function toggleVisOff(boxid)
 	 */
 	function formbuilder_check_redirection($form, $fields)
 	{
+		$redirect_url = '';
+
 		// Iterate through the form fields to add values to the email sent to the recipient.
 		foreach($fields as $field)
 		{
 			// Add the followup page redirect, if it exists.
 			if($field['field_type'] == "followup page" AND trim($field['field_value']) != "")
 			{
-				//echo "<meta HTTP-EQUIV='REFRESH' content='0; url=" . $field['field_value'] . "'>";
-				header("Location: " . $field['field_value']);
+				$redirect_url = $field['field_value'];
+				break;
 			}
+		}
 
+		// Capture any plugin related redirects.
+		$redirect_url = apply_filters('formbuilder_redirection', $redirect_url);
+
+		if(!empty($redirect_url))
+		{
+			header("Location: " . $redirect_url);
 		}
 	}
 
@@ -1113,7 +1158,7 @@ function toggleVisOff(boxid)
 	
 			case "email address":
 				$pattern = FORMBUILDER_PATTERN_EMAIL;
-				if(eregi($pattern, $field['value']))
+				if(preg_match('#' . $pattern . '#isU', $field['value']))
 				{
 					$last_email_address = $field['value'];
 					$_SESSION['formbuilder']['last_email_address'] = $last_email_address;
@@ -1162,7 +1207,7 @@ function toggleVisOff(boxid)
 			break;
 		}
 	
-		if(!preg_match("#" . $pattern . "#isu", $field['value']))
+		if(!preg_match("#" . $pattern . "#isU", $field['value']))
 		{
 			$post_errors = true;
 		}
@@ -1274,7 +1319,7 @@ function toggleVisOff(boxid)
 			elseif($field['field_type'] == "recipient selection")
 			{
 				// If we have a recipient selection field, change the form recipient to the selected value.
-				if( eregi(FORMBUILDER_PATTERN_EMAIL, trim($field['value'])) )
+				if( preg_match('#' . FORMBUILDER_PATTERN_EMAIL . '#isU', trim($field['value'])) )
 				{
 					$form['recipient'] = trim($field['value']);
 				}
