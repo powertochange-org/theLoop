@@ -10,7 +10,9 @@ $repos = array(
 	'theLoop' => array (
 		'/home/powertochange/domains/staff.powertochange.org',
 		'/home/powertochange/domains/stafftemp.powertochange.org',
-		'/home/development/domains/devstaff.powertochange.org'));
+		'/home/development/domains/devstaff.powertochange.org'),
+	'agencyreporting' => array (
+		'/home/development/domains/dev.agencyreporting.powertochange.org/public_html'));
 
 if (array_key_exists("project", $_GET)){
 	$project = $_GET["project"];
