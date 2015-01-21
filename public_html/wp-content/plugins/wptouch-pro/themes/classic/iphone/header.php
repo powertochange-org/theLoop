@@ -76,13 +76,18 @@
                     </a>
                 </div>
 				<div>
-                    <a href='/wp-admin/admin.php?page=s2'>
-                        <img src='/wp-content/images/My-Settings-Icon.png' alt='My Settings' />
+                    <a href='https://staffapps.powertochange.org/authmanager'>
+                        <img src='/wp-content/images/AuthorizationMgr-Icon.png' alt='Authorization Manager' />
                     </a>
                 </div>
 				<div>
                     <a href='/staff-directory/'>
                         <img src='/wp-content/images/Staff-Directory-Icon.png' alt='Staff Directory' />
+                    </a>
+                </div>
+				<div>
+                    <a href='https://apps.powertochange.org'>
+                        <img src='/wp-content/images/Reimbursements-Icon.png' alt='Reimbursement Form' />
                     </a>
                 </div>
 				<div>
@@ -95,6 +100,16 @@
                         <img src='/wp-content/images/Self-Help-Wiki-Icon.png' alt='Self-Help Wiki' />
                     </a>
                 </div>
+				<div>
+                    <a href='https://staff.powertochange.org/sh'>
+                        <img src='/wp-content/images/Link-Shortener-Icon.png' alt='Link Shortener' />
+                    </a>
+		</div>
+				<div>
+                    <a href='/wp-admin/admin.php?page=s2'>
+                        <img src='/wp-content/images/My-Settings-Icon.png' alt='My Settings' />
+                    </a>
+		</div>
 			</div>
 			<!-- This brings in menu.php // remove it and the whole menu won't show at all -->
 			<?php if ( wptouch_has_menu() ) { ?>
