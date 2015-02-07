@@ -154,9 +154,8 @@ recorded. You chose the following plan:
   Quarterly amount: \$".($plans[$healthplan]*3)."
  
 You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
-For more information about the Medical Allowance, refer to this post on
-the loop: https://staff.powertochange.org/human-resources/medical-allowance-in-effect/
-or email hr@powertochange.org.
+
+For more information about the Medical Allowance, contact Rachel Janz (rachel.janz@p2c.com).
 
 Your HR team
 ";
