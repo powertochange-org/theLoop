@@ -153,7 +153,7 @@ recorded. You chose the following plan:
   Annual amount: \$".($plans[$healthplan]*12)."
   Quarterly amount: \$".($plans[$healthplan]*3)."
  
-You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
+You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
 For more information about the Medical Allowance, refer to this post on
 the loop: https://staff.powertochange.org/human-resources/medical-allowance-in-effect/
 or email hr@powertochange.org.
@@ -164,7 +164,7 @@ Your HR team
 						mail($current_user->user_email, $subject, $emailMessage, $headers);
 						
 						// Print a success message
-						echo "Thank you for enrolling for the medical allowance for Annual amount: \$".($plans[$healthplan]*12).". You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.";
+						echo "Thank you for enrolling for the medical allowance for Annual amount: \$".($plans[$healthplan]*12).". You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.";
 						echo '<form action="" ><input type="submit" name="submit" value="Return" /></form>';
 					}
 				}
