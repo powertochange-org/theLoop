@@ -71,10 +71,10 @@ $plans = array(
 							
 							//determine if current date is inbetween the open date and the close date, then let the user know whether they can change plans or not
 							if($currentdate >= $opendate && $currentdate <= $closedate){
-								echo 'Please choose a health care spending account plan:';
+								echo 'Please choose an annual medical allowance amount:';
 							}
 							else{
-								echo 'You cannot currently change your health care spending account plan.';
+								echo 'You cannot currently change your medical allowance amount.';
 							}
 						?>
 					  </th>
@@ -153,10 +153,9 @@ recorded. You chose the following plan:
   Annual amount: \$".($plans[$healthplan]*12)."
   Quarterly amount: \$".($plans[$healthplan]*3)."
  
-You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
-For more information about the HCSA for 2013, refer to this post on
-the loop: https://staff.powertochange.org/human-resources/important-update-2013-hcsa-enrollment-deadline-december-27th-2012/
-or email hr@powertochange.org.
+You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
+
+For more information about the Medical Allowance, contact Rachel Janz (rachel.janz@p2c.com).
 
 Your HR team
 ";
@@ -164,8 +163,7 @@ Your HR team
 						mail($current_user->user_email, $subject, $emailMessage, $headers);
 						
 						// Print a success message
-						// may need to change 2013 to be a variable
-						echo "Thank you for enrolling for the medical allowance for 2013 for Annual amount: \$".($plans[$healthplan]*12).". You will be paid out March 23, June 23, September 23 and December 23rd, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.";
+						echo "Thank you for enrolling for the medical allowance for Annual amount: \$".($plans[$healthplan]*12).". You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.";
 						echo '<form action="" ><input type="submit" name="submit" value="Return" /></form>';
 					}
 				}
@@ -179,7 +177,7 @@ Your HR team
 					<table>
 						<tr>
 							<th>
-								You are an administrator! You can view the Health Plan Report by clicking this button!
+								You are an administrator! You can view the Medical Allowance Report by clicking this button!
 							</th>
 							<th>
 								<form action='../health-care-spending-account-admin/' method='post'>
