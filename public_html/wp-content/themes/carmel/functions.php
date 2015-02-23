@@ -1,25 +1,5 @@
 <?php
 
-function themename_customize_live_preview() {
-    wp_enqueue_script(
-        'themename-theme-customizer',
-        get_template_directory_uri() . '/js/theme-customizer.js',
-        array( 'jquery', 'customize-preview' ),
-        '1.0.0',
-        false
-    );
-}
-add_action( 'customize_preview_init', 'themename_customize_live_preview');
-
-function themename_customize_css() {
-    // <style type="text/css">
-        //<?php if ( '' != get_theme_mod( 'image_select' )) { 
-        //    content {
-
-        //    }
-        //<?php }
-}
-
  //adding menu
 add_theme_support('nav-menus');
 register_nav_menus(array(
