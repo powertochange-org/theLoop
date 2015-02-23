@@ -332,4 +332,9 @@ function sanitize_date($string) {
     // Just return original string
     return $string;
 }
+
+function add_publish_confirmation(){ 
+    echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+} 
+add_action('admin_footer', 'add_publish_confirmation');
 ?>
