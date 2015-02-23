@@ -1,5 +1,25 @@
 <?php
 
+function themename_customize_live_preview() {
+    wp_enqueue_script(
+        'themename-theme-customizer',
+        get_template_directory_uri() . '/js/theme-customizer.js',
+        array( 'jquery', 'customize-preview' ),
+        '1.0.0',
+        false
+    );
+}
+add_action( 'customize_preview_init', 'themename_customize_live_preview');
+
+function themename_customize_css() {
+    // <style type="text/css">
+        //<?php if ( '' != get_theme_mod( 'image_select' )) { 
+        //    content {
+
+        //    }
+        //<?php }
+}
+
  //adding menu
 add_theme_support('nav-menus');
 register_nav_menus(array(
@@ -70,6 +90,155 @@ function themename_customize_register($wp_customize){
         'type'    => 'select',
         'choices'    => $postArray
     ));
+
+    // *** THIS IS THE CUSTOM IMAGE SLIDER SECTION
+
+    // Add section for Image Slider Settings
+    $wp_customize->add_section('image_slider_settings', array(
+        // Visible title of section
+        'title'       => 'Image Slider Settings', 
+        // Visible Description of what the section is supposed to do
+        'description' => 'Here you can set up the Image Slider for specific Images,
+                          without code! Phew! *Breath a sigh of relief* To operate, 
+                          copy and paste the URL of the new page/post into the "Image URL"
+                          section, and then Select the Image you want associated
+                          with that URL :)',
+        // Set Priority to lowest (this puts it at the bottom)
+        'priority'    => 200
+    ));
+
+    // URL Setting - this is for the Image URL
+    // so that when the Image is clicked, it routes to the correct page.
+    $wp_customize->add_setting('image_url_1', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+
+    $wp_customize->add_control('input_image_url_1', array(
+        'label'      => 'Image URL 1',
+        'section'    => 'image_slider_settings',
+        'settings'   => 'image_url_1',
+    ));
+
+    // Select an Image
+    $wp_customize->add_setting('image_select_1', array(
+        'default'        => '',
+        // 'capability'     => 'edit_theme_options',
+        // 'type'           => 'option',
+        'transport'      => 'postMessage'
+    ));
+
+    $wp_customize->add_control(
+        new WP_Customize_Image_Control(
+            $wp_customize,
+            'image_select_1',
+            array(
+                'label'     => 'Select Image 1',
+                'section'   => 'image_slider_settings',
+                'settings'  => 'image_select_1'
+            )
+        )  
+    );
+
+    $wp_customize->add_setting('image_url_2', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+
+    $wp_customize->add_control('input_image_url_2', array(
+        'label'      => 'Image URL 2',
+        'section'    => 'image_slider_settings',
+        'settings'   => 'image_url_2',
+    ));
+
+    $wp_customize->add_setting('image_select_2', array(
+        'default'        => '',
+        // 'capability'     => 'edit_theme_options',
+        // 'type'           => 'option',
+        'transport'      => 'postMessage'
+    ));
+
+    $wp_customize->add_control(
+        new WP_Customize_Image_Control(
+            $wp_customize,
+            'image_select_2',
+            array(
+                'label'     => 'Select Image 2',
+                'section'   => 'image_slider_settings',
+                'settings'  => 'image_select_2'
+            )
+        )  
+    );
+    
+    $wp_customize->add_setting('image_url_3', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+
+    $wp_customize->add_control('input_image_url_3', array(
+        'label'      => 'Image URL 3',
+        'section'    => 'image_slider_settings',
+        'settings'   => 'image_url_3',
+    ));
+
+    $wp_customize->add_setting('image_select_3', array(
+        'default'        => '',
+        // 'capability'     => 'edit_theme_options',
+        // 'type'           => 'option',
+        'transport'      => 'postMessage'
+    ));
+
+    $wp_customize->add_control(
+        new WP_Customize_Image_Control(
+            $wp_customize,
+            'image_select_3',
+            array(
+                'label'     => 'Select Image 3',
+                'section'   => 'image_slider_settings',
+                'settings'  => 'image_select_3'
+            )
+        )  
+    );
+
+    $wp_customize->add_setting('image_url_4', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+
+    $wp_customize->add_control('input_image_url_4', array(
+        'label'      => 'Image URL 4',
+        'section'    => 'image_slider_settings',
+        'settings'   => 'image_url_4',
+    ));
+
+    $wp_customize->add_setting('image_select_4', array(
+        'default'        => '',
+        // 'capability'     => 'edit_theme_options',
+        // 'type'           => 'option',
+        'transport'      => 'postMessage'
+    ));
+
+    $wp_customize->add_control(
+        new WP_Customize_Image_Control(
+            $wp_customize,
+            'image_select_4',
+            array(
+                'label'     => 'Select Image 4',
+                'section'   => 'image_slider_settings',
+                'settings'  => 'image_select_4'
+            )
+        )  
+    );
+
+    // *** THIS IS THE END OF THE CUSTOM IMAGE SLIDER SECTION //
 
     // Add section for survey settings
     $wp_customize->add_section('survey_settings', array(
