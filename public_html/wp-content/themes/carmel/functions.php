@@ -333,8 +333,13 @@ function sanitize_date($string) {
     return $string;
 }
 
+/*
+ * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
+ *  deploy other changes in this file to production
+ *
 function add_publish_confirmation(){ 
     echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
 } 
 add_action('admin_footer', 'add_publish_confirmation');
+*/
 ?>
