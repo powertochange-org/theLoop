@@ -582,12 +582,6 @@ class formbuilder_xml_db_results
 			$searchQuery = $_GET['searchQuery'];
 		}
 		
-		$searchQuery = '';
-		if(isset($_GET['searchQuery']))
-		{
-			$searchQuery = $_GET['searchQuery'];
-		}
-		
 		if(!isset($error))
 		{
 			$sql = "SELECT * FROM " . FORMBUILDER_TABLE_RESULTS . " WHERE id='$email_id' ORDER BY timestamp DESC LIMIT 0," . $this->result_limit . ";";

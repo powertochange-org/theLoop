@@ -1,6 +1,6 @@
 <?php
 
- //adding menu
+//adding menu
 add_theme_support('nav-menus');
 register_nav_menus(array(
 	 'main'=>__('Main Menu')
