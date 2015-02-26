@@ -1,7 +1,7 @@
 <?php
 
 /*
-*Template Name: IT Survey Admin
+*Template Name: zIT Survey Admin
 *
 *todo description
 *

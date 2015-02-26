@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Health_Plan
+Template Name: zHealth_Plan
 
 @author Jordan Shelvock, May 31, 2012
 */

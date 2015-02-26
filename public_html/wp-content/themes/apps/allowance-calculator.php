@@ -3,7 +3,7 @@ require('pdf/fpdf.php');
 include('functions/functions.php');
 
 /*
-*Template Name: Allowance Calculator
+*Template Name: zAllowance Calculator
 *
 *Author: matthew.chell
 *

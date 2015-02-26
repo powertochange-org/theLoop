@@ -1,6 +1,6 @@
 <?php
 /*
-*Template Name: New_report
+*Template Name: zNew_report
 *
 *Base page for the financial reporting system. When a reportform is submitted, the report
 *producer is called in rs_functions.php and the report is downloaded or an error is displayed.

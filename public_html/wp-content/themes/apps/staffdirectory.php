@@ -1,6 +1,6 @@
 <?php
 /*
-*Template Name: Staff_Directory
+*Template Name: zStaff_Directory
 *
 *This page is always loaded when you use staff address page. it contains the wordpress template.
 *When we change pages, we just reload this page and 'switch' the include we want to use. It's pretty
