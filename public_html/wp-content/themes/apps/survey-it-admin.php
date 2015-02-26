@@ -1,7 +1,7 @@
 <?php
 
 /*
-*Template Name: zIT Survey Admin
+*Template Name: zApp IT Survey Admin
 *
 *todo description
 *

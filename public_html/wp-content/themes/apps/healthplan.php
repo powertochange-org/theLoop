@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: zHealth_Plan
+Template Name: zApp Health_Plan
 
 @author Jordan Shelvock, May 31, 2012
 */

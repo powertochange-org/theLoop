@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: zHealth_Plan_Report
+Template Name: zApp Health_Plan_Report
 The purpose of this page is to give a report on who has selected which health plan. administrative features are also offered.
 Purposes, in order of importance
 1)display report

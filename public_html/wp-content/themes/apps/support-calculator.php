@@ -3,7 +3,7 @@ include('functions/functions.php');
 require('pdf/fpdf.php');
 
 /*
-*Template Name: zSupport_Calculator
+*Template Name: zApp Support_Calculator
 *
 *Author: matthew.chell
 *
