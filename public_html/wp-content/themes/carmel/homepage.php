@@ -11,11 +11,11 @@
 			$pictures = array(get_theme_mod('image_select_1'), 
 							  get_theme_mod('image_select_2'), 
 							  get_theme_mod('image_select_3'),
-							  get_theme_mod('image_select_4'));  // array($folder.'StaffReview.jpg', $folder.'Christmas.jpg', $folder.'ReimbursementAd.jpg', $folder.'westLife.jpg', $folder.'SES_Banner_Loop.jpg',  $folder.'JobBoardBanner.jpg', $folder.'WellnessNews.jpg');
+							  get_theme_mod('image_select_4'));
 			$links    = array(get_theme_mod('image_url_1'),
 							  get_theme_mod('image_url_2'),
 							  get_theme_mod('image_url_3'),
-							  get_theme_mod('image_url_4'));  // array('/training-development/position-review/', '/forms-information/ptc-branding-conference-resources/christmas-promotional-material-2/','https://apps.powertochange.org/Reimbursements','/all-staff/take-the-personal-health-assessment/', '/training-development/staff-engagement/staff-engagement-survey-2014/', '/training-development/job-board/', '/training-development/healthwellness/wellness-news/');
+							  get_theme_mod('image_url_4'));
 		?>
 		<a id='slideshow_link' target="_blank">
 		<?php foreach($pictures as $pic=>$src){
@@ -27,14 +27,12 @@
 		
 		</a>
 		<div style='height:45px;width:976px;left:12px;top:367px;background-color:#000000;position:absolute;opacity:0.27;filter:alpha(opacity=27); '>
-		<?php
-			
-		foreach($pictures as $pic=>$x){
-			?>
-			<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'>
-			</div>
-			<?php
-		}
+		<?php 
+			foreach($pictures as $pic=>$x){
+				?>
+				<div id='div_pic_<?php echo $pic ?>'  onclick='showPicture(<?php echo $pic ?>);' style='display:inline-block;margin-top:16px;margin-right:12px;float:right;width:14px;height:14px;border-radius:7px;background-color:#ffffff'></div>
+				<?php
+			}
 		?>
 		</div>
 		<script type="text/javascript">
@@ -63,13 +61,13 @@
 			}
             
 			var pics_array = new Array (<?php
-			foreach($pictures as &$pic){
+			foreach($pictures as $pic){
 				echo " '$pic',";
 			}
 			?> null);
 			
 			var links_array = new Array (<?php
-			foreach($links as &$l){
+			foreach($links as $l){
 				echo " '$l',";
 			}
 			?> null);
@@ -199,28 +197,15 @@
     <div id="content-right">
 		<div id="sidebar">
 			<div class="sidebaritem">
-				<h1>Search the Loop</h1><BR>
-				<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>
-					<input name="s" id="s" class='search-input' placeholder='Search' type='text' />
-					<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
-				</div></form>
-				<hr>
-				<h1>Feature Update</h1><BR>
-				<?php 
-					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('feature_update'));
-					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					echo "<a href='".get_permalink()."'><h2>".strtoupper(the_title('', '', false))."</h2></a>"; 
-					endwhile; endif; ?>
-				
-				<hr>
-				<h1>Upcoming Event</h1><BR>
-				<?php 
-					$latest_cat_post = new WP_Query( 'p='.get_theme_mod('upcoming_event'));
-					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					echo "<a href='/worldwide-day-of-prayer/'><h2>WORLDWIDE DAY OF PRAYER</h2></a>"; 
-					// to change back, comment this line and delete previous line // echo "<a href='".get_permalink()."'><h2>".strtoupper(the_title('', '', false))."</h2></a>"; 
-					endwhile; endif; ?>
-				
+				<h1>Featured Content</h1><BR>
+				<?php  
+				for ($i = 1; $i <= 5; $i += 1) {
+					if(get_theme_mod("title_url_$i") && get_theme_mod("feature_title_$i")) {
+					?>
+					<a href="<?php echo get_theme_mod("title_url_$i");?>" class="sbfeaturelinks"><?php echo get_theme_mod("feature_title_$i"); ?></a><br>
+					<?php 
+					}
+				} ?>
 				<hr>
 				<h1>Recent Comments</h1><BR>
 				<?php 
