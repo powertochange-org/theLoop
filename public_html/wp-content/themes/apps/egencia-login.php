@@ -50,7 +50,6 @@ if (isset($_POST['proceed_to_egencia']) ||
 
 
 					/*** Code for the "don't show this again" checkbox, as well as the button goes here ***/
-					var_dump($_POST);
 					?>
 					
 					<form name="egencia_login" id="egencia_login" action="." method="POST">
