@@ -88,8 +88,6 @@ if (get_theme_mod('survey_active')) {
 			<div class='inner' style='position:relative;'>
 				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
 				<a href='/'><img style='position:relative;left:37px;top:-5px' class='header-logo' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
-				<!--> Place Search area here, in between the logo and the staff App Button </!-->
-        
         <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
         <!-- <h1>Search the Loop</h1><BR> -->
         <div class="search-position">
