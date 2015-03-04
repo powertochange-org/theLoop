@@ -448,7 +448,10 @@ include('functions/js_functions.php');
 		function setUserValues($id){
 			global $wpdb, $allowance_constant;
 			echo "function() {reset();";
-			echo "document.getElementById('hour_precentage').value ='".getFieldEmployee("percent_of_fulltime", $id)."';\n";
+			/* Jason B  2015-02-26: Commented out as per request from Jordan Tarr. They would like to force staff to enter this,
+			 *                      rather than pre-populating it for them.
+			echo "document.getElementById('hour_percentage').value ='".getFieldEmployee("percent_of_fulltime", $id)."';\n";
+			*/
 			
 			//** HARDCODED **// this is to set the preset user values;
 			//if clean_tree() in allowance-calculator-admin is run $q may have to change
@@ -579,7 +582,7 @@ include('functions/js_functions.php');
 				$pdf->SetFont('Arial','b',11);
 				$pdf->Write(5, getStringConstant("hour_label"));$pdf->LN();
 				$pdf->SetFont('Arial','',10);
-				$pdf->Write(5, "       ".$_POST['hour_precentage']."%");$pdf->LN();
+				$pdf->Write(5, "       ".$_POST['hour_percentage']."%");$pdf->LN();
 				$pdf->LN();
 				
 				$array_key = array_keys($_POST);
@@ -811,6 +814,7 @@ include('functions/js_functions.php');
 						$(".role" + role).show();
 					}
 					else {
+						document.getElementById('name_project_code').style.display = "none";
 						document.getElementById('hours').style.display = "none";
 						document.getElementById('role_type_field').style.display = "none";
 						document.getElementById('role_type_corp').style.display = "none";
@@ -856,8 +860,8 @@ include('functions/js_functions.php');
 				
 				function showSomeFor(who){
 					document.getElementById('choose_role_div').style.display = "none";
-					
-					document.getElementById('hours').style.display = "none";
+					document.getElementById('name_project_code').style.display = "none";
+					document.getElementById('hours').style.display = "block";
 					document.getElementById('role_type_field').style.display = "none";
 					document.getElementById('role_type_corp').style.display = "none";
 					
@@ -877,6 +881,7 @@ include('functions/js_functions.php');
 				
 				function select_role(){
 					var role = parseInt(document.getElementById('choose_role').value);
+					document.getElementById('name_project_code').style.display = "block";
 					document.getElementById('hours').style.display = "block";
 					document.getElementById('role_type_field').style.display = "none";
 					document.getElementById('role_type_corp').style.display = "none";
@@ -942,7 +947,12 @@ include('functions/js_functions.php');
 				}
 				
 				function calculate(){
-					displayResult();
+					if ($('#hour_percentage').val() == '') {
+						alert('Percentage of hours is a required field.');
+						$('#hour_percentage').focus();
+					} else {
+						displayResult();
+					}
 				}
 				
 				function calculatePoints(role){
@@ -993,7 +1003,7 @@ include('functions/js_functions.php');
 						break;
 					}
 					var minMax = getMinMax(role, $('input[name=extra_level]:checked').val())
-					var h =  get_value_float('hour_precentage');
+					var h =  get_value_float('hour_percentage');
 					console.log(h);
 					document.getElementById('output_minimum').innerHTML = number2currency(minMax.min * h / 100);
 					document.getElementById('output_minimum_month').innerHTML = number2currency(minMax.min * h / 100 / 12);
@@ -1059,7 +1069,7 @@ include('functions/js_functions.php');
 					document.getElementById('extra-field-8').checked = false;
 					document.getElementById('extra-corp-6').checked = false;
 					document.getElementById('extra-corp-7').checked = false;
-					document.getElementById('hour_precentage').value = "100";
+					document.getElementById('hour_percentage').value = "";
 					<?php getReset() ?>
 				}
 				
@@ -1167,12 +1177,14 @@ include('functions/js_functions.php');
 					<form name="saveUserValues_form" id="saveUserValues_form" action="" method="post">
 						<div id='questions'>
 							<BR>
-							<div id='hours'>
+							<div id='name_project_code'>
 								Name: <input type='text' name='person_name' id='person_name'><BR>
 								Project Code: <input type='text' name='projectCode' id='projectCode' maxlength='6'><BR><BR>
-								<h2><?php echo getStringConstant("first_header") ?></h2>
+							</div>
+							<div id='hours'>
+							    <h2><?php echo getStringConstant("first_header") ?></h2>
 								<strong><?php echo getStringConstant("hour_label") ?></strong>
-								<input type='text' size='5' name='hour_precentage' id='hour_precentage' value='100'><BR><BR>
+								<input type='text' size='3' name='hour_percentage' id='hour_percentage'>%<BR><BR>
 							</div>
 							<div id='role_type_field'>
 								<strong>Role Type</strong><BR>
