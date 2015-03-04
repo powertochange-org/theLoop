@@ -88,7 +88,18 @@ if (get_theme_mod('survey_active')) {
 			<div class='inner' style='position:relative;'>
 				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
 				<a href='/'><img style='position:relative;left:37px;top:-5px' class='header-logo' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
-				<div id="staffAppButtonPlaceholder"></div>
+        <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
+        <!-- <h1>Search the Loop</h1><BR> -->
+        <div class="search-position">
+          <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
+            <div class='search-box'>
+              <input name="s" id="s" class='search-input' placeholder='Search' type='text' />
+              <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
+            </div>
+          </form>
+        </div>
+        
+        
 			</div>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>

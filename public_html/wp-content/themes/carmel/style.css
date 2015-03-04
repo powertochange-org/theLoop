@@ -603,3 +603,25 @@ footer .copy{
     background-color: grey;
     padding: 10px 20px;
 }
+
+.search-and-staff-app-button {
+	width:750px;
+    margin:0px;
+    float:right;
+}
+
+div.search-position {
+	position:relative;
+	float:right;
+	top:0px;
+	margin-right: -160px;
+	margin-top: 11px;
+}
+div.staff-app-position {
+	position:relative;
+	float:right;
+	top:20px;
+}
+.sbfeaturelinks {
+	font-weight: bold;
+}

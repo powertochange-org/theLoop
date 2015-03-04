@@ -41,9 +41,137 @@ foreach($posts_array as $post){
 
 function themename_customize_register($wp_customize){
     
+    //var_dump($wp_customize);
 	global $postArray;
 	
-	   $wp_customize->add_setting('feature_update', array(
+	// *************************************************************************************************
+
+    $wp_customize->add_section('sidebar_settings', array(
+        'title'         =>  'Feature Sidebar Settings',
+        'description'   =>  'The Sidebar section allows you to select feature pages,
+                             posts, and other documents you believe would be valuable
+                             to P2C staff and show them directly on the homepage.',
+        'priority'      =>  '201'
+    ));
+    $wp_customize->add_setting('feature_title_1', array(
+        'default'       =>  null,
+        'capability'    =>  'edit_theme_options',
+        'type'          =>  'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('select_feature_title_1', array(
+        'label'      => 'Title 1',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'feature_title_1'
+    ));
+    $wp_customize->add_setting('title_url_1', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('input_title_url_1', array(
+        'label'      => 'Title URL 1',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'title_url_1',
+    ));
+    
+    $wp_customize->add_setting('feature_title_2', array(
+        'default'       =>  null,
+        'capability'    =>  'edit_theme_options',
+        'type'          =>  'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('select_feature_title_2', array(
+        'label'      => 'Title 2',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'feature_title_2'
+    ));
+    $wp_customize->add_setting('title_url_2', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('input_title_url_2', array(
+        'label'      => 'Title URL 2',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'title_url_2',
+    ));
+
+    $wp_customize->add_setting('feature_title_3', array(
+        'default'       =>  null,
+        'capability'    =>  'edit_theme_options',
+        'type'          =>  'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('select_feature_title_3', array(
+        'label'      => 'Title 3',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'feature_title_3'
+    ));
+    $wp_customize->add_setting('title_url_3', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('input_title_url_3', array(
+        'label'      => 'Title URL 3',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'title_url_3',
+    ));
+
+    $wp_customize->add_setting('feature_title_4', array(
+        'default'       =>  null,
+        'capability'    =>  'edit_theme_options',
+        'type'          =>  'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('select_feature_title_4', array(
+        'label'      => 'Title 4',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'feature_title_4'
+    ));
+    $wp_customize->add_setting('title_url_4', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('input_title_url_4', array(
+        'label'      => 'Title URL 4',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'title_url_4',
+    ));
+
+    $wp_customize->add_setting('feature_title_5', array(
+        'default'       =>  null,
+        'capability'    =>  'edit_theme_options',
+        'type'          =>  'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('select_feature_title_5', array(
+        'label'      => 'Title 5',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'feature_title_5'
+    ));
+    $wp_customize->add_setting('title_url_5', array(
+        'default'        => null,
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+        'transport'     =>  'postMessage'
+    ));
+    $wp_customize->add_control('input_title_url_5', array(
+        'label'      => 'Title URL 5',
+        'section'    => 'sidebar_settings',
+        'settings'   => 'title_url_5',
+    ));
+
+
+    // *************************************************************************************************
+
+    $wp_customize->add_setting('feature_update', array(
         'default'        => null,
         'capability'     => 'edit_theme_options',
         'type'           => 'theme_mod',
