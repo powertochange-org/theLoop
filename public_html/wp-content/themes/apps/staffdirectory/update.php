@@ -453,17 +453,16 @@ function sendEmail($changes, $userName) {
     // If we have changes; don't send any email if there's no changes!
     if (!empty($changes)) {
         if (defined('DEV_ENV') && DEV_ENV) { // We're in dev environment
-            $to = "brent.nesbitt@p2c.com";
+            $to = "jason.brink@p2c.com";
             $subject = "Staff Directory: User " . $userName . " changed info [Dev Environment]";
         }
         else {
-            // TODO: At some point, change to a mailing list (ie, hradmins@p2c.com)
-            $to = "Rachel.janz@p2c.com, Leoni.anderson@p2c.com, Cherie.rodway@p2c.com, Marian.ocampo@p2c.com, cam.ludwig@powertochange.org";
+            $to = "staff_info_change@p2c.com";
             $subject = "Staff Directory: User " . $userName . " changed info";
         }
         // Set up the headers
-        $headers = "From: staff-directory@powertochange.org\r\n";
-        $headers .= "Reply-To: helpdesk@powertochange.org\r\n";
+        $headers = "From: Staff Directory <helpdesk@p2c.com>\r\n";
+        $headers .= "Reply-To: helpdesk@p2c.com\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
         // Add the message prelude
