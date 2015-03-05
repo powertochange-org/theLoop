@@ -623,5 +623,7 @@ div.staff-app-position {
 	top:20px;
 }
 .sbfeaturelinks {
+	display: block;
 	font-weight: bold;
+	margin-bottom: 5px;
 }

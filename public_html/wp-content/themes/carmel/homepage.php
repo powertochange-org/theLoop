@@ -202,7 +202,7 @@
 				for ($i = 1; $i <= 5; $i += 1) {
 					if(get_theme_mod("title_url_$i") && get_theme_mod("feature_title_$i")) {
 					?>
-					<a href="<?php echo get_theme_mod("title_url_$i");?>" class="sbfeaturelinks"><?php echo get_theme_mod("feature_title_$i"); ?></a><br>
+					<a href="<?php echo get_theme_mod("title_url_$i");?>" class="sbfeaturelinks"><?php echo get_theme_mod("feature_title_$i"); ?></a>
 					<?php 
 					}
 				} ?>
