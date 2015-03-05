@@ -457,7 +457,7 @@ function sendEmail($changes, $userName) {
             $subject = "Staff Directory: User " . $userName . " changed info [Dev Environment]";
         }
         else {
-            $to = "staff_info_change@p2c.com";
+            $to = "staff_address_change@p2c.com";
             $subject = "Staff Directory: User " . $userName . " changed info";
         }
         // Set up the headers
