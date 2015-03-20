@@ -204,13 +204,13 @@ li.menu-item.current-menu-item  a{
 }
 
 #content-left{
-	width:700px;
+	width:70%;
 	padding:0;
 	float:left;
 }
 
 #content-right{
-	width:300px;
+	width:30%;
 	padding:0;
 	display:inline;
 	float:right;
@@ -409,8 +409,6 @@ footer{
 	border-right: 1px solid #c7c7c7;
 }
 
-
-
 footer .bottom{
 	width:1000px;
 	margin:0 auto;
@@ -420,7 +418,7 @@ footer .bottom{
 
 footer .bottom div{
 	display:inline-block;
-		color:#c4c4c4;
+	color:#c4c4c4;
 }
 
 footer .bottom a{
@@ -440,6 +438,7 @@ footer .privacy:hover{
 footer .copy{
 	font-family: 'Open sans', sans-serif;
 	font-size:13px;
+	text-align: center;
 }
 
 #main-content .homepage{
@@ -686,4 +685,107 @@ div.staff-app-position {
 }
 .homepage-tiles-new-line {
 	clear: both;
+}
+
+/*
+	This is the media query for displaying content based on screen size
+*/
+
+@media (min-width: 300px) and (max-width: 450px) {
+	.homepage-tiles {
+		width:90%;
+		float:left;
+		padding:10px;
+		clear: both;
+	}
+	.menu{
+		padding: 0;
+		width:100%;
+		margin:0 auto;
+	}
+
+	#content{
+		width:100%;
+		padding:0;
+		margin:auto;
+	}
+	.slideshow-img {
+		visibility: hidden;
+		width: 0px;
+		height:0px;
+	}
+	.slideshow-img-bottom-bar {
+		visibility: hidden;
+		width: 100%;
+		height: 0px;
+	}
+	header .inner {
+		width:100%;
+	}
+	.middle{
+		width:100%;
+		text-align: center;
+		padding:0px;
+	}
+	.middle .logo{
+		padding:29px 25px 20px 10px;	
+		border-right: 0px;
+	}
+	footer .bottom {
+		width:100%;
+	}
+	.search-and-staff-app-button {
+		visibility: hidden;
+	}
+	.cluster {
+		width: 95%;
+	}
+	.menu-item a {
+		height:31px;
+		color:#ffffff;
+		font-family:'Open Sans', sans-serif;
+		padding:0px 23px;
+		float: left;
+		position: relative;
+		font-size:14px;
+		padding-top: 17px;
+		top:-1px;
+		width: 89.75%;
+		background:#005e90;
+		/*padding-left:20px;*/
+	}
+	.menu_bg {
+		top: 55px;
+	}
+	footer .privacy {
+		text-align: center;
+		margin-left: 0px;
+	}
+	#sidebar {
+		visibility: hidden;
+		height:0px;
+	}
+	.sidebaritem {
+		visibility: hidden;
+		height:0px;
+	}
+}
+
+@media (min-width: 451px) and (max-width: 600px) {
+	.container {
+		margin: auto;
+	}
+	.homepage-tiles {
+		width:50%;
+		float:left;
+		padding:10px 5%;
+	}
+}
+
+@media (min-width: 600px) and (max-width: 736px) {
+	.homepage-tiles {
+		width:45%;
+		float:left;
+		padding:10px;
+	}
 }

@@ -85,7 +85,8 @@ if (get_theme_mod('survey_active')) {
     </head>  
     <body>
 		<header>
-			<div class='inner'>
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+      <div class='inner'>
 				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
 				<a href='/'><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
         <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>

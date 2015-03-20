@@ -108,107 +108,109 @@
 			</div>                        
 		</div>
 	</div><div style='clear:both;'></div>
-	<div id="main-content">
-		<div class="homepage-tiles">
-			<hr>
-			<span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-				News &amp; Update</span><BR>
-				<span class="newsUpdate">
-				<?php
-					$post_number = 6;
-				
-					$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
-					$result = $results[0];
+	<div class="container"></div>	
+		<div id="main-content">
+			<div class="homepage-tiles">
+				<hr>
+				<span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+					News &amp; Update</span><BR>
+					<span class="newsUpdate">
+					<?php
+						$post_number = 6;
 					
-					$idObj = get_category_by_slug('staff-stories'); 
-					$id_staffStories = $idObj->term_id;
-					$idObj = get_category_by_slug('p2cstudents'); 
-					$id_students = $idObj->term_id;
-					
-					$categories = get_categories(array('orderby' => 'id', 'exclude' => "$id_staffStories,$id_students")); 
-					// Build a comma-separated list that we can pass to the query_posts function
-					$category_list = "";
-					foreach ($categories as $category) {	
-						if ($category_list != "") {
-							$category_list .= ",";
+						$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
+						$result = $results[0];
+						
+						$idObj = get_category_by_slug('staff-stories'); 
+						$id_staffStories = $idObj->term_id;
+						$idObj = get_category_by_slug('p2cstudents'); 
+						$id_students = $idObj->term_id;
+						
+						$categories = get_categories(array('orderby' => 'id', 'exclude' => "$id_staffStories,$id_students")); 
+						// Build a comma-separated list that we can pass to the query_posts function
+						$category_list = "";
+						foreach ($categories as $category) {	
+							if ($category_list != "") {
+								$category_list .= ",";
+							}
+							$category_list .= $category->term_id;
 						}
-						$category_list .= $category->term_id;
-					}
 
-					// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
-					if ($result->ministry == "Power to Change - Students") {
-						// Show any posts
-						$latest_cat_post = new WP_Query( "showposts=$post_number&cat=$category_list,$id_students");
-					} else {					
-						// Query posts associated with any category in our list. Posts that are only
-						// in the P2C Students category won't get selected.
-						$latest_cat_post = new WP_Query("showposts=$post_number&cat=$category_list");
-					}
-					
+						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
+						if ($result->ministry == "Power to Change - Students") {
+							// Show any posts
+							$latest_cat_post = new WP_Query( "showposts=$post_number&cat=$category_list,$id_students");
+						} else {					
+							// Query posts associated with any category in our list. Posts that are only
+							// in the P2C Students category won't get selected.
+							$latest_cat_post = new WP_Query("showposts=$post_number&cat=$category_list");
+						}
+						
+						if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+						?>
+						<BR>
+						<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo the_title('', '', false); ?></a></h2>
+						<?php
+						endwhile; endif; ?>
+						<BR>
+					</span>
+					<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
+			</div>
+			<div class="homepage-tiles">
+				<hr>
+				<?php 
+					$idObj = get_category_by_slug('leonards-updates'); 
+					$id = $idObj->term_id;
+					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
 					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
 					?>
-					<BR>
-					<h2 class="homepage"><a href='<?php echo get_permalink() ?>'><?php  echo the_title('', '', false); ?></a></h2>
-					<?php
-					endwhile; endif; ?>
-					<BR>
-				</span>
-				<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
-		</div>
-		<div class="homepage-tiles">
-			<hr>
-			<?php 
-				$idObj = get_category_by_slug('leonards-updates'); 
-				$id = $idObj->term_id;
-				$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-				if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-				?>
-				<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-					Leonard's Updates</span></a><BR>
-					<BR>
-					<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-					<BR>
-					<span class="homepage"><?php the_excerpt(); ?></span>
-					<?php
-					endwhile; endif; ?>
-		</div>
-		<div class="homepage-tiles-new-line"></div>
-		<div  class="homepage-tiles">
-			<hr>
-			<?php 
-				$idObj = get_category_by_slug('staff-stories'); 
-				$id = $idObj->term_id;
-				$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-				if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-				?>
-				<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-					Staff Stories</span></a><BR>
-					<BR>
-					<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-					<BR>
-					<span class="homepage"><?php the_excerpt(); ?></span>
-					<?php
-					endwhile; endif; ?>
-			<br>
-			<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
-		</div>
-		<div class="homepage-tiles">
-			<hr>
-			<?php 
-				$idObj = get_category_by_slug('prayer-requests'); 
-				$id = $idObj->term_id;
-				$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-				if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-				?>
-				<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-					Prayer Requests</span></a><BR>
-					<BR>
-					<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-					<BR>
-					<span class="homepage"><?php the_excerpt(); ?></span>
-					<?php
-					endwhile; endif; ?>
-			<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						Leonard's Updates</span></a><BR>
+						<BR>
+						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+						<BR>
+						<span class="homepage"><?php the_excerpt(); ?></span>
+						<?php
+						endwhile; endif; ?>
+			</div>
+			<div class="homepage-tiles-new-line"></div>
+			<div  class="homepage-tiles">
+				<hr>
+				<?php 
+					$idObj = get_category_by_slug('staff-stories'); 
+					$id = $idObj->term_id;
+					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+					?>
+					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						Staff Stories</span></a><BR>
+						<BR>
+						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+						<BR>
+						<span class="homepage"><?php the_excerpt(); ?></span>
+						<?php
+						endwhile; endif; ?>
+				<br>
+				<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
+			</div>
+			<div class="homepage-tiles">
+				<hr>
+				<?php 
+					$idObj = get_category_by_slug('prayer-requests'); 
+					$id = $idObj->term_id;
+					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+					?>
+					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+						Prayer Requests</span></a><BR>
+						<BR>
+						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+						<BR>
+						<span class="homepage"><?php the_excerpt(); ?></span>
+						<?php
+						endwhile; endif; ?>
+				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+			</div>
 		</div>
 	</div>
 </div>
