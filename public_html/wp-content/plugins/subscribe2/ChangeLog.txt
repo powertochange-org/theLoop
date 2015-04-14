@@ -1,3 +1,18 @@
+= 10.18.5 =
+
+* Get larger blog post for daily digest
+* Code cleanup
+
+= 10.18.4 =
+
+* Readygraph premium plan default change
+* Bug fix
+
+= 10.18.3 =
+
+* Readygraph premium plan selections
+* Site profile for readygraph promotions
+
 = 10.18.2 =
 
 * ReadyGraph Bug Fixes

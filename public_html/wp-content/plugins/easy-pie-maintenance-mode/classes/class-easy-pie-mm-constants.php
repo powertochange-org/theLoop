@@ -35,7 +35,7 @@ if (!class_exists('Easy_Pie_MM_Constants')) {
         const OPTION_NAME = 'easy-pie-mm-options';
         const MAIN_PAGE_KEY = 'easy-pie-mm-main-page';
         const PLUGIN_SLUG = 'easy-pie-maintenance-mode';
-        const PLUGIN_VERSION = "0.6.4"; // RSR Version
+        const PLUGIN_VERSION = "0.6.5"; // RSR Version
 
         /* Pseudo constants */
 
