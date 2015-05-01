@@ -55,7 +55,6 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			} ?>
 			</div>
 			<div style='float:left;padding-left:23px;width:407px'>
-			<BR>
 			<h4>MINISTRY INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php 
@@ -177,7 +176,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			echo "<BR>";
 			if(isset($user->spouse_id)){ //if you're married to someone on staff we link your profiles.
 				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE external_id = '" . $user->spouse_id . "'");
-				echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a>"; 
+				echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br />"; 
 			}
 			//grab phone numbers that are shared, then display them
 			$phones = $wpdb->get_results('SELECT * FROM phone_number, employee WHERE employee.external_id = phone_number.employee_id AND phone_number.share_phone=1 AND phone_number.is_ministry=0 AND phone_number.employee_id = "' . $user->external_id . '"');
@@ -237,7 +236,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			}
 			?>
             <?php if (!empty($user->notes)){
-                echo "<p style='margin:  5px 0'><strong>A personal message:</strong> " . $user->notes . "</p>";
+                echo "<p style='margin:  5px 0'><strong>About me:</strong><br />" . nl2br($user->notes) . "</p>";
             } ?>
 			</div><div style='clear:both;'></div>
 		</div>
