@@ -805,15 +805,21 @@ div.staff-app-position {
 	header {
 		height: 185px;
 	}
-	.search-position {
-		margin: 0 auto 0 auto;
+	div.search-position {
+		float:none;
+		top:-10px;
+		margin-right: 10px;
+	}
+	#staff-app-container {
+		/*
+		float: none;
+		margin-left: 30%;
+		margin-right: 30%;
+		min-width: 0px;
+		 */
 	}
 	.search-box {
 		margin: 0 auto 0 auto;
-	}
-	#staff-app-container {
-		float: none;
-		min-width: 0px;
 	}
 	#main-content.form .post div.nav-option {
 		width: 100%;
