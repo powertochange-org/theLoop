@@ -75,7 +75,7 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''),
 	
 	/*special people*/
-	'chris.harman' => array('2015/02/Atlantic-Email.png', ''));
+	'chris.harman' => array('2015/05/Atlantic-Email.png', ''));
 	
 	/*very special people 
 	you 
@@ -146,7 +146,7 @@ get_header(); ?>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
-		 
+
 		
 		<script type="text/javascript">
 			function refreshSignature(){
@@ -184,7 +184,7 @@ get_header(); ?>
 					'<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
 					'<?php
-						if(isset($divison[$current_user->user_login]){
+						if(array_key_exists($current_user->user_login, $division)){ //special people
 							echo $division[$current_user->user_login][0];
 						} else {
 							echo $division[$user->ministry][0];
