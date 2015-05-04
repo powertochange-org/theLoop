@@ -72,7 +72,18 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
 	'PTC Resource Centre' =>  array('2014/07/Resource-Centre.png', 'http://store.powertochange.org/'),
 	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
-	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''));
+	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''),
+	
+	/*special people*/
+	'chris.harman' => array('2015/02/Atlantic-Email.png', ''));
+	
+	/*very special people 
+	you 
+	S
+	I am the good shepherd. I know my own and my own know me, just as the Father knows me and I know the Father; and I lay down my life for the sheep. 
+	John 10:3
+	
+	*/
 
 
 get_header(); ?>
@@ -151,8 +162,8 @@ get_header(); ?>
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
 				signature += '</td>' +
-					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
+					'</tr>' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
 				if (phone.trim() == ""){
@@ -172,7 +183,13 @@ get_header(); ?>
 				signature += '</a></td></tr>' +
 					'<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
-					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>';
+					'<?php
+						if(isset($divison[$current_user->user_login]){
+							echo $division[$current_user->user_login][0];
+						} else {
+							echo $division[$user->ministry][0];
+						}
+					?>" height="80"  /></a></td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
