@@ -14,29 +14,29 @@
 		<?php $parts = explode('/', get_page_uri(get_the_ID())); 
 		$link = "";
 		?>
-		<table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr style=''>
+		<div style='table-row'><div style=''>
 		<?php for ($i = 0; $i < count($parts); $i ++){
 			$link .= "/$parts[$i]";
 			if ($i < count($parts) - 2){
 				if ($i % 3 == 0 and $i > 0) {?>
-					<tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+					<div></div><div style='table-row'><div><div class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></div>
 				<?php } ?>
-				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
-				<td class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+				<div class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></div>
+				<div class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></div>
 			<?php } else if ($i < count($parts) - 1){
 				if ($i % 3 == 0 and $i > 0) {?>
-					</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+					</div></div><div style='table-row'><div><div class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></div>
 				<?php } ?>
-				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
-				<td  class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
+				<div class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></div>
+				<div  class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></div>
 			<?php } else { 
 				if ($i % 3 == 0 and $i > 0) {?>
-					</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
+					</div></div><div style='table-row'><div><div class ='crumbs' style='width:22px;'><img src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></div>
 				<?php } ?>
-				<td class ='crumbs' style='background-color:#f7941d; width:auto;'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
+				<div class ='crumbs' style='background-color:#f7941d; width:auto;'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></div>
 			<?php }
 		 } ?>
-		</tr></table>
+		</div></div>
 		<div class="post">
 		    <?php the_post_thumbnail(); ?>
 		    <?php the_content(); ?>

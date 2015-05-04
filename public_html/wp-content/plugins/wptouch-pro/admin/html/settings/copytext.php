@@ -1,1 +1,0 @@
-<p class="copytext"><?php wptouch_the_tab_setting_desc(); ?></p>

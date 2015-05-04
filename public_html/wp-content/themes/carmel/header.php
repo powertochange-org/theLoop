@@ -81,14 +81,14 @@ if (get_theme_mod('survey_active')) {
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
-		</script>		
+		</script>
     </head>  
     <body>
 		<header>
 			<meta name="viewport" content="width=device-width, initial-scale=1">
       <div class='inner'>
-				<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
-				<a href='/'><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
+  			<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
+  			<a href='/'><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
         <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
         <!-- <h1>Search the Loop</h1><BR> -->
         <div class="search-position">
@@ -98,10 +98,16 @@ if (get_theme_mod('survey_active')) {
               <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
             </div>
           </form>
-        </div>
-        
-        
+        </div>   
 			</div>
+      <script type="text/javascript">
+        $(document).ready(function(){
+          $("#mobile-menu").click(function(){
+            $(".menu_bg").toggle();
+          });
+        });
+      </script>
+      <button id="mobile-menu">☰</button>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>
 			</div>
