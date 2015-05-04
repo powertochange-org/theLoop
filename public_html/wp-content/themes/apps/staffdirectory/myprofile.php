@@ -384,8 +384,10 @@ $max_file_size = 30000000; // size in bytes
 				<input type="text" placeholder='Facebook' name="personalFacebook" value="<?php echo $user->facebook ?>" style="width:446px">
 			</div>
 			<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">
-				Personal Message:
-				<textarea id="notes" name="notes" cols="40" rows="5"><?php echo $user->notes ?></textarea>
+				<span style='font-weight:600;'>About you (share a bit about yourself for other staff):</span><br />
+				<textarea id="notes" name="notes" cols="60" rows="5"><?php echo $user->notes ?></textarea>
+				<br />
+				<br />
 				<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
 			</div>
 			</form>
