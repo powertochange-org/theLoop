@@ -64,7 +64,7 @@ if (get_theme_mod('survey_active')) {
         jQuery(document).ready(function(){
           $.ajax({
             type: "POST",
-            url: "https://apps.powertochange.org/DesktopModules/AgapeConnect/StaffRmb/WebService.asmx/getStaffAppsButton",
+            url: "https://apps.powertochange.org/DesktopModules/AgapeConnect/StaffRmb/WebService.asmx/getStaffAppsButtonResponsive",
             success: function (data) {
                 $('#staffAppButtonPlaceholder').replaceWith(data);
             }
