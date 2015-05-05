@@ -811,11 +811,12 @@ div.staff-app-position {
 		margin-right: 10px;
 	}
 	#staff-app-container {
-		/*
 		float: none;
 		margin-left: 30%;
 		margin-right: 30%;
 		min-width: 0px;
+		/*
+		#staff-app-container's float:none; and min-width:0px; is getting overwritten
 		 */
 	}
 	.search-box {
