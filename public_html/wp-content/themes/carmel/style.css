@@ -810,17 +810,6 @@ div.staff-app-position {
 		top:-10px;
 		margin-right: 10px;
 	}
-	#staff-app-container {
-		display: inline-block;
-		position: relative;
-		float: none;
-		margin-left: 30%;
-		margin-right: 30%;
-		min-width: 0px;
-		/*
-		#staff-app-container's float:none; and min-width:0px; is getting overwritten
-		 */
-	}
 	.search-box {
 		margin: 0 auto 0 auto;
 	}
