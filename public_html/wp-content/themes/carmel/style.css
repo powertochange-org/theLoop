@@ -619,11 +619,11 @@ footer .copy{
 }
 
 div.search-position {
-	position:relative;
+	position:static;
 	float:right;
 	top:0px;
-	margin-right: -160px;
-	margin-top: 11px;
+	margin-right: 130px;
+	margin-top: -44px;
 }
 
 div.staff-app-position {
@@ -806,9 +806,11 @@ div.staff-app-position {
 		height: 185px;
 	}
 	div.search-position {
+		position:relative;
 		float:none;
 		top:-10px;
 		margin-right: 10px;
+		margin-top: 0px;
 	}
 	.search-box {
 		margin: 0 auto 0 auto;
