@@ -811,6 +811,8 @@ div.staff-app-position {
 		margin-right: 10px;
 	}
 	#staff-app-container {
+		display: inline-block;
+		position: relative;
 		float: none;
 		margin-left: 30%;
 		margin-right: 30%;
