@@ -229,9 +229,9 @@
 <hr style='border-color:#d6d7d4'>	
 <div class='middle'>
 	<img class='logo' src='/wp-content/themes/carmel/img/footer-logo.png' /> <!-- change?-->
-	<img class='cluster' src='/wp-content/themes/carmel/img/cluster.png'  usemap="#clustermap" />
-	<map name="clustermap">
-		<!-- todo change? -->
+	<img class='cluster' src='/wp-content/themes/carmel/img/Brand_Cluster_2_Line_New_Footer.png'  usemap="#clustermap" />
+	<!-- <map name="clustermap">
+		<!-- todo change?
 	  <area shape="rect" coords="0,0,115,50" href="/ministries/aia/" />
 	  <area shape="rect" coords="115,0,250,50" href="/ministries/students/" />
 	  <area shape="rect" coords="250,0,330,50" href="/ministries/gain/" />
@@ -245,6 +245,6 @@
 	  <area shape="rect" coords="400,50,530,95" href="/ministries/icn/" />
 	  <area shape="rect" coords="530,50,600,95" href="/ministries/ce/" />
 	  <area shape="rect" coords="600,50,729,95" href="/ministries/btp/" />
-	</map> 
+	</map> -->
 </div>	
 <?php get_footer(); ?>
