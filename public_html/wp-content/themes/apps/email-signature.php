@@ -144,7 +144,8 @@ get_header(); ?>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
-		<tr><td><label for='second'> Second Ministry/Department:</label></td><td><input type='text' id='second' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='sec_ministry'> Second Ministry/Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -157,26 +158,31 @@ get_header(); ?>
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
 					document.getElementById('name').value; 
 					
-				var qual = document.getElementById('qual').value;
-				if (qual.trim() != ""){	
-					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>';
+				var qual = document.getElementById('qual').value.trim();
+				if (qual) != ""){	
+					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
 				}
 				signature += '</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
-				var ministry = document.getElementById('ministry').value;
-				if (ministry.trim() != ""){
+				var ministry = document.getElementById('ministry').value.trim();
+				if (ministry != ""){
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
 				signature += '</td></tr>';
-				var second = document.getElementById('second').value;
-				if (second.trim() != ""){
-					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;"><td style="font-family:verdana,sans-serif;" >' + second + '</td></tr>';
+				var sec_role = document.getElementById('sec_role').value.trim();
+				var sec_ministry = document.getElementById('sec_ministry').value.trim();
+				if (sec_role != "" || sec_ministry != ""){
+					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role;
+					if (sec_role != "" && sec_ministry != ""){
+						signature += '<span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>';
+					}
+					signature += sec_ministry + '</td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
-				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
-				if (phone.trim() == ""){
+				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>").trim();
+				if (phone == ""){
 					signature += "<?php echo "604".$delimiter."514".$delimiter."2000" ?>";
 				}
 				else {
