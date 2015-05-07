@@ -155,7 +155,13 @@ get_header(); ?>
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
-					document.getElementById('name').value + '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>' +
+					document.getElementById('name').value; 
+					
+				var qual = document.getElementById('qual').value;
+				if (qual.trim() != ""){	
+					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>' +
+				}
+				signature +=
 					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
@@ -163,12 +169,12 @@ get_header(); ?>
 				if (ministry.trim() != ""){
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
+				signature += '</td></tr>';
 				var second = document.getElementById('second').value;
 				if (second.trim() != ""){
 					signature += '<td style="font-family:verdana,sans-serif;" >' + second + '</td>';
 				}
-				signature += '</td>' +
-					'</tr>' +
+				signature +=
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
