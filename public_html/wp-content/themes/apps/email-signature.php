@@ -159,7 +159,7 @@ get_header(); ?>
 					document.getElementById('name').value; 
 					
 				var qual = document.getElementById('qual').value.trim();
-				if (qual) != ""){	
+				if (qual != ""){	
 					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
 				}
 				signature += '</tr>' +
