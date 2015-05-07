@@ -140,9 +140,11 @@ get_header(); ?>
 		</style>
 		<table style="border: 1px #F7941D solid;" id="inputTable">
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
+		<tr><td><label for='qual'>Qualifications (MBA, PhD, etc:</label></td><td><input type='text' id='qual' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
+		<tr><td><label for='second'> Second Ministry/Department:</label></td><td><input type='text' id='second' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -153,13 +155,17 @@ get_header(); ?>
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
-					document.getElementById('name').value + '</td>' +
+					document.getElementById('name').value + '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nsbp;' + document.getElementById('qual').value + '</span></td>' +
 					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
 				var ministry = document.getElementById('ministry').value;
 				if (ministry.trim() != ""){
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
+				}
+				var second = document.getElementById('second').value;
+				if (second.trim() != ""){
+					signature += '<td style="font-family:verdana,sans-serif;" >' + second + '</td>';
 				}
 				signature += '</td>' +
 					'</tr>' +
