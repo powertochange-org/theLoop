@@ -162,8 +162,8 @@ get_header(); ?>
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
 				signature += '</td>' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'</tr>' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
 				if (phone.trim() == ""){
