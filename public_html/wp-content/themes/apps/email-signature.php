@@ -155,7 +155,7 @@ get_header(); ?>
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
-					document.getElementById('name').value + '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nsbp;' + document.getElementById('qual').value + '</span></td>' +
+					document.getElementById('name').value + '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>' +
 					'</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
 					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
