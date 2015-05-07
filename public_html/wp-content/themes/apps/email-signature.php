@@ -159,7 +159,7 @@ get_header(); ?>
 					
 				var qual = document.getElementById('qual').value;
 				if (qual.trim() != ""){	
-					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>';
+					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;">&nbsp;|&nbsp;' + document.getElementById('qual').value + '</span></td>';
 				}
 				signature += '</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
@@ -171,7 +171,7 @@ get_header(); ?>
 				signature += '</td></tr>';
 				var second = document.getElementById('second').value;
 				if (second.trim() != ""){
-					signature += '<td style="font-family:verdana,sans-serif;" >' + second + '</td>';
+					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;"><td style="font-family:verdana,sans-serif;" >' + second + '</td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
