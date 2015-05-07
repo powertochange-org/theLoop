@@ -142,7 +142,8 @@ get_header(); ?>
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
 		<tr><td><label for='qual'>Qualifications (MBA, PhD, etc)	:</label></td><td><input type='text' id='qual' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
-		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
+		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->role_title" ?>'/></td></tr>
+		<tr><td><label for='role'>Role:</label></td><td><input type='text' id='role'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='sec_ministry'> Second Ministry/Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
@@ -164,7 +165,7 @@ get_header(); ?>
 				}
 				signature += '</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
+					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value + '<span style="color:#c0c0c0;">';
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
