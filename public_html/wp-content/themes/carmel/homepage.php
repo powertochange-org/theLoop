@@ -93,7 +93,7 @@
 					<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
 				</div></form>
 				<hr>
-				<h1>Featured Content</h1><BR>
+				<h1>Featured Content</h1>
 				<?php  
 				for ($i = 1; $i <= 5; $i += 1) {
 					if(get_theme_mod("title_url_$i") && get_theme_mod("feature_title_$i")) {
@@ -110,6 +110,11 @@
 					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a>\n";
 				
 				} ?> -->
+				<h1 class="sidebar-heading-spacing">Popular Posts</h1>
+				<?php
+				    if (function_exists('wpp_get_mostpopular'))
+				    wpp_get_mostpopular('limit=3', 'range="monthly"', 'stats_views=0');
+				?>
 			</div>                        
 		</div>
 	</div><div style='clear:both;'></div>

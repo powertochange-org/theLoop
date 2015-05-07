@@ -1,0 +1,131 @@
+/*
+Wordpress Popular Posts plugin stylesheet
+Developed by Hector Cabrera
+
+Use the following classes to style your popular posts list as you like.
+*/
+@media (min-width: 768px) {
+	.wpp-list { /* UL element */
+		
+	}
+
+		.wpp-list li { /* LI - post container */
+			/*display:inline-block;*/ /* <-- uncommenting this line is recommended when using post thumbnails */
+			float:none;
+			clear:left;
+		}
+
+			/* title styles */
+			.wpp-post-title {
+			}
+			
+			/* thumbnail styles */
+			.wpp-thumbnail {
+				display:inline;
+				float:left;
+				margin:0 5px 0 0;
+				border:none;
+			}
+			
+			/* excerpt styles */
+			.wpp-excerpt {
+			}
+			
+			/* Stats tag styles */
+			.post-stats {
+				display:block;
+				font-size:9px;
+				font-weight:bold;
+			}
+				
+				.wpp-comments {
+				}
+				
+				.wpp-views {
+				}
+				
+				.wpp-author {
+				}
+				
+				.wpp-date {
+				}
+			
+			/* WP-PostRatings styles */
+			.wpp-rating {
+			}
+}
+
+@media (max-width: 767px) {
+	.wpp-list { /* UL element */
+		visibility: hidden;
+		width: 0px;
+		height:0px;
+	}
+
+		.wpp-list li { /* LI - post container */
+			visibility: hidden;
+			width: 0px;
+			height:0px;
+		}
+
+			/* title styles */
+			.wpp-post-title {
+				visibility: hidden;
+				width: 0px;
+				height:0px;
+			}
+			
+			/* thumbnail styles */
+			.wpp-thumbnail {
+				margin:0 0 0 0;
+				visibility: hidden;
+				width: 0px;
+				height:0px;
+			}
+			
+			/* excerpt styles */
+			.wpp-excerpt {
+				visibility: hidden;
+				width: 0px;
+				height:0px;
+			}
+			
+			/* Stats tag styles */
+			.post-stats {
+				font-size:0px;
+				visibility: hidden;
+				width: 0px;
+				height:0px;
+			}
+				
+				.wpp-comments {
+					visibility: hidden;
+					width: 0px;
+					height:0px;
+				}
+				
+				.wpp-views {
+					visibility: hidden;
+					width: 0px;
+					height:0px;
+				}
+				
+				.wpp-author {
+					visibility: hidden;
+					width: 0px;
+					height:0px;
+				}
+				
+				.wpp-date {
+					visibility: hidden;
+					width: 0px;
+					height:0px;
+				}
+			
+			/* WP-PostRatings styles */
+			.wpp-rating {
+				visibility: hidden;
+				width: 0px;
+				height:0px;
+			}
+}
