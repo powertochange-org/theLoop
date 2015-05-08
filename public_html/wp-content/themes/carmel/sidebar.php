@@ -1,4 +1,4 @@
-<div id="sidebar">
+<div id="sidebar" style="max-height: 425px;">
 	<div class="sidebaritem">
 		<h1>Search the Loop</h1><BR>
 		<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>

@@ -237,19 +237,17 @@
 	<img class='cluster' src='/wp-content/themes/carmel/img/Brand_Cluster_2_Line_New_Footer.png'  usemap="#clustermap" />
 	<map name="clustermap">
 		<!-- todo change? -->
-	    <area shape="rect" coords="0,0,115,50" href="/ministries/aia/" />
-	    <area shape="rect" coords="115,0,250,50" href="/ministries/students/" />
-	    <area shape="rect" coords="250,0,330,50" href="/ministries/gain/" />
-	    <area shape="rect" coords="330,0,470,50" href="/ministries/fl/" />
-	    <area shape="rect" coords="470,0,600,50" href="/ministries/tm/" />
-	    <area shape="rect" coords="600,0,729,50" href="/ministries/li/" />
-	    <area shape="rect" coords="0,50,125,95" href="/ministries/cs/" />
-	    <area shape="rect" coords="125,50,225,95" href="/ministries/drime/" />
-	    <area shape="rect" coords="225,50,310,95" href="/ministries/jfs/" />
-	    <area shape="rect" coords="310,50,400,95" href="/ministries/tl/" />
-	    <area shape="rect" coords="400,50,530,95" href="/ministries/icn/" />
-	    <area shape="rect" coords="530,50,600,95" href="/ministries/ce/" />
-	    <area shape="rect" coords="600,50,729,95" href="/ministries/btp/" />
+	    <area shape="rect" coords="0, 1, 120, 59" href="http://athletesinaction.com/" />
+	    <area shape="rect" coords="120, 0, 278, 59" href="http://p2c.com/students" />
+	    <area shape="rect" coords="278, 0, 376, 59" href="http://globalaid.net/" />
+	    <area shape="rect" coords="376, 2, 472, 59" href="http://jesusfilmstrategy.com/" />
+	    <area shape="rect" coords="472, 2, 560, 59" href="http://christianembassy.ca/" />
+	    <area shape="rect" coords="560, 1, 707, 59" href="http://www.familylifecanada.com/" />
+	    <area shape="rect" coords="2, 59, 152, 110" href="http://www.connectingstreams.com/" />
+	    <area shape="rect" coords="152, 59, 276, 109" href="http://powertochange.com/drime/" />
+	    <area shape="rect" coords="276, 61, 398, 109" href="http://whenetwork.ca/" />
+	    <area shape="rect" coords="398, 61, 565, 109" href="http://thelife.com/" />
+	    <area shape="rect" coords="565, 62, 706, 109" href="http://www.leaderimpact.com/" />
 	</map>
 </div>	
 <?php get_footer(); ?>
