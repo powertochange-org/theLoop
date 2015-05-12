@@ -411,6 +411,11 @@ footer{
 	border-right: 1px solid #c7c7c7;
 }
 
+.middle .image-cluster {
+	width: 765px;
+	float: right;
+}
+
 footer .bottom{
 	width:1000px;
 	margin:0 auto;
@@ -707,7 +712,8 @@ div.staff-app-position {
 	.homepage-tiles {
 		width:90%;
 		float:left;
-		padding:10px;
+		padding:0px;
+		padding-left: 20px;
 		clear: both;
 	}
 	.menu {
@@ -747,6 +753,11 @@ div.staff-app-position {
 	.middle .logo{
 		padding:29px 25px 20px 10px;	
 		border-right: 0px;
+	}
+	.middle .image-cluster {
+		width: 100%;
+		padding-left: 0px;
+		float: none;
 	}
 	footer .bottom {
 		width:100%;

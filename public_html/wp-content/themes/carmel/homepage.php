@@ -233,21 +233,20 @@
 <div style='clear:both;'></div>
 <hr style='border-color:#d6d7d4'>	
 <div class='middle'>
-	<img class='logo' src='/wp-content/themes/carmel/img/footer-logo.png' /> <!-- change?-->
-	<img class='cluster' src='/wp-content/themes/carmel/img/Brand_Cluster_2_Line_New_Footer.png'  usemap="#clustermap" />
-	<map name="clustermap">
-		<!-- todo change? -->
-	    <area shape="rect" coords="0, 1, 120, 59" href="http://athletesinaction.com/" />
-	    <area shape="rect" coords="120, 0, 278, 59" href="http://p2c.com/students" />
-	    <area shape="rect" coords="278, 0, 376, 59" href="http://globalaid.net/" />
-	    <area shape="rect" coords="376, 2, 472, 59" href="http://jesusfilmstrategy.com/" />
-	    <area shape="rect" coords="472, 2, 560, 59" href="http://christianembassy.ca/" />
-	    <area shape="rect" coords="560, 1, 707, 59" href="http://www.familylifecanada.com/" />
-	    <area shape="rect" coords="2, 59, 152, 110" href="http://www.connectingstreams.com/" />
-	    <area shape="rect" coords="152, 59, 276, 109" href="http://powertochange.com/drime/" />
-	    <area shape="rect" coords="276, 61, 398, 109" href="http://whenetwork.ca/" />
-	    <area shape="rect" coords="398, 61, 565, 109" href="http://thelife.com/" />
-	    <area shape="rect" coords="565, 62, 706, 109" href="http://www.leaderimpact.com/" />
-	</map>
+	<img class='logo' src='/wp-content/themes/carmel/img/footer-logo.png' /> <!-- change?-->	
+	<!--<img class='cluster' src='/wp-content/themes/carmel/img/Brand_Cluster_2_Line_New_Footer.png'  usemap="#clustermap" />-->
+	<div class="image-cluster">
+		<a href="http://athletesinaction.com/"><img src="/wp-content/uploads/2014/12/Athletes-In-Action.png" alt=""></a>
+		<a href="http://p2c.com/students"><img src="/wp-content/uploads/2014/12/P2C_Students.png" alt=""></a>
+		<a href="http://globalaid.net/"><img src="/wp-content/uploads/2014/12/gain.png" alt=""></a>
+		<a href="http://jesusfilmstrategy.com/"><img src="/wp-content/uploads/2014/12/Jesus_Film.png" alt=""></a>
+		<a href="http://christianembassy.ca/"><img src="/wp-content/uploads/2014/12/Christian_Embassy.png" alt=""></a>
+		<a href="http://www.familylifecanada.com/"><img src="/wp-content/uploads/2014/12/Family_Life.png" alt=""></a>
+		<a href="http://www.connectingstreams.com/"><img src="/wp-content/uploads/2014/12/Connecting_Streams.png" alt=""></a>
+		<a href="http://powertochange.com/drime/"><img src="/wp-content/uploads/2014/12/Drime.png" alt=""></a>
+		<a href="http://whenetwork.ca/"><img src="/wp-content/uploads/2014/12/When_Network.png" alt=""></a>
+		<a href="http://thelife.com/"><img src="/wp-content/uploads/2014/12/The_Life.png" alt=""></a>
+		<a href="http://www.leaderimpact.com/"><img src="/wp-content/uploads/2014/12/Leader_Impact.png" alt=""></a>
+	</div>
 </div>	
 <?php get_footer(); ?>
