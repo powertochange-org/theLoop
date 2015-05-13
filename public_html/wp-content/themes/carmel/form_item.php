@@ -53,7 +53,7 @@
 			<p>The page you are looking for is not here.</p>					 
 			<?php endif; ?>
 		</div>
-		<div id="content-right" class='download' style='width: 240px;'>
+		<div id="content-right" class='download form-item'>
 			<?php $parts = explode('<!-- links -->', get_the_content());
 				echo $parts[1]; ?>
 		</div><div style='clear:both;'></div>

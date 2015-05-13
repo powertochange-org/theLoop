@@ -84,7 +84,7 @@
 			</script>
 		</div>
     </div>
-    <div id="content-right">
+    <div id="content-right" class="home-page">
 		<div id="sidebar">
 			<div class="sidebaritem">
 				<h1>Search the Loop</h1><BR>
