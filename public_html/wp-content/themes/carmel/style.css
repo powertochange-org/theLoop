@@ -629,8 +629,8 @@ div.search-position {
 	position:static;
 	float:right;
 	top:0px;
-	margin-right: 130px;
-	margin-top: -44px;
+	margin-right: -175px;
+	margin-top: 11px;
 }
 
 div.staff-app-position {
@@ -847,10 +847,6 @@ div.staff-app-position {
 	#main-content.form .post > div {
 		width: 100%;
 	}
-	/*
-	#main-content {
-		width: 100%;
-	}*/
 	#content-left {
 		width: 100%;
 	}
