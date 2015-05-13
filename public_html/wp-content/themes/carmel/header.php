@@ -109,7 +109,7 @@ if (get_theme_mod('survey_active')) {
           });
         });
       </script>
-      <button id="mobile-menu">☰</button>
+      <button id="mobile-menu"><img src="/wp-content/themes/carmel/img/menu_icon.png" alt="" /></button>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>
 			</div>
