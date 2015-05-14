@@ -2,9 +2,7 @@
 
 ##Guidelines for setting up your dev environment with the Loop
 
-1. First, clone the repo `git clone https://github.com/powertochange-org/theLoop.git`.
-
-If you don't have git, shame on you. All jokes aside though, seriously, shame on you. BUT, if by chance you don't have git, use your Ninja-like Google-fu Skills and track down how to download it onto your machine. If you don't know how, or are too lazy to switch browser tabs to do a google search, you can use [this link](http://git-scm.com/).
+1. First, clone the repo `git clone https://github.com/powertochange-org/theLoop.git`. If you don't have git, shame on you. All jokes aside though, seriously, shame on you. BUT, if by chance you don't have git, use your Ninja-like Google-fu Skills and track down how to download it onto your machine. If you don't know how, or are too lazy to switch browser tabs to do a google search, you can use [this link](http://git-scm.com/).
 
 2. Second, download XAMPP. No, not WAMP or MAMP. XAMPP. Pronounced xzjxzjknxjznx-AMPP. Here's [the link](https://www.apachefriends.org/index.html).
 
