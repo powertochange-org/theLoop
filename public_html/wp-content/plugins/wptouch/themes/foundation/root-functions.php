@@ -1,6 +1,6 @@
 <?php
 
-define( 'FOUNDATION_VERSION', '2.3' );
+define( 'FOUNDATION_VERSION', '2.3.3' );
 
 define( 'FOUNDATION_DIR', WPTOUCH_DIR . '/themes/foundation' );
 define( 'FOUNDATION_URL', WPTOUCH_URL . '/themes/foundation' );
@@ -414,25 +414,7 @@ function foundation_render_theme_settings( $page_options ) {
 
 	wptouch_add_page_section(
 		FOUNDATION_PAGE_HOMESCREEN_ICONS,
-		__( 'Icon Title', 'wptouch-pro' ),
-		'admin_menu_homescreen_icons_options',
-		array(
-			wptouch_add_pro_setting(
-				'text',
-				'homescreen_icon_title',
-				__( 'Icon title', 'wptouch-pro' ),
-				__( 'When visitors bookmark your website, this will be the title shown.', 'wptouch-pro' ),
-				WPTOUCH_SETTING_BASIC,
-				'1.0'
-			),
-		),
-		$page_options,
-		FOUNDATION_SETTING_DOMAIN
-	);
-
-	wptouch_add_page_section(
-		FOUNDATION_PAGE_HOMESCREEN_ICONS,
-		__( 'Android', 'wptouch-pro' ),
+		__( 'Low Resolution', 'wptouch-pro' ),
 		'admin_menu_homescreen_android',
 		array(
 			wptouch_add_setting(
@@ -450,13 +432,13 @@ function foundation_render_theme_settings( $page_options ) {
 
 	wptouch_add_page_section(
 		FOUNDATION_PAGE_HOMESCREEN_ICONS,
-		__( 'iPhone & iPod touch', 'wptouch-pro' ),
+		__( 'High Resolution', 'wptouch-pro' ),
 		'admin_menu_homescreen_iphone_android_retina',
 		array(
 			wptouch_add_setting(
 				'image-upload',
 				'iphone_icon_retina',
-				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 180, 180 ),
+				sprintf( __( '%d by %d pixels (PNG)', 'wptouch-pro' ), 192, 192 ),
 				'',
 				WPTOUCH_SETTING_BASIC,
 				'2.0'
@@ -580,6 +562,7 @@ function foundation_setup_homescreen_icons() {
 		echo '<link rel="apple-touch-icon-precomposed" href="' . WPTOUCH_DEFAULT_HOMESCREEN_ICON . '" />' . "\n";
 	} else {
 		// iPhone / Android home screen icons
+		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 192, 192, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 180, 180, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 120, 120, 2 );
 		foundation_maybe_output_homescreen_icon( $settings->iphone_icon_retina, 114, 114, 2 );

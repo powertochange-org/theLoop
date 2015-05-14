@@ -2,8 +2,8 @@
 Contributors: bravenewcode, duanestorey, dalemugford, mkuplens
 Tags: wptouch, iphone, ipod, bravenewcode, mobile, android, blackberry, smartphone, responsive, design, mobile plugin, ios, mobile theme
 Requires at least: 3.8
-Stable tag: 3.7.3
-Tested up to: 4.1
+Stable tag: 3.7.7
+Tested up to: 4.2.1
 License: GPLv2
 
 Make your WordPress website mobile-friendly with just a few clicks.
@@ -39,6 +39,49 @@ For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wp
 11. WPtouch admin - Menu Setup
 
 == Changelog ==
+
+= Version 3.7.7 (April 27, 2015) =
+
+* Added: New hook to perform actions when admin settings are saved
+* Added: MobileStore - Improved compatibility with WooCommerce Checkout Manager fields (Pro Only)
+* Fixed: In rare cases themes and extensions attempted to auto-update without a valid source URL (Pro Only)
+* Fixed: An issue with Web App Mode persistence that stopped links from being clickable (Pro Only)
+* Fixed: Minor JavaScript issue in Advanced Type which could prevent saving settings in some scenarios (Pro Only)
+* Changed: Removed jQuery 2.x setting — caused too many issues with compatibility and older plugins and themes
+* Changed: URL filter allows filtering of homepage using the value '/'
+* Changed: Advanced Type Admin js for better compatibility (Pro Only)
+* Changed: Infinity Cache: automatically flush cache when WPtouch Pro settings are updated (Pro Only)
+* Changed: Extension settings layout (Infinity Cache, Mobile Content, Responsive Images - Pro Only)
+* Changed: Open - Adjusted menu filter to be more flexible. (Pro Only)
+
+= Version 3.7.6 (April 20, 2015) =
+
+* Added: Improved SEO compatibility
+* Added: Web-App Mode support for Chrome on Android (Pro Only)
+* Added: Support for overriding admin translation when localization is selected (add define( 'WPTOUCH_ADMIN_IGNORE_LOCALIZATION', true );  to wp-config.php)
+* Changed: Colour picker is now more resilient
+* Changed: Homescreen icon now recommends 192x192 (best size for high-DPI devices, backwards compatible)
+* Changed: Web App Mode's persistence feature now fiters out more logout URLs (Pro Only)
+* Fixed: Bootstrap instance no longer attempts to load glyphicon image
+* Fixed: Occasional Infinity Cache/theme switch conflict (Pro Only)
+* Fixed: Rare issue with MobileStore/Web App Mode (Pro Only)
+* Fixed: add_query_arg/remove_query_arg vulnerability
+
+= Version 3.7.5.3 (March 30, 2015) =
+
+* Fixed: Bug with saving filtered URL fragments
+
+= Version 3.7.5 (March 23, 2015) =
+
+* Added: wptouch-icons-old module for compatibility with custom themes that haven't migrated their icon classnames.
+* Added: Improved compatibility with page builder plugin (process posts and pages for alternate mobile content when the_content is filtered). (Pro Only)
+* Added: Improved compatibility with custom add to cart links in MobileStore. (Pro Only)
+* Changed: Plugin repository description and labels.
+* Changed: Simplified admin (eliminated basic/advanced admin mode switching) and streamlined settings.
+* Changed: Labels no longer translated to placeholders for select controls in MobileStore. (Pro Only)
+* Changed: Removed 'upgrade available' and 'notifications' buttons from admin.
+* Fixed: Applying 'wptouch_settings_override_defaults' filter to default settings.
+* Fixed: Notice in MobileStore when WooCommerce is not active. (Pro Only)
 
 = Version 3.7.3 (March 5, 2015) =
 
