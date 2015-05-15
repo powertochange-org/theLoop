@@ -72,7 +72,18 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
 	'PTC Resource Centre' =>  array('2014/07/Resource-Centre.png', 'http://store.powertochange.org/'),
 	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
-	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''));
+	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''),
+	
+	/*special people*/
+	'chris.harman' => array('2015/05/Atlantic-Email.png', ''));
+	
+	/*very special people 
+	you 
+	S
+	I am the good shepherd. I know my own and my own know me, just as the Father knows me and I know the Father; and I lay down my life for the sheep. 
+	John 10:3
+	
+	*/
 
 
 get_header(); ?>
@@ -129,33 +140,50 @@ get_header(); ?>
 		</style>
 		<table style="border: 1px #F7941D solid;" id="inputTable">
 		<tr><td><label for='name'>Name:</label></td><td><input type='text' id='name' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo "$user->first_name $user->last_name"?>'/></td></tr>
+		<tr><td><label for='qual'>Qualifications (MBA, PhD, etc)	:</label></td><td><input type='text' id='qual' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='phone'>Phone:</label></td><td><input type='text' id='phone' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($phone != null){echo $phone->number;} ?>'/></td></tr>
 		<tr><td><label for='cell'>Cell:</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
+		<tr><td><label for='role'>Role:</label></td><td><input type='text' id='role'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo $user->role_title ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
+		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='sec_ministry'> Second Ministry/Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
-		 
+
 		
 		<script type="text/javascript">
 			function refreshSignature(){
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
-					document.getElementById('name').value + '</td>' +
-					'</tr>' +
+					document.getElementById('name').value; 
+					
+				var qual = document.getElementById('qual').value.trim();
+				if (qual != ""){	
+					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
+				}
+				signature += '</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
-					'<td style="font-family:verdana,sans-serif;" ><?php echo "$user->role_title" ?><span style="color:#c0c0c0;">';
-				var ministry = document.getElementById('ministry').value;
-				if (ministry.trim() != ""){
+					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value + '<span style="color:#c0c0c0;">';
+				var ministry = document.getElementById('ministry').value.trim();
+				if (ministry != ""){
 					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
 				}
-				signature += '</td>' +
-					'</tr>' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
+				signature += '</td></tr>';
+				var sec_role = document.getElementById('sec_role').value.trim();
+				var sec_ministry = document.getElementById('sec_ministry').value.trim();
+				if (sec_role != "" || sec_ministry != ""){
+					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role;
+					if (sec_role != "" && sec_ministry != ""){
+						signature += '<span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>';
+					}
+					signature += sec_ministry + '</td></tr>';
+				}
+				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
-				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>");
-				if (phone.trim() == ""){
+				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>").trim();
+				if (phone == ""){
 					signature += "<?php echo "604".$delimiter."514".$delimiter."2000" ?>";
 				}
 				else {
@@ -171,8 +199,14 @@ get_header(); ?>
 				}
 				signature += '</a></td></tr>' +
 					'<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2014/07/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
-					'<?php echo $division[$user->ministry][0]?>" height="80"  /></a></td></tr></table>';
+					'<td style="font-family:verdana,sans-serif;" ><a href="http://powertochange.org/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://powertochange.org/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
+					'<?php
+						if(array_key_exists($current_user->user_login, $division)){ //special people
+							echo $division[$current_user->user_login][0];
+						} else {
+							echo $division[$user->ministry][0];
+						}
+					?>" height="80"  /></a></td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
