@@ -744,6 +744,11 @@ div.staff-app-position {
 		width: 100%;
 		position: relative;
 	}
+	#content-right.staff-directory-sidebar {
+		margin-right: 30%;
+		margin-left: 30%;
+		float: none;
+	}
 	.slideshow-img {
 		visibility: hidden;
 		width: 0px;
@@ -811,6 +816,13 @@ div.staff-app-position {
 	#sidebar {
 		visibility: hidden;
 		height:0px;
+	}
+	#sidebar.staff-directory-sidebar {
+		margin-right: auto;
+		margin-left: auto;
+		float: none;
+		visibility: visible;
+		min-height: 200px;
 	}
 	.sidebaritem {
 		visibility: hidden;

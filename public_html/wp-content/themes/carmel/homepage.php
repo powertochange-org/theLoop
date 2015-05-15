@@ -39,7 +39,10 @@
 			</div>
 			<script type="text/javascript">
 				
-				window.setInterval(nextPic,10000);
+				var mq = window.matchMedia( "(min-width: 768px)" );
+				if (mq.matches === true) {
+					window.setInterval(nextPic,5000);
+				}
 
 				var select_pic = 0;
 				
@@ -74,7 +77,10 @@
 				}
 				?> null);
 				
-				showPicture(0); 
+				//init slideshow
+				if(mq.matches === true) { 
+					showPicture(0); 
+				}
 			</script>
 		</div>
     </div>

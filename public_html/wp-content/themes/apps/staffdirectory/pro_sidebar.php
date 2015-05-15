@@ -1,5 +1,5 @@
-<div id="sidebar">
-	<div class="sidebaritem">
+<div id="sidebar" class="staff-directory-sidebar">
+	<div class="sidebaritem-staff-directory">
 		<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1><BR>
 		
 		<div id='simple-search-staff'>
