@@ -84,23 +84,26 @@ if (get_theme_mod('survey_active')) {
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
 		</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>  
     <body>
 		<header>
-			<meta name="viewport" content="width=device-width, initial-scale=1">
       <div class='inner'>
-  			<a href='/'><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
-  			<a href='/'><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
-        <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
-        <!-- <h1>Search the Loop</h1><BR> -->
-        <div class="search-position">
-          <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
-            <div class='search-box'>
-              <input name="s" id="s" class='search-input' placeholder='Search' type='text' />
-              <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
-            </div>
-          </form>
-        </div>   
+  			<div class="header-logo">
+          <a href="/"><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
+    			<a href="/"><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
+        </div>
+        <div class="header-right">
+          <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
+          <div class="search-position">
+            <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
+              <div class='search-box'>
+                <input name="s" id="s" class='search-input' placeholder='Search' type='text' />
+                <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
+              </div>
+            </form>
+          </div>
+        </div>  
 			</div>
       <script type="text/javascript">
         $(document).ready(function(){
