@@ -70,8 +70,6 @@ class WPMinify {
         add_action('init', array($this, 'pre_content'), 99999);
         add_action('wp_footer', array($this, 'post_content'));
       }
-      // advertise hook
-      add_action('wp_footer', array($this, 'advertise'));
     }
   }
 
@@ -917,12 +915,7 @@ class WPMinify {
     }
   }
 
-  function advertise() {
-    $wpm_options = get_option($this->name);
-    if ($wpm_options['show_link']) {
-      printf("<p align='center'><small>Page optimized by <a href='$this->homepage' title='$this->name_proper WordPress Plugin' style='text-decoration:none;'>$this->name_proper</a> <a href='$this->author_homepage' title='WordPress Plugin' style='text-decoration:none;'>WordPress Plugin</a></small></p>");
-    }
-  }
+  
 
 } // class WPMinify
 
