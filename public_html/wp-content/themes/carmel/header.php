@@ -91,7 +91,7 @@ if (get_theme_mod('survey_active')) {
       <div class='inner'>
   			<div class="header-logo">
           <a href="/"><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
-    			<a href="/"><img style='' class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
+    			<a href="/"><img class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
         </div>
         <div class="header-right">
           <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
@@ -108,9 +108,11 @@ if (get_theme_mod('survey_active')) {
       <script type="text/javascript">
         $(document).ready(function(){
           $("#mobile-menu").click(function(){
-            $(".menu_bg").toggle();
+            $(".menu_bg") .toggleClass("menu_bg_show");
           });
+        
         });
+        
       </script>
       <button id="mobile-menu"><img src="/wp-content/themes/carmel/img/menu_icon.png" alt="" /></button>
 			<div class='menu_bg'>

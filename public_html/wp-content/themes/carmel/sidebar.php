@@ -1,4 +1,4 @@
-<div id="sidebar" style="max-height: 425px;">
+<div id="sidebar">
 	<div class="sidebaritem">
 		<h1>Search the Loop</h1><BR>
 		<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>
@@ -25,7 +25,7 @@
 		} ?> -->
 		<h1 class="sidebar-heading-spacing">Popular Posts</h1>
 		<?php
-		    if (function_exists('wpp_get_mostpopular'))
+			if (function_exists('wpp_get_mostpopular'))
 		    wpp_get_mostpopular('limit=5', 'range="monthly"', 'stats_views=0');
 		?>
 	</div>                        

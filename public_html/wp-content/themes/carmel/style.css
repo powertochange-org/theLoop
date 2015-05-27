@@ -46,7 +46,7 @@ h2{
 }
 
 html {
-	overflow-x: hidden;
+	/*overflow-x: hidden;*//*gerald*/
 }
 
 body {
@@ -112,7 +112,7 @@ header{
 	height:154px;
 	border-bottom:1px solid #218ac9;
 	margin-bottom:48px;
-	
+	min-width: 1000px;/*gerald*/
 }
 
 header .inner{
@@ -122,11 +122,11 @@ header .inner{
 	position:relative;
 }
 
-header-logo{
+header-logo{ /*Not being applied. Add "img." in front of class.*/
 	vertical-align:middle;
 }
 
-header-logo-img {
+img.header-logo-img {
 	position:relative;
 	left:37px;
 	top:-5px;
@@ -718,6 +718,9 @@ div.staff-app-position {
 */
 
 @media (max-width: 767px) {
+	html {
+		overflow-x: hidden;/*gerald*/
+	}
 	.homepage-tiles {
 		width:90%;
 		float:left;
@@ -736,20 +739,23 @@ div.staff-app-position {
 		padding:0;
 		margin:auto;
 	}
-	#content-right.home-page {
+	#content-right {
+		display: none;
+	}
+	/*#content-right.home-page {
 		height: 0px;
 		width: 100%;
 	}
 	#content-right.form-item {
 		width: 100%;
 		position: relative;
-	}
-	#content-right.staff-directory-sidebar {
+	}*/
+	/*#content-right.staff-directory-sidebar {
 		margin-right: 30%;
 		margin-left: 30%;
 		float: none;
-	}
-	.slideshow-img {
+	}*/
+	/*.slideshow-img {
 		visibility: hidden;
 		width: 0px;
 		height:0px;
@@ -758,11 +764,22 @@ div.staff-app-position {
 		visibility: hidden;
 		width: 100%;
 		height: 0px;
+	}*/
+	.image-slider {
+		/*height: 0px;
+		visibility: hidden;*/
+		display: none;
+	}
+	header {
+		min-width: 0px;/*gerald*/
 	}
 	header .inner {
 		width:100%;
 		display: inline-block;
 		text-align: center;
+	}
+	img.header-logo-img {
+		left: 0px;
 	}
 	.middle{
 		width:100%;
@@ -797,10 +814,13 @@ div.staff-app-position {
 		font-size:14px;
 		padding-top: 17px;
 		top:-1px;
-		width: 89%;
+		width: 89%; /*gerald 89%*/
 		background:#005e90;
-		/*padding-left:20px;*/
 	}
+	/*li.menu-item {
+		background-color: pink;
+		height: 100px;
+	}*/
 	.menu_bg {
 		top: 279px;
 		left: 0%;
@@ -808,15 +828,21 @@ div.staff-app-position {
 		position: absolute;
 		width: 100%;
 		z-index: 100;
+		background: none;
+		border-top: none;
+	}
+	.menu_bg_show {
+		display: block;
 	}
 	footer .privacy {
 		text-align: center;
-		margin-left: 0px;
+		margin-left: 10px;
 	}
-	#sidebar {
+	/*#sidebar {
 		visibility: hidden;
 		height:0px;
-	}
+		max-height: 425px;
+	}*/
 	#sidebar.staff-directory-sidebar {
 		margin-right: auto;
 		margin-left: auto;
@@ -824,10 +850,10 @@ div.staff-app-position {
 		visibility: visible;
 		min-height: 200px;
 	}
-	.sidebaritem {
+	/*.sidebaritem {
 		visibility: hidden;
 		height:0px;
-	}
+	}*/
 	#mobile-menu {
 		font-family:'Open Sans', sans-serif;
 		font-size: 20px;
@@ -875,6 +901,8 @@ div.staff-app-position {
 		float: none;
 		margin-top: 0px;
 	}
+	
+	
 }
 
 @media (min-width: 768px) {
@@ -888,4 +916,5 @@ div.staff-app-position {
 		height: 0px;
 		width: 0px;
 	}
+	
 }
