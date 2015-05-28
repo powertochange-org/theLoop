@@ -13,14 +13,14 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	<?php 
 	$current_user = wp_get_current_user();
 	if(!isset($profile) || $current_user->user_login == $profile){
-		echo '<h4 style="float:right;position:relative;top:30px;"><a style="color:#adafb2;font-weight:bold;" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		echo '<h4 class="profile"><a style="color:#adafb2;font-weight:bold;" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
 		
 		if(count($_POST) > 0){
 			include('update.php');
 		}
 	}
 	else{
-		echo '<h4 style="float:right;position:relative;top:30px;"><a  style="color:#adafb2;font-weight:bold;" href= "?page=profile">MY PROFILE</a></h4>';
+		echo '<h4 class="profile"><a  style="color:#adafb2;font-weight:bold;" href= "?page=profile">MY PROFILE</a></h4>';
 	} ?>
 	
 	<BR><BR><BR><BR>
@@ -29,7 +29,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 	<div id="content-left">
 		<div id="main-content">
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
-			<div style='float:left'>
+			<div class="profile-image" style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
                 // Attempt to use their public giving site photo
                 $url = "http://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
@@ -54,7 +54,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				echo	 '<img src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
 			} ?>
 			</div>
-			<div style='float:left;padding-left:23px;width:407px'>
+			<div class="profile-content">
 			<h4>MINISTRY INFORMATION</h4>
 			<BR><p style='margin:0;'>
 			<?php 
@@ -241,6 +241,6 @@ $profile = $_GET['person']; //grab from URL the profile we want
 			</div><div style='clear:both;'></div>
 		</div>
 	</div>
-	<div id="content-right">   
+	<div id="content-right" class="staff-directory-sidebar">   
 		<?php include('pro_sidebar.php') ?>
 	</div><div style='clear:both;'></div>

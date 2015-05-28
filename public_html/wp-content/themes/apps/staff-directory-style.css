@@ -47,9 +47,21 @@ div#Upload * {
 }
 
 #content-right.staff-directory a{
-	background-color:#005e90
+	background-color: #005e90;
 }
 
 .placeholder {
     color: grey;
+}
+
+.profile {
+    float: right;
+    position: relative;
+    top: 30px;
+}
+
+.profile-content {
+    float: left;
+    padding-left: 23px;
+    width: 407px
 }
