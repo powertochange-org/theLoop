@@ -125,7 +125,6 @@ header .inner{
 header-logo{ /*Not being applied. Add "img." in front of class.*/
 	vertical-align:middle;
 }
-
 img.header-logo-img {
 	position:relative;
 	left:37px;
@@ -204,7 +203,10 @@ li.menu-item.current-menu-item  a{
 #content{
 	width:1000px;
 	padding:0;
-	margin:auto;
+	margin: auto;
+}
+#content.slideshow-content {
+	margin-top: -37px;/*-37 for chrome and mozilla, -34 for IE*/
 }
 
 #content-left{
@@ -218,6 +220,10 @@ li.menu-item.current-menu-item  a{
 	padding:0;
 	display:inline;
 	float:right;
+}
+
+#content-right.staff-directory {
+	width: 240px;
 }
 
 #main-content {
@@ -304,12 +310,12 @@ hr{
 
 #sidebar{
 	width:240px;
-	min-height:380px;
+	min-height:384px;/*gerald 380px*/
 	max-height: 386px;
 	background-color:#eaeae8;
 	padding:20px;
 	float:right;
-	margin-top: -30px;
+	/*margin-top: -30px; gerald*/
 }
 
 #sidebar p, #sidebar ol, #sidebar ul {
@@ -424,7 +430,7 @@ footer .bottom{
 	width:1000px;
 	margin:0 auto;
 	padding:20px 0;
-
+	text-align: center;
 }
 
 footer .bottom div{
@@ -503,11 +509,39 @@ footer .copy{
 	height:37px;
 }
 
+
 .crumbs img{
 	float: right;
 }
 
 #main-content .crumbs a{
+	color:#ffffff;
+}
+
+.crumbstest{
+	padding:0;
+	border:0;
+	vertical-align:middle;
+	background-color:#adafb2;
+	padding-left:24px;
+	height: 37px;/*height:37px;*/
+	float: left;
+	min-width: 20%;
+	max-width: 70%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	
+}
+
+a.crumbstest {
+	white-space: nowrap;
+	overflow: hidden;
+	/*max-width: 100%;*/
+}
+
+
+#main-content .crumbstest a{
 	color:#ffffff;
 }
 
@@ -661,7 +695,7 @@ div.staff-app-position {
 
 .image-slider {
 	position:relative; 
-	top:-28px;
+	/*top:-28px; gerald*/
 }
 
 .slideshow-img {
@@ -670,6 +704,7 @@ div.staff-app-position {
 	display:none;
 	width: 700px;
 	height: 400px;
+	margin-right: 11px;
 }
 
 .slideshow-img-bottom-bar {
@@ -680,7 +715,7 @@ div.staff-app-position {
 	background-color:#000000;
 	position:absolute;
 	opacity:0.27;
-	filter:alpha(opacity=27); 
+	filter:alpha(opacity=27); /*IE8 and earlier support. Causes CSS validation error.*/
 }
 
 .slideshow-img-tab {
@@ -714,12 +749,17 @@ div.staff-app-position {
 }
 
 /*
-	This is the media query for displaying content based on screen size
+	This is the media query for displaying content based on screen size.
+	The main browser width css is first loaded and then this mobile
+	css will alter any previous css entries. When the screen is scaled 
+	to a larger size, this mobile css will be reverted back to the regular
+	browser entires.
 */
 
 @media (max-width: 767px) {
 	html {
 		overflow-x: hidden;/*gerald*/
+		/*overflow-y:scroll;*/
 	}
 	.homepage-tiles {
 		width:90%;
@@ -740,21 +780,44 @@ div.staff-app-position {
 		margin:auto;
 	}
 	#content-right {
+		float: left;
+	}
+	#content-right.home-page{
 		display: none;
 	}
 	/*#content-right.home-page {
 		height: 0px;
 		width: 100%;
-	}
+	}*/
 	#content-right.form-item {
 		width: 100%;
-		position: relative;
-	}*/
-	/*#content-right.staff-directory-sidebar {
+		/*position: relative;*/
+	}
+	/*#content-right.staff-directory-sidebar a{
 		margin-right: 30%;
 		margin-left: 30%;
 		float: none;
 	}*/
+	
+	#content-right.staff-directory {
+		width: 100%;
+	}
+	#content-right.staff-directory-sidebar {
+		width: 100%;
+	}
+	h4.profile {
+		position: static;
+		margin-right: 20px;
+	}
+	.profile-image {
+		width: 100%;
+		text-align: center;
+		margin-bottom: 10px;
+	}
+	div.profile-content {
+		width: 97%;
+		padding-left: 3%;
+	}
 	/*.slideshow-img {
 		visibility: hidden;
 		width: 0px;
@@ -772,6 +835,7 @@ div.staff-app-position {
 	}
 	header {
 		min-width: 0px;/*gerald*/
+		margin-bottom: 85px;/*gerald*/
 	}
 	header .inner {
 		width:100%;
@@ -808,18 +872,19 @@ div.staff-app-position {
 		height:31px;
 		color:#ffffff;
 		font-family:'Open Sans', sans-serif;
-		padding:0px 23px;
+		padding:0px 0px; /*gerald*/
+		padding-left: 7%;
 		float: left;
 		position: relative;
 		font-size:14px;
 		padding-top: 17px;
 		top:-1px;
-		width: 89%; /*gerald 89%*/
+		width: 93%; /*gerald 89%*/
 		background:#005e90;
 	}
-	/*li.menu-item {
+	/*li.menu-item {   gerald   delete this whole property
 		background-color: pink;
-		height: 100px;
+		height: 70px;
 	}*/
 	.menu_bg {
 		top: 279px;
@@ -890,9 +955,16 @@ div.staff-app-position {
 	}
 	#main-content.form .post div.nav-option {
 		width: 100%;
+		margin: 0px 0px 10px 15px;
+	}
+	#main-content.form  .post h2, #main-content.form-item .post h2{
+		padding-left: 5px;
 	}
 	#main-content.form .post > div {
 		width: 100%;
+	}
+	#main-content h1, #content h1{
+		padding-left: 10px;
 	}
 	#content-left {
 		width: 100%;
@@ -901,8 +973,14 @@ div.staff-app-position {
 		float: none;
 		margin-top: 0px;
 	}
-	
-	
+	td.table-image {
+		float: left;
+		text-align: center;
+	}
+	.crumbs{
+		word-break:break-all;
+		padding-left: 5px;
+	}
 }
 
 @media (min-width: 768px) {

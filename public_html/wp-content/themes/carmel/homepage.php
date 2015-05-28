@@ -4,7 +4,7 @@
 *
 */
  get_header(); ?>
-<div id="content">
+<div id="content" class="slideshow-content">
 	
     <div id="content-left">
 		<div class='image-slider'>
