@@ -310,8 +310,7 @@ hr{
 	border:0;
 	border-radius: 5px;
 	line-height:normal;
-	font-size: 12pt;
-	font-weight: bold;
+	font-size: 14pt;
 	letter-spacing: 1px;
 }
 
@@ -1015,6 +1014,8 @@ div.staff-app-position {
 	}
 	#main-content .btn1 { 
 		width: 100%;
+		font-size: 12pt;
+		font-weight: bold;
 	}
 	#main-content.archive-page {
 		margin: 0 10px;
