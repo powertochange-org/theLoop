@@ -980,6 +980,16 @@ div.staff-app-position {
 	#main-content h1, #content h1{
 		padding-left: 10px;
 	}
+	#main-content a {
+		/*On mobile devices, a long link tag will cause the page
+		to load larger than the device. The page can then be moved
+		around. This will fix that issue for mobile.*/
+		white-space: pre-wrap;     
+		white-space: -moz-pre-wrap; 
+		white-space: -pre-wrap;   
+		white-space: -o-pre-wrap;   
+		word-wrap: break-word; 
+	}
 	#content-left {
 		width: 100%;
 	}
