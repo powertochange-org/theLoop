@@ -47,7 +47,7 @@
 			</div><!-- end main content -->
 		</div><!-- end content-left -->
                 
-		<div id="content-right">
+		<div id="content-right" class="mobile-off">
 		<?php if ($is_pray){ ?>
 			<!-- a class='orange_button' style='width:280px;margin-bottom:18px;float:right' href='/'><center style='color:#ffffff;'>PRINTER-FRIENDLY VERSION</center></a -->
 			<a class='orange_button' style='width:280px;margin-bottom:18px;float:right;' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>

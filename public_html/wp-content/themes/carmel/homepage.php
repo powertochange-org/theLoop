@@ -164,7 +164,7 @@
 						endwhile; endif; ?>
 						<BR>
 					</span>
-					<a href='https://staff.powertochange.org/forms-information/archives'>View Archived Posts</a>
+					<a href='/forms-information/archives'>View Archived Posts</a>
 			</div>
 			<div class="homepage-tiles">
 				<hr>

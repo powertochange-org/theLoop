@@ -30,7 +30,7 @@
 				<?php endif; ?>	
 			</div>
 			</div>
-        	<div id="content-right">
+        	<div id="content-right" class="mobile-off">
 			<?php get_sidebar(''); ?>
 		</div></div><div style='clear:both;'></div>
         </div>

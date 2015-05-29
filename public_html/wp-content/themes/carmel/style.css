@@ -805,6 +805,9 @@ div.staff-app-position {
 	#content-right.staff-directory-sidebar {
 		width: 100%;
 	}
+	#content-right.mobile-off {
+		display: none;
+	}
 	h4.profile {
 		position: static;
 		margin-right: 20px;
@@ -981,7 +984,26 @@ div.staff-app-position {
 		word-break:break-all;
 		padding-left: 5px;
 	}
+	.indent {
+		margin-left: 2%; /*10px*/
+		width: 96%;
+	}
+	#main-content textarea.modify {
+		margin: 0;
+		width: 98%;
+	}
+	.comment_text {
+		/*width: auto;*/
+	}
+	.comment_text, .comment_meta {
+		float: none;
+		width: auto;
+	}
+	p.meta {
+		padding-bottom: 0;
+	}
 }
+
 
 @media (min-width: 768px) {
 	.homepage-tiles {
