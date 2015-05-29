@@ -874,6 +874,11 @@ div.staff-app-position {
 	.search-and-staff-app-button {
 		visibility: hidden;
 	}
+	
+	.search-results {
+		margin: 0 10px 20px;
+	}
+	
 	.cluster {
 		width: 95%;
 	}

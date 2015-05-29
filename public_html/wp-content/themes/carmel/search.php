@@ -3,7 +3,7 @@
 		<div id="content-left">
 			<div id="header-img">
 			</div>
-			<div id="main-content">	
+			<div id="main-content" class="search-results">	
 				<h1 class="replace">SEARCH RESULTS: <?php printf(__('\'%s\''), $s) ?></h1>
 				<?php if (have_posts()) : ?>
 				<?php while (have_posts()) : the_post(); ?>		
@@ -18,7 +18,7 @@
 			</div>
 		</div>
                 
-		<div id="content-right">
+		<div id="content-right" class="mobile-off">
 		<?php get_sidebar(); ?>
 		</div><div style='clear:both;'></div>
 	</div>
