@@ -1,3 +1,4 @@
+<!--This page is used for the single WordPress Posts. This includes staff stories and president's updates etc. -->
 <?php get_header(); ?>
 	<div id="content">
 		<div id="content-left">

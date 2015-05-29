@@ -1,7 +1,8 @@
+<!--Controlls the sub-archive page that will list every post available to be viewed.-->
 <?php get_header(); ?>
 	<div id="content">
 		<div id="content-left">
-			<div id="main-content">
+			<div id="main-content" class="archive-page">
 				<?php if (have_posts()) : ?>				
 					<?php if (is_category()) { ?>
 						<h1 class="replace">ARCHIVES</h1>

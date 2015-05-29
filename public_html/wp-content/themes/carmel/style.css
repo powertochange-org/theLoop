@@ -283,6 +283,10 @@ hr{
 	width: 500px;
 }
 
+.comments_reply {
+	margin-bottom: 20px;
+}
+
 .right{
 	float:right;
 	display:inline;
@@ -306,6 +310,9 @@ hr{
 	border:0;
 	border-radius: 5px;
 	line-height:normal;
+	font-size: 12pt;
+	font-weight: bold;
+	letter-spacing: 1px;
 }
 
 #sidebar{
@@ -1001,6 +1008,16 @@ div.staff-app-position {
 	}
 	p.meta {
 		padding-bottom: 0;
+	}
+	#archive-list li {
+		font-size: 1.5em;
+		padding-left: 10px;
+	}
+	#main-content .btn1 { 
+		width: 100%;
+	}
+	#main-content.archive-page {
+		margin: 0 10px;
 	}
 }
 
