@@ -123,10 +123,14 @@
 							//var_dump($json_data);
 							
 							// Check if the Yourls call was successful or not, and show a message to the user
-							if ($json_data->status == "fail") {
-								$errors[] = "Error: " . $json_data->message;
-							} else {
+							if ($json_data->status == "success") {
 								$message = "Success! Short link <b>" . $json_data->shorturl . "</b> created.";
+							} else {
+								if (!$curl_data) {
+									$errors[] = "Error: request to create short link failed. Please try again later, or if the problem persists, contact helpdesk@p2c.com";
+								} else {
+									$errors[] = "Error: " . $json_data->message;
+								}
 							}
 						}
 					}
