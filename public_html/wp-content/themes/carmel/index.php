@@ -22,7 +22,7 @@
 	    </div>
 	</div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <div id="content-right" class="mobile-off"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
 </div>
 <!--content end-->
 <!--Popup window-->
