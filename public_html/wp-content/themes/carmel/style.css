@@ -1014,7 +1014,7 @@ div.staff-app-position {
 		margin-left: 2%; /*10px*/
 		width: 96%;
 	}
-	.mobile-indent {
+	#main-content #content-left div.mobile-indent {
 		margin: 0 2%;
 	}
 	#main-content textarea.modify {
