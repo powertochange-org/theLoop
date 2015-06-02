@@ -754,6 +754,7 @@ div.staff-app-position {
 	margin-top: -55px;
 }
 
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
@@ -990,6 +991,9 @@ div.staff-app-position {
 		white-space: -o-pre-wrap;   
 		word-wrap: break-word; 
 	}
+	#main-content #content-left .post ul {
+		margin-right: 10px;
+	}
 	#content-left {
 		width: 100%;
 	}
@@ -1068,6 +1072,14 @@ div.staff-app-position {
 		left: 0;
 		width: 100%;
 		height: 100%;
+	}
+	.entry {
+		margin: 0 10px;
+	}
+	.calendar-box {
+		/*Unable to change the position of the javascript calendar because the 
+		calendar.js file controls positioning by modifying the inline style.*/
+		margin-left: -300px;
 	}
 }
 
