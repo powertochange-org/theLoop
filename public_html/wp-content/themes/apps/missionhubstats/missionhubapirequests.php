@@ -12,8 +12,18 @@
  ***************************************************************************************************/
 
 define('BASE_URL', 'https://www.missionhub.com/apis/v3/');
-//Missionhub auth key is defined in wp-config.php as MISSIONHUB_AUTH_KEY
 
+//Every organization on missionhub has it's own client ID and authentication key.
+//Naming convention is: [NAME_OF_ORGANIZATION]_[AUTH_KEY/CLIENT_ID];
+
+define('POWER_TO_CHANGE_CLIENT_ID', '117');
+define('POWER_TO_CHANGE_AUTH_KEY', '8ab5c9906a019e8b9e7f3943a0ca6013385bb961f645256c3144ebfd5d03f709');
+define('MATTHEWS_TESTING_ORG_CLIENT_ID', '119');
+define('MATTHEWS_TESTING_ORG_AUTH_KEY', '3d911aeb84d6c2766d3ea949a48e77fe3bffaa9746c3d1dd9ef8c7ce97178aa1');
+define('HOBBES_TESTING_CLIENT_ID', '120');
+define('HOBBES_TESTING_AUTH_KEY', '0997e11e2b63a0b3b30dfd11969217290b8ceeffa761ce7e595ea60bbfa25515');
+define('ANTONS_TESTING_CLIENT_ID', '121');
+define('ANTONS_TESTING_AUTH_KEY', '59435f8c2e8a3ad2d3a588557e1496abc2778bdafd3bc6843ac6f2040b3c4dac');
 
 /****************************************************************************************************
  * GET requests
@@ -38,13 +48,21 @@ define('BASE_URL', 'https://www.missionhub.com/apis/v3/');
  * getIndexOfEndpoint('people', '', '10'); 
  *
  * The rest can be left blank as the default value is provided.
- * See missionhub API documentation for more info about what these parameters do.
+ * Parameters: (all are entered as strings)
+ * $endpoint: The name of the desired endpoint.
+ * $include: A comma separated list of all the related objects to nest in the response.
+ * $limit: Limits the number of results returned. Use with $offset for pagination.
+ * $offset: Specifies which row in the result set to start with.
+ * $order: Specifies how to sort and return the results.  See MissionHub API for valid inputs for different endpoints.
+ * $filters: Specifies a filter for the results. Only valid for certain endpoints. See MissionHub API for details.
+ * $include_archived: If true, the result set will include archived entries. The default is to not include these.
+ *                    Only valid for certain endpoints. See MissionHub API for details.
  *
  ***************************************************************************************************/
 
 function getIndexOfEndpoint($endpoint, $include = '', $limit = '', $offset = '', $order = '', $filters = '', $include_archived = '') {
 	
-	$curl_address = BASE_URL . $endpoint . "?secret=" . MISSIONHUB_AUTH_KEY;
+	$curl_address = BASE_URL . $endpoint . "?secret=" . POWER_TO_CHANGE_AUTH_KEY;
 	if ($include != '') {
 		$curl_address = $curl_address . "&include=" . $include;
 	}
@@ -103,7 +121,7 @@ function getIndexOfEndpoint($endpoint, $include = '', $limit = '', $offset = '',
  ***************************************************************************************************/
 
 function showEndpoint($endpoint, $id, $include = '') {
-	$curl_address = BASE_URL . $endpoint . "/" . $id . "?secret=" . MISSIONHUB_AUTH_KEY;
+	$curl_address = BASE_URL . $endpoint . "/" . $id . "?secret=" . POWER_TO_CHANGE_AUTH_KEY;
 	if ($include != '') {
 		$curl_address = $curl_address . "&include=" . $include;
 	}

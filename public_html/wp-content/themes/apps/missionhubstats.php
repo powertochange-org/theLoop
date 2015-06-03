@@ -41,23 +41,14 @@
                         $site = "";
                     }
                     switch($site) {
-                        case "surveys":                        
-                            $surveys = getIndexOfEndpoint("surveys", "questions,keyword", "", "", "", "", "");
-                            echo "<br /><br />";
-                            var_export($surveys['surveys'][0]['id']);
-                            echo "<br />";
-                            foreach($surveys['surveys'][0] as $propertyname=>$value) {
-                                echo $propertyname . " has value " . $value . "<br />";
-                            }
+                        case "surveys":  
+                            include "missionhubstats/missionhubsurveys.php";
                             break;
                         case "people":
-                            $people = getIndexOfEndpoint("people", "", "10", "", "", "", "");
-                            echo "<br /><br />";
-                            var_export($people['people'][0]['id']);
-                            echo "<br />";
-                            foreach($people['people'][0] as $propertyname=>$value) {
-                                echo $propertyname . " has value " . $value . "<br />";
-                            }
+                            include "missionhubstats/missionhubpeople.php";
+                            break;
+                        case "organizations":
+                            include "missionhubstats/missionhuborganizations.php";
                             break;
                         default:
                             echo "Please modify the url";
