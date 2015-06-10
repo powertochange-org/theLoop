@@ -88,9 +88,9 @@
 		<div id="sidebar">
 			<div class="sidebaritem">
 				<!--<h1>Search the Loop</h1><BR>
-				<form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/"><div class='search-box'>
+				<form method="get" id="sb_searchform" action="< ?php bloginfo('home'); ?>/"><div class='search-box'>
 					<input name="s" id="s" class='search-input' placeholder='Search' type='text' />
-					<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
+					<img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='< ?php bloginfo('template_url'); ?>/img/search.png'>
 				</div></form>
 				<hr>-->
 				<h1>Featured Content</h1>
@@ -111,7 +111,7 @@
 				
 				} ?> 
 				<!--<h1 class="sidebar-heading-spacing">Popular Posts</h1>
-				<?php
+				< ?php
 				    if (function_exists('wpp_get_mostpopular'))
 				    wpp_get_mostpopular('limit=3', 'range="monthly"', 'stats_views=0');
 				?>-->
