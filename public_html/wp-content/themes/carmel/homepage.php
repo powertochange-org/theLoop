@@ -105,7 +105,7 @@
 				<hr>
 				<h1>Recent Comments</h1><BR>
 				<?php 
-				foreach(get_comments( array( 'number' => 2)) as $c){
+				foreach(get_comments( array( 'number' => 4)) as $c){
 					echo "<a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
 					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a>\n";
 				
