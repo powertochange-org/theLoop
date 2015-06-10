@@ -1122,6 +1122,9 @@ div.staff-app-position {
 	#training-table  td{
 		padding: 5px;
 	}
+	input[name="longurl"] {
+		width: 96%;
+	}
 }
 
 
