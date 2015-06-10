@@ -61,7 +61,7 @@ $plans = array(
 					}
 					?>
 				</table>
-				<table class="small-table" style="float: left; width: 500px; margin-left: 15px;">
+				<table class="small-table small-table-margin" style="float: left;"><!--width: 500px; margin-left: 15px; removed for mobile display -->
 					<tr>
 					  <th>
 						<?php
@@ -179,6 +179,8 @@ Your HR team
 							<th>
 								You are an administrator! You can view the Medical Allowance Report by clicking this button!
 							</th>
+						</tr>
+						<tr>
 							<th>
 								<form action='../health-care-spending-account-admin/' method='post'>
 									<input type='submit' name='report' value='See Report' >

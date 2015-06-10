@@ -317,7 +317,7 @@ hr{
 #sidebar{
 	width:240px;
 	min-height:384px;/*gerald 380px*/
-	max-height: 386px;
+	/*max-height: 386px;*/
 	background-color:#eaeae8;
 	padding:20px;
 	float:right;
@@ -754,6 +754,18 @@ div.staff-app-position {
 	margin-top: -55px;
 }
 
+.small-table-margin {
+	margin-left: 15px;
+}
+#content-right .submit-request {
+	width: 280px;
+	float: right;
+	margin-bottom: 18px;
+}
+#training-table  td{
+	padding: 15px;
+}
+
 
 /*
 	This is the media query for displaying content based on screen size.
@@ -805,7 +817,9 @@ div.staff-app-position {
 		margin-left: 30%;
 		float: none;
 	}*/
-	
+	#content-right {
+		width: 100%;
+	}
 	#content-right.staff-directory {
 		width: 100%;
 	}
@@ -813,6 +827,9 @@ div.staff-app-position {
 		width: 100%;
 	}
 	#content-right.mobile-off {
+		display: none;
+	}
+	#sidebar.mobile-off {
 		display: none;
 	}
 	h4.profile {
@@ -1018,6 +1035,10 @@ div.staff-app-position {
 		margin-left: 2%; /*10px*/
 		width: 96%;
 	}
+	.mobile-indent {
+		margin-left: 2%;
+		width: 96%;
+	}
 	#main-content #content-left div.mobile-indent {
 		margin: 0 2%;
 	}
@@ -1080,6 +1101,26 @@ div.staff-app-position {
 		/*Unable to change the position of the javascript calendar because the 
 		calendar.js file controls positioning by modifying the inline style.*/
 		margin-left: -300px;
+	}
+	.small-table {
+		width: 98%;
+	}
+	.small-table-margin {
+		margin-left: 0;
+	}
+	#formBuilderFieldSUBMIT div.formBuilderSubmit {
+		padding-left: 0;
+	}
+	#content-right .submit-request {
+		width: 100%;
+		float: none;
+		margin-bottom: 18px;
+	}
+	textarea#fieldformBuilderFieldAdditional_Information {
+		width: 96%;
+	}
+	#training-table  td{
+		padding: 5px;
 	}
 }
 

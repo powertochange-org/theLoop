@@ -129,6 +129,12 @@ include('functions/js_functions.php');
 				margin-bottom:10px;
 				display:block;
 			}
+			@media (max-width: 767px) {
+				#main-content div {
+					margin: 0 10px;
+				}
+				
+			}
 		</style>
 		<?php 
 		
@@ -177,7 +183,7 @@ include('functions/js_functions.php');
 						echo "<option value='".$sub_result->id."'>".$sub_result->label."</option>\n";
 						break;
 					case 'radiobutton':
-						echo "<input style='vertical-align: top; position: relative; top: 6px;' type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='margin-left: 5px; display:inline-block; width:510px; margin-top:5px'>".$sub_result->label."</label><BR>\n";
+						echo "<input style='vertical-align: top; position: relative; top: 6px;' type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'  style='margin-left: 5px; display:inline-block; width:90%; margin-top:5px'>".$sub_result->label."</label><BR>\n"; //510px width previously
 						break;
 					case 'radiobutton_sdw':
 						echo "<span style='white-space:nowrap;'><input type='radio' name='form-".$result->id."' id='form-".$result->id."-".$sub_result->id."' value='".$sub_result->id."'><label for='form-".$result->id."-".$sub_result->id."'>".$sub_result->label."</label></span>\n";
@@ -1276,7 +1282,7 @@ include('functions/js_functions.php');
 		<?php } ?>
     </div>
     </div>
-    <div id="content-right"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
+    <div id="content-right" class="mobile-off"><?php get_sidebar(''); ?></div><div style='clear:both;'></div>
 </div>
 <!--content end-->
 <!--Popup window-->

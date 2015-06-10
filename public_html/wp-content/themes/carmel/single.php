@@ -15,7 +15,7 @@
 						<h1 ><a href="<?php echo get_permalink() ?>" rel="bookmark"><?php  if($is_pray) {echo 'Prayer Request'; } else { the_title();} ?></a></h1>
 						<hr>
 						<?php if ($is_pray){ ?>
-						If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, select the "Submit A Prayer Request" button or email them to <a href="prayersupport@p2c.com">prayersupport@p2c.com</a>.
+						<p class="mobile-indent">If you would like us to share your ministry’s praise items and prayer requests in Chapel or on The LOOP, select the "Submit A Prayer Request" button or email them to <a href="prayersupport@p2c.com">prayersupport@p2c.com</a>.</p>
 						<hr>
 						<div style='width:40px;background-color:#f7941d;display:inline;float:left;text-align:center;'>
 							<span style='color:#ffffff;'><?php echo strtoupper(get_the_time('M')) ?></span><BR>
@@ -48,10 +48,10 @@
 			</div><!-- end main content -->
 		</div><!-- end content-left -->
                 
-		<div id="content-right" class="mobile-off">
+		<div id="content-right" >
 		<?php if ($is_pray){ ?>
 			<!-- a class='orange_button' style='width:280px;margin-bottom:18px;float:right' href='/'><center style='color:#ffffff;'>PRINTER-FRIENDLY VERSION</center></a -->
-			<a class='orange_button' style='width:280px;margin-bottom:18px;float:right;' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+			<a class='orange_button submit-request' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 		<?php } ?>
 		<?php get_sidebar(); ?>
 		</div><div style='clear:both;'></div>
