@@ -85,7 +85,7 @@
 		</div>
     </div>
     <div id="content-right" class="home-page">
-		<div id="sidebar">
+		<div id="sidebar" class="homesidebar">
 			<div class="sidebaritem">
 				<!--<h1>Search the Loop</h1><BR>
 				<form method="get" id="sb_searchform" action="< ?php bloginfo('home'); ?>/"><div class='search-box'>
@@ -103,18 +103,20 @@
 					}
 				} ?>
 				<hr>
-				<h1>Recent Comments</h1><BR>
-				<?php 
-				foreach(get_comments( array( 'number' => 4)) as $c){
-					echo "<a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
-					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a>\n";
-				
-				} ?> 
-				<!--<h1 class="sidebar-heading-spacing">Popular Posts</h1>
-				< ?php
+				<h1>Popular Pages</h1>
+				<?php
 				    if (function_exists('wpp_get_mostpopular'))
 				    wpp_get_mostpopular('limit=3', 'range="monthly"', 'stats_views=0');
-				?>-->
+				?>
+				<hr>
+				<h1 style="margin-bottom:5px">Recent Comments</h1>
+				<?php 
+				foreach(get_comments( array( 'number' => 3)) as $c){
+					echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
+					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
+				
+				} ?> 
+				
 			</div>                        
 		</div>
 	</div><div style='clear:both;'></div>

@@ -45,10 +45,6 @@ h2{
 	font-weight:bold;
 }
 
-html {
-	/*overflow-x: hidden;*//*gerald*/
-}
-
 body {
 	/*line-height: 1;*/
 }
@@ -95,6 +91,10 @@ a {
 	color: #0079C1;
 }
 
+a:hover {
+	color: #4a4d4e;
+}
+
 p strong{
 	font-weight:bold;
 }
@@ -112,7 +112,7 @@ header{
 	height:154px;
 	border-bottom:1px solid #218ac9;
 	margin-bottom:48px;
-	min-width: 1000px;/*gerald*/
+	min-width: 1000px;
 }
 
 header .inner{
@@ -316,28 +316,53 @@ hr{
 
 #sidebar{
 	width:240px;
-	min-height:384px;/*gerald 380px*/
+	min-height:384px;
 	/*max-height: 386px;*/
 	background-color:#eaeae8;
 	padding:20px;
 	float:right;
-	/*margin-top: -30px; gerald*/
+}
+
+#sidebar.homesidebar {
+	min-height: 419px;
+	padding: 5px 20px 0px 16px;
+}
+
+#sidebar.homesidebar hr {
+	margin: 15px 0 15px;
+}
+
+#sidebar.homesidebar p {
+	/*font-weight: bold;*/
+	padding: 0;
 }
 
 #sidebar p, #sidebar ol, #sidebar ul {
-	margin-bottom:5px;
-	margin-top: 5px;
+	margin-bottom:7px;
+	margin-top: 0px;
 	padding-left:0;
 }
 
 #sidebar p {
-	font-size:11px;
-	font-style:italic;
+	font-size:13px;
+	/*font-style:italic;*/
 	line-height:normal;
 }
 
 #sidebar h1 {
 	margin-left:0;
+}
+
+#sidebar a {
+	/*font-weight: bold;*/
+}
+
+#sidebar a:hover {
+	color: #4a4d4e;
+}
+
+#sidebar .recent-comment:hover p {
+	color: #4a4d4e;
 }
 
 .search-img{
@@ -376,21 +401,21 @@ hr{
 
 .sidebaritem *{
 	font-family:'Open Sans', sans-serif;
-	font-size:11pt;
+	font-size:13pt;
 	color:#4a4d4e;
 }
 
 .sidebaritem  a h2{
-	font-size:12px;
+	font-size:13px;
 }
 
 .sidebaritem  a p{
-	font-size:12px;
+	font-size:13px;
 	color: #0079c1;
 }
 
 .sidebaritem li a{
-	font-size:12px;
+	font-size:13px;
 	color: #0079c1;
 }
 
@@ -480,6 +505,10 @@ footer .copy{
 .newsUpdate a{
 	font-size: 83%;
 	line-height: 153%;
+}
+
+.newsUpdate a:hover {
+	color: #4a4d4e;
 }
 
 .arrow{
@@ -685,14 +714,27 @@ div.staff-app-position {
 
 .sbfeaturelinks {
 	display: block;
-	font-weight: bold;
-	margin-top: 4px;
-	margin-bottom: 4px;
-	font-size: 14px;
+	/*font-weight: bold;*/
+	/*margin-top: 4px;
+	margin-bottom: 4px;*/
+	font-size: 13px;
+	color: #0074c4;
 }
 
 .sbfeaturelinks:hover {
-	color: #0074c4;
+	color: #4a4d4e;
+}
+
+.wpp-views {
+	font-size: 11px;
+}
+
+#sidebar.homesidebar a.wpp-post-title {
+	/*font-weight: bold;*/
+}
+
+#sidebar.homesidebar a:hover.wpp-post-title {
+	color: #4a4d4e;
 }
 
 .sidebar-heading-spacing {
@@ -701,7 +743,6 @@ div.staff-app-position {
 
 .image-slider {
 	position:relative; 
-	/*top:-28px; gerald*/
 }
 
 .slideshow-img {
@@ -777,7 +818,7 @@ div.staff-app-position {
 
 @media (max-width: 767px) {
 	html {
-		overflow-x: hidden;/*gerald*/
+		overflow-x: hidden;
 		/*overflow-y:scroll;*/
 	}
 	.homepage-tiles {
@@ -861,8 +902,8 @@ div.staff-app-position {
 		display: none;
 	}
 	header {
-		min-width: 0px;/*gerald*/
-		margin-bottom: 85px;/*gerald*/
+		min-width: 0px;
+		margin-bottom: 85px;
 	}
 	header .inner {
 		width:100%;
@@ -904,20 +945,17 @@ div.staff-app-position {
 		height:31px;
 		color:#ffffff;
 		font-family:'Open Sans', sans-serif;
-		padding:0px 0px; /*gerald*/
+		padding:0px 0px;
 		padding-left: 7%;
 		float: left;
 		position: relative;
 		font-size:14px;
 		padding-top: 17px;
 		top:-1px;
-		width: 93%; /*gerald 89%*/
+		width: 93%;
 		background:#005e90;
 	}
-	/*li.menu-item {   gerald   delete this whole property
-		background-color: pink;
-		height: 70px;
-	}*/
+	
 	.menu_bg {
 		top: 279px;
 		left: 0%;
