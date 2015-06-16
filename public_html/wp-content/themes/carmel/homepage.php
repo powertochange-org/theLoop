@@ -19,7 +19,7 @@
 								  get_theme_mod('image_url_3'),
 								  get_theme_mod('image_url_4'));
 			?>
-			<a id='slideshow_link' target="_blank">
+			<a id='slideshow_link'>
 			<?php foreach($pictures as $pic=>$src){
 				?>
 				<img id='slideshow_<?php echo $pic ?>' class='slideshow-img' src='<?php echo $src ?>'>
@@ -106,7 +106,8 @@
 				<h1>Popular Pages</h1>
 				<?php
 				    if (function_exists('wpp_get_mostpopular'))
-				    wpp_get_mostpopular('limit=3', 'range="monthly"', 'stats_views=0');
+				    wpp_get_mostpopular('pid="754, 8306, 8379, 8388, 8332, 8761, 7807, 8335, 8309"& 
+				    	limit=3&range="monthly"&stats_views=0');
 				?>
 				<hr>
 				<h1 style="margin-bottom:5px">Recent Comments</h1>

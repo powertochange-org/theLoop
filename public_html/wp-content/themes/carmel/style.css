@@ -329,7 +329,7 @@ hr{
 }
 
 #sidebar.homesidebar hr {
-	margin: 15px 0 15px;
+	margin: 10px 0 10px;
 }
 
 #sidebar.homesidebar p {
@@ -718,6 +718,7 @@ div.staff-app-position {
 	/*margin-top: 4px;
 	margin-bottom: 4px;*/
 	font-size: 13px;
+	line-height: 20px;
 	color: #0074c4;
 }
 
@@ -728,6 +729,13 @@ div.staff-app-position {
 .wpp-views {
 	font-size: 11px;
 }
+
+
+ul.wpp-list li {
+	font-size: 13px;
+	line-height: 20px;
+}
+
 
 #sidebar.homesidebar a.wpp-post-title {
 	/*font-weight: bold;*/
