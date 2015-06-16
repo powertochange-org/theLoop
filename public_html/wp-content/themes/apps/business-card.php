@@ -1,6 +1,6 @@
 <?php 
 /*
-*Template Name: BusinessCard
+*Template Name: zApp BusinessCard
 *
 *Author: matthew.chell
 *
