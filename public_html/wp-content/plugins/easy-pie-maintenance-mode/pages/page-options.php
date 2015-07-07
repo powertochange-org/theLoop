@@ -51,17 +51,15 @@
                     </tr>
                 </table>
             </div>
+            
+            <div style="margin-top:30px; margin-bottom:25px; border-radius:4px; box-shadow: 1px 6px 36px -5px rgba(34,34,34,1);width: 514px; color: rgb(200, 22, 22); background-color: white;font-weight: bold;border: red solid 1px;padding: 5px;">Custom backgrounds, email collection, social media and more <a href="https://easypiewp.com/coming-soon-page-elite-mm?footerfixed" target="_blank">in our Pro product!</a>                       
+            </div>
+            
             <?php
             submit_button();
             ?>
-            <p style="margin-top:0; margin-bottom: 15px; color: #dd3d36; background-color: white; padding: 3px; font-weight: bold; border: #dd3d36 1px solid;">Email collection, countdown timer and more flexibility is available in <a style="color:rgb(48, 100, 48)" target="_blank" href="http://easypiewp.com/coming-soon-page-elite-mm/">our ELITE product!</a></p>
+                        
             <a href="http://easypiewp.com/easy-pie-maintenance-mode-faq/" target="_blank"><?php $this->_e('Plugin FAQ'); ?></a>
-            |
-            <a href="http://easypiewp.com/about/" target="_blank"><?php $this->_e('Feature Request'); ?></a>
-            |
-            <a href="http://easypiewp.com/about/" target="_blank"><?php $this->_e('Report Bug'); ?></a>
-            |
-            <a href="http://wordpress.org/support/view/plugin-reviews/easy-pie-maintenance-mode" target="_blank"><?php $this->_e('Write Review'); ?></a>
             |
             <a href="mailto:bob@easypiewp.com" target="_blank"><?php $this->_e('Contact Bob'); ?></a>
         </form>

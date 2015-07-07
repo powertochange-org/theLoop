@@ -1,6 +1,5 @@
 <?php
-
-define( 'FOUNDATION_VERSION', '2.3.3' );
+define( 'FOUNDATION_VERSION', '2.3.5' );
 
 define( 'FOUNDATION_DIR', WPTOUCH_DIR . '/themes/foundation' );
 define( 'FOUNDATION_URL', WPTOUCH_URL . '/themes/foundation' );
@@ -116,6 +115,7 @@ function foundation_setting_defaults( $settings ) {
 	// General
 	$settings->video_handling_type = 'fitvids';
 	$settings->latest_posts_page = 'none';
+	$settings->allow_zoom = false;
 	$settings->logo_image = '';
 
 	// Login
@@ -192,7 +192,6 @@ function foundation_setting_defaults( $settings ) {
 	$settings->featured_autoslide = false;
 	$settings->featured_continuous = false;
 	$settings->featured_grayscale = false;
-	$settings->featured_title_date = true;
 	$settings->featured_type = 'latest';
 	$settings->featured_tag = '';
 	$settings->featured_category = '';
@@ -211,10 +210,6 @@ function foundation_setting_defaults( $settings ) {
 
 	// Pages
 	$settings->show_comments_on_pages = false;
-
-	// Related posts
-	$settings->related_posts_enabled = false;
-	$settings->related_posts_max = 3;
 
 	return $settings;
 }
@@ -331,9 +326,13 @@ function foundation_get_category_list() {
 }
 
 function foundation_setup_viewport(){
-	echo '<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />';
-	// iPhone 5
-	echo '<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" media="(device-height: 568px)" />';
+	$settings = foundation_get_settings();
+
+	if ( $settings->allow_zoom == true ) {
+		echo '<meta name="viewport" content="initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, width=device-width" />';
+	} else {
+		echo '<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />';
+	}
 }
 
 function foundation_render_theme_settings( $page_options ) {
@@ -404,6 +403,24 @@ function foundation_render_theme_settings( $page_options ) {
 		__( 'Pages', 'wptouch-pro' ),
 		'foundation-pages',
 		$foundation_page_settings,
+		$page_options,
+		FOUNDATION_SETTING_DOMAIN
+	);
+
+	wptouch_add_page_section(
+		FOUNDATION_PAGE_GENERAL,
+		__( 'Page Zoom', 'wptouch-pro' ),
+		'foundation-zoom',
+			array(
+				wptouch_add_setting(
+					'checkbox',
+					'allow_zoom',
+					__( 'Allow browser zooming', 'wptouch-pro' ),
+					__( '' ),
+					WPTOUCH_SETTING_BASIC,
+					'2.3.4'
+				)
+			),
 		$page_options,
 		FOUNDATION_SETTING_DOMAIN
 	);
@@ -799,7 +816,7 @@ function wptouch_fdn_iOS_7() {
 If we're on iOS8
 */
 function wptouch_fdn_iOS_8() {
-	if ( strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 10_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 8_' ) ) {
+	if ( strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 7_' ) || strpos( $_SERVER['HTTP_USER_AGENT'],'iPhone OS 8_' ) ) {
 		return true;
 	} else {
 		return false;

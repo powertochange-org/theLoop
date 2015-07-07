@@ -2,10 +2,10 @@
 /*
 Plugin Name: Subscribe to Comments Reloaded
 
-Version: 150422
-Stable tag: 150422
+Version: 150611
+Stable tag: 150611
 Requires at least: 2.9.2
-Tested up to: 4.1.3
+Tested up to: 4.2.2
 
 Plugin URI: http://wordpress.org/extend/plugins/subscribe-to-comments-reloaded/
 Description: Subscribe to Comments Reloaded is a robust plugin that enables commenters to sign up for e-mail notifications. It includes a full-featured subscription manager that your commenters can use to unsubscribe to certain posts or suspend all notifications.
@@ -118,7 +118,7 @@ if ( get_option( 'subscribe_reloaded_show_subscription_box', 'yes' ) == 'yes' ) 
 
 class wp_subscribe_reloaded {
 
-	public $current_version = '150422';
+	public $current_version = '150611';
 
 	/**
 	 * Constructor -- Sets things up.
@@ -130,6 +130,7 @@ class wp_subscribe_reloaded {
 		add_action( 'comment_post', array( &$this, 'new_comment_posted' ), 12, 2 );
 		// Add hook for the subscribe_reloaded_purge, define on the constructure so that the hook is read on time.
 		add_action('_cron_subscribe_reloaded_purge', array($this, 'subscribe_reloaded_purge'), 10 );
+
 
 		// Provide content for the management page using WP filters
 		if ( ! is_admin() ) {
@@ -194,6 +195,10 @@ class wp_subscribe_reloaded {
 
 			// Settings link for plugin on plugins page
 			add_filter( 'plugin_action_links', array( &$this, 'plugin_settings_link' ), 10, 2 );
+			// Check if the subscribers table is created otherwise create it.
+			if ( ! get_option( 'subscribe_reloaded_subscriber_table' ) || get_option( 'subscribe_reloaded_subscriber_table' ) == 'no') {
+				$this->_create_subscriber_table();
+			}
 		}
 
 
@@ -296,7 +301,7 @@ class wp_subscribe_reloaded {
 		add_option( 'subscribe_reloaded_unique_key', $this->generate_key(), '', 'yes' );
 
 		add_option( 'subscribe_reloaded_subscriber_table', 'no', '', 'yes' );
-		add_option( 'subscribe_reloaded_data_sanitized', 'yes', '', 'yes' );
+		add_option( 'subscribe_reloaded_data_sanitized', 'no', '', 'yes' );
 		add_option( 'subscribe_reloaded_show_subscription_box', 'yes', '', 'yes' );
 		add_option( 'subscribe_reloaded_checked_by_default', 'no', '', 'yes' );
 		add_option( 'subscribe_reloaded_enable_advanced_subscriptions', 'no', '', 'yes' );
@@ -389,7 +394,7 @@ class wp_subscribe_reloaded {
 		$errorMsg        = '';
 
 		// If the update option is set to false
-		if ( get_option('subscribe_reloaded_subscriber_table') == 'no' ) {
+		if ( ! get_option('subscribe_reloaded_subscriber_table') ||  get_option('subscribe_reloaded_subscriber_table') == 'no' ) {
 			// Creation of table and subscribers.
 			$sqlCreateTable = " CREATE TABLE " . $wpdb->prefix . "subscribe_reloaded_subscribers (
 							  stcr_id int(11) NOT NULL AUTO_INCREMENT,
@@ -495,7 +500,7 @@ class wp_subscribe_reloaded {
 		if( $email != null ) {
 			$subscriber = $wpdb->get_row($wpdb->prepare($retrieveEmail,$email), OBJECT);
 			if( ! empty( $subscriber ) ) {
-				return $this->generate_temp_key($subscriber->salt.$email);
+				return $subscriber->subscriber_unique_id;
 			}
 		}
 		return false;
@@ -512,10 +517,12 @@ class wp_subscribe_reloaded {
 			$sctr_data_array_size = sizeof( $stcr_data );
 			// Lets make sure that there is not another subscription with the same compose key
 			foreach ( $stcr_data as $row ) {
-				$optionValue = $row->option_value;
-				$optionValue = html_entity_decode( stripslashes( $optionValue ), ENT_QUOTES, 'UTF-8' );
-				$optionValue = esc_attr( $optionValue );
-				update_option( $row->option_name, $optionValue );
+				if ( $row->option_name != 'subscribe_reloaded_deferred_admin_notices' ) {
+					$optionValue = $row->option_value;
+					$optionValue = html_entity_decode( stripslashes( $optionValue ), ENT_QUOTES, 'UTF-8' );
+					$optionValue = esc_attr( $optionValue );
+					update_option( $row->option_name, $optionValue );
+				}
 			}
 			update_option( "subscribe_reloaded_data_sanitized", "yes" );
 			$notices   = get_option( 'subscribe_reloaded_deferred_admin_notices', array() );
@@ -1721,8 +1728,8 @@ class wp_subscribe_reloaded {
 	 */
 	public function generate_key( $_email = "" ) {
 		$salt      = time();
-		$user      = wp_get_current_user();
-		$uniqueKey = md5( get_current_user_id() . $user->user_login . $salt . $_email );
+		$dd_salt   = md5( $salt );
+		$uniqueKey = md5( $dd_salt . $salt . $_email );
 
 		return $uniqueKey;
 	}
