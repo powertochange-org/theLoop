@@ -13,20 +13,23 @@
 class missionhubReport {
 
     require('missionhubapirequests.php');
+    require('missionhuborganizations.php');
 
 /****************************************************************************************************
  * Properties will be private and exposed through specific methods just for security's sake
  ****************************************************************************************************/
 
 	private $data; //2D array
-
-
+    private $org; //string
+    private $orgid; //int
+    private $children; //int array
 	
 
-	void __construct() {
-
+	void __construct($org, ) {
+        $this->org = $org;
+        $this->orgid = getOrgId($this->org);
+        $this->children = getListOfChildren($this->orgid);
 	}
-
 }
 
 ?>

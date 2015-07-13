@@ -19,20 +19,44 @@
 					the_content(); 
 					?>
 					
+                   
 					<?php
-                    /***APP CODE STARTS HERE***/
+                     /***APP CODE STARTS HERE***/
                     require('missionhubstats/missionhubapirequests.php');
 
                     ?> 
-
+                    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<!--                    <script type="text/javascript" src="missionhubstats/script.js"></script>-->
+                    <script type="text/javascript" src="missionhubstats/jsquerytest.js"></script>
+                    <script type="text/javascript" src="missionhubstats/patscript.js"></script>
+                    <script type="text/javascript" src="missionhubstats/missionhubstats.js"></script>
                     <div id="nav">
+<!--
                     	<ul>
                             <form action="?report=surveys" id="surveys" method="post"></form>
                             <form action="?report=people" id="people" method="post"></form>
+                            <form action="?report=pat" id="pat" method="post"></form>
                     		<li><button form="surveys">Surveys</button></li>
                     		<li><button form="people">People</button></li>
+                            <li><button form="pat">PAT</button></li>
                     	</ul>
+-->                     
+                        <form action="?report=" id="home" method="post"></form>
+                        <form action="?report=missionhub" id="missionhub" method="post"></form>
+                        <form action="?report=pat" id="pat" method="post"></form>
+                        <form action="?report=eventbrite" id="eventbrite" method="post"></form>
+                        <form action="?report=theloop" id="theloop" method="post"></form>
+                        <form action="?report=admin" id="admin" method="post"></form>
+                        <ul>
+                            <li><button form="home">Home</button></li>
+                            <li><button form="missionhub">MissionHub</button></li>
+                            <li><button form="pat">PAT</button></li>
+                            <li><button form="eventbrite">EventBrite</button></li>
+                            <li><button form="theloop">The Loop</button></li>
+                            <li><button form="admin">Admin</button></li>
+                        </ul>
                     </div>
+                    <div id="filter"></div>
                     <div id="reportcontent">
                     <?php
                     if(isset($_GET['report'])) {
@@ -41,34 +65,40 @@
                         $site = "";
                     }
                     switch($site) {
-                        case "surveys":  
-                            include "missionhubstats/missionhubsurveys.php";
+                        case "missionhub":  
+                            include "missionhubstats/missionhubexposure.php";
+                            break;
+                        case "pat":
+                            include "missionhubstats/missionhubpat.php";
+                            break;
+                        case "eventbrite":
+                            include "missionhubstats/missionhubeventbrite.php";
+                            break;
+                        case "theloop":
+                            include "missionhubstats/missionhubtheloop.php";
+                            break;
+                        case "admin":
+                            include "missionhubstats/missionhubadmin.php";
+                            break;
+                        case "organizations":
+                            include "missionhubstats/missionhuborganizationsview.php";
+                            break;
+                        case "reporttype":
+                            include "missionhubstats/missionhubreporttypeview.php";
                             break;
                         case "people":
                             include "missionhubstats/missionhubpeople.php";
-                            break;
-                        case "organizations":
-                            include "missionhubstats/missionhuborganizations.php";
                             break;
                         default:
                             echo "Please modify the url";
                             break;
                     }
 
-                    
-
-                    
-                    /*function missionhubAPICall($method, $url, $data = false) { //$method is what REST method is being called. Unsure what $data is for but stackoverflow has it so let's roll with that for now
-                        $curl = curl_init();
-
-                    
-                    }*/
-
-                    
-
-                    /***APP CODE ENDS HERE***/
                     ?>
-                    </div>						
+                    </div>
+                    
+                    
+                    <?php/***APP CODE ENDS HERE***/?>
 				</div>
 				<div class="clear"></div>				
 			</div>

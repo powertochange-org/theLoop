@@ -3,6 +3,14 @@
 	float: left;
 }
 
+#nav ul {
+    list-style-type: none;
+}
+
+#nav button {
+    width: 100px;
+}
+
 #reportcontent {
 	width: 80%;
 	float: right;

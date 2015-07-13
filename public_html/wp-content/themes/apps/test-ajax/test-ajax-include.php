@@ -8,7 +8,7 @@ add_action( 'wp_ajax_nopriv_test-ajax', 'test_ajax_func' );
 // Function to set up JavaScript stuff for the page
 function test_ajax_scripts() {
 	// Get the JavaScript file for this page template included on the page
-    wp_enqueue_script( 'test-ajax', get_stylesheet_directory_uri() . '../js/test-ajax.js', array( 'jquery' ));	
+    wp_enqueue_script( 'test-ajax', get_stylesheet_directory_uri() . '/js/test-ajax.js', array( 'jquery' ));	
 	
 	// Create some JavaScript variables that can be used in the .js file
     wp_localize_script( 'test-ajax', 'WordPressAjax', array(

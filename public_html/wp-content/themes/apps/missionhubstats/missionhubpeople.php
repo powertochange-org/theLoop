@@ -1,10 +1,11 @@
 <?php
 
-$people = getIndexOfEndpoint("people", "", "", "", "", "", "");
+$people = getIndexOfEndpoint("people", "interactions", "", "", "", "", "");
 echo "<br /><br />";
 echo count($people['people']);
 echo "<br />";
-?> <table>
+?>
+<table>
 <?php 
 for ($i = 0; $i < count($people['people']); $i++) {
     echo "<tr>";
@@ -16,5 +17,14 @@ for ($i = 0; $i < count($people['people']); $i++) {
 ?>
 </table>
 <?php
-
+echo "<br /> Test test <br />";
+for ($i = 0; $i < count($people['people']); $i++) {
+  //  echo "<br /> At " . $i . " the label is ";
+    var_dump($people['people'][$i]['interactions']);
+    echo "<br />";
+    foreach($people['people'][$i]['interactions'] as $propertyname=>$value) {
+        echo "<p>" . $people['people'][$i]['first_name'] . " has " . $propertyname . " of " . $value . " as their label.";
+    }
+}
+    
 ?>

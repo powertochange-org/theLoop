@@ -15,6 +15,7 @@ define('BASE_URL', 'https://www.missionhub.com/apis/v3/');
 
 //Every organization on missionhub has it's own client ID and authentication key.
 //Naming convention is: [NAME_OF_ORGANIZATION]_[AUTH_KEY/CLIENT_ID];
+//TODO; remove these....
 
 define('POWER_TO_CHANGE_CLIENT_ID', '117');
 define('POWER_TO_CHANGE_AUTH_KEY', '8ab5c9906a019e8b9e7f3943a0ca6013385bb961f645256c3144ebfd5d03f709');
@@ -89,6 +90,7 @@ function getIndexOfEndpoint($endpoint, $include = '', $limit = '', $offset = '',
 
 	if ($curl_response === false) {
        	$info = curl_getinfo($curl);
+        //$error = curl_error($curl);
         curl_close($curl);
         die('Error occured during curl execution. Additional info ' . var_export($info));
     }
