@@ -4,7 +4,7 @@ Donate link: http://easypiewp.com/donate/
 Tags: maintenance, admin, administration, construction, under construction, maintenance mode, offline, unavailable, launch, wordpress maintenance mode, site maintenance
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 0.6.5
+Stable tag: 0.6.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -101,6 +101,12 @@ Then, please [let me know](mailto:bob@easypiewp.com) what's going on, with as mu
 
 == Changelog ==
 
+= 0.6.7 =
+* UI tweaks
+
+= 0.6.6 =
+* Cleaned up UI
+
 = 0.6.5 =
 * Small tweaks
 
@@ -133,6 +139,12 @@ Then, please [let me know](mailto:bob@easypiewp.com) what's going on, with as mu
 * Initial release
 
 == Upgrade Notice ==
+
+= 0.6.7 =
+UI tweaks
+
+= 0.6.6 =
+Cleaned up UI
 
 = 0.6.5 =
 Small tweaks

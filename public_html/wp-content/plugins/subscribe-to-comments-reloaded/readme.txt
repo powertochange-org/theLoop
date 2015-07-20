@@ -4,8 +4,8 @@ Contributors: coolmann, reedyseth, raamdev
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: subscribe, comments, notification, subscription, manage, double check-in, follow, commenting
 Requires at least: 2.9.2
-Tested up to: 4.1.3
-Stable tag: 150422
+Tested up to: 4.2.2
+Stable tag: 150611
 
 Subscribe to Comments Reloaded allows commenters to sign up for e-mail notifications of subsequent replies.
 
@@ -74,6 +74,10 @@ Just go to the Options Panel and click the generate button. By generating a new 
 
 == Upgrade Notice ==
 
+== v150611 ==
+
+v150611 Fix the creation of the new table realated to the Google PII issue with AdWords, see v150422 Change log for details.
+
 == v150422 ==
 
 **Security Fix; PLEASE UPGRADE IMMEDIATELY** Google PII issue with AdWords. Protect user email Address and uses an encrypted key instead on URL. Several issues are fix, see the change log.
@@ -95,6 +99,12 @@ v1410124 Fixed several issues reported on the support forum like broken links, r
 **Security Fix; PLEASE UPGRADE IMMEDIATELY**. v140219 fixes an XSS/CSRF vulnerability that was discovered by Tom Adams and reported by a WordPress Plugin Repository moderator.
 
 == Changelog ==
+
+= v150611 =
+
+* **Fix** The creation of the new table realated to the Google PII issue with AdWords, see bug/#100
+* **Fix** The manage subscription link broke due to a wrong SRE key generation, see bug/#102
+* **Add** Fixed French translation(thanks to Jean-Michel Meyer)
 
 = v150422 =
 
