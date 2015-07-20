@@ -56,6 +56,9 @@ class WPtouchProThree {
 
 	var $cache_smash;
 
+	// Shortcodes that must process before AJAX shortcode request
+	var $preprocess_shortcodes = array( 'gallery', 'new_royalslider' );
+
 	function WPtouchPro() {
 		$this->is_mobile_device = false;
 		$this->showing_mobile_theme = false;
@@ -190,6 +193,7 @@ class WPtouchProThree {
 			}
 		} else {
 			if ( $this->should_do_desktop_shortcode_magic( $settings ) ) {
+				add_filter( 'wptouch_force_mobile_device', array( &$this, 'shortcode_override' ) );
 				add_action( 'init', array( &$this, 'handle_desktop_shortcode' ) );
 			}
 
@@ -227,7 +231,15 @@ class WPtouchProThree {
 		if ( !is_admin() ) {
 			if ( $this->should_do_desktop_shortcode_magic( $settings ) && ( $this->is_mobile_device && $this->showing_mobile_theme ) ) {
 				remove_filter( 'the_content', 'wptexturize' );
-				remove_all_shortcodes(); // Defer all shortcode processing to the subsequent request
+
+				// Need finer-grain control over what gets processed or not.
+				global $shortcode_tags;
+				foreach ( $shortcode_tags as $shortcode => $object ) {
+					if ( !in_array( $shortcode, $this->preprocess_shortcodes ) ) {
+						unset ( $shortcode_tags[ $shortcode ] );
+					}
+				}
+
 				add_filter( 'the_content', array( &$this, 'desktop_shortcode_magic' ), 99 );
 			}
 		}
@@ -264,6 +276,14 @@ class WPtouchProThree {
 		// if ( is_admin() ) {
 		// 	add_action( 'admin_menu', array( &$this, 'add_notification_icon' ) );
 		// }
+	}
+
+	function shortcode_override( $is_mobile_device ) {
+		if ( isset( $_GET[ 'wptouch_shortcode' ] ) ) {
+			return false;
+		} else {
+			return $is_mobile_device;
+		}
 	}
 
 	function desktop_shortcode_magic( $content ) {
@@ -499,7 +519,7 @@ class WPtouchProThree {
 					sprintf( __( '%sTo fix the issue, follow our %sstep-by-step setup guide%s on support.wptouch.com%s', 'wptouch-pro' ), '<p>','<a href="' . $this->cache_smash->get_cache_support_url() . '?utm_campaign=cache_smash&utm_medium=web&utm_source=' . WPTOUCH_UTM_SOURCE . '" target="_blank">', '</a>', '</p>' ) .
 					'</div>';
 				}
-			}			
+			}
 		}
 
 
@@ -633,7 +653,7 @@ class WPtouchProThree {
 
 	function admin_handle_init() {
 		require_once( dirname( __FILE__ ) . '/info.php' );
-		
+
 		$this->admin_initialize();
 		$this->setup_admin_twitter_bootstrap();
 		$this->setup_admin_stylesheets();

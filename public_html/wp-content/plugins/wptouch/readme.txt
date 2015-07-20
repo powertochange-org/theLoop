@@ -2,7 +2,7 @@
 Contributors: bravenewcode, duanestorey, dalemugford, mkuplens
 Tags: wptouch, iphone, ipod, bravenewcode, mobile, mobile-friendly, android, blackberry, smartphone, responsive, design, mobile plugin, ios, mobile theme
 Requires at least: 3.9
-Stable tag: 3.8.1
+Stable tag: 3.8.2
 Tested up to: 4.2.2
 License: GPLv2
 
@@ -37,6 +37,11 @@ For more information visit [WPtouch.com](http://www.wptouch.com/?utm_campaign=wp
 11. WPtouch admin - Menu Setup
 
 == Changelog ==
+
+= Version 3.8.2 (July 9, 2015) =
+
+* Fixed: Desktop theme shortcode handling
+* Removed: Requirement to set WordFence cache method to PHP. Further testing suggests Falcon Engine is compatible.
 
 = Version 3.8.1 (June 25, 2015) =
 

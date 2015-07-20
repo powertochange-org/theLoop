@@ -36,9 +36,9 @@ class WPtouchCacheSmash {
 			3) WP Super Cache is active in settings AND WP Super Cache UAs aren't configured properly
 		*/
 
-		return ( 
-			defined( 'WP_CACHE') && 
-			WP_CACHE && 
+		return (
+			defined( 'WP_CACHE') &&
+			WP_CACHE &&
 			!function_exists( 'get_wpcachehome' ) &&
 			$this->is_wp_super_cache_active() &&
 			!$this->does_wp_super_cache_have_configured_uas()
@@ -65,7 +65,7 @@ class WPtouchCacheSmash {
 	private function is_wp_super_cache_active() {
 		global $cache_enabled;
 
-		$super_cache_enabled = isset( $_POST[ 'wp_cache_easy_on' ] ) ? $_POST[ 'wp_cache_easy_on' ] : $cache_enabled;		
+		$super_cache_enabled = isset( $_POST[ 'wp_cache_easy_on' ] ) ? $_POST[ 'wp_cache_easy_on' ] : $cache_enabled;
 
 		return $super_cache_enabled;
 	}
@@ -81,7 +81,7 @@ class WPtouchCacheSmash {
 			$configured = false;
 		}
 
-		return $configured;		
+		return $configured;
 	}
 
 	public function is_cache_configured() {
@@ -89,7 +89,7 @@ class WPtouchCacheSmash {
 
 		if ( $this->is_wp_super_cache_detected() ) {
 			return ( $this->is_wp_super_cache_active() && $this->does_wp_super_cache_have_configured_uas() ) || ( !$this->is_wp_super_cache_active() );
-		}		
+		}
 
 		// Check W3
 		if ( $this->is_w3_plugin_detected() ) {
@@ -101,7 +101,7 @@ class WPtouchCacheSmash {
 					$rejected_user_agents = $w3_config->get_cache_option( 'pgcache.reject.ua' );
 					if ( !$this->find_in_array_no_case( 'iphone', $rejected_user_agents ) ) {
 						$cache_configured = false;
-					}					
+					}
 				}
 			}
 
@@ -134,7 +134,7 @@ class WPtouchCacheSmash {
 					}
 				}
 
-				$cache_configured = ( $cookie_set && $user_agents_set && $cache_type == 'php' );				
+				$cache_configured = ( $cookie_set && $user_agents_set );
 			}
 
 			return $cache_configured;
@@ -160,7 +160,7 @@ class WPtouchCacheSmash {
 			return "https://support.wptouch.com/support/solutions/articles/5000637442-configuring-wordfence-for-wptouch";
 		}
 
-		
+
 	}
 
 	public function should_disable_mobile_theme() {
