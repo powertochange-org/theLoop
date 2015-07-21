@@ -27,22 +27,7 @@ $format = array(
     '%s',   //name, string
 );
 
-$aResult = array();
 
-//error_log("Hey look!");
-
-var_dump($_POST['functionname']);
-
-switch($_POST['functionname']) {
-    case 'createEngagementReport':
-        $aResult['error'] = "Not Found";
-        break;
-    default:
-        $aResult['error'] = "Not found";
-        break;
-}
-
-echo json_encode($aResult);
 
 /****************************************************************************************************
  * Function getChildren($parent_id)
@@ -57,7 +42,6 @@ echo json_encode($aResult);
 
 function getChildren($parent_id) {
     global $wpdb;
-    echo $parent_id;
     $children = $wpdb->get_results( $wpdb->prepare(
             "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d",
             $parent_id
@@ -79,7 +63,6 @@ function getChildren($parent_id) {
 
 function getOrgId($name) {
     global $wpdb;
-    echo $name;
     $id = $wpdb->get_results( $wpdb->prepare(
             "SELECT `id` FROM `mh_org_tree` WHERE `name` = %s",
             $name    

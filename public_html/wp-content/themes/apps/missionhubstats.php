@@ -22,7 +22,7 @@
                    
 					<?php
                      /***APP CODE STARTS HERE***/
-                    require('missionhubstats/missionhubapirequests.php');
+                    //require('missionhubstats/missionhubapirequests.php');
 
                     ?> 
                     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -30,6 +30,7 @@
                     <script type="text/javascript" src="missionhubstats/jsquerytest.js"></script>
                     <script type="text/javascript" src="missionhubstats/patscript.js"></script>
                     <script type="text/javascript" src="missionhubstats/missionhubstats.js"></script>
+                    <script type="text/javascript" src="missionhubstats/missionhuborganizations.js"></script>
                     <div id="nav">
 <!--
                     	<ul>
