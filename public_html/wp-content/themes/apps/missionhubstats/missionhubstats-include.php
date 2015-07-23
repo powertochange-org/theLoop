@@ -69,84 +69,112 @@ function create_engagement_report() {
     $orgname = $_POST['orgname'];
     $orgid = getOrgId($orgname);
     $children = getChildren($orgid);
+    $thresholds = array(0, 0, 0, 0, 0);
+    $parentpeople = getIndexOfEndpoint('people', 'organizational_labels', $orgid[0]);
+    
+    
+    foreach($parentpeople['people'] as $person) {
+        foreach($person['organizational_labels'] as $label) {
+            switch ($label['label_id']){
+                case 14121:
+                    $thresholds[0]++;
+                    break;
+                case 14122:
+                    $thresholds[1]++;
+                    break;
+                case 14123:
+                    $thresholds[2]++;
+                    break;
+                case 14124:
+                    $thresholds[3]++;
+                    break;
+                case 14125:
+                    $thresholds[4]++;
+                    break;
+                default:
+                    break;                    
+            }
+        }
+    }
     
     
     //Table headers
-    echo "<table>    
-            <tr>
-                <th>Organization</th>
-                <th>Threshold 1</th>
-                <th>Threshold 2</th>
-                <th>Threshold 3</th>
-                <th>Threshold 4</th>
-                <th>Threshold 5</th>
-            </tr>       ";
+    $tableheaders = "<table>    
+                        <tr>
+                            <th>Organization</th>
+                            <th>Threshold 1</th>
+                            <th>Threshold 2</th>
+                            <th>Threshold 3</th>
+                            <th>Threshold 4</th>
+                            <th>Threshold 5</th>
+                        </tr>";
     
-    //Parent org (TODO: stylize parent organization's row to make it stand out)
-    echo "<tr>
-             <td>" . $orgname ."</td>
-             <td></td>
-             <td></td>
-             <td></td>
-             <td></td>
-             <td></td>
-        </tr>";
+    $childrenrows = "";
     
     //Children organizations
     foreach($children as $childid) {
-        $threshold1 = 0;
-        $threshold2 = 0;
-        $threshold3 = 0;
-        $threshold4 = 0;
-        $threshold5 = 0;
-        //Gets the organization from the missionhub database using an API call that includes people.
-        $child = showEndpoint('organizations', $childid[0], 'people,labels');
-        $people = $child['organization']['people'];
-//        if ($child['organization']['name'] == "Field Ministry")     
-//            var_dump($people );
-//        echo $child['organization']['name'];
+        $childthresholds = array(0, 0, 0, 0, 0);
+        $labels = array(14121, 14122, 14123, 14124, 14125);
+        $child = showEndpoint('organizations', $childid[0]);
+        $childname = $child['organization']['name'];
+//        $people = getIndexOfEndpoint('people', 'organizational_labels', $childid[0]);
         
-        foreach($people as $person) {
-            if ($child['organization']['name'] == "Field Ministry") {
-                echo "<br>" . $person['id'];
-                $curlperson = showEndpoint('people', $person['id']);
-                var_dump($curlperson);
-            }
-            foreach($curlperson['person']['organizational_labels'] as $label) {
-//                var_dump($label);
-                switch ($label['label_id']){
-                    case 14121:
-                        $threshold1++;
-                        break;
-                    case 14122:
-                        $threshold2++;
-                        break;
-                    case 14123:
-                        $threshold3++;
-                        break;
-                    case 14124:
-                        $threshold4++;
-                        break;
-                    case 14125:
-                        $threshold5++;
-                        break;
-                    default:
-                        break;                    
-                }
-            }
+        foreach($labels as $label) {
+            $count = getCountAtThreshold($childid[0], $label);
+            $childthresholds[$label - 14121] = $count;
+            $thresholds[$label - 14121] += $count;
         }
         
-        echo "<tr>
-             <td>" . $child['organization']['name'] ."</td>
-             <td>" . $threshold1 ."</td>
-             <td>" . $threshold2 ."</td>
-             <td>" . $threshold3 ."</td>
-             <td>" . $threshold4 ."</td>
-             <td>" . $threshold5 ."</td>
+//        foreach($people['people'] as $person) {
+//            foreach($person['organizational_labels'] as $label) {
+//                switch ($label['label_id']){
+//                    case 14121:
+//                        $childthresholds[0]++;
+//                        $thresholds[0]++;
+//                        break;
+//                    case 14122:
+//                        $childthresholds[1]++;
+//                        $thresholds[1]++;
+//                        break;
+//                    case 14123:
+//                        $childthresholds[2]++;
+//                        $thresholds[2]++;
+//                        break;
+//                    case 14124:
+//                        $childthresholds[3]++;
+//                        $thresholds[3]++;
+//                        break;
+//                    case 14125:
+//                        $childthresholds[4]++;
+//                        $thresholds[4]++;
+//                        break;
+//                    default:
+//                        break;                    
+//                }
+//            }
+//        }
+        
+        $childrenrows = $childrenrows . "<tr>
+                                            <td>" . $childname ."</td>
+                                            <td>" . $childthresholds[0] ."</td>
+                                            <td>" . $childthresholds[1] ."</td>
+                                            <td>" . $childthresholds[2] ."</td>
+                                            <td>" . $childthresholds[3] ."</td>
+                                            <td>" . $childthresholds[4] ."</td>
         </tr>";
     }
+    
+    $parentrow =    "<tr>
+                        <td><strong>" . $orgname ."</strong></td>
+                        <td><strong>" . $thresholds[0] ."</strong></td>
+                        <td><strong>" . $thresholds[1] ."</strong></td>
+                        <td><strong>" . $thresholds[2] ."</strong></td>
+                        <td><strong>" . $thresholds[3] ."</strong></td>
+                        <td><strong>" . $thresholds[4] ."</strong></td>
+                    </tr>";
         
-    echo "</table>";
+    $response = $tableheaders . $parentrow . $childrenrows . "</table>";
+    echo $response;
     
     exit;
 }

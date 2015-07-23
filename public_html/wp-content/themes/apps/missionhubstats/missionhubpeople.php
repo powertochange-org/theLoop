@@ -1,7 +1,7 @@
 <?php
 
 
-$people = getIndexOfEndpoint("people", "interactions", "", "", "", "", "");
+$people = getIndexOfEndpoint("people", "interactions", );
 echo "<br /><br />";
 echo count($people['people']);
 echo "<br />";

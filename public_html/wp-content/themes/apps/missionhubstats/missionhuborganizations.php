@@ -105,7 +105,26 @@ function getCurlObject() {
 }
 
 /****************************************************************************************************
+ * Function getCountAtThreshold($orgid, $labelid)
+ *
+ * Parameters:
+ * int orgid: The ID of the organization for which this count is to be produced
+ * int labelid: The ID of the label associated with the particular threshold.
+ *
+ * Returns:
+ * int filtercount: The number of people at that threshold.
+ ***************************************************************************************************/
+
+function getCountAtThreshold($orgid, $labelid) {
+    $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $labelid));
+    $filtercount = sizeof($people['people']);
+    return $filtercount;
+}
+
+/****************************************************************************************************
  * Function createEngagementReport($name)
+ *
+ * MAY OR MAY NOT EVER BE USED (and therefore may or may not ever be finished)
  * 
  * Parameters:
  * string name: The name of the organization for which the report is being generated
