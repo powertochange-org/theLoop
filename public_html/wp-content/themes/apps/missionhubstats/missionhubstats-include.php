@@ -67,36 +67,19 @@ function create_engagement_report() {
     //This part builds the table to be displayed on the page. This will probably be replaced a separate, generic function
     
     $orgname = $_POST['orgname'];
+    //$orgid is an array.  To use it, refer to the first index in the array.
     $orgid = getOrgId($orgname);
-    $children = getChildren($orgid);
+    $children = getChildren($orgid[0]);
+    //Currently this is hardcoded, current task it to make it so it is not.
     $thresholds = array(0, 0, 0, 0, 0);
-    $parentpeople = getIndexOfEndpoint('people', 'organizational_labels', $orgid[0]);
+    $labels = array(14121, 14122, 14123, 14124, 14125);
     
-    
-    foreach($parentpeople['people'] as $person) {
-        foreach($person['organizational_labels'] as $label) {
-            switch ($label['label_id']){
-                case 14121:
-                    $thresholds[0]++;
-                    break;
-                case 14122:
-                    $thresholds[1]++;
-                    break;
-                case 14123:
-                    $thresholds[2]++;
-                    break;
-                case 14124:
-                    $thresholds[3]++;
-                    break;
-                case 14125:
-                    $thresholds[4]++;
-                    break;
-                default:
-                    break;                    
-            }
-        }
+    foreach($labels as $label) {
+        $thresholds[$label - 14121] = getCountAtThreshold($orgid[0], $label);
+        
     }
     
+    $parentpeople = getIndexOfEndpoint('people', 'organizational_labels', $orgid[0]);    
     
     //Table headers
     $tableheaders = "<table>    
@@ -114,45 +97,14 @@ function create_engagement_report() {
     //Children organizations
     foreach($children as $childid) {
         $childthresholds = array(0, 0, 0, 0, 0);
-        $labels = array(14121, 14122, 14123, 14124, 14125);
         $child = showEndpoint('organizations', $childid[0]);
         $childname = $child['organization']['name'];
-//        $people = getIndexOfEndpoint('people', 'organizational_labels', $childid[0]);
         
         foreach($labels as $label) {
             $count = getCountAtThreshold($childid[0], $label);
             $childthresholds[$label - 14121] = $count;
-            $thresholds[$label - 14121] += $count;
+            $thresholds[$label - 14121] = $thresholds[$label - 14121] + $count;
         }
-        
-//        foreach($people['people'] as $person) {
-//            foreach($person['organizational_labels'] as $label) {
-//                switch ($label['label_id']){
-//                    case 14121:
-//                        $childthresholds[0]++;
-//                        $thresholds[0]++;
-//                        break;
-//                    case 14122:
-//                        $childthresholds[1]++;
-//                        $thresholds[1]++;
-//                        break;
-//                    case 14123:
-//                        $childthresholds[2]++;
-//                        $thresholds[2]++;
-//                        break;
-//                    case 14124:
-//                        $childthresholds[3]++;
-//                        $thresholds[3]++;
-//                        break;
-//                    case 14125:
-//                        $childthresholds[4]++;
-//                        $thresholds[4]++;
-//                        break;
-//                    default:
-//                        break;                    
-//                }
-//            }
-//        }
         
         $childrenrows = $childrenrows . "<tr>
                                             <td>" . $childname ."</td>
@@ -161,7 +113,7 @@ function create_engagement_report() {
                                             <td>" . $childthresholds[2] ."</td>
                                             <td>" . $childthresholds[3] ."</td>
                                             <td>" . $childthresholds[4] ."</td>
-        </tr>";
+                                        </tr>";
     }
     
     $parentrow =    "<tr>

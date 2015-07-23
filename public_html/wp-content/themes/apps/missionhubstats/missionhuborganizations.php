@@ -42,6 +42,7 @@ $format = array(
 
 function getChildren($parent_id) {
     global $wpdb;
+    echo $parent_id;
     $children = $wpdb->get_results( $wpdb->prepare(
             "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d",
             $parent_id
