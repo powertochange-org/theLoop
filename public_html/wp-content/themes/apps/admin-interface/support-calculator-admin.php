@@ -14,7 +14,7 @@
 
 include('functions-admin.php');
 
-$constants = array("cpp_rate", "cpp_max", "cpp_exempt", "ei_rate1", "ei_rate2", "ei_max", "ehc_single", "ehc_couple", "ehc_family", "ehc_MB", "health_tax_AB", "health_tax_BC", "health_tax_MB", "health_tax_NB", "health_tax_NL", "health_tax_NT", "health_tax_NS", "health_tax_NU", "health_tax_ON", "health_tax_PE", "health_tax_QC", "health_tax_SK", "health_tax_YT", "health_tax_FR", "part_time", "add_rate", "life_rate", "life_max", "dept_life_single", "dept_life_couple", "dept_life_family", "medical_ON", "medical_QC", "medical_BC_single", "medical_BC_couple", "medical_BC_family", "workers_rate_AB", "workers_rate_BC", "workers_rate_MB", "workers_rate_NB", "workers_rate_NL", "workers_rate_NT", "workers_rate_NS", "workers_rate_NU", "workers_rate_ON", "workers_rate_PE", "workers_rate_QC", "workers_rate_SK", "workers_rate_YT", "workers_rate_FR", "cr_charge");
+$constants = array("cpp_rate", "cpp_max", "cpp_exempt", "ei_rate1", "ei_rate2", "ei_max", "ehc_single", "ehc_couple", "ehc_family", "ehc_single_int", "ehc_couple_int", "ehc_family_int", "dental_single", "dental_couple", "dental_family", "dental_single_int", "dental_couple_int", "dental_family_int", "ehc_MB", "health_tax_AB", "health_tax_BC", "health_tax_MB", "health_tax_NB", "health_tax_NL", "health_tax_NT", "health_tax_NS", "health_tax_NU", "health_tax_ON", "health_tax_PE", "health_tax_QC", "health_tax_SK", "health_tax_YT", "health_tax_FR", "part_time", "add_rate", "life_rate", "life_max", "dept_life_single", "dept_life_couple", "dept_life_family", "add_rate_int", "life_rate_int", "life_max_int", "dept_life_single_int", "dept_life_couple_int", "dept_life_family_int", "medical_ON", "medical_QC", "medical_BC_single", "medical_BC_couple", "medical_BC_family", "workers_rate_AB", "workers_rate_BC", "workers_rate_MB", "workers_rate_NB", "workers_rate_NL", "workers_rate_NT", "workers_rate_NS", "workers_rate_NU", "workers_rate_ON", "workers_rate_PE", "workers_rate_QC", "workers_rate_SK", "workers_rate_YT", "workers_rate_FR", "cr_charge");
 
 parseConstantInput();
 
@@ -24,10 +24,10 @@ function parseConstantInput(){
 
 		//todo error handling
 		$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["constants"])));
-		if (count($data) < 51){
+		if (count($data) < 66){
 			return; //no data
 		}
-		for ($i = 0; $i < 51; $i ++){
+		for ($i = 0; $i < 66; $i ++){
 			setConstant($constants[$i], $data[$i]);
 		}
 		echo '<BR>Constants Saved!<BR>';
@@ -89,6 +89,11 @@ function printAdmin(){
 			</td>
 		</tr>
 		<tr>
+			<td colspan=2 style="text-align:center;">
+				<b>Extended Health Rates</b>
+			</td>
+		</tr>
+		<tr>
 			<td>
 				Extended Health Coverage (single, couple, family)
 			</td>
@@ -96,6 +101,41 @@ function printAdmin(){
 				<input type="text" name="set_ehc_single" id="set_ehc_single" value="'.getConstant("ehc_single").'" title="single">
 				<input type="text" name="set_ehc_couple" id="set_ehc_couple" value="'.getConstant("ehc_couple").'" title="couple">
 				<input type="text" name="set_ehc_family" id="set_ehc_family" value="'.getConstant("ehc_family").'" title="family">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Dental Coverage (single, couple, family)
+			</td>
+			<td>
+				<input type="text" name="set_dental_single" id="set_dental_single" value="'.getConstant("dental_single").'" title="single">
+				<input type="text" name="set_dental_couple" id="set_dental_couple" value="'.getConstant("dental_couple").'" title="couple">
+				<input type="text" name="set_dental_family" id="set_dental_family" value="'.getConstant("dental_family").'" title="family">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align:center;">
+				<b>International Extended Health Rates</b>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<b>International</b> Extended Health Coverage (single, couple, family)
+			</td>
+			<td>
+				<input type="text" name="set_ehc_single_int" id="set_ehc_single_int" value="'.getConstant("ehc_single_int").'" title="single_int">
+				<input type="text" name="set_ehc_couple_int" id="set_ehc_couple_int" value="'.getConstant("ehc_couple_int").'" title="couple_int">
+				<input type="text" name="set_ehc_family_int" id="set_ehc_family_int" value="'.getConstant("ehc_family_int").'" title="family_int">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<b>International</b> Dental Coverage (single, couple, family)
+			</td>
+			<td>
+				<input type="text" name="set_dental_single_int" id="set_dental_single_int" value="'.getConstant("dental_single_int").'" title="single">
+				<input type="text" name="set_dental_couple_int" id="set_dental_couple_int" value="'.getConstant("dental_couple_int").'" title="couple">
+				<input type="text" name="set_dental_family_int" id="set_dental_family_int" value="'.getConstant("dental_family_int").'" title="family">
 			</td>
 		</tr>
 		<tr>
@@ -121,6 +161,11 @@ function printAdmin(){
 			</td>
 			<td>
 				<input type="text" name="set_part_time" id="set_part_time" value="'.getConstant("part_time").'">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align:center;">
+				<b>National Rates</b>
 			</td>
 		</tr>
 		<tr>
@@ -155,6 +200,50 @@ function printAdmin(){
 				<input type="text" name="set_dept_life_single" id="set_dept_life_single" value="'.getConstant("dept_life_single").'" title="single">
 				<input type="text" name="set_dept_life_couple" id="set_dept_life_couple" value="'.getConstant("dept_life_couple").'" title="couple">
 				<input type="text" name="set_dept_life_family" id="set_dept_life_family" value="'.getConstant("dept_life_family").'" title="family">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align:center;">
+				<b>International Rates</b>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Intl AD&D rate per $1000
+			</td>
+			<td>
+				<input type="text" name="set_add_rate_int" id="set_add_rate_int" value="'.getConstant("add_rate_int").'">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Intl Life rate per $1000
+			</td>
+			<td>
+				<input type="text" name="set_life_rate_int" id="set_life_rate_int" value="'.getConstant("life_rate_int").'">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Intl Life maximum 2 x annual salary
+			</td>
+			<td>
+				<input type="text" name="set_life_max_int" id="set_life_max_int" value="'.getConstant("life_max_int").'">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Intl Depedents life (single, couple, family)
+			</td>
+			<td>
+				<input type="text" name="set_dept_life_single_int" id="set_dept_life_single_int" value="'.getConstant("dept_life_single_int").'" title="single">
+				<input type="text" name="set_dept_life_couple_int" id="set_dept_life_couple_int" value="'.getConstant("dept_life_couple_int").'" title="couple">
+				<input type="text" name="set_dept_life_family_int" id="set_dept_life_family_int" value="'.getConstant("dept_life_family_int").'" title="family">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align:center;">
+				<b>Provincal Rates</b>
 			</td>
 		</tr>
 		<tr>
@@ -225,6 +314,9 @@ function printAdmin(){
 		ei_rate2 = get_value_float("set_ei_rate2");
 		ei_max = get_value_float("set_ei_max");
 		ehc = new Array(get_value_float("set_ehc_single"), get_value_float("set_ehc_couple"), get_value_float("set_ehc_family"));
+		ehc_int = new Array(get_value_float("set_ehc_single_int"), get_value_float("set_ehc_couple_int"), get_value_float("set_ehc_family_int"));
+		dental = new Array(get_value_float("set_dental_single"), get_value_float("set_dental_couple"), get_value_float("set_dental_family"));
+		dental_int = new Array(get_value_float("set_dental_single_int"), get_value_float("set_dental_couple_int"), get_value_float("set_dental_family_int"));
 		ehc_MB = get_value_float("set_ehc_MB");
 		health_tax = new Array('.printHealthTaxSet().' get_value_float("set_health_tax_FR"));
 		part_time = get_value_float("set_part_time");
@@ -232,6 +324,10 @@ function printAdmin(){
 		life_rate = get_value_float("set_life_rate");
 		life_max = get_value_float("set_life_max");
 		dept_life = new Array(get_value_float("set_dept_life_single"), get_value_float("set_dept_life_couple"), get_value_float("set_dept_life_family")); 
+		add_rate_int = get_value_float("set_add_rate_int");
+		life_rate_int = get_value_float("set_life_rate_int");
+		life_max_int = get_value_float("set_life_max_int");
+		dept_life_int = new Array(get_value_float("set_dept_life_single_int"), get_value_float("set_dept_life_couple_int"), get_value_float("set_dept_life_family_int")); 
 		medical_ON = get_value_float("set_medical_ON");
 		medical_QC = get_value_float("set_medical_QC");
 		medical_BC = new Array(get_value_float("set_medical_BC_single"), get_value_float("set_medical_BC_couple"), get_value_float("set_medical_BC_family"));
@@ -241,7 +337,7 @@ function printAdmin(){
 	
 	function saveConstants(){
 		storeValues();
-		var data = cpp_rate + "+" + cpp_max + "+" + cpp_exempt + "+" + ei_rate1 + "+" + ei_rate2 + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
+		var data = cpp_rate + "+" + cpp_max + "+" + cpp_exempt + "+" + ei_rate1 + "+" + ei_rate2 + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_int.join("+") + "+" + dental.join("+") + "+" + dental_int.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + add_rate_int + "+" + life_rate_int + "+" + life_max_int + "+" + dept_life_int.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
 		document.getElementById("constants").value = data;
 		sendConstants.submit();
 	}
