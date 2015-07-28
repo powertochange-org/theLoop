@@ -146,7 +146,9 @@ $max_file_size = 30000000; // size in bytes
 	        <input type="hidden" id="height" name="height" />
 	        <!-- Remove photo -->
             <input type="hidden" id="deleteImage" name="deleteImage" />
-
+        	
+        	<p><b>Note: </b>To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to <b>My HR</b>. Changes made there will typically show up in the Staff Directory within 24 hours.</p>
+        	
 			<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 			<div class='form'>
 				<table><tr>
@@ -161,58 +163,37 @@ $max_file_size = 30000000; // size in bytes
 				</tr></table>
 			</div>
 
-
-			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
-			if($phones){
-				$last = end($phones);
-				foreach($phones as $phone){
-					$isLast = $last === $phone;
-					$id = $phone->phone_number_id;
-					$contact = split("-", $phone->contact_number, 2);
-					if ($isLast){
-						echo "<div style='position:relative;'>";
+			<div class="form">
+				<table>
+				<?php
+				$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
+				if($phones){
+					$last = end($phones);
+					foreach($phones as $phone){
+						$isLast = $last === $phone;
+						$id = $phone->phone_number_id;
+						$contact = split("-", $phone->contact_number, 2);
+					?><tr>
+						<td>
+							<span style='font-weight:600;'>Phone: </span>
+							<input type='hidden' name='phone[<?php echo $id; ?>][share]' value='ministryshare' >
+						</td>
+						<td style="text-align:left;">
+							<?php echo '&nbsp;'.$phone->country_code ?>
+							&nbsp;&nbsp;(
+							<?php echo $phone->area_code ?>
+							)&nbsp;
+							<?php echo $contact[0] ?> 
+							-
+							<?php echo $contact[1] ?>
+							&nbsp;Ext: <?php echo $phone->extension ?>
+						</td>
+					 </tr>
+				 	<?php
 					}
-					echo '<div class="form" id="editPhone' . $id . '" action="" method="post" enctype="multipart/form-data">';
-				?><table><tr>
-						<td><span style='font-weight:600;'>Phone: </span></td>
-						<td><input type="text" placeholder='Country' name="phone[<?php echo $id; ?>][country]" value="<?php echo $phone->country_code ?>" maxlength="3" style="width:52px" /></td>
-						<td><input type='hidden' name='phone[<?php echo $id; ?>][share]' value='ministryshare' ></td>
-						<td><input type='hidden' name='phone[<?php echo $id; ?>][type]' value='BUS' ></td>
-						<td>(</td>
-						<td><input type="text" placeholder='Area' name="phone[<?php echo $id; ?>][area]" value="<?php echo $phone->area_code ?>" maxlength="3" style="width:52px" /></td>
-						<td>)</td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][part1]" value="<?php echo $contact[0] ?>" maxlength="3" style="width:52px" /></td>
-						<td>-</td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][part2]" value="<?php echo $contact[1] ?>" maxlength="4"style="width:60px" /></td>
-						<td style='width:100%'> <input type="text" style='width:100%' placeholder='Ext' name="phone[<?php echo $id; ?>][ext]" value="<?php echo $phone->extension ?>" maxlength="10"/></td>
-						<td><input title="Delete this phone number" style="color:red;" type="button" value="✖" onclick="deleteItem('phone number', <?php echo $id ?>);"/></td>
-					 </tr></table>
-			 <?php
-					echo '</div>';
-					if ($isLast){
-						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#min_phone\").slideToggle()'>";
-						echo "</div>";
-					}
-				}
-			}
-			?>
-
-			<div class="form" id="min_phone" <?php echo ($phones ? "style='display:none'" : "") ?> >
-				<input type='hidden' name='phone[-1][share]' value='ministryshare' >
-				<input type='hidden' name='phone[-1][type]' value='BUS' >
-				<table><tr>
-					<td><?php $width = 245; $name = 'phone[-1][country]'; require("countrycodes.php");  ?></td>
-					 <td>(</td>
-					 <td><input type="text" placeholder='Area' name="phone[-1][area]" value="" maxlength="3" style="width:30px" /></td>
-					 <td>)</td>
-					 <td><input type="text" name="phone[-1][part1]" value="" maxlength="3" style="width:30px" /></td>
-					 <td>-</td>
-					 <td><input type="text" name="phone[-1][part2]" value="" maxlength="4" style="width:40px" /></td>
-					 <td style='width:100%'><input type="text" style='width:100%' placeholder='Ext' name="phone[-1][ext]" value="" maxlength="10"/></td>
-				 </tr></table>
+				} ?>
+				</table>
 			</div>
-
 
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1'");
@@ -224,28 +205,19 @@ $max_file_size = 30000000; // size in bytes
 						echo "<div style='position:relative;'>";
 					}
 					$id = $email->email_address_id;	?>
-					<div class="form" id="editEmail<?php echo $id ?>">
+					<div class="form">
 					<table><tr>
 						<td><span style="font-weight:600;">Ministry&nbsp;Email: </span></td>
-						<?php	//don't allow editing of powertochange.org address
-						if(strpos(strtolower($email->email_address),'powertochange.org') === false) { ?>
-							<td style='width:100%'><input type="text" style='width:100%' name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address; ?>" /></td>
-						    <td><input title="Delete this email address" style="color:red;" type="button" value="✖" onclick="deleteItem('email address', <?php echo $id ?>);"/></td>
-						<?php }	else{ ?>
-							<td title="Note: @powertochange.org email addresses cannot be edited or removed" style='width:100%'><input type="text" style='width:100%' value='<?php echo $email->email_address; ?>' disabled /></td>
-						<?php }
-					echo "</tr></table>";
+						<td style='width:100%'>&nbsp;<?php echo $email->email_address; ?></td>
+					<?php echo "</tr></table>";
 					echo "</div>";
 					if ($isLast){
-						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addMinEmail\").slideToggle()'>";
 						echo "</div>";
 					}
 				}
 			}
 			?>
-			<div class="form" id="addMinEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
-				<input type="text"  placeholder='Ministry Email' name="email[-1][email]" style="width:446px"/>
-			</div>
+			
 			<div class="form" id="editMinSocialMedia">
 				<input type="text" placeholder='Website' name="ministryWebsite" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
 				<input type="text" placeholder='Twitter' name="ministryTwitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:446px"><BR>
@@ -254,129 +226,90 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 			<h4 style='font-size:16pt'>PERSONAL INFORMATION</h4>
 			<div class="form">
-				<table><tr>
-					<td><span style='font-weight:600;'>Address: </span></td>
-					<td><input type="textbox" placeholder='Address Line #1' name="personalAddress[line1]" value="<?php echo $user->address_line1 ?>" style="width:205px"></td>
-					<td style='width:100%'><input type="textbox" style='width:100%' placeholder='Address Line #2' name="personalAddress[line2]" value="<?php echo $user->address_line2 ?>" title='(Only needed if you have a PO Box or RR number)' ></td>
-				</tr></table><table><tr>
-					<td><input type="textbox" placeholder='City' name="personalAddress[city]" value="<?php echo $user->city ?>" style="width:130px"></td>
-					<td><input type="textbox" placeholder='Pr.' name="personalAddress[pr]" value="<?php echo $user->province ?>" maxlength="2" style="width:30px"></td>
-					<td><input type="textbox" placeholder='Country' name="personalAddress[country]" value="<?php echo $user->country ?>" maxlength="2" style="width:30px"></td>
-					<td><input type="textbox" placeholder='PC' name="personalAddress[pc]" value="<?php echo $user->postal_code ?>" style="width:110px"></td>
-					<td style='width:100%'><select name="personalAddress[share]" style='width:100%'>
-						<option value="FULL" <?php if($user->share_address == 'FULL') { echo 'selected'; } ?>>Shared</option>
-						<option value="NONE" <?php if($user->share_address == 'NONE') { echo 'selected'; } ?>>Not Shared</option>
-					</select></td>
-				</tr></table>
+				<table>
+					<tr>
+						<td><span style='font-weight:600;'>Address: </span></td>
+						<td colspan=3><?php echo $user->address_line1 ?></td>
+						<td colspan=2><?php echo $user->address_line2 ?></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><?php echo $user->city ?></td>
+						<td><?php echo $user->province ?></td>
+						<td><?php echo $user->country ?></td>
+						<td><?php echo $user->postal_code ?></td>
+						<td><select name="personalAddress[share]" style='width:90px;'>
+							<option value="FULL" style="padding:10px 4px;" <?php if($user->share_address == 'FULL') { echo 'selected'; } ?>>Shared</option>
+							<option value="NONE" style="padding:10px 4px;" <?php if($user->share_address == 'NONE') { echo 'selected'; } ?>>Not Shared</option>
+						</select></td>
+					</tr>
+				</table>
 			</div>
 
-
-			<?php
-			$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
-			if($phones){
-				$last = end($phones);
-				foreach($phones as $phone){
-					$isLast = $last === $phone;
-					if ($isLast){
-						echo "<div style='position:relative;'>";
-					}
-					$id = $phone->phone_number_id;
-					$contact = split("-", $phone->contact_number, 2);
-					echo '<div class="form" id="editPhone' . $id . '">';
-					?>
-					<table><tr>
-						<td><span style='font-weight:600;'>Phone:</span></td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][country]" value="<?php echo $phone->country_code ?>" maxlength="3" style="width:30px" /></td>
-						<td><select name="phone[<?php echo $id; ?>][share]" >
-							<option value="personalshare" <?php if ($phone->share_phone) { echo 'selected="selected"'; } ?>> Shared</option>
-							<option value="personalnotshare" <?php if (!$phone->share_phone) {echo 'selected="selected"'; } ?>> Not Shared</option>
-						</select></td>
-						<td><select name="phone[<?php echo $id; ?>][type]">
-							<option value="CELL" <?php if ($phone->phone_type == 'CELL') { echo 'selected="selected"'; } ?>>Cell</option>
-							<option value="HOME" <?php if ($phone->phone_type == 'HOME') { echo 'selected="selected"'; } ?>>Home</option>
-							<option value="FAX" <?php if ($phone->phone_type == 'FAX') { echo 'selected="selected"'; } ?>>Fax</option>
-							<option value="ALT" <?php if ($phone->phone_type == 'ALT') { echo 'selected="selected"'; } ?>>Other</option>
-						</select></td>
-						<td>(</td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][area]" value="<?php echo $phone->area_code ?>" maxlength="3" style="width:27px" /></td>
-						<td>)</td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][part1]" value="<?php echo $contact[0] ?>" maxlength="3" style="width:27px" /></td>
-						<td>-</td>
-						<td><input type="text" name="phone[<?php echo $id; ?>][part2]" value="<?php echo $contact[1] ?>" maxlength="4" style="width:35px" /></td>
-						<td style='width:100%'><input type="text" style='width:100%' placeholder="Ext." name="phone[<?php echo $id; ?>][ext]" value="<?php echo $phone->extension ?>" maxlength="10" /></td>
-						<td><input title="Delete this phone number" style="color:red;" type="button" value="✖" onclick="deleteItem('phone number', <?php echo $id ?>);"/></td>
-					</tr></table>
-					 <?php
-					echo '</div>';
-					if ($isLast){
-						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#phone\").slideToggle()'>";
-						echo "</div>";
-					}
-				}
-			} ?>
-
-			<div class="form" id="phone" <?php echo ($phones ? "style='display:none'" : "") ?> >
-				<table><tr>
-					<td><select name="phone[-2][share]" style="width:67px">
-						<option value="personalshare" > Shared</option>
-						<option value="personalnotshare" > Not Shared</option>
-					</select></td>
-					<td><select name="phone[-2][type]">
-						<option value="CELL">Cell</option>
-						<option value="HOME">Home</option>
-						<option value="FAX">Fax</option>
-						<option value="OTHER">Other</option>
-					</select></td>
-					<td><?php $width=100; $name = 'phone[-2][country]'; require("countrycodes.php"); ?></td>
-					 <td>(</td>
-					 <td><input type="text" name="phone[-2][area]" value="" maxlength="3" style="width:27px" /></td>
-					 <td>)</td>
-					 <td><input type="text" name="phone[-2][part1]" value="" maxlength="3" style="width:27px" /></td>
-					 <td>-</td>
-					 <td><input type="text" name="phone[-2][part2]" value="" maxlength="4" style="width:35px" /></td>
-					 <td style='width:100%'><input type="text" style='width:100%' placeholder='Ext.' name="phone[-2][ext]" value="" maxlength="10" /></td>
-				</tr></table>
-			</div>
-
-
-			<?php
-			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
-			if($emails){
-				$last = end($emails);
-				foreach($emails as $email){
-					$isLast = $last === $email;
-					if ($isLast){
-						echo "<div style='position:relative;'>";
-					}
-					$id = $email->email_address_id; ?>
-					<div class="form" id="editEmail<?php echo $id ?>">
-					<table><tr>
-						<td><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
-						<td><input type="text" name="email[<?php echo $id; ?>][email]" value="<?php echo $email->email_address ?>" style="width:260px"/></td>
-						<td style='width:100%'><select style='width:100%' name="email[<?php echo $id; ?>][share]">
-							<option value="1" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
-							<option value="0" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
-						</select></td>
-						<td><input title="Delete this email address" style="color:red;" type="button" value="✖" onclick="deleteItem('email address', <?php echo $id ?>);"/></td>
-					</tr></table>
+			<div class="form" id="editPhone">
+				<table>
 					<?php
-					echo '</div>';
-					if ($isLast){
-						echo "<img class='false-link plus' src='".get_stylesheet_directory_uri()."/res/plus.png' width='14' height='14' onclick='$(\"#addEmail\").slideToggle()'>";
-						echo "</div>";
-					}
-				}
-			}
-			?>
-			<div class="form" id="addEmail" <?php echo ($emails ? "style='display:none'" : "") ?> >
-				<table><tr>
-					<td><input type="text" placeholder='Personal Email' name="email[-2][email]" style="width:350px"/></td>
-					<td><select name="email[-2][share]" style='width:100%'>
-						<option value="1" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
-						<option value="0" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
-					</select></td>
-				</tr></table>
+					$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
+					if($phones){
+						$last = end($phones);
+						foreach($phones as $phone){
+							$isLast = $last === $phone;
+							
+							$id = $phone->phone_number_id;
+							$contact = split("-", $phone->contact_number, 2);
+							?>
+							<tr>
+								<td><span style='font-weight:600;'>Phone:</span></td>
+								<td>
+									<?php echo $phone->country_code ?>
+									&nbsp;
+									<?php 
+									if ($phone->phone_type == 'CELL') { echo 'Cell';} 
+									else if ($phone->phone_type == 'HOME') { echo 'Home';} 
+									else if ($phone->phone_type == 'FAX'){ echo 'Fax';} 
+									else if ($phone->phone_type == 'ALT'){ echo 'Other';}?>
+									&nbsp;&nbsp;&nbsp;
+									(<?php echo $phone->area_code ?>)
+									<?php echo $contact[0] ?> -
+									<?php echo $contact[1] ?>
+									Ext: <?php echo $phone->extension ?>
+								</td>
+								<td><select name="phone[<?php echo $id; ?>][share]" style="width:90px;">
+									<option value="personalshare" style="padding:10px 4px;" <?php if ($phone->share_phone) { echo 'selected="selected"'; } ?>> Shared</option>
+									<option value="personalnotshare" style="padding:10px 4px;" <?php if (!$phone->share_phone) {echo 'selected="selected"'; } ?>> Not Shared</option>
+								</select></td>
+							</tr>
+				 	<?php
+						}
+					} ?>
+				</table>
 			</div>
+
+			<div class="form" id="editEmail">
+				<table>
+					<?php
+					$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
+					if($emails){
+						$last = end($emails);
+						foreach($emails as $email){
+							$isLast = $last === $email;
+							$id = $email->email_address_id; ?>
+							<tr>
+								<td><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
+								<td><?php echo $email->email_address ?></td>
+								<td><select style='width:90px;' name="email[<?php echo $id; ?>][share]">
+									<option value="1" style="padding:10px 4px;" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
+									<option value="0" style="padding:10px 4px;" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
+								</select></td>
+							</tr>
+					<?php
+						}
+					}?>
+				</table>
+			</div>
+				
+				
+			
 			<div class="form" id="editSocialMedia">
 				<input type="text" placeholder='Website' name="personalWebsite" value="<?php echo $user->website ?>" style="width:446px"><BR>
 				<input type="text" placeholder='Twitter' name="personalTwitter" value="<?php echo $user->twitter_handle ?>" style="width:446px"><BR>
