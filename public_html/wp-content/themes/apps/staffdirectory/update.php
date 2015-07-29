@@ -76,76 +76,8 @@
                 );
 		}
 		
-		//Phone
 		foreach($_POST['phone'] as $key => $value){
-		
-			//if add new
-			if ($key < 0){
-			
-				//if dirty
-				if ($value['area'] != ''){
-					
-					$share = $value['share'];
-					if($share=='personalnotshare'){
-						$phoneshare = 0;
-						$isMinistry = 0; 
-					}
-					else if ($share == 'personalshare'){
-						$phoneshare = 1;
-						$isMinistry = 0;
-					}
-					else if ($share == 'ministryshare'){
-						$phoneshare = 1;
-						$isMinistry = 1;
-					}
-					$country = strip_tags($value['country']);
-					$area = strip_tags($value['area']);
-					$number1 = strip_tags($value['part1']);
-					$number2 = strip_tags($value['part2']);
-					$extension = strip_tags($value['ext']);
-					$type = strip_tags($value['type']);
-					if($number1 != ""){
-						$number = $number1 . '-' . $number2; //format the phone number like XXX-XXXX
-						$wpdb->insert( 'phone_number',
-								array( 'country_code' 	=> $country,
-										'country_phone_code' => countryToNumber($country), 
-										'area_code'		=> $area, 
-										'contact_number' =>	$number, 
-										'extension'		=> $extension, 
-										'phone_type'	=> $type, 
-										'employee_id'	=> $user->external_id, 
-										'share_phone'	=> $phoneshare, 
-										'is_ministry' 	=> $isMinistry
-								));
-						// get the record ID
-						$id = $wpdb->insert_id;
-						$wpdb->insert( 'sync',
-								array(  'table_name'    => 'phone_number',
-										'record_id'     => $id,
-										'sync_action'   => 'insert',
-										'changed_date'	=>	date('Y-m-d H-i-s'),
-										'user_login'	=> $user->user_login
-								));
-					}
-                        // NOTE: I originally had begun to create code that would include changes to
-                        // phone numbers in the email of changes. For now, however, we're going to
-                        // ignore those changes, and ONLY email notifications for ministry or
-                        // personal address changes. I'm only leaving this code here for future
-                        // reference, if we decide we want to add it in at some point
-
-                        //// Add to the changes
-                        //$changes['Phone'] = array(
-                        //    'old' => "None (New Phone)",
-                        //    'new' => "
-                        //    <strong>" . ($type == 'BUS' ? 'Office' : ucfirst(strtolower($type))) . ": </strong>+" . countryToNumber($country) . " ($area) $number" . (empty($extension) ? "" : "-" . $extension) . 
-                        //    "<br />" . ($phoneshare ? "Shared" : "Not Shared") . 
-                        //    "<br />" . ($isMinistry ? "Ministry" : "Non-Ministry")
-                        //    );
-					    //}
-					
-				}
-			}
-			else {
+			if ($key >= 0) {
 				$id = $key;
 				$phones = $wpdb-> get_results("SELECT * FROM phone_number WHERE phone_number_id = '" . $id . "'");
 				$phone = $phones[0];
@@ -153,150 +85,61 @@
 				$isMinistry = 0;
 				if ($value['share'] == 'personalshare') {
 					$phoneshare = 1;
-				} elseif ($value['share'] == 'ministryshare') {
-					$phoneshare = 1;
-					$isMinistry = 1;
+				} elseif ($value['share'] == 'ministryshare' || $phone->is_ministry == 1) {
+					continue; //Skip to the next personal address
 				}
-				if (!empty($value['part1'])) {
-					$country = strip_tags($value['country']);
-					$countrycode = countryToNumber($country);
-					$areacode = strip_tags($value['area']);
-					$extension = strip_tags($value['ext']);
-					$phonetype = strip_tags($value['type']);
-					$phonenumber = strip_tags($value['part1']) . '-' . strip_tags($value['part2']);
-					
-					//check if dirty
-					
-					if ($country != $phone->country_code 
-							|| $countrycode != $phone->country_phone_code
-							|| $areacode != $phone->area_code
-							|| $phonenumber != $phone->contact_number
-							|| $extension != $phone->extension
-							|| $phonetype != $phone->phone_type
-							|| $phoneshare != $phone->share_phone
-							|| $isMinistry != $phone->is_ministry) {
-						$wpdb->insert( 'sync',
-								array(  'table_name'    => 'phone_number',
-										'record_id'     => $phone->phone_number_id,
-										'sync_action'   => 'update',
-										'changed_date'	=>	date('Y-m-d H-i-s'),
-										'user_login'	=> $user->user_login
-								));
-						$wpdb->update( 'phone_number', 
-								array( 'country_code' => $country,
-										'country_phone_code' => $countrycode,
-										'area_code' => $areacode,
-										'contact_number' => $phonenumber,
-										'extension' => $extension,
-										'phone_type' => $phonetype,
-										'employee_id' => $user->external_id,
-										'share_phone' => $phoneshare,
-										'is_ministry' => $isMinistry),
-								array(	'phone_number_id' => $id));
-					}
-				} else if (empty($value['part2']) && empty($value['country']) &&
-                           empty($value['area']) && empty($value['ext'])) {
-                    // Phone number is empty; need to delete
+				
+				if ($phoneshare != $phone->share_phone) {
 					$wpdb->insert( 'sync',
 							array(  'table_name'    => 'phone_number',
 									'record_id'     => $phone->phone_number_id,
-									'sync_action'   => 'delete',
+									'sync_action'   => 'update',
 									'changed_date'	=>	date('Y-m-d H-i-s'),
 									'user_login'	=> $user->user_login
 							));
-                    // Delete from database
-                    $wpdb->delete( 'phone_number',
-                            array( 'phone_number_id' => $phone->phone_number_id
-                    ));
-                }
+					$wpdb->update( 'phone_number', 
+							array( 'share_phone' => $phoneshare),
+							array(	'phone_number_id' => $id));
+				}
+				 
 			}
 		}
+		
 		
 		//Email
 		foreach($_POST['email'] as $key => $value){
 		
 			//if add new
-			if ($key < 0){
-			
-				//if dirty
-				if ($value['email'] != ''){
-					$address = strtolower(strip_tags($value['email']));
-					if (isMinistryAddress($address)) {
-						$ministry = '1'; 
-						$shared = '1';
-					} else {
-						$ministry = '0';
-						$shared = $value['share'];
-					}
-                    // Let the user know if the type of email was automatically changed
-                    echo getEmailNoticeAdd($key, $ministry, $address);
-					$wpdb->insert( 'email_address', 
-						array( 'employee_id' => $user->external_id,
-								'email_address' => $address,
-								'is_ministry' => $ministry,
-								'share_email' => $shared)
-					);
-					$id = $wpdb->insert_id;
-					$wpdb->insert( 'sync',
-						array(  'table_name'    => 'email_address',
-								'record_id'     => $id,
-								'sync_action'   => 'insert',
-								'field_changed' => '',
-								'changed_date'	=>	date('Y-m-d H-i-s'),
-								'user_login'	=> $user->user_login
-						));
-				}
-			}
-			else{
+			if ($key >= 0) {
 				$id = $key;
 				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
 				$email = $emails[0];
-				$address = strtolower(strip_tags($value['email']));
-				if ($address == ""){
-					$wpdb->insert( 'sync',
-							array(  'table_name'    => 'email_address',
-									'record_id'     => $value['external_id'],
-									'sync_action'   => 'delete',
-									'field_changed' => $id,
-									'changed_date'	=>	date('Y-m-d H-i-s'),
-									'user_login'	=> $user->user_login,
-							));
-                    $wpdb->delete( 'email_address',
-                            array( 'email_address_id' => $id
-                    ));
+				
+				if ($email->is_ministry == 1) {
+					continue;
+				} else {
+					//$ministry = '0';
+					$shared = $value['share'];
 				}
-				else{
-					if (isMinistryAddress($address)) {
-						   $ministry = '1';
-						   $shared = '1';
-					} else {
-							$ministry = '0';
-							$shared = $value['share'];
-					}
-					$wpdb->insert( 'sync',
-									array(  'table_name'    => 'email_address',
-											'record_id'     => $id,
-											'sync_action'   => 'update',
-											'field_changed' => '',
-											'changed_date'	=>	date('Y-m-d H-i-s'),
-											'user_login'	=> $user->user_login
-									));
-					if ($address != $email->email_address 
-							|| $ministry != $email->is_ministry
-							|| $shared != $email->share_email) {
-                        // Let the user know if the type of email was automatically changed
-                        echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
-								
-						$wpdb->update( 'email_address', 
-								array( 'email_address' => $address,
-										'is_ministry'	=> $ministry,
-										'share_email' => $shared),
-								array( 'email_address_id' => $id  ) 
-							);
-					
-					
-					}
+				$wpdb->insert( 'sync',
+								array(  'table_name'    => 'email_address',
+										'record_id'     => $id,
+										'sync_action'   => 'update',
+										'field_changed' => '',
+										'changed_date'	=>	date('Y-m-d H-i-s'),
+										'user_login'	=> $user->user_login
+								));
+				if ($shared != $email->share_email) {
+                    // Let the user know if the type of email was automatically changed
+                    //echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
+							
+					$wpdb->update( 'email_address', 
+							array( 'share_email' => $shared),
+							array( 'email_address_id' => $id  ) 
+						);
+				
 				}
+				
 			}
 		}
 		
@@ -326,14 +169,7 @@
 		//Personal Address
 		
 		//checking if anything is different
-		if (strip_tags($_POST['personalAddress']['line1']) != $user->address_line1 
-				|| strip_tags($_POST['personalAddress']['line2']) != $user->address_line2
-				|| strip_tags($_POST['personalAddress']['city']) != $user->city
-				|| strip_tags($_POST['personalAddress']['pr']) != $user->province
-				|| strip_tags($_POST['personalAddress']['country']) != $user->country
-				|| strip_tags($_POST['personalAddress']['pc']) != $user->postal_code
-				|| $_POST['personalAddress']['share'] != $user->share_address){
-				
+		if ($_POST['personalAddress']['share'] != $user->share_address) {
 			$wpdb->insert( 'sync',
 				array(  'table_name'    => 'employee',
 						'record_id'     => $user->external_id,
@@ -343,31 +179,13 @@
 						'user_login'	=> $user->user_login
 				));
 			
-            $employeeChanges['address_line1'] = strip_tags($_POST['personalAddress']['line1']);
-			$employeeChanges['address_line2'] = strip_tags($_POST['personalAddress']['line2']);
-			$employeeChanges['city'] = strip_tags($_POST['personalAddress']['city']);
-			$employeeChanges['province'] = strip_tags($_POST['personalAddress']['pr']);
-			$employeeChanges['country'] = strip_tags($_POST['personalAddress']['country']);
-			$employeeChanges['postal_code'] = strip_tags($_POST['personalAddress']['pc']);
 			$employeeChanges['share_address'] = $_POST['personalAddress']['share'];
             
             // Add to the changes
             $changes['Personal Address'] = array(
                 'old' => 
-		            getField($user->address_line1) . " <br/>" .
-		            getField($user->address_line2) . " <br/>" .
-		            getField($user->city) . " <br/>" .
-		            getField($user->province) . " <br/>" .
-		            getField($user->country) . " <br/>" .
-		            getField($user->postal_code) . " <br/>" .
                     ($user->share_address == 'FULL' ? 'Shared' : 'Not shared'),
                 'new' => 
-				    getField(strip_tags($_POST['personalAddress']['line1']))  . "<br/>" .
-				    getField(strip_tags($_POST['personalAddress']['line2']))  . "<br/>" .
-				    getField(strip_tags($_POST['personalAddress']['city']))  . "<br/>" .
-				    getField(strip_tags($_POST['personalAddress']['pr']))  . "<br/>" .
-				    getField(strip_tags($_POST['personalAddress']['country']))  . "<br/>" .
-				    getField(strip_tags($_POST['personalAddress']['pc']))  . "<br/>" .
                     ($_POST['personalAddress']['share'] == 'FULL' ? "Shared" : "Not shared")
                 );
 		}
@@ -419,7 +237,7 @@
         }
 
         // Send email notification for changes
-        sendEmail($changes, "$user->first_name $user->last_name");
+        //sendEmail($changes, "$user->first_name $user->last_name");
 		// Re-read user, in case values changed
 		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
 
