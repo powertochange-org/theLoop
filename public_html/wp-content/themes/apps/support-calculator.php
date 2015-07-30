@@ -1,5 +1,4 @@
 <?php
-ini_set('display_errors', 'On');
 include('functions/functions.php');
 require('pdf/fpdf.php');
 
