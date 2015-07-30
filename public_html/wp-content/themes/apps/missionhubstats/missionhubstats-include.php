@@ -14,6 +14,8 @@ add_action('wp_ajax_nav-click', 'stats_ajax_func');
 add_action('wp_ajax_create-engagement-report', 'create_engagement_report');
 add_action('wp_ajax_summer-filter', 'project_ajax_func');
 add_action('wp_ajax_spring-filter', 'project_ajax_func');
+//Not yet in use.
+add_action('wp_ajax_create-discipleship-report', 'create_discipleship_report'); 
 
 // Function to set up JavaScript stuff for the page
 function stats_ajax_scripts() {
@@ -64,71 +66,30 @@ function create_engagement_report() {
             
     header("Content-Type: text/html");
     
-    //This part builds the table to be displayed on the page. This will probably be replaced a separate, generic function
-    
     $orgname = $_POST['orgname'];
-    //$orgid is an array.  To use it, refer to the first index in the array.
-    $orgid = getOrgId($orgname);
-    $children = getChildren($orgid[0]);
-    //Currently this is hardcoded, current task it to make it so it is not.
-    $thresholds = array(0, 0, 0, 0, 0);
-    $labels = array(14121, 14122, 14123, 14124, 14125);
+    //createEngagementReport exists in missionhuborganizations.php
+    $response = createEngagementReport($orgname);
     
-    foreach($labels as $label) {
-        $thresholds[$label - 14121] = getCountAtThreshold($orgid[0], $label);
-        
-    }
-    
-    $parentpeople = getIndexOfEndpoint('people', 'organizational_labels', $orgid[0]);    
-    
-    //Table headers
-    $tableheaders = "<table>    
-                        <tr>
-                            <th>Organization</th>
-                            <th>Threshold 1</th>
-                            <th>Threshold 2</th>
-                            <th>Threshold 3</th>
-                            <th>Threshold 4</th>
-                            <th>Threshold 5</th>
-                        </tr>";
-    
-    $childrenrows = "";
-    
-    //Children organizations
-    foreach($children as $childid) {
-        $childthresholds = array(0, 0, 0, 0, 0);
-        $child = showEndpoint('organizations', $childid[0]);
-        $childname = $child['organization']['name'];
-        
-        foreach($labels as $label) {
-            $count = getCountAtThreshold($childid[0], $label);
-            $childthresholds[$label - 14121] = $count;
-            $thresholds[$label - 14121] = $thresholds[$label - 14121] + $count;
-        }
-        
-        $childrenrows = $childrenrows . "<tr>
-                                            <td>" . $childname ."</td>
-                                            <td>" . $childthresholds[0] ."</td>
-                                            <td>" . $childthresholds[1] ."</td>
-                                            <td>" . $childthresholds[2] ."</td>
-                                            <td>" . $childthresholds[3] ."</td>
-                                            <td>" . $childthresholds[4] ."</td>
-                                        </tr>";
-    }
-    
-    $parentrow =    "<tr>
-                        <td><strong>" . $orgname ."</strong></td>
-                        <td><strong>" . $thresholds[0] ."</strong></td>
-                        <td><strong>" . $thresholds[1] ."</strong></td>
-                        <td><strong>" . $thresholds[2] ."</strong></td>
-                        <td><strong>" . $thresholds[3] ."</strong></td>
-                        <td><strong>" . $thresholds[4] ."</strong></td>
-                    </tr>";
-        
-    $response = $tableheaders . $parentrow . $childrenrows . "</table>";
     echo $response;
     
     exit;
+}
+
+//Not yet in use.  createDiscipleshipReport($orgname) does not yet exist.
+
+function create_discipleship_report() {
+    $nonce = $_POST['nonce'];
+    if (!wp_verify_nonce($nonce,'missionhuborg-include-nonce'))
+        die ('You do not have permission to use this service.');
+    
+    header("Content-Type: text/html");
+    
+    $orgname = $_POST['orgname'];
+    $response = createDiscipleshipReport($orgname);
+    
+    echo $response;
+    
+    exit;    
 }
 
 function project_ajax_func() {

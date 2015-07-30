@@ -42,7 +42,6 @@ $format = array(
 
 function getChildren($parent_id) {
     global $wpdb;
-    echo $parent_id;
     $children = $wpdb->get_results( $wpdb->prepare(
             "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d",
             $parent_id
@@ -92,6 +91,27 @@ function getListOfOrgNames() {
 }
 
 /****************************************************************************************************
+ * Function getOrgName()
+ *
+ * Parameters:
+ * int ordid: The ID of the organization for which we want to get the name.
+ *
+ * Returns:
+ * array names: An array with the desired name in it.  TODO: see about returning it not in an array.
+ ***************************************************************************************************/
+
+function getOrgName($orgid) {
+    global $wpdb;
+    $name = $wpdb->get_results( $wpdb->prepare(
+            "SELECT `name` FROM `mh_org_tree` WHERE `id` = %d",
+            $orgid
+        ),
+        ARRAY_N
+    );
+    return $name[0];
+}
+
+/****************************************************************************************************
  * Function getCurlObject()
  *
  * Parameters:
@@ -123,19 +143,151 @@ function getCountAtThreshold($orgid, $labelid) {
 }
 
 /****************************************************************************************************
- * Function createEngagementReport($name)
+ * Function getOrgLabelCount($orgid, $labels)
+ *
+ * Parameters:
+ * int orgid: The ID of the organization for which this count is to be produced
+ * array(int) label: The IDs of the labels that need a count.
+ *
+ * Returns:
+ * int filtercount: The number of people at that threshold.
+ ***************************************************************************************************/
+
+function getOrgLabelCount($orgid, $labels) {
+    $result = array();
+    foreach ($labels as $label) {
+        $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $label));
+        array_push($result, sizeof($people['people']));
+    }
+    return $result;
+}
+
+/****************************************************************************************************
+ * Function createEngagementReport($orgname)
  *
  * MAY OR MAY NOT EVER BE USED (and therefore may or may not ever be finished)
  * 
  * Parameters:
- * string name: The name of the organization for which the report is being generated
+ * string orgname: The name of the organization for which the report is being generated
  *
  * Returns:
- * I don't even know yet....
+ * string result: The resulting html to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
-function createEngagementReport($name) {
-    return $name;
+function createEngagementReport($orgname) {
+
+//    $initstart = microtime(true);
+    $orgid = getOrgId($orgname);
+    $children = getChildren($orgid[0]);
+    //Currently this is hardcoded, hopefully we can modify it to make it so it is not.
+    $thresholds = array(0, 0, 0, 0, 0);
+    //$labels are hardcoded to be appropriate for the report.  Should abstract out functionality of each part of the report as getting counts at given labels is not unique to engagement reports.
+    $labels = array(14121, 14122, 14123, 14124, 14125);
+//    $initend = microtime(true);
+//    $inittotal = $initend - $initstart;
+//    echo "<br>Initialization start: " . $initstart;
+//    echo "<br>Initialization end: " . $initend;
+//    echo "<br>Initialization: " . $inittotal;
+//    
+//    $parentcountstart = microtime(true);
+    //Zero-indexed for loop.
+    $i = 0;
+    foreach($labels as $label) {
+        $thresholds[$i] = getCountAtThreshold($orgid[0], $label);        
+        $i++;
+    }
+//    $parentcountend = microtime(true);
+//    $parentcounttotal = $parentcountend - $parentcountstart;
+//    echo "<br>Parent count start: " . $parentcountstart;
+//    echo "<br>Parent count end: " . $parentcountend;
+//    echo "<br>Parent count: " . $parentcounttotal;
+    
+    //Table headers
+    $tableheaders = generateTableHeaders($labels);
+    
+    $childrenrows = "";
+    
+    //Children organizations
+//    $childstart = microtime(true);
+    foreach($children as $childid) {
+        $childthresholds = array(0, 0, 0, 0, 0);
+        $childname = getOrgName($childid);
+        $arrayindex = 0;
+        
+        foreach($labels as $label) {
+            $count = getCountAtThreshold($childid[0], $label);
+            $childthresholds[$arrayindex] = $count;
+            $thresholds[$arrayindex] = $thresholds[$arrayindex] + $count;
+            $arrayindex++;
+        }
+        
+        $childrenrows = $childrenrows . "<tr>
+                                            <td>" . $childname[0] ."</td>
+                                            <td>" . $childthresholds[0] ."</td>
+                                            <td>" . $childthresholds[1] ."</td>
+                                            <td>" . $childthresholds[2] ."</td>
+                                            <td>" . $childthresholds[3] ."</td>
+                                            <td>" . $childthresholds[4] ."</td>
+                                        </tr>";
+    }
+//    $childend = microtime(true);
+//    $childtotal = $childend - $childstart;
+//    echo "<br>Child processing start: " . $childstart;
+//    echo "<br>Child processing end: " . $childend;
+//    echo "<br>Child processing: " . $childtotal;
+    
+//    $endingstart = microtime(true);
+    $parentrow =    "<tr>
+                        <td><strong>" . $orgname ."</strong></td>
+                        <td><strong>" . $thresholds[0] ."</strong></td>
+                        <td><strong>" . $thresholds[1] ."</strong></td>
+                        <td><strong>" . $thresholds[2] ."</strong></td>
+                        <td><strong>" . $thresholds[3] ."</strong></td>
+                        <td><strong>" . $thresholds[4] ."</strong></td>
+                    </tr>";
+        
+    $response = $tableheaders . $parentrow . $childrenrows . "</table>";
+//    $endingend = microtime(true);
+//    $endingtotal = $endingend - $endingstart;
+//    echo "<br>Final bit: " . $endingtotal;
+    
+    return $response;
+}
+
+/****************************************************************************************************
+ * Function generateTableHeaders($labels)
+ *
+ * Generates the html for the headers of the table for a given report.
+ * 
+ * Parameters:
+ * array labes: The list of all the label ids being used for the table.
+ *
+ * Returns:
+ * string result: The resulting html to produce a table header for the table.
+  ***************************************************************************************************/ 
+
+function generateTableHeaders($labels) {
+    //May need a way to look up label names...
+     $result = "<table>    
+                        <tr>
+                            <th>Organization</th>";
+    //One-indexed for loop.
+    $i = 1; 
+    foreach($labels as $label) {
+        $result = $result . "<th>Threshold " . $i . "</th>";
+        $i++;
+    }
+    $result = $result . "</tr>";
+    return $result;
+    
+}
+
+function generateParentRow($orgid, $labels) {
+    
+}
+
+function generateChildrenRows($children, $labels) {
+    
 }
 
 ?>
