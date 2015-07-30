@@ -10,14 +10,27 @@
 		<div class='image-slider'>
 			<?php 
 				$folder = '/wp-content/uploads/slides/';
-				$pictures = array(get_theme_mod('image_select_1'), 
-								  get_theme_mod('image_select_2'), 
-								  get_theme_mod('image_select_3'),
-								  get_theme_mod('image_select_4'));
-				$links    = array(get_theme_mod('image_url_1'),
-								  get_theme_mod('image_url_2'),
-								  get_theme_mod('image_url_3'),
-								  get_theme_mod('image_url_4'));
+				
+				// Add as many images as have been set in the theme customizer
+				$pictures = array();
+				$links = array();
+				
+				if (get_theme_mod('image_select_1')) {
+					$pictures[] = get_theme_mod('image_select_1');
+					$links[] = get_theme_mod('image_url_1');
+				}
+				if (get_theme_mod('image_select_2')) {
+					$pictures[] = get_theme_mod('image_select_2');
+					$links[] = get_theme_mod('image_url_2');
+				}
+				if (get_theme_mod('image_select_3')) {
+					$pictures[] = get_theme_mod('image_select_3');
+					$links[] = get_theme_mod('image_url_3');
+				}
+				if (get_theme_mod('image_select_4')) {
+					$pictures[] = get_theme_mod('image_select_4');
+					$links[] = get_theme_mod('image_url_4');
+				}
 			?>
 			<a id='slideshow_link'>
 			<?php foreach($pictures as $pic=>$src){
@@ -41,7 +54,7 @@
 				
 				var mq = window.matchMedia( "(min-width: 768px)" );
 				if (mq.matches === true) {
-					window.setInterval(nextPic,5000);
+					window.setInterval(nextPic,6000);
 				}
 
 				var select_pic = 0;
