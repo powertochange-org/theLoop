@@ -439,12 +439,13 @@ hr{
 
 footer{
 	background:#0079c1;
+	min-width: 1000px;
 }
 
 .middle{
 	width:1000px;
 	margin: auto;
-	padding:13px;
+	padding:13px 0;
 }
 
 .middle .logo{
@@ -934,6 +935,9 @@ ul.wpp-list li {
 		width: 100%;
 		padding-left: 0px;
 		float: none;
+	}
+	footer {
+		min-width: 0;
 	}
 	footer .bottom {
 		width:100%;
