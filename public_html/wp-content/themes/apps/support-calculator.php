@@ -1,4 +1,5 @@
 <?php
+ini_set('display_errors', 'On');
 include('functions/functions.php');
 require('pdf/fpdf.php');
 
@@ -186,7 +187,7 @@ include('functions/js_functions.php'); ?>
 					$support_dataID = getDataID($spouse);
 					if ($support_dataID == null){
 						//user has spouse but neither has id
-						$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, `decline`, `salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 90
+						$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, 'coverage_int', `decline`, `decline_dental`,`salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,0,0,60,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 60
 						$wpdb->get_results($sql);
 						$support_dataID = $wpdb->insert_id;
 						update_user_meta( $ID, 'support_calculator_id', $support_dataID);
@@ -199,13 +200,13 @@ include('functions/js_functions.php'); ?>
 				}
 				else {
 					//user has no spouse or id
-					$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, `decline`, `salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 90
+					$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, 'coverage_int', `decline`, `decline_dental`,`salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 60
 					$wpdb->get_results($sql);
 					$support_dataID = $wpdb->insert_id;
 					update_user_meta( $ID, 'support_calculator_id', $support_dataID);
 				}
 			}
-			if (count($data) < 11){
+			if (count($data) < 13){
 				return; //no data
 			}
 			//save data in table
@@ -214,7 +215,7 @@ include('functions/js_functions.php'); ?>
 				$data[$i] = floatval($data[$i]);
 			}
 			
-			$sql = "UPDATE `support_calculator` SET `hours`=".$data[0].",`hours_s`=".$data[1].",`coverage`=".$data[2].",`decline`=".$data[3].",`salary`=".$data[4].",`salary_s`=".$data[5].",`hcsa`=".$data[6].",`conference`=".$data[7].",`mpd`=".$data[8].",`expenses`=".$data[9].",`support`=".$data[10]." WHERE `id`=".$support_dataID;
+			$sql = "UPDATE support_calculator SET hours=".$data[0].",hours_s=".$data[1].",coverage=".$data[2].",decline=".$data[3].",salary=".$data[4].",salary_s=".$data[5].",hcsa=".$data[6].",conference=".$data[7].",mpd=".$data[8].",expenses=".$data[9].",support=".$data[10].",coverage_int=".$data[11].",decline_dental=".$data[12]." WHERE id=".$support_dataID;
 			$wpdb->get_results($sql);
 			
 			
@@ -328,6 +329,10 @@ include('functions/js_functions.php'); ?>
 		//Extended Health Coverage
 		var ehc = new Array(<?php echo getConstant("ehc_single") ?>, <?php echo getConstant("ehc_couple") ?>, <?php echo getConstant("ehc_family") ?>);
 			//= new Array(100, 220, 260); //single, couple, family
+		var ehc_int = new Array(<?php echo getConstant("ehc_single_int") ?>, <?php echo getConstant("ehc_couple_int") ?>, <?php echo getConstant("ehc_family_int") ?>);
+		var dental = new Array(<?php echo getConstant("dental_single") ?>, <?php echo getConstant("dental_couple") ?>, <?php echo getConstant("dental_family") ?>);
+			//= new Array(100, 220, 260); //single, couple, family
+		var dental_int = new Array(<?php echo getConstant("dental_single_int") ?>, <?php echo getConstant("dental_couple_int") ?>, <?php echo getConstant("dental_family_int") ?>);
 		var ehc_MB = <?php echo getConstant("ehc_MB") ?> //1; //Manitoba tax on EHC
 		
 		// only Ontario and Quebec have a tax on Benefit Costs right now
@@ -343,6 +348,15 @@ include('functions/js_functions.php'); ?>
 		//Depedents life
 		var dept_life = new Array(<?php echo getConstant("dept_life_single") ?>, <?php echo getConstant("dept_life_couple") ?>, <?php echo getConstant("dept_life_family") ?>);
 			//= new Array(0, 9.7, 19.4); //single, couple, family
+		
+		//International Rates
+		var add_rate_int = <?php echo getConstant("add_rate_int") ?> //0.04 //AD&D rate per $1000
+		var life_rate_int = <?php echo getConstant("life_rate_int") ?> //0.215 //Life rate per $1000
+		var life_max_int = <?php echo getConstant("life_max_int") ?> //150000 // Life maximum 2 x annual salary
+		
+		//International Depedents life
+		var dept_life_int = new Array(<?php echo getConstant("dept_life_single_int") ?>, <?php echo getConstant("dept_life_couple_int") ?>, <?php echo getConstant("dept_life_family_int") ?>);
+		
 		
 		//Province Medical
 		var medical_ON = <?php echo getConstant("medical_ON") ?> //0.0195; //Ontario medical rate
@@ -366,10 +380,12 @@ include('functions/js_functions.php'); ?>
 		var hours = <?php echo getData("hours"); ?>;
 		var hours_s = <?php echo getData("hours_s"); ?>;
 		var coverage = <?php echo getData("coverage"); ?>;
+		//var coverage_int = <?php echo getData("coverage_int"); ?>;
 		var decline = <?php echo getData("decline"); ?>;
+		var decline_dental = <?php echo getData("decline_dental"); ?>;
 		var salary = <?php echo getData("salary"); ?>;
 		var salary_s = <?php echo getData("salary_s"); ?>;
-		var hcsa = <?php echo getData("hcsa"); ?>;
+		var hcsa = <?php echo getData("hcsa"); ?>; //Has now become medical allowance
 		var conference = <?php echo getData("conference"); ?>;
 		var mpd = <?php echo getData("mpd"); ?>;
 		var expenses = <?php echo getData("expenses"); ?>;
@@ -379,6 +395,7 @@ include('functions/js_functions.php'); ?>
 		var cpp;
 		var cpp_s;
 		var health;
+		var dental_amt;
 		var medical;
 		var workers;
 		var subtotal;
@@ -404,23 +421,61 @@ include('functions/js_functions.php'); ?>
 				console.log("MB");
 				return ehc[coverage] * ehc_MB;
 			}
-			return ehc[coverage];
+			
+			if(coverage_int == 0)
+				return ehc[coverage];
+			else
+				return ehc_int[coverage];
 		}
 		
 		function get_benefit_cost(){
 			if (hours < part_time){
 				return 0;
 			}
-			var total = get_ehc();
-			total += salary * 24 * add_rate / 1000; //24 months, per $1000
-			total += Math.min(life_max, salary * 24) * life_rate / 1000; //24 months, per $1000
-			total += dept_life[coverage];
+			var total = get_ehc(); //This retrieves the extended health portion only
 			
-			//spouse
-			total += salary_s * 24 * add_rate / 1000; //24 months, per $1000
-			total += Math.min(life_max, salary_s * 24) * life_rate / 1000; //24 months, per $1000
-			total += dept_life[coverage];
+			if(coverage_int == 1) {
+				total += salary * 24 * add_rate_int / 1000; //24 months, per $1000
+				total += Math.min(life_max_int, salary * 24) * life_rate_int / 1000; //24 months, per $1000
+				total += dept_life_int[coverage];
+				
+				//spouse
+				total += salary_s * 24 * add_rate_int / 1000; //24 months, per $1000
+				total += Math.min(life_max_int, salary_s * 24) * life_rate_int / 1000; //24 months, per $1000
+				total += dept_life_int[coverage];
+			} else {
+				total += salary * 24 * add_rate / 1000; //24 months, per $1000
+				total += Math.min(life_max, salary * 24) * life_rate / 1000; //24 months, per $1000
+				total += dept_life[coverage];
+				
+				//spouse
+				total += salary_s * 24 * add_rate / 1000; //24 months, per $1000
+				total += Math.min(life_max, salary_s * 24) * life_rate / 1000; //24 months, per $1000
+				total += dept_life[coverage];
+			}
+			
 			return total * health_tax[province];						
+		}
+		
+		function get_dental_cost() {
+			if (hours < part_time){
+				return 0;
+			} 
+			
+			if (province == FR || decline || decline_dental){
+				return 0;
+			}
+			if (province == MB){
+				console.log("MB");
+				return dental[coverage] * ehc_MB;
+			}
+			
+			
+			if(coverage_int == 1) {
+				return dental_int[coverage] * health_tax[province];
+			} else {
+				return dental[coverage] * health_tax[province];
+			}
 		}
 		
 		function get_medical(){
@@ -450,15 +505,26 @@ include('functions/js_functions.php'); ?>
 			document.getElementById(element).innerHTML = value.toFixed(2);
 		}
 		
+		function set_content(element, value){
+			document.getElementById(element).innerHTML = value;
+		}
+		
 		function calculate(){
 			
 			province = parseInt(document.getElementById("input_province").value);
 			hours = get_value_float("input_hours");
+			eligible_toggle();
 			hours_s = get_value_float("input_hours_s");
 			coverage = parseInt(document.getElementById("input_coverage").value);
+			coverage_int = parseInt(document.getElementById("input_coverage_int").value);
 			decline = document.getElementById("input_decline").checked;
+			decline_dental = document.getElementById("input_decline_dental").checked;
 			
-			hcsa = get_value_float("input_hcsa");
+			if (hours < part_time){
+				hcsa = 0;
+			} else {
+				hcsa = get_value_float("input_hcsa");
+			}
 			
 			salary = get_value_float("input_salary");
 			cpp = get_cpp_ei(salary + hcsa);
@@ -471,6 +537,9 @@ include('functions/js_functions.php'); ?>
 			health = get_benefit_cost();
 			set_value("output_health", health);
 			
+			dental_amt = get_dental_cost();
+			set_value("output_dental", dental_amt);
+			
 			medical = get_medical();
 			set_value("output_medical", medical);
 			
@@ -481,7 +550,7 @@ include('functions/js_functions.php'); ?>
 			mpd = get_value_float("input_mpd");
 			expenses = get_value_float("input_expenses");
 			
-			subtotal = salary + cpp + salary_s + cpp_s + health + medical + hcsa + workers + conference + mpd + expenses;
+			subtotal = salary + cpp + salary_s + cpp_s + health + dental_amt + medical + hcsa + workers + conference + mpd + expenses;
 			set_value("output_subtotal", subtotal);
 			total = subtotal / (1 - cr_charge);
 			set_value("output_total", total);
@@ -507,7 +576,7 @@ include('functions/js_functions.php'); ?>
 			//summary table
 			set_value("summ_salary", salary);
 			set_value("summ_salary_s", salary_s);
-			set_value("summ_tax", cpp + cpp_s + health + medical + /*hcsa + */workers);
+			set_value("summ_tax", cpp + cpp_s + health + dental_amt + medical + hcsa + workers); //added hcsa back in to make the values add up correctly.
 			set_value("summ_expenses", conference + mpd + expenses + charge);
 			set_value("summ_total", total);
 			set_value("summ_tobe_raised", tobe_raised);
@@ -516,7 +585,7 @@ include('functions/js_functions.php'); ?>
 		
 		function saveData(){
 			calculate(); //this stores what the user inputs into the variables
-			var data = hours + "+" + hours_s + "+" + coverage + "+" + decline + "+" + salary + "+" + salary_s + "+" + hcsa + "+" + conference + "+" + mpd  + "+" + expenses + "+" +  support;
+			var data = hours + "+" + hours_s + "+" + coverage + "+" + decline + "+" + salary + "+" + salary_s + "+" + hcsa + "+" + conference + "+" + mpd  + "+" + expenses + "+" +  support + "+" +  coverage_int + "+" + decline_dental;
 			document.getElementById("data").value = data;
 			sendData.submit();
 		}
@@ -566,6 +635,7 @@ include('functions/js_functions.php'); ?>
 			document.getElementById("input_hours").value = 0;
 			document.getElementById("input_hours_s").value = 0;
 			document.getElementById("input_decline").checked = false;
+			document.getElementById("input_decline_dental").checked = false;
 			document.getElementById("input_salary").value = 0;
 			document.getElementById("input_salary_s").value = 0;
 			document.getElementById("input_hcsa").value = 0;
@@ -579,14 +649,35 @@ include('functions/js_functions.php'); ?>
 		var default_hcsa = '<select name="simple_hcsa" id="simple_hcsa" title="Please enter the monthly amount you would like to contribute to a HCSA." value="2"><option value="0" <?php if (getData("hcsa") == 0) echo "selected"; ?>>0</option><option value="25" <?php if (getData("hcsa") == 25) echo "selected"; ?>>25</option><option value="50" <?php if (getData("hcsa") == 50) echo "selected"; ?>>50</option><option value="100" <?php if (getData("hcsa") == 100) echo "selected"; ?>>100</option><option value="150" <?php if (getData("hcsa") == 150) echo "selected"; ?>>150</option><option value="200" <?php if (getData("hcsa") == 200) echo "selected"; ?>>200</option><option value="300" <?php if (getData("hcsa") == 300) echo "selected"; ?>>300</option><option value="350" <?php if (getData("hcsa") == 350) echo "selected"; ?>>350</option><option value="400" <?php if (getData("hcsa") == 400) echo "selected"; ?>>400</option><option value="500" <?php if (getData("hcsa") == 500) echo "selected"; ?>>500</option></select>';
 		var default_coverage = '<select name="simple_coverage" id="simple_coverage" title="Please select the type of benefits you require." value="2"><option value="0" <?php if (getData("coverage") == 0) echo "selected"; ?>>Single</option><option value="1" <?php if (getData("coverage") == 1) echo "selected"; ?>>Couple</option><option value="2" <?php if (getData("coverage") == 2) echo "selected"; ?>>Family</option></select>';
 		
+		var default_coverage_int = '<select name="simple_coverage_int" id="simple_coverage_int" title="Please select the region type." value="2"><option value="0" <?php if (getData("coverage_int") == 0) echo "selected"; ?>>National</option><option value="1" <?php if (getData("coverage_int") == 1) echo "selected"; ?>>International</option></select>';
+		
 		function eligible(){
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
 				document.getElementById("table_coverage").innerHTML = 'ineligible';
+				document.getElementById("table_coverage_int").innerHTML = 'ineligible';
 				document.getElementById("table_hcsa").innerHTML = 'ineligible';
+				
 			}
 			else {
 				document.getElementById("table_coverage").innerHTML = default_coverage;
+				document.getElementById("table_coverage_int").innerHTML = default_coverage_int;
 				document.getElementById("table_hcsa").innerHTML = default_hcsa;
+			}
+		}
+		
+		function eligible_toggle() {
+			if(hours < part_time) {
+				document.getElementById("input_coverage").style.visibility = "hidden"; 
+				document.getElementById("input_coverage_int").style.visibility = "hidden";
+				document.getElementById("input_decline").style.visibility = "hidden";
+				document.getElementById("input_decline_dental").style.visibility = "hidden";
+				document.getElementById("input_hcsa").style.visibility = "hidden";
+			} else {
+				document.getElementById("input_coverage").style.visibility = "visible";
+				document.getElementById("input_coverage_int").style.visibility = "visible";
+				document.getElementById("input_decline").style.visibility = "visible";
+				document.getElementById("input_decline_dental").style.visibility = "visible";
+				document.getElementById("input_hcsa").style.visibility = "visible";
 			}
 		}
 		
@@ -594,20 +685,24 @@ include('functions/js_functions.php'); ?>
 			$('html,body').scrollTop(0);
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
 				document.getElementById("input_coverage").value = 0;
+				document.getElementById("input_coverage_int").value = 0;
 				document.getElementById("input_hcsa").value = 0;
 			}
 			else {
 				document.getElementById("input_coverage").value = parseInt(document.getElementById("simple_coverage").value);
+				document.getElementById("input_coverage_int").value = parseInt(document.getElementById("simple_coverage_int").value);//TODO
 				document.getElementById("input_hcsa").value = get_value_float("simple_hcsa");
 			}
 			document.getElementById("input_hours").value = get_value_float("simple_hours");
 			document.getElementById("input_hours_s").value = get_value_float("simple_hours_s");
 			document.getElementById("input_decline").checked = document.getElementById("simple_decline").checked;
+			document.getElementById("input_decline_dental").checked = document.getElementById("simple_decline_dental").checked;
 			document.getElementById("input_salary").value = get_value_float("simple_salary");
 			document.getElementById("input_salary_s").value = get_value_float("simple_salary_s");
 			document.getElementById("input_conference").value = get_value_float("simple_conference");
 			document.getElementById("input_expenses").value = get_value_float("simple_expenses");
 			document.getElementById("input_support").value = get_value_float("simple_support");
+			toggle_benefits();
 			calculate();
 			skip();
 		}
@@ -642,6 +737,15 @@ include('functions/js_functions.php'); ?>
 			else{
 				block.style.display = "none";
 				button.value="Show Details";
+			}
+		}
+		
+		function toggle_benefits() {
+			var declineInput = document.getElementById("input_decline");
+			if(declineInput.checked) {
+				document.getElementById("input_decline_dental").style.visibility = "hidden";
+			} else {
+				document.getElementById("input_decline_dental").style.visibility = "visible";
 			}
 		}
 		
@@ -686,13 +790,31 @@ include('functions/js_functions.php'); ?>
 			</tr>
 			<tr>
 				<td>
-					If you are covered under another benefit plan, you may choose to refuse portions of the Power to Change plan. Do you want to decline benefits?
+					Please enter the benefit coverage region:
+				</td>
+				<td name='table_coverage_int' id='table_coverage_int'>
+					<select name="simple_coverage_int" id="simple_coverage_int" title="Please select the region type." value="2">
+						<option value="0" <?php if (getData("coverage_int") == 0) echo "selected"; ?>>National</option>
+						<option value="1" <?php if (getData("coverage_int") == 1) echo "selected"; ?>>International</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					If you are covered under your spouse's benefit plan, you may choose to refuse portions of the Power to Change plan. Do you want to decline extended health benefits?
 				</td>
 				<td>
 					<input type="checkbox" name="simple_benefits" id="simple_decline" <?php if (getData("decline")) echo "checked"; ?>>
 				</td>
 			</tr>
-			
+			<tr>
+				<td>
+					If you are covered under your spouse's benefit plan, you may choose to refuse portions of the Power to Change plan. Do you want to decline <b>dental</b> benefits?
+				</td>
+				<td>
+					<input type="checkbox" name="simple_benefits_dental" id="simple_decline_dental" <?php if (getData("decline_dental")) echo "checked"; ?>>
+				</td>
+			</tr>
 			<tr>
 				<td>
 					Please enter your monthly allowance/salary:
@@ -730,10 +852,10 @@ include('functions/js_functions.php'); ?>
 			</tr>
 			<tr>
 				<td>
-					For one person enter $90 or for two people enter $180 for Staff Conference
+					For one person enter $60 or for two people enter $120 for Staff Conference
 				</td>
 				<td>
-					<input type="text" name="simple_conference" id="simple_conference" title="For one person enter $90 or for two people enter $180" value="<?php echo getData("conference"); ?>">
+					<input type="text" name="simple_conference" id="simple_conference" title="For one person enter $60 or for two people enter $120" value="<?php echo getData("conference"); ?>">
 				</td>
 			</tr>
 			<tr>
@@ -839,10 +961,14 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<select name="input_coverage" id="input_coverage" onchange="calculate();" title="Please select the type of benefits you require." value="2">
+					<select style="margin-bottom:5px;" name="input_coverage" id="input_coverage" onchange="calculate();" title="Please select the type of benefits you require." value="2">
 						<option value="0" <?php if (getData("coverage") == 0) echo "selected"; ?>>Single</option>
 						<option value="1" <?php if (getData("coverage") == 1) echo "selected"; ?>>Couple</option>
 						<option value="2" <?php if (getData("coverage") == 2) echo "selected"; ?>>Family</option>
+					</select>
+					<select name="input_coverage_int" id="input_coverage_int" onchange="calculate();" title="Please select the region type." value="2">
+						<option value="0" <?php if (getData("coverage_int") == 0) echo "selected"; ?>>National</option>
+						<option value="1" <?php if (getData("coverage_int") == 1) echo "selected"; ?>>International</option>
 					</select>
 				</td>
 			</tr>
@@ -857,11 +983,15 @@ include('functions/js_functions.php'); ?>
 				</td>
 				<td>
 					<p>
-						Decline Benefits:
+						Decline Health Benefits:
+						<br>
+						Decline Dental Benefits:
 					</p>
 				</td>
 				<td>
-					<input type="checkbox" name="input_benefits" id="input_decline" onchange="calculate();" title="If you are covered under another benefit plan, you may choose to refuse portions of the Power to Change plan." <?php if (getData("decline")) echo "checked"; ?>>
+					<input style="margin-bottom:8px;" type="checkbox" name="input_benefits" id="input_decline" onchange="calculate(); toggle_benefits();" title="If you are covered under your spouse's benefit plan, you may choose to refuse portions of the Power to Change plan. Do you want to decline extended health benefits?" <?php if (getData("decline")) echo "checked"; ?>>
+					<br>
+					<input type="checkbox" name="input_benefits_dental" id="input_decline_dental" onchange="calculate();" title="If you are covered under your spouse's benefit plan, you may choose to refuse portions of the Power to Change plan. Do you want to decline dental benefits only?" <?php if (getData("decline_dental")) echo "checked"; ?>>
 				</td>
 			</tr>
 		</table>
@@ -941,6 +1071,16 @@ include('functions/js_functions.php'); ?>
 				</td>
 				<td>
 					<p name="output_health" id="output_health"></p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p>
+						Dental
+					</p>
+				</td>
+				<td>
+					<p name="output_dental" id="output_dental"></p>
 				</td>
 			</tr>
 			<tr>
