@@ -324,8 +324,8 @@ hr{
 }
 
 #sidebar.homesidebar {
-	min-height: 419px;
-	padding: 5px 20px 0px 16px;
+	min-height: 415px;
+	padding: 9px 20px 0px 16px;
 }
 
 #sidebar.homesidebar hr {
