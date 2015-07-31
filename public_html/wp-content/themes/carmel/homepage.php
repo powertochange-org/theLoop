@@ -94,6 +94,22 @@
 				if(mq.matches === true) { 
 					showPicture(0); 
 				}
+				
+				//Fix the slide show margins
+				if (document.documentMode) { // as of IE8
+				    var x = document.getElementsByClassName("slideshow-img");
+				    for(var i = 0; i < x.length; i++) {
+				    	document.getElementById("slideshow_"+i).className += " IEfix_slideshow";
+				    }
+				}
+				if((/Safari/.test(navigator.userAgent)) && !(/Chrome/.test(navigator.userAgent))) {
+					var x = document.getElementsByClassName("slideshow-img");
+				    for(var i = 0; i < x.length; i++) {
+				    	document.getElementById("slideshow_"+i).className += " Safarifix_slideshow";
+				    }
+				}
+					
+				
 			</script>
 		</div>
     </div>

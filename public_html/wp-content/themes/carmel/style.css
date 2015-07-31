@@ -816,6 +816,16 @@ ul.wpp-list li {
 	padding: 15px;
 }
 
+.IEfix_slideshow {
+	margin-top: 2px;
+	border-bottom-width: 10px;
+}
+
+.Safarifix_slideshow {
+	margin-top: 9px;
+	border-top-width: 8px;
+	border-bottom-width: 7px;
+}
 
 /*
 	This is the media query for displaying content based on screen size.
