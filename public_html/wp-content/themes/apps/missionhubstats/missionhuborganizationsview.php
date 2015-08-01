@@ -6,7 +6,7 @@
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript" src="missionhuborganizationsview.js"></script>
 <div id="dropdown">
-    
+Organization
 <select id="orgname" name="orgname" form="orgselect">
 <?php
 
@@ -22,8 +22,18 @@ foreach($orgs as $org) {
 
 ?>
 </select>
-    <button id="submit">Submit</button>
+    
 
+</div>
+<br>
+<div id="reporttype">
+Report
+<!--There's going to be some php most likely in here to generate all the report types...but maybe not-->
+<select id="report" name="report" >
+<option value="engagement">Engagement Report</option>
+<option value="discipleship">Discipleship Report</option>
+</select>
+<button id="submit">Submit</button>
 </div>
 
 

@@ -174,82 +174,34 @@ function getOrgLabelCount($orgid, $labels) {
  * string result: The resulting html to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
-function createEngagementReport($orgname) {
+function createEngagementReport($orgname, $labels) {
 
-//    $initstart = microtime(true);
     $orgid = getOrgId($orgname);
     $children = getChildren($orgid[0]);
-    //Currently this is hardcoded, hopefully we can modify it to make it so it is not.
-    $thresholds = array(0, 0, 0, 0, 0);
-    //$labels are hardcoded to be appropriate for the report.  Should abstract out functionality of each part of the report as getting counts at given labels is not unique to engagement reports.
-    $labels = array(14121, 14122, 14123, 14124, 14125);
-//    $initend = microtime(true);
-//    $inittotal = $initend - $initstart;
-//    echo "<br>Initialization start: " . $initstart;
-//    echo "<br>Initialization end: " . $initend;
-//    echo "<br>Initialization: " . $inittotal;
-//    
-//    $parentcountstart = microtime(true);
-    //Zero-indexed for loop.
-    $i = 0;
-    foreach($labels as $label) {
-        $thresholds[$i] = getCountAtThreshold($orgid[0], $label);        
-        $i++;
-    }
-//    $parentcountend = microtime(true);
-//    $parentcounttotal = $parentcountend - $parentcountstart;
-//    echo "<br>Parent count start: " . $parentcountstart;
-//    echo "<br>Parent count end: " . $parentcountend;
-//    echo "<br>Parent count: " . $parentcounttotal;
+    //$labels are hardcoded to be appropriate for the report.  
+       
+    //Table headers
+    $tableheaders = generateTableHeaders($labels);
+  
+    $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
+        
+    $response = "<table>{$tableheaders}{$tablerows}</table>";
+    
+    return $response;
+}
+
+function createDiscipleshipReport($orgname, $labels) {
+
+    $orgid = getOrgId($orgname);
+    $children = getChildren($orgid[0]);
+    //$labels are hardcoded to be appropriate for the report.
     
     //Table headers
     $tableheaders = generateTableHeaders($labels);
     
-    $childrenrows = "";
+    $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
     
-    //Children organizations
-//    $childstart = microtime(true);
-    foreach($children as $childid) {
-        $childthresholds = array(0, 0, 0, 0, 0);
-        $childname = getOrgName($childid);
-        $arrayindex = 0;
-        
-        foreach($labels as $label) {
-            $count = getCountAtThreshold($childid[0], $label);
-            $childthresholds[$arrayindex] = $count;
-            $thresholds[$arrayindex] = $thresholds[$arrayindex] + $count;
-            $arrayindex++;
-        }
-        
-        $childrenrows = $childrenrows . "<tr>
-                                            <td>" . $childname[0] ."</td>
-                                            <td>" . $childthresholds[0] ."</td>
-                                            <td>" . $childthresholds[1] ."</td>
-                                            <td>" . $childthresholds[2] ."</td>
-                                            <td>" . $childthresholds[3] ."</td>
-                                            <td>" . $childthresholds[4] ."</td>
-                                        </tr>";
-    }
-//    $childend = microtime(true);
-//    $childtotal = $childend - $childstart;
-//    echo "<br>Child processing start: " . $childstart;
-//    echo "<br>Child processing end: " . $childend;
-//    echo "<br>Child processing: " . $childtotal;
-    
-//    $endingstart = microtime(true);
-    $parentrow =    "<tr>
-                        <td><strong>" . $orgname ."</strong></td>
-                        <td><strong>" . $thresholds[0] ."</strong></td>
-                        <td><strong>" . $thresholds[1] ."</strong></td>
-                        <td><strong>" . $thresholds[2] ."</strong></td>
-                        <td><strong>" . $thresholds[3] ."</strong></td>
-                        <td><strong>" . $thresholds[4] ."</strong></td>
-                    </tr>";
-        
-    $response = $tableheaders . $parentrow . $childrenrows . "</table>";
-//    $endingend = microtime(true);
-//    $endingtotal = $endingend - $endingstart;
-//    echo "<br>Final bit: " . $endingtotal;
+    $response = "<table>{$tableheaders}{$tablerows}</table>";
     
     return $response;
 }
@@ -260,7 +212,7 @@ function createEngagementReport($orgname) {
  * Generates the html for the headers of the table for a given report.
  * 
  * Parameters:
- * array labes: The list of all the label ids being used for the table.
+ * array labels: The list of all the label ids being used for the table.
  *
  * Returns:
  * string result: The resulting html to produce a table header for the table.
@@ -282,12 +234,67 @@ function generateTableHeaders($labels) {
     
 }
 
-function generateParentRow($orgid, $labels) {
-    
-}
+/****************************************************************************************************
+ * Function generateTableRows($orgname, $orgid, $children, $labels)
+ *
+ * Generates the html for the rows of the table for a given report.
+ * 
+ * Parameters:
+ * string orgname: The name of the parent organization for the report.
+ * int orgid: The id of the parent organization for the report.
+ * array children: An array of the ids of all the children of the parent organization.
+ * array labels: The list of all the label ids being used for the table.
+ *
+ * Returns:
+ * string result: The resulting html to produce all the table rows for the table.
+  ***************************************************************************************************/ 
 
-function generateChildrenRows($children, $labels) {
+function generateTableRows($orgname, $orgid, $children, $labels) {
     
+    //Initialization
+    $childrenrows = "";
+    $parentrow = "";
+    $thresholds = array();
+    array_pad($thresholds, sizeof($labels), 0);
+    
+    //Getting counts for parent organization
+    $arrayindex = 0;
+    foreach($labels as $label) {
+        $thresholds[$arrayindex] = getCountAtThreshold($orgid, $label);
+        $arrayindex++;
+    }
+    
+    
+    //Creating the children rows
+    foreach ($children as $child) {
+        $childname = getOrgName($child[0]);
+        $childthresholds = array();
+        array_pad($childthresholds, sizeof($labels), 0);
+        $arrayindex = 0;
+        $childrenrows = $childrenrows . "<tr><td>" . $childname[0] ."</td>";
+        foreach ($labels as $label) {
+            $count = getCountAtThreshold($child[0], $label);
+            $childthresholds[$arrayindex] = $count;
+            $thresholds[$arrayindex] = $thresholds[$arrayindex] + $count;
+            $childrenrows = $childrenrows . "<td>" . $childthresholds[$arrayindex] . "</td>";
+            $arrayindex++;
+        }
+        $childrenrows = $childrenrows . "</tr>";        
+    }
+    
+    //Creating the parent rows
+    $parentrow = $parentrow . "<tr><td><strong>" . $orgname . "</strong></td>";
+    
+    $arrayindex = 0;
+    while ($arrayindex < sizeof($labels)) {
+        $parentrow = $parentrow . "<td><strong>" . $thresholds[$arrayindex] . "</strong></td>";
+        $arrayindex++;
+    }
+    $parentrow = $parentrow . "</tr>";
+    
+    $result = $parentrow . $childrenrows . "</table>";
+    
+    return $result;
 }
 
 ?>

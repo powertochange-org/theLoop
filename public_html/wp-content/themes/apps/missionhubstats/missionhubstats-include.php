@@ -16,6 +16,7 @@ add_action('wp_ajax_summer-filter', 'project_ajax_func');
 add_action('wp_ajax_spring-filter', 'project_ajax_func');
 //Not yet in use.
 add_action('wp_ajax_create-discipleship-report', 'create_discipleship_report'); 
+add_action('wp_ajax_handle-submit', 'handle_submit');
 
 // Function to set up JavaScript stuff for the page
 function stats_ajax_scripts() {
@@ -59,6 +60,27 @@ function stats_ajax_func() {
     exit;        
 }
 
+function handle_submit() {
+    $report = $_POST['report'];
+    $orgname = $_POST['orgname'];
+    switch ($report) {
+        case 'engagement':
+            create_engagement_report();
+            break;
+        case 'discipleship':
+            create_discipleship_report();
+            break;
+        case 'pat':
+            create_pat_report();
+            break;
+        default:
+            echo 'Error in generating report.';
+            break;
+    }
+    
+    exit;
+}
+
 function create_engagement_report() {
     $nonce = $_POST['nonce'];
     if (!wp_verify_nonce($nonce,'missionhuborg-include-nonce')) 
@@ -68,7 +90,8 @@ function create_engagement_report() {
     
     $orgname = $_POST['orgname'];
     //createEngagementReport exists in missionhuborganizations.php
-    $response = createEngagementReport($orgname);
+    $labels = array(14121, 14122, 14123, 14124, 14125);  
+    $response = createEngagementReport($orgname, $labels);
     
     echo $response;
     
@@ -85,11 +108,30 @@ function create_discipleship_report() {
     header("Content-Type: text/html");
     
     $orgname = $_POST['orgname'];
-    $response = createDiscipleshipReport($orgname);
+    $labels = array(14126, 14127, 14128);
+    $response = createEngagementReport($orgname, $labels);
     
     echo $response;
     
     exit;    
+}
+
+function create_pat_report() {
+    $nonce = $_POST['nonce'];
+    if (!wp_verify_nonce($nonce,'pat-include-nonce'))
+        die ('You do not have permission to use this service.');
+    
+    header("Content-Type: text/html");
+    
+    $season = $_POST['season'];
+    $year = $_POST['year'];
+    $response = createPatReport($season, $year);
+    
+    echo $response;
+    
+    exit;
+    
+    
 }
 
 function project_ajax_func() {
