@@ -190,22 +190,6 @@ function createEngagementReport($orgname, $labels) {
     return $response;
 }
 
-function createDiscipleshipReport($orgname, $labels) {
-
-    $orgid = getOrgId($orgname);
-    $children = getChildren($orgid[0]);
-    //$labels are hardcoded to be appropriate for the report.
-    
-    //Table headers
-    $tableheaders = generateTableHeaders($labels);
-    
-    $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
-    
-    $response = "<table>{$tableheaders}{$tablerows}</table>";
-    
-    return $response;
-}
-
 /****************************************************************************************************
  * Function generateTableHeaders($labels)
  *
@@ -220,9 +204,8 @@ function createDiscipleshipReport($orgname, $labels) {
 
 function generateTableHeaders($labels) {
     //May need a way to look up label names...
-     $result = "<table>    
-                        <tr>
-                            <th>Organization</th>";
+     $result = "<tr>
+                    <th>Organization</th>";
     //One-indexed for loop.
     $i = 1; 
     foreach($labels as $label) {
@@ -292,7 +275,7 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
     }
     $parentrow = $parentrow . "</tr>";
     
-    $result = $parentrow . $childrenrows . "</table>";
+    $result = $parentrow . $childrenrows;
     
     return $result;
 }
