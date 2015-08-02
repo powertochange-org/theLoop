@@ -2,7 +2,7 @@
 
 require('missionhuborganizations.php');
 require('missionhubapirequests.php');
-require('missionhubpat.php');
+//require('missionhubpat.php');
 
 add_action('wp_enqueue_scripts', 'stats_ajax_scripts'); 
 // Register Ajax handler for action "test-ajax" 
