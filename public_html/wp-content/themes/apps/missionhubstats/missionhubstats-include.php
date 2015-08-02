@@ -2,7 +2,7 @@
 
 require('missionhuborganizations.php');
 require('missionhubapirequests.php');
-require('missionhubpat')
+require('missionhubpat.php');
 
 add_action('wp_enqueue_scripts', 'stats_ajax_scripts'); 
 // Register Ajax handler for action "test-ajax" 
@@ -121,8 +121,9 @@ function create_pat_report() {
     header("Content-Type: text/html");
     
     $season = $_POST['season'];
-    $year = $_POST['year'];
-    $response = createPatReport($season, $year);
+    $startdate = $_POST['startdate'];
+    $enddate = $_POST['enddate'];
+    $response = createPatReport($season, $startdate, $enddate);
     
     echo $response;
     
