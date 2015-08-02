@@ -164,11 +164,10 @@ function getOrgLabelCount($orgid, $labels) {
 
 /****************************************************************************************************
  * Function createEngagementReport($orgname)
- *
- * MAY OR MAY NOT EVER BE USED (and therefore may or may not ever be finished)
  * 
  * Parameters:
  * string orgname: The name of the organization for which the report is being generated
+ * array labels: The labels to be included in the report.
  *
  * Returns:
  * string result: The resulting html to produce a table to be displayed to the user.
@@ -178,7 +177,6 @@ function createEngagementReport($orgname, $labels) {
 
     $orgid = getOrgId($orgname);
     $children = getChildren($orgid[0]);
-    //$labels are hardcoded to be appropriate for the report.  
        
     //Table headers
     $tableheaders = generateTableHeaders($labels);
@@ -188,6 +186,10 @@ function createEngagementReport($orgname, $labels) {
     $response = "<table>{$tableheaders}{$tablerows}</table>";
     
     return $response;
+}
+
+function createPatReport($season, $year) {
+    
 }
 
 /****************************************************************************************************

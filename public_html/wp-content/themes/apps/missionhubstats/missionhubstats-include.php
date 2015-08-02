@@ -2,8 +2,7 @@
 
 require('missionhuborganizations.php');
 require('missionhubapirequests.php');
-
-//There is something broken. This will probably get used in the future to implement using AJAX for changing pages in the page without reloading.
+require('missionhubpat')
 
 add_action('wp_enqueue_scripts', 'stats_ajax_scripts'); 
 // Register Ajax handler for action "test-ajax" 
@@ -62,7 +61,6 @@ function stats_ajax_func() {
 
 function handle_submit() {
     $report = $_POST['report'];
-    $orgname = $_POST['orgname'];
     switch ($report) {
         case 'engagement':
             create_engagement_report();
@@ -98,8 +96,7 @@ function create_engagement_report() {
     exit;
 }
 
-//Not yet in use.  createDiscipleshipReport($orgname) does not yet exist.
-
+//Uses same table generation function as engagement reports but with different labels.
 function create_discipleship_report() {
     $nonce = $_POST['nonce'];
     if (!wp_verify_nonce($nonce,'missionhuborg-include-nonce'))
