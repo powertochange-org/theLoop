@@ -188,27 +188,6 @@ function createEngagementReport($orgname, $labels) {
     return $response;
 }
 
-/****************************************************************************************************
- * Function createPatReport($season, $year)
- * 
- * Parameters:
- * string season: optional parameter to specify season. If not specified, a report covering all seasons
- * will be generated.
- * int startdate: optional parameter to specify start date of report.  If not specified, a report 
- * covering the current year (Aug-July) will be generated.
- * int enddate: optional parameter to specify the end date of the report. If not specified, a report
- * covering the current year (Aug-July) will be generated.
- * 
- * NOTE: including just one of startdate or enddate, but not both, is an error case.
- *
- * Returns:
- * string result: The resulting html to produce a table to be displayed to the user.
-  ***************************************************************************************************/ 
-
-function createPatReport($season, $startdate, $enddate) {
-    
-    
-}
 
 /****************************************************************************************************
  * Function generateTableHeaders($labels)

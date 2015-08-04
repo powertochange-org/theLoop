@@ -2,7 +2,7 @@
 
 require('missionhuborganizations.php');
 require('missionhubapirequests.php');
-//require('missionhubpat.php');
+require('missionhubpat.php');
 
 add_action('wp_enqueue_scripts', 'stats_ajax_scripts'); 
 // Register Ajax handler for action "test-ajax" 
@@ -113,9 +113,23 @@ function create_discipleship_report() {
     exit;    
 }
 
+function create_pat_interface() {
+    $nonce = $_POST['nonce'];
+    if (!wp_verify_nonce($nonce, 'pat-include-nonce'))
+        die ('You do not have permission to use this service.');
+    
+    header("Content-Type: text/html");
+    
+    $response = createPatInterface();
+    
+    echo $response;
+    
+    exit;
+}
+
 function create_pat_report() {
     $nonce = $_POST['nonce'];
-    if (!wp_verify_nonce($nonce,'pat-include-nonce'))
+    if (!wp_verify_nonce($nonce,'missionhuborg-include-nonce'))
         die ('You do not have permission to use this service.');
     
     header("Content-Type: text/html");
