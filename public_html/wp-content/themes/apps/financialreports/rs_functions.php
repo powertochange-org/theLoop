@@ -149,8 +149,10 @@ global $SERVER_FIRST_CHRONICLES, $SERVER_SQL2012;
 	$response = preg_replace('#<IMG SRC.*?/>#','<img src="/wp-content/P2C_LOGO_WEB.gif" />',$response);
 	
 	//Fix the logo image in SSRS 2012
-	$response = preg_replace('#<IMG onerror\=\"this\.errored\=true\;\" SRC[^>]*>#','<img src="/wp-content/P2C_LOGO_WEB.gif" />',$response);
-	
+  //$response = preg_replace('#<IMG onerror\=\"this\.errored\=true\;\" SRC[^>]*>#','<img src="/wp-content/P2C_LOGO_WEB.gif" />',$response);
+  $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '<img src="/wp-content/P2C_LOGO_WEB.gif" style="width: 23mm;"/>', $response, 1);
+  $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '', $response, 1); //Type Finance in here if we need the clickable link
+  
 	//Get rid of the extra column that causes the content to get crunched to the left
 	$response = str_ireplace('<td width="100%" height="0"></td>',"",$response);
 	
