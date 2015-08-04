@@ -15,12 +15,13 @@
  ***************************************************************************************************/
 
 require_once('../../../../wp-config.php');
+require_once('missionhubapirequests.php');
 
 /****************************************************************************************************
  * Begin curl request 
  ***************************************************************************************************/
 
-$curl_address = 'https://www.missionhub.com/apis/v3/organizations?secret=' . MISSIONHUB_AUTH_KEY;
+$curl_address = BASE_URL . 'organizations?secret=' . MISSIONHUB_AUTH_KEY;
 
 $curl = curl_init($curl_address);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  //Return the data rather than printing it on the screen
