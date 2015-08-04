@@ -14,28 +14,29 @@
  *
  ***************************************************************************************************/
 
-require('public_html/wp-config.php');
+require_once('../../../../wp-config.php');
 
 /****************************************************************************************************
  * Begin curl request 
  ***************************************************************************************************/
-    
+
 $curl_address = 'https://ca.missionhub.com/apis/v3/organizations?secret=' . MISSIONHUB_AUTH_KEY;
 
 $curl = curl_init($curl_address);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  //Not entirely sure what this does, but without it there's a raw dump of data on the screen
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  //Return the data rather than printing it on the screen
 $curl_response = curl_exec($curl);
 
 if ($curl_response === false) {
-$info = curl_getinfo($curl);
-curl_close($curl);
-    die('Error occured during curl execution. Additional info ' . var_export($info));
+    $info = curl_getinfo($curl);
+	$error = curl_error($curl);
+    curl_close($curl);
+	die("Error occurred during curl execution: " . $error . "\r\nAdditional info:\r\n" . var_export($info, true));
 }
 
 $decoded_response = json_decode($curl_response, true);
 
 if (isset($decoded->response->status) && $decoded->response->status == 'ERROR') {
-  	die('Error occured: ' . $decoded->response->errormessage);
+  	die('Error occurred: ' . $decoded->response->errormessage);
 }
 
 /****************************************************************************************************
@@ -58,9 +59,12 @@ foreach($decoded_response['organizations'] as $organization) {
         'parent_id' => (int) substr(strrchr($organization['ancestry'], '/'), 1),
         'name' => $organization['name']
     );
-    //echo "\n" . $orgarray['id'];
-    //replace($table, $data, $format) will insert a new row if the data does not exist.
-    echo $orgdb->replace('mh_org_tree', $orgarray, $format);
+    $result = $orgdb->replace('mh_org_tree', $orgarray, $format);
+	if ($result) {
+		echo "Successfully updated $organization[name]\r\n";
+	} else {
+		echo "Problem updating $organization[name]\r\n";
+	}
 }
 
 ?>
