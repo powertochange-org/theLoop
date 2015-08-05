@@ -41,7 +41,7 @@
 		</tr></table>
 		<div class="post">
 		    <?php the_post_thumbnail(); ?>
-		    <?php the_content(); ?>
+		    <?php echo get_the_content(); ?>
 		</div>
 		<!--/box-->   
 	    <?php endwhile; else: ?>
