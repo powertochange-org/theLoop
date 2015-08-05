@@ -827,6 +827,51 @@ ul.wpp-list li {
 	border-bottom-width: 7px;
 }
 
+#main-content.form .post a.nav-option-link {
+	height: 160px;
+	width: 310px;
+	background-color: #eeeeee;
+	border: solid 1px #eaeae8;
+	text-decoration: none;
+	display: block;
+	float: left;
+	position: inherit;
+	text-align: inherit;
+	margin: 0px 15px 35px 17px;
+}
+#main-content.form .post a.nav-option-link:hover {
+	background-color: #f7941d;
+	color: #FFFFFF;
+}
+
+#main-content.form .post div.nav-option-outside { 
+	height: 160px; 
+	width: 310px;  
+	display: table;
+}
+
+#main-content.form .post div.nav-option-inside {
+	display: table-cell; 
+	vertical-align: middle; 
+	text-align: center;
+	width: 310px; 
+	color: #858585;
+}
+
+#main-content.form .post div.nav-option-inside:hover {
+	color: #ffffff;
+}
+
+#main-content.form .post .nav-option-inside p {
+	margin: 0;
+	padding: 0 5px;
+}
+#main-content.form .post .nav-option-inside h2 {
+	margin: 0;
+}
+
+
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
@@ -1184,6 +1229,21 @@ ul.wpp-list li {
 	}
 	input[name="longurl"] {
 		width: 96%;
+	}
+	
+	#main-content.form .post a.nav-option-link {
+		width: 100%;
+		white-space: normal;
+		border-right: none;
+		border-left: none;
+		margin: 0px 0px 10px 17px;
+	}
+	#main-content.form .post div.nav-option-outside {  
+		width: 100%;  
+	}
+
+	#main-content.form .post div.nav-option-inside {
+		width: 100%; 
 	}
 }
 
