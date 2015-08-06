@@ -240,6 +240,7 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
     array_pad($thresholds, sizeof($labels), 0);
     
     //Getting counts for parent organization
+    //NOTE: THIS BIT MAY BE REMOVED.  That being said a whole lot is going to change down here so...stay tuned I guess.
     $arrayindex = 0;
     foreach($labels as $label) {
         $thresholds[$arrayindex] = getCountAtThreshold($orgid, $label);

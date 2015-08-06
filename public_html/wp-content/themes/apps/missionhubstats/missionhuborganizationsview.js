@@ -20,20 +20,22 @@
             var orgname = org.options[org.selectedIndex].value;
             var report = document.getElementById("report");
             var reportname = report.options[report.selectedIndex].value;
-            
-            handleSubmit(orgname, reportname);
+            var yearselect = document.getElementById("year");
+            var year = yearselect.options[yearselect.selectedIndex].value;
+            handleSubmit(orgname, reportname, year);
             return false;
         }); 
     });
 })(jQuery);
 
-function handleSubmit(orgname, report) {
+function handleSubmit(orgname, report, year) {
     $.post(
         WordPressAjaxOrgs.ajaxurl,
         {
             action: "handle-submit",
             report: report,
             orgname: orgname,
+            year: year,
             nonce: WordPressAjaxOrgs.nonce
         },
         (function (response) {

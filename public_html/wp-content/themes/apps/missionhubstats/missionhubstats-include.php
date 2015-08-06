@@ -113,20 +113,6 @@ function create_discipleship_report() {
     exit;    
 }
 
-function create_pat_interface() {
-    $nonce = $_POST['nonce'];
-    if (!wp_verify_nonce($nonce, 'pat-include-nonce'))
-        die ('You do not have permission to use this service.');
-    
-    header("Content-Type: text/html");
-    
-    $response = createPatInterface();
-    
-    echo $response;
-    
-    exit;
-}
-
 function create_pat_report() {
     $nonce = $_POST['nonce'];
     if (!wp_verify_nonce($nonce,'missionhuborg-include-nonce'))
@@ -135,9 +121,8 @@ function create_pat_report() {
     header("Content-Type: text/html");
     
     $season = $_POST['season'];
-    $startdate = $_POST['startdate'];
-    $enddate = $_POST['enddate'];
-    $response = createPatReport($season, $startdate, $enddate);
+    $year = $_POST['year'];
+    $response = createPatReport($season, $year);
     
     echo $response;
     

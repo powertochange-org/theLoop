@@ -13,18 +13,13 @@
  * Parameters:
  * string season: optional parameter to specify season. If not specified, a report covering all seasons
  * will be generated.
- * string startdate: optional parameter to specify start date of report.  If not specified, a report 
- * covering the current year (Aug-July) will be generated.
- * string enddate: optional parameter to specify the end date of the report. If not specified, a report
- * covering the current year (Aug-July) will be generated.
- * 
- * NOTE: including just one of startdate or enddate, but not both, is an error case.
+ * string year: The year selected and passed through from the main page.
  *
  * Returns:
  * string result: The resulting html to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
-function createPatReport($season, $startdate, $enddate) {
+function createPatReport($season, $year) {
     
     $response = "<tr>
                     <th>Project</th>
@@ -32,13 +27,19 @@ function createPatReport($season, $startdate, $enddate) {
                     <th># Interns</th>
                 </tr>";
     
-    if ($startdate == NULL && $enddate != NULL) 
-        die ("Please enter an end date.");
-    if ($startdate != NULL && $enddate == NULL)
-        die ("Please enter a start date.");
-    if ($startdate == NULL && $enddate == NULL) {
-        $startdate = (date("Y") - 1) . "-08-01";
-        $enddate = (date("Y") . "07-31");
+    if ($year == NULL) {
+        $CurrDate = strtotime(date("Y-m-d"));
+        $cutoff = strtotime(date("Y") . "-09-01");
+        if ($cutoff > $CurrDate) {
+            $startdate = (date("Y") - 1) . "-09-01";
+            $enddate = date("Y") . "-08-31";
+        } else {
+            $startdate = date("Y") . "-09-01";
+            $enddate = (date("Y") + 1) . "-08-31";
+        }
+    } else {
+        $startdate = $year . "-09-01";
+        $enddate = ($year + 1) . "-8-31";        
     }
     
     $mydb = new wpdb(DB_USER, DB_PASSWORD, PAT_DB_NAME, DB_HOST); 

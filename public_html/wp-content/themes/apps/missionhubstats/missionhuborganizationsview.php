@@ -31,65 +31,27 @@ Organization
     </select>
 </div>
 <div id="daterange">
-    Select starting date:
-    <select id="startmonth">
-        <option value="">--SELECT A MONTH--</option>
-        <option value="01">January</option>
-        <option value="02">February</option>
-        <option value="03">March</option>
-        <option value="04">April</option>
-        <option value="05">May</option>
-        <option value="06">June</option>
-        <option value="07">July</option>
-        <option value="08">August</option>
-        <option value="09">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
-    </select>
-    <select id="startyear">
+    Select school year:
+    <select id="year">
         <option value="">--SELECT A YEAR--</option>
-        <?php $CurrYear = date("Y");
-					     $x = 0;
-						 while ($CurrYear-$x >= 1989){
-						 ?>
-						 <option value='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected");}?>>
-									 <?php echo $CurrYear-$x;?></option>
-						 <?php
-						 $x++;
-                         } ?>
+        <?php
+            $CurrYear = date("Y");
+            $CurrDate = strtotime(date("Y-m-d"));
+            $cutoff = strtotime($CurrYear . "-09-01");
+            if ($cutoff > $CurrDate) {
+                $x = 0;
+            } else {
+                $x = -1;
+            }
+            while ($CurrYear - $x >= 2007) {
+                ?><option value='<?php echo $CurrYear-$x-1;?>'>
+                <?php echo "September " . ($CurrYear - $x - 1). " to August " . ($CurrYear - $x);?></option>
+                <?php
+                $x++;
+            }
+        ?>
     </select>
-    <br>
-    Select ending date:
-    <select id="endmonth">
-        <option value="">--SELECT A MONTH--</option>
-        <option value="01">January</option>
-        <option value="02">February</option>
-        <option value="03">March</option>
-        <option value="04">April</option>
-        <option value="05">May</option>
-        <option value="06">June</option>
-        <option value="07">July</option>
-        <option value="08">August</option>
-        <option value="09">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
-    </select>
-    <select id="endyear">
-        <option value="">--SELECT A YEAR--</option>
-        <?php $CurrYear = date("Y");
-					     $x = 0;
-						 while ($CurrYear-$x >= 1989){
-						 ?>
-						 <option value='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected");}?>>
-									 <?php echo $CurrYear-$x;?></option>
-						 <?php
-						 $x++;
-                         } ?>
-    </select>
+    
 </div>
 <br>
 
