@@ -1,7 +1,7 @@
 (function($) {
     $(document).ready(function() {
-        $("#daterange").slideUp();
-        $("#organizations").slideUp();
+        $("#daterange").hide();
+        $("#organizations").hide();
         $("#report").change(function() {
             $("#report").each(function() {
                 if($(this).val() =="pat") {
@@ -29,19 +29,27 @@
 })(jQuery);
 
 function handleSubmit(orgname, report, year) {
-    $.post(
-        WordPressAjaxOrgs.ajaxurl,
+    /* Show a loading spinner */
+	$("#ajax-loading").css("display", "block");
+	
+	/* Make the Ajax call to get the report data */
+	$.post(
+        MissionHubStatsAjax.ajaxurl,
         {
             action: "handle-submit",
             report: report,
             orgname: orgname,
             year: year,
-            nonce: WordPressAjaxOrgs.nonce
+            nonce: MissionHubStatsAjax.nonce
         },
         (function (response) {
             //if(!('error' in response) ) {
+				/* We got an Ajax response! Hide the loading spinner to show we are done */
+				$("#ajax-loading").css("display", "none");
+				
+				/* Show the result in the appropriate area */
                 console.log(response);
-                $("#table").html(response);
+                $("#report-table").html(response);
             //}
             //else {
             //    console.log(response.error);

@@ -21,13 +21,19 @@
 					
                    
 					<?php
-                     /***APP CODE STARTS HERE***/
+                    /***APP CODE STARTS HERE***/
                     //require('missionhubstats/missionhubapirequests.php');
+					?>
 
+					<script type="text/javascript">
+					var MissionHubStatsAjax = {
+					<?php
+					/* Create some JavaScript variables used to make Ajax calls */
+					echo '"ajaxurl":"' . admin_url( 'admin-ajax.php' ) . 
+						'","nonce":"' . wp_create_nonce( 'missionhubstats-nonce' ) . '"';
                     ?> 
-                    <script type="text/javascript" src="missionhubstats/patscript.js"></script>
-                    <script type="text/javascript" src="missionhubstats/missionhubstats.js"></script>
-                    <script type="text/javascript" src="missionhubstats/missionhuborganizations.js"></script>
+					};
+					</script>
                     <div id="report-nav">
                         <ul>
                             <li><a href="?report=missionhub">MissionHub</a></li>
@@ -38,7 +44,7 @@
                         </ul>
                     </div>
                     <div id="filter"></div>
-                    <div id="reportcontent">
+                    <div id="report-content">
                     <?php
                     if(isset($_GET['report'])) {
                         $report = $_GET['report'];
@@ -74,9 +80,8 @@
 
                     ?>
                     </div>
-                    
-                    
-                    <?php/***APP CODE ENDS HERE***/?>
+                                        
+                    <?php /***APP CODE ENDS HERE***/ ?>
 				</div>
 				<div class="clear"></div>				
 			</div>

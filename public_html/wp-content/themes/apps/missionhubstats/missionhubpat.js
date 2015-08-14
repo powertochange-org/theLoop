@@ -28,12 +28,12 @@ function handleButtonClick(buttonData) {
     }
     $.post(
         //URL to send request to, defined in php on the server
-        WordPressAjaxPat.ajaxurl,
+        MissionHubStatsAjax.ajaxurl,
         //Data to pass
         {
             action: buttonaction,
             button: buttonData,
-            nonce: WordPressAjaxPat.nonce
+            nonce: MissionHubStatsAjax.nonce
         },
         //Function to execute
         (function(response) {

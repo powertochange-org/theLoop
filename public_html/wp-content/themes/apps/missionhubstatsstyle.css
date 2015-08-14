@@ -20,7 +20,23 @@
 	border-radius: 5px;
 }
 
-#reportcontent {
+#report-content {
+	width: 80%;
+	float: right;
+	padding: 10px 0 0 0;
+}
+
+#report-table {
+	margin: 15px 0 15px 0;
+	font-size: 80%;
+}
+
+#submit {
 	float: left;
-	margin: 10px 0 0 0;
+}
+
+#ajax-loading {
+	display: none;
+	float: left;
+	margin-left: 5px;
 }
