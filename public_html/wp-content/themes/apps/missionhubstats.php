@@ -25,49 +25,29 @@
                     //require('missionhubstats/missionhubapirequests.php');
 
                     ?> 
-                    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<!--                    <script type="text/javascript" src="missionhubstats/script.js"></script>-->
-                    <script type="text/javascript" src="missionhubstats/jsquerytest.js"></script>
                     <script type="text/javascript" src="missionhubstats/patscript.js"></script>
                     <script type="text/javascript" src="missionhubstats/missionhubstats.js"></script>
                     <script type="text/javascript" src="missionhubstats/missionhuborganizations.js"></script>
-                    <div id="nav">
-<!--
-                    	<ul>
-                            <form action="?report=surveys" id="surveys" method="post"></form>
-                            <form action="?report=people" id="people" method="post"></form>
-                            <form action="?report=pat" id="pat" method="post"></form>
-                    		<li><button form="surveys">Surveys</button></li>
-                    		<li><button form="people">People</button></li>
-                            <li><button form="pat">PAT</button></li>
-                    	</ul>
--->                     
-                        <form action="?report=" id="home" method="post"></form>
-                        <form action="?report=missionhub" id="missionhub" method="post"></form>
-                        <form action="?report=pat" id="pat" method="post"></form>
-                        <form action="?report=eventbrite" id="eventbrite" method="post"></form>
-                        <form action="?report=theloop" id="theloop" method="post"></form>
-                        <form action="?report=admin" id="admin" method="post"></form>
+                    <div id="report-nav">
                         <ul>
-                            <li><button form="home">Home</button></li>
-                            <li><button form="missionhub">MissionHub</button></li>
-                            <li><button form="pat">PAT</button></li>
-                            <li><button form="eventbrite">EventBrite</button></li>
-                            <li><button form="theloop">The Loop</button></li>
-                            <li><button form="admin">Admin</button></li>
+                            <li><a href="?report=missionhub">MissionHub</a></li>
+                            <li><a href="?report=pat">PAT</a></li>
+                            <li><a href="?report=eventbrite">EventBrite</a></li>
+                            <li><a href="?report=theloop">The Loop</a></li>
+                            <li><a href="?report=admin">Admin</a></li>
                         </ul>
                     </div>
                     <div id="filter"></div>
                     <div id="reportcontent">
                     <?php
                     if(isset($_GET['report'])) {
-                        $site = $_GET['report'];
+                        $report = $_GET['report'];
                     } else {
-                        $site = "";
+                        $report = "";
                     }
-                    switch($site) {
+                    switch($report) {
                         case "missionhub":  
-                            include "missionhubstats/missionhubexposure.php";
+                            include "missionhubstats/missionhuborganizationsview.php";
                             break;
                         case "pat":
                             include "missionhubstats/missionhubpat.php";
@@ -81,9 +61,6 @@
                         case "admin":
                             include "missionhubstats/missionhubadmin.php";
                             break;
-                        case "organizations":
-                            include "missionhubstats/missionhuborganizationsview.php";
-                            break;
                         case "reporttype":
                             include "missionhubstats/missionhubreporttypeview.php";
                             break;
@@ -91,7 +68,7 @@
                             include "missionhubstats/missionhubpeople.php";
                             break;
                         default:
-                            echo "Please modify the url";
+                            echo "Select a report button on the left to get started";
                             break;
                     }
 

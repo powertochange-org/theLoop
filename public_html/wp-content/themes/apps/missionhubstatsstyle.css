@@ -1,17 +1,26 @@
-#nav {
+#report-nav {
 	width: 20%;
 	float: left;
 }
 
-#nav ul {
+#report-nav ul {
     list-style-type: none;
+	padding: 0;
+	margin: 10px 20px 20px 0;
 }
 
-#nav button {
-    width: 100px;
+#report-nav a {
+	text-align: center;
+	color: #ffffff;
+	background-color: #f7941d;
+	display: block;
+	width: 100%;
+	padding: 5px 0;
+	margin-bottom: 5px;
+	border-radius: 5px;
 }
 
 #reportcontent {
-	width: 80%;
-	float: right;
+	float: left;
+	margin: 10px 0 0 0;
 }
