@@ -42,7 +42,8 @@ function createPatReport($season, $year) {
         $enddate = ($year + 1) . "-8-31";        
     }
     
-    $mydb = new wpdb(DB_USER, DB_PASSWORD, PAT_DB_NAME, DB_HOST); 
+    $mydb = new wpdb(DB_USER, DB_PASSWORD, PAT_DB_NAME, DB_HOST);
+	
     $sql = $mydb->prepare("SELECT event_groups.id, event_groups.title, projects.id AS 'Project ID', projects.title AS 'Project', SUM(`profiles`.as_intern) AS 'Interns', COUNT(`profiles`.id) - COALESCE(SUM(`profiles`.as_intern), 0) AS 'Students'
     FROM `event_groups` JOIN
         `projects`ON event_groups.id = projects.event_group_id JOIN
@@ -53,6 +54,11 @@ function createPatReport($season, $year) {
     $enddate
     );
     $result = $mydb->get_results($sql);
+	
+	if (is_wp_error($mydb->error)) {
+		return "Error accessing the PAT database."; // More detailed error message for debugging: $mydb->error->get_error_message();
+	}
+	
     foreach($result as $obj) {
         if ($obj->Students == NULL) {$obj->Students = 0;}
         if ($obj->Interns == NULL) {$obj->Interns = 0;}
@@ -60,8 +66,7 @@ function createPatReport($season, $year) {
     }
     
     return "<table>" . $response . "</table>";
-    
-    
+   
 }
 
 function createPatInterface() {
