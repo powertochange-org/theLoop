@@ -137,9 +137,63 @@ function getCurlObject() {
  ***************************************************************************************************/
 
 function getCountAtThreshold($orgid, $labelid) {
-    $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $labelid));
-    $filtercount = sizeof($people['people']);
-    return $filtercount;
+    global $wpdb;
+    $count = 0;
+    $column = convertLabelToColumn($labelid);
+    $children = getChildren($orgid);
+    foreach($children as $child) {
+        $count = $count + getCountAtThreshold($child, $labelid);
+    }
+    $orgAmount = $wpdb->get_results( $wpdb->prepare(
+            "SELECT `" . $column . "` FROM `mh_org_tree` WHERE `id` = %d",
+            $orgid
+        ),
+        ARRAY_N
+    );
+    return $count + $orgAmount[0][0];
+}
+
+function convertLabelToColumn($labelid) {
+    switch ($labelid) {
+        case 14121:
+            return 't1';
+        case 14122:
+            return 't2';
+        case 14123:
+            return 't3';
+        case 14124:
+            return 't4';
+        case 14125:
+            return 't5';
+        case 14126:
+            return 'd1';
+        case 14127:
+            return 'd2';
+        case 14128:
+            return 'd3';
+    }
+}
+
+
+function convertLabelToTitle($labelid) {
+    switch ($labelid) {
+        case 14121:
+            return 'Knows and Trusts a Christian';
+        case 14122:
+            return 'Became Curious';
+        case 14123:
+            return 'Became Open to Change';
+        case 14124:
+            return 'Seeking God';
+        case 14125:
+            return 'Made a Decision';
+        case 14126:
+            return 'Growing Disciple';
+        case 14127:
+            return 'Ministering Disciple';
+        case 14128:
+            return 'Multiplying Disciple';
+    }
 }
 
 /****************************************************************************************************
@@ -188,6 +242,64 @@ function createEngagementReport($orgname, $labels) {
     return $response;
 }
 
+function createThresholdReport($orgname, $label) {
+    
+    $orgid = getOrgId($orgname);
+    $children = getChildren($orgid[0]);
+    
+    $title = "<strong>" . convertLabelToTitle($label) . "<strong><br>";
+    
+    $tableheaders = "<tr>
+                        <th></th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                    </tr>";
+    
+    $tablerows = getNestedPeopleAtThreshold($orgid[0], $label);
+    
+    
+    
+    $response = "<table>" . $title . $tableheaders . $tablerows . "</table>";
+    
+    return $response;
+    
+}
+
+function getNestedPeopleAtThreshold($orgid, $label) {
+    $result = "";
+    $children = getChildren($orgid);
+    
+    $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $label));
+    
+    
+    
+    foreach ($people['people'] as $person) {
+        $result = $result .  '<tr><td><img src="' . $person['picture'] . '"></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td></tr>';
+    }
+    
+    foreach($children as $child) {
+        $result = $result . getNestedPeopleAtThreshold($child[0], $label);
+    }
+    return $result;
+}
+
+//not sure if this is going to be per org or if it should just show all orgs...
+function createDecisionReport($orgname) {
+    
+    if ($orgname == NULL) {
+        $orgname = '';
+    } else {
+    }    
+    
+    $tableheaders = "<tr>
+                        <th>Organization</th>
+                        <th>Receiver</th>
+                        <th>Initiatior</th>
+                        <th>Date</th>
+                        <th>Story</th>
+                    <tr>";
+}
+
 
 /****************************************************************************************************
  * Function generateTableHeaders($labels)
@@ -208,7 +320,7 @@ function generateTableHeaders($labels) {
     //One-indexed for loop.
     $i = 1; 
     foreach($labels as $label) {
-        $result = $result . "<th>Threshold " . $i . "</th>";
+        $result = $result . '<th><a href="#" id="'. $label .'" class="threshold">' . convertLabelToTitle($label) . '</th>';
         $i++;
     }
     $result = $result . "</tr>";
@@ -240,7 +352,6 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
     array_pad($thresholds, sizeof($labels), 0);
     
     //Getting counts for parent organization
-    //NOTE: THIS BIT MAY BE REMOVED.  That being said a whole lot is going to change down here so...stay tuned I guess.
     $arrayindex = 0;
     foreach($labels as $label) {
         $thresholds[$arrayindex] = getCountAtThreshold($orgid, $label);
@@ -258,7 +369,6 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
         foreach ($labels as $label) {
             $count = getCountAtThreshold($child[0], $label);
             $childthresholds[$arrayindex] = $count;
-            $thresholds[$arrayindex] = $thresholds[$arrayindex] + $count;
             $childrenrows = $childrenrows . "<td>" . $childthresholds[$arrayindex] . "</td>";
             $arrayindex++;
         }

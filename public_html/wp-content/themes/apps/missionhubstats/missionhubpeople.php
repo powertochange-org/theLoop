@@ -1,7 +1,7 @@
 <?php
 
 
-$people = getIndexOfEndpoint("people", "interactions", );
+$people = getIndexOfEndpoint('people', 'interactions');
 echo "<br /><br />";
 echo count($people['people']);
 echo "<br />";
@@ -18,7 +18,6 @@ for ($i = 0; $i < count($people['people']); $i++) {
 ?>
 </table>
 <?php
-echo "<br /> Test test <br />";
 for ($i = 0; $i < count($people['people']); $i++) {
   //  echo "<br /> At " . $i . " the label is ";
     var_dump($people['people'][$i]['interactions']);

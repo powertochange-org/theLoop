@@ -24,7 +24,7 @@
             var year = yearselect.options[yearselect.selectedIndex].value;
             handleSubmit(orgname, reportname, year);
             return false;
-        }); 
+        });
     });
 })(jQuery);
 
@@ -50,6 +50,23 @@ function handleSubmit(orgname, report, year) {
 				/* Show the result in the appropriate area */
                 console.log(response);
                 $("#report-table").html(response);
+                $(".threshold").click(function() {
+                    $.post(
+                        MissionHubStatsAjax.ajaxurl,
+                        {
+                            action: "handle-submit",
+                            report: "threshold",
+                            orgname: orgname,
+                            year: year,
+                            label: $(this).context.id,
+                            nonce: MissionHubStatsAjax.nonce
+                        },
+                        (function (response) {
+                            $("#ajax-loading").css("display", "none");
+                            $('#report-table').html(response);
+                        })
+                    )
+                })
             //}
             //else {
             //    console.log(response.error);
