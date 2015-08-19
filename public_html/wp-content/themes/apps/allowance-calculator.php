@@ -1084,6 +1084,50 @@ include('functions/js_functions.php');
 						alert("Please enter an effective date.")
 					} else {
 						document.getElementById('print').value = true;
+						document.getElementById('saveUserValues_form').action = '';
+						switch(chooseWay){
+						case YOU:
+							document.getElementById('userIs').value = 'you';
+							document.getElementById('role').value = you.role;
+							document.getElementById('person_name').value = you.name;
+							document.getElementById('projectCode').value = you.projectCode;
+							break;
+						case SPOUSE:
+							document.getElementById('userIs').value = 'spouse';
+							document.getElementById('role').value = spouse.role;
+							document.getElementById('person_name').value = spouse.name;
+							document.getElementById('projectCode').value = spouse.projectCode;
+							break;
+						case FREE:
+							document.getElementById('userIs').value = 'free';
+							document.getElementById('role').value = document.getElementById('choose_role').value;
+							break;
+						}
+						document.getElementById('minimum').value = document.getElementById('output_minimum').innerHTML;
+						document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
+						document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
+						document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
+						document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
+						document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
+						document.getElementById('preHours').value = document.getElementById('input_preHours').value;
+						document.getElementById('newHours').value = document.getElementById('input_newHours').value;
+						document.getElementById('mon').value = document.getElementById('input_mon').value;
+						document.getElementById('tues').value = document.getElementById('input_tues').value;
+						document.getElementById('wed').value = document.getElementById('input_wed').value;
+						document.getElementById('thurs').value = document.getElementById('input_thurs').value;
+						document.getElementById('fri').value = document.getElementById('input_fri').value;
+						document.getElementById('effective').value = document.getElementById('input_effective').value;
+						document.getElementById('saveUserValues_form').target = "_blank";
+						saveUserValues_form.submit();
+					}
+				}
+				
+				function download1(){
+					if (document.getElementById('input_effective').value == ""){
+						alert("Please enter an effective date.")
+					} else {
+						document.getElementById('print').value = true;
+						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export';///forms-information/workflow/?page=allowance-calculator-export'; ///mpd/allowance-goal-calculations/allowance-calculator/allowance-calculator-export/
 						switch(chooseWay){
 						case YOU:
 							document.getElementById('userIs').value = 'you';
@@ -1270,6 +1314,7 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Download/Print' onclick='download();'></td>
+					<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
 				<?php if(isAdmin()){ ?>
