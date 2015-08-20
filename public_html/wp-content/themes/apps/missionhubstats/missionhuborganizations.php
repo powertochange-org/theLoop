@@ -139,41 +139,44 @@ function getCurlObject() {
 function getCountAtThreshold($orgid, $labelid) {
     global $wpdb;
     $count = 0;
-    $column = convertLabelToColumn($labelid);
     $children = getChildren($orgid);
     foreach($children as $child) {
-        $count = $count + getCountAtThreshold($child, $labelid);
+        $count = $count + getCountAtThreshold($child[0], $labelid);
     }
-    $orgAmount = $wpdb->get_results( $wpdb->prepare(
-            "SELECT `" . $column . "` FROM `mh_org_tree` WHERE `id` = %d",
-            $orgid
+
+    $people = $wpdb->get_results( $wpdb->prepare(
+            "SELECT * FROM `mh_threshold_details` WHERE `org_id` = %d AND `threshold_id` = %d",
+            $orgid,
+            $labelid
         ),
         ARRAY_N
     );
-    return $count + $orgAmount[0][0];
+    
+    return $count + sizeof($people);
 }
 
-function convertLabelToColumn($labelid) {
-    switch ($labelid) {
-        case 14121:
-            return 't1';
-        case 14122:
-            return 't2';
-        case 14123:
-            return 't3';
-        case 14124:
-            return 't4';
-        case 14125:
-            return 't5';
-        case 14126:
-            return 'd1';
-        case 14127:
-            return 'd2';
-        case 14128:
-            return 'd3';
+function getPeopleAtThreshold($orgid, $labelid) {
+    global $wpdb;
+    $people = array();
+    $children = getChildren($orgid);
+    foreach($children as $child) {
+        $childrenpeople = getPeopleAtThreshold($child[0], $labelid);
+        foreach($childrenpeople as $person) {
+            array_push($people, $person);
+        }
     }
+    $queryresult = $wpdb->get_results( $wpdb->prepare(
+            "SELECT `first_name`,`last_name`,`image_url`,`org_id` FROM `mh_threshold_details` WHERE `org_id` = %d AND `threshold_id` = %d",
+            $orgid,
+            $labelid
+        ),
+        ARRAY_A
+    );
+    foreach($queryresult as $person) {
+        array_push($people, $person);
+    }
+    return $people;
 }
-
 
 function convertLabelToTitle($labelid) {
     switch ($labelid) {
@@ -253,6 +256,7 @@ function createThresholdReport($orgname, $label) {
                         <th></th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Organization</th>
                     </tr>";
     
     $tablerows = getNestedPeopleAtThreshold($orgid[0], $label);
@@ -267,19 +271,16 @@ function createThresholdReport($orgname, $label) {
 
 function getNestedPeopleAtThreshold($orgid, $label) {
     $result = "";
-    $children = getChildren($orgid);
-    
-    $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $label));
-    
-    
-    
-    foreach ($people['people'] as $person) {
-        $result = $result .  '<tr><td><img src="' . $person['picture'] . '"></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td></tr>';
+    $people = getPeopleAtThreshold($orgid, $label);
+        
+    foreach ($people as $person) {
+        if ($person['image_url'] == NULL) {
+            $result = $result .  '<tr><td></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id'])[0] . '</td></tr>';   
+        } else {
+            $result = $result .  '<tr><td><img src="' . $person['image_url'] . '"></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id'])[0] . '</td></tr>';
+        }
     }
     
-    foreach($children as $child) {
-        $result = $result . getNestedPeopleAtThreshold($child[0], $label);
-    }
     return $result;
 }
 
@@ -354,7 +355,7 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
     //Getting counts for parent organization
     $arrayindex = 0;
     foreach($labels as $label) {
-        $thresholds[$arrayindex] = getCountAtThreshold($orgid, $label);
+        $thresholds[$arrayindex] = getCountAtThreshold($orgid[0], $label);
         $arrayindex++;
     }
     

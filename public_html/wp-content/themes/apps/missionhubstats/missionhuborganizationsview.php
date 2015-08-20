@@ -49,7 +49,7 @@ Organization
 </div>
 <br>
 
-<button id="submit">Generate Report!</button>
+<button id="submit" value="Generate Report!">Generate Report!</button>
 <div id="ajax-loading">
 <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />
 </div>
