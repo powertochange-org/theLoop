@@ -1,17 +1,8 @@
 (function($) {
     $(document).ready(function() {
-        $("#daterange").hide();
-        $("#organizations").hide();
+        showDropdowns($("#report").val());
         $("#report").change(function() {
-            $("#report").each(function() {
-                if($(this).val() =="pat") {
-                    $("#daterange").slideDown();
-                    $("#organizations").slideUp();
-                } else if ($(this).val() =="engagement" || $(this).val() =="discipleship") {
-                    $("#daterange").slideUp();
-                    $("#organizations").slideDown();
-                }
-            })
+            showDropdowns($(this).val())
         })
         
         
@@ -27,6 +18,21 @@
         });
     });
 })(jQuery);
+
+function showDropdowns(selection) {
+    $("#report").each(function() {
+        if(selection == "pat") {
+            $("#daterange").slideDown();
+            $("#organizations").slideUp();
+        } else if (selection == "engagement" || selection == "discipleship") {
+            $("#daterange").slideUp();
+            $("#organizations").slideDown();
+        } else if (selection == "decision") {
+            $("#daterange").slideUp();
+            $("#organizations").slideUp();
+        }
+    });
+}
 
 function handleSubmit(orgname, report, year) {
     /* Show a loading spinner */
