@@ -8,11 +8,11 @@
  ***************************************************************************************************/
 
 /****************************************************************************************************
- * Function createPatReport($season, $startdate, $enddate)
+ * Function createPatReport($season, $year)
  * 
  * Parameters:
  * string season: optional parameter to specify season. If not specified, a report covering all seasons
- * will be generated.
+ * will be generated. Currently not in use.
  * string year: The year selected and passed through from the main page.
  *
  * Returns:
