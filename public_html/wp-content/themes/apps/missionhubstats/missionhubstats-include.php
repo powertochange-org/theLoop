@@ -61,6 +61,9 @@ function handle_submit() {
         case 'threshold':
             create_threshold_report($_POST['label']);
             break;
+        case 'decision':
+            create_decision_report();
+            break;
         default:
             echo 'Error in generating report.';
             break;
@@ -110,14 +113,10 @@ function create_pat_report() {
     exit;    
 }
 
-function create_decision_report() {
-    $nonce = $_POST['nonce'];
-    if (!wp_verify_nonce($nonce, 'misionhuborg-include-nonce'))
-        die ('You do not have permission to use this service.');
-    
+function create_decision_report() {    
     header("Content-Type: text/html");
     
-    $response = createDecisionReport($orgname);
+    $response = createDecisionReport();
     
     echo $response;
     

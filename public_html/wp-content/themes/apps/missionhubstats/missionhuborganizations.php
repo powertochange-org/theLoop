@@ -18,8 +18,6 @@
 //Database object
 global $wpdb;
 
-//$result = $wpdb->get_results("SELECT * FROM `mh_org_tree` WHERE 1");
-//var_dump($result);
 //Format of rows in database
 $format = array(
     '%d',   //id, int
@@ -31,6 +29,8 @@ $format = array(
 
 /****************************************************************************************************
  * Function getChildren($parent_id)
+ *
+ * This function gets the ids of all the children of a certain parent.
  *
  * Parameters:
  * int parent_id: The id of the parent from which to get the children from
@@ -53,6 +53,8 @@ function getChildren($parent_id) {
 
 /****************************************************************************************************
  * Function getOrgId($name)
+ * 
+ * This function gets the id of an organization given the name of the organization.
  *
  * Parameters:
  * string name: The name of the organization being examined
@@ -75,6 +77,8 @@ function getOrgId($name) {
 /****************************************************************************************************
  * Function getListOfOrgNames()
  *
+ * This function simply gets the list of all the organization names from the database.
+ *
  * Parameters:
  *
  * Returns:
@@ -85,13 +89,15 @@ function getListOfOrgNames() {
     global $wpdb;
     $names = $wpdb->get_results(
         "SELECT `name` FROM `mh_org_tree` WHERE 1",
-        ARRAY_N //not sure if this is the correct type.
+        ARRAY_N
     );
     return $names;
 }
 
 /****************************************************************************************************
- * Function getOrgName()
+ * Function getOrgName($orgid)
+ *
+ * This function gets the name of an organization given its id. Opposite of getOrgId($name).
  *
  * Parameters:
  * int ordid: The ID of the organization for which we want to get the name.
@@ -109,20 +115,6 @@ function getOrgName($orgid) {
         ARRAY_N
     );
     return $name[0];
-}
-
-/****************************************************************************************************
- * Function getCurlObject()
- *
- * Parameters:
- *
- * Returns:
- * object curl_object: The JSON object from missionhubapirequests
- ***************************************************************************************************/
-
-function getCurlObject() {
-    $curl_object = getIndexOfEndpoint('organizations');
-    return $curl_object;
 }
 
 /****************************************************************************************************
@@ -155,6 +147,18 @@ function getCountAtThreshold($orgid, $labelid) {
     return $count + sizeof($people);
 }
 
+/****************************************************************************************************
+ * Function getPeopleAtThreshold($orgid, $labelid)
+ *
+ * Parameters:
+ * int orgid: The ID of the organization for which this count is to be produced
+ * int labelid: The ID of the label associated with the particular threshold.
+ *
+ * Returns:
+ * array people: An array which contains all the people in the organization and children organizations
+ * at the specified threshold.
+ ***************************************************************************************************/
+
 function getPeopleAtThreshold($orgid, $labelid) {
     global $wpdb;
     $people = array();
@@ -178,6 +182,19 @@ function getPeopleAtThreshold($orgid, $labelid) {
     return $people;
 }
 
+/****************************************************************************************************
+ * Function convertLabelToTitle($labelid)
+ *
+ * This function takes a labelid and returns a string title for the label. This will need to be modified
+ * if any label names change in the future.  This is used to give meaningful names to table columns.
+ *
+ * Parameters:
+ * int labelid: The ID of the label for which we want a title
+ *
+ * Returns:
+ * string: The name of the label
+ ***************************************************************************************************/
+
 function convertLabelToTitle($labelid) {
     switch ($labelid) {
         case 14121:
@@ -200,34 +217,39 @@ function convertLabelToTitle($labelid) {
 }
 
 /****************************************************************************************************
- * Function getOrgLabelCount($orgid, $labels)
+ * Function getPersonName($personid)
  *
+ * The purpose of this function is to provide a compact way to get someone's name given their id.
+ * The process is extraordinarily complicated and this function is a work in progress.
+ * 
  * Parameters:
- * int orgid: The ID of the organization for which this count is to be produced
- * array(int) label: The IDs of the labels that need a count.
+ * int personid: The ID of the person we need a name for
  *
  * Returns:
- * int filtercount: The number of people at that threshold.
+ * string: A string with the first and last name of the person, separated by a space.
  ***************************************************************************************************/
 
-function getOrgLabelCount($orgid, $labels) {
-    $result = array();
-    foreach ($labels as $label) {
-        $people = getIndexOfEndpoint('people', 'organizational_labels', $orgid, '', '', '', array('labels' => $label));
-        array_push($result, sizeof($people['people']));
-    }
-    return $result;
+function getPersonName($personid) {
+    $person = showEndpoint('people', $personid)[person];
+    
+    var_dump($person);
+    return "$person[first_name] $person[last_name]";
+    
 }
 
 /****************************************************************************************************
- * Function createEngagementReport($orgname)
+ * Function createEngagementReport($orgname, $labels)
  * 
+ * This function is called by missionhubstats-include.php to create engagement and discipleship reports
+ * as they both have the same structure.  It calls a few helper methods in this file to put together an
+ * HTML string containing the requested table.
+ *
  * Parameters:
  * string orgname: The name of the organization for which the report is being generated
  * array labels: The labels to be included in the report.
  *
  * Returns:
- * string result: The resulting html to produce a table to be displayed to the user.
+ * string response: The resulting HTML to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
 function createEngagementReport($orgname, $labels) {
@@ -245,6 +267,23 @@ function createEngagementReport($orgname, $labels) {
     return $response;
 }
 
+/****************************************************************************************************
+ * Function createThresholdReport($orgname, $label)
+ *
+ * This function is called by missionhubstats-include.php when a user clicks on a column header in 
+ * either a discipleship or engagement report.  It produces a table containing a detailed list of all
+ * the people in the current organization and its children who are at the specific threshold.  It calls
+ * the helper function getNestedPeopleAtThreshold($orgid, $label) to create all the rows, and connects
+ * this to the header to create an HTML table.
+ *
+ * Parameters:
+ * int orgname: The name of the organization for which this report is to be produced
+ * int label: The ID of the label for which we are creating a table
+ *
+ * Returns:
+ * string response: The resulting HTML to produce a table to be displayed to the user.
+ ***************************************************************************************************/
+
 function createThresholdReport($orgname, $label) {
     
     $orgid = getOrgId($orgname);
@@ -253,7 +292,7 @@ function createThresholdReport($orgname, $label) {
     $title = "<strong>" . convertLabelToTitle($label) . "<strong><br>";
     
     $tableheaders = "<tr>
-                        <th></th>
+                        <th>Picture</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Organization</th>
@@ -268,6 +307,21 @@ function createThresholdReport($orgname, $label) {
     return $response;
     
 }
+
+/****************************************************************************************************
+ * Function getNestedPeopleAtThreshold($orgid, $label);
+ *
+ * This function creates the table rows for a detailed report on a specific threshold.  Each row has
+ * a picture, first name, last name, and organization of a user who has the specified label.  If 
+ * the user has no picture, an alternate row is produced leaving that field blank.
+ *
+ * Parameters:
+ * int orgid: The ID of the parent organization for this table
+ * int label: The ID of the label for which this table is being created
+ *
+ * Returns:
+ * string result: The HTLM to create all the table rows.
+ ***************************************************************************************************/
 
 function getNestedPeopleAtThreshold($orgid, $label) {
     $result = "";
@@ -284,14 +338,27 @@ function getNestedPeopleAtThreshold($orgid, $label) {
     return $result;
 }
 
-//not sure if this is going to be per org or if it should just show all orgs...
-function createDecisionReport($orgname) {
-    
-    if ($orgname == NULL) {
-        $orgname = '';
-    } else {
-    }    
-    
+/****************************************************************************************************
+ * Function createDecisionReport()
+ *
+ * This function is called by missionhubstats-include.php to create a detailed table of all the users
+ * who have indicated a decision to follow Christ, as determined by an interaction (NOT BY THRESHOLD
+ * FIVE, ID: 14125).  This function and its helpers are still a work in progres....well...mostly the
+ * helpers, this one is in almost its final form.
+ *
+ * Parameters:
+ *
+ * Returns:
+ * string response: The HTML to create the table for the decision report.
+ ***************************************************************************************************/
+
+function createDecisionReport() {
+    global $wpdb; 
+    $people = $wpdb->get_results( 
+        "SELECT * FROM `mh_interactions_details`",
+        ARRAY_A
+    );
+        
     $tableheaders = "<tr>
                         <th>Organization</th>
                         <th>Receiver</th>
@@ -299,6 +366,16 @@ function createDecisionReport($orgname) {
                         <th>Date</th>
                         <th>Story</th>
                     <tr>";
+    
+    $tablerows = "";
+    foreach($people as $person) {
+        $tablerows = $tablerows . "<tr><td>" . $person[org_id] . "</td><td>" . $person[receiver_id] . "</td><td>" . $person[initiator_ids] . "<td></td>$person[date]</td><td>$person[story]</td></tr>";
+    }
+    
+    $response = "<table>$tableheaders$tablerows</table>";
+    
+    return "Sorry! This service is currently unavailable."; //This is here so it doesn't show a broken table.
+    
 }
 
 
@@ -315,7 +392,6 @@ function createDecisionReport($orgname) {
   ***************************************************************************************************/ 
 
 function generateTableHeaders($labels) {
-    //May need a way to look up label names...
      $result = "<tr>
                     <th>Organization</th>";
     //One-indexed for loop.

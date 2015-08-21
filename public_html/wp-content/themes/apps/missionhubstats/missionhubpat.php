@@ -64,24 +64,10 @@ function createPatReport($season, $year) {
         if ($obj->Interns == NULL) {$obj->Interns = 0;}
         $response = $response . "<tr><td>" . $obj->Project . "</td><td>" . $obj->Students . "</td><td>" . $obj->Interns . "</td></tr>";
     }
-    return "<table>" . $response . "</table>";
-   
-}
-
-function createPatInterface() {
-    
-    $result = "
-        <div id=\"startdate\">
-        
-        </div>
-        <div id=\"enddate\">
-        
-        </div>";
     $patlink = '<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>';
     
     return "<table>" . $response . "</table>" . $patlink;
-    
-    
+   
 }
 
 ?>

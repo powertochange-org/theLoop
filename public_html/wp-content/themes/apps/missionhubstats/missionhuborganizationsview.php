@@ -1,11 +1,12 @@
 <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhuborganizationsview.js"></script>
 <div id="reporttype">
-Report
+Report: 
 <!--There's going to be some php most likely in here to generate all the report types...but maybe not-->
     <select id="report" name="report" >
         <option value="">--SELECT A REPORT--</option>
         <option value="engagement">Engagement Report</option>
         <option value="discipleship">Discipleship Report</option>
+        <option value="decision">Indicated Decision Report</option>
         <option value="pat">PAT Report</option>
     </select>
 </div>

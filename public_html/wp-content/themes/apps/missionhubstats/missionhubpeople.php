@@ -1,7 +1,7 @@
 <?php
 
 
-$people = getIndexOfEndpoint('people', 'organizational_labels,interactions', 8852, '', '', '', array('labels'=>14121));
+$people = getIndexOfEndpoint('people', 'interactions');
 var_dump($people);
 echo "<br /><br />";
 echo count($people['people']);
