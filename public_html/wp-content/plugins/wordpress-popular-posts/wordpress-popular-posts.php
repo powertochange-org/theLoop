@@ -3,7 +3,7 @@
 Plugin Name: WordPress Popular Posts
 Plugin URI: http://wordpress.org/extend/plugins/wordpress-popular-posts
 Description: WordPress Popular Posts is a highly customizable widget that displays the most popular posts on your blog
-Version: 3.2.2
+Version: 3.2.3
 Author: Hector Cabrera
 Author URI: http://cabrerahector.com
 Author Email: hcabrerab@gmail.com
@@ -61,7 +61,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 		 * @since	1.3.0
 		 * @var		string
 		 */
-		private $version = '3.2.2';
+		private $version = '3.2.3';
 
 		/**
 		 * Plugin identifier.
@@ -995,25 +995,17 @@ if ( !class_exists('WordpressPopularPosts') ) {
 
 			}
 
-			// Check indexes and fields
-			$dataFields = $wpdb->get_results( "SHOW FIELDS FROM {$prefix}data;" );
-
-			// Update fields, if needed
-			foreach ( $dataFields as $column ) {
-				if ( "postid" == $column->Field && "bigint(20)" != $column->Type ) {
-					$wpdb->query("ALTER TABLE {$prefix}data CHANGE postid postid bigint(20) NOT NULL;");
-				}
-
-				if ( "pageviews" == $column->Field && "bigint(20)" != $column->Type ) {
-					$wpdb->query("ALTER TABLE {$prefix}data CHANGE pageviews pageviews bigint(20) DEFAULT 1;");
-				}
+			// Check storage engine
+			$storage_engine_data = $wpdb->get_var("SELECT `ENGINE` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA`='{$wpdb->dbname}' AND `TABLE_NAME`='{$prefix}data';");
+			
+			if ( 'MyISAM' == $storage_engine_data ) {
+				$wpdb->query("ALTER TABLE {$prefix}data ENGINE=INNODB;");
 			}
-
-			// Update index, if needed
-			$dataIndex = $wpdb->get_results("SHOW INDEX FROM {$prefix}data;", ARRAY_A);
-
-			if ( "PRIMARY" != $dataIndex[0]['Key_name'] ) {
-				$wpdb->query("ALTER TABLE {$prefix}data DROP INDEX id, ADD PRIMARY KEY (postid);");
+			
+			$storage_engine_summary = $wpdb->get_var("SELECT `ENGINE` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA`='{$wpdb->dbname}' AND `TABLE_NAME`='{$prefix}summary';");
+			
+			if ( 'MyISAM' == $storage_engine_summary ) {
+				$wpdb->query("ALTER TABLE {$prefix}summary ENGINE=INNODB;");
 			}
 
 			// Update WPP version
@@ -1047,7 +1039,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 					last_viewed datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 					pageviews bigint(20) DEFAULT 1,
 					PRIMARY KEY  (postid)
-				) {$charset_collate};
+				) {$charset_collate} ENGINE=INNODB;
 				CREATE TABLE {$prefix}summary (
 					ID bigint(20) NOT NULL AUTO_INCREMENT,
 					postid bigint(20) NOT NULL,
@@ -1057,8 +1049,9 @@ if ( !class_exists('WordpressPopularPosts') ) {
 					PRIMARY KEY  (ID),
 					UNIQUE KEY ID_date (postid,view_date),
 					KEY postid (postid),
+					KEY view_date (view_date),
 					KEY last_viewed (last_viewed)
-				) {$charset_collate};";
+				) {$charset_collate} ENGINE=INNODB;";
 
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql);
@@ -1245,11 +1238,11 @@ if ( !class_exists('WordpressPopularPosts') ) {
 		 */
 		public function update_views_ajax(){
 
-			if ( !wp_verify_nonce($_POST['token'], 'wpp-token') || !$this->__is_numeric($_POST['id']) )
+			if ( !wp_verify_nonce($_POST['token'], 'wpp-token') || !$this->__is_numeric($_POST['wpp_id']) )
 				die("WPP: Oops, invalid request!");
 
 			$nonce = $_POST['token'];
-			$post_ID = $_POST['id'];
+			$post_ID = $_POST['wpp_id'];
 
 			$exec_time = 0;
 
@@ -1298,7 +1291,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 						  ? new XMLHttpRequest()
 						  : new ActiveXObject( "Microsoft.XMLHTTP" ),
 						url = '<?php echo admin_url('admin-ajax.php', is_ssl() ? 'https' : 'http'); ?>',
-						params = 'action=update_views_ajax&token=<?php echo wp_create_nonce('wpp-token') ?>&id=<?php echo $this->current_post_id; ?>';
+						params = 'action=update_views_ajax&token=<?php echo wp_create_nonce('wpp-token') ?>&wpp_id=<?php echo $this->current_post_id; ?>';
 						// Set request method and target URL
 						xhr.open( "POST", url, true );
 						// Set request header
@@ -1775,7 +1768,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 
 			// No posts to show
 			if ( !is_array($mostpopular) || empty($mostpopular) ) {
-				return "<p>".__('Sorry. No data so far.', $this->plugin_slug)."</p>";
+				return "<p class=\"wpp-no-data\">".__('Sorry. No data so far.', $this->plugin_slug)."</p>";
 			}
 
 			// Allow WP themers / coders access to raw data
@@ -2067,7 +2060,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 							$size = null;
 
 							foreach ( $this->default_thumbnail_sizes as $name => $attr ) :
-								if ( $attr['width'] == $tbWidth && $attr['height'] == $tbHeight ) {
+								if ( $attr['width'] == $tbWidth && $attr['height'] == $tbHeight && $attr['crop'] == $crop ) {
 									$size = $name;
 									break;
 								}
