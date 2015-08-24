@@ -13,6 +13,18 @@
 *
 * //TODO: create better documentation
 *
+*When adding a new field type, you must follow the following steps:
+*1) Add the option under id=fieldtype
+*2) Go to the javascript file and add it to : function fieldTypeCheck(selectedValue) 
+    Also add to: function fieldTypeEdit(elem)
+*3) Add logic in Workflow::loadWorkflowEntry() function
+*4) Go to the javascript file and update: function preview()  -  this is used for building the form
+*
+*
+*
+*When adding a new property:
+*
+*
 *
 *
 * author: gerald.becker
@@ -25,7 +37,23 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     $workflow = new Workflow();
     echo $workflow->getForm();
 ?>
-
+    <script>
+    /*
+    Prevents the page from exiting without first giving a warning to the user. 
+    */
+    var pageExitOK = false;
+    
+    function clearPageExit() {
+        pageExitOK = true;
+    }
+    window.onbeforeunload = function() {
+        if(!pageExitOK) {
+            return "Are you sure you want to exit without submitting?";
+        }
+        
+    }
+    </script>
+    
     <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();">
         <div class="workflow workflowleft">
             Workflow Name:
@@ -47,7 +75,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Approver Level 1:
         </div>
         <div class="workflow workflowright style-1">
-            <select name="destination">
+            <select name="destination1">
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
@@ -110,6 +138,14 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
+        <div class="workflow workflowleft">
+            Behalf Of Submissions:
+        </div>
+        <div class="workflow workflowright style-1">
+            <input type="checkbox" id="behalfof" name="behalfof">Allow submissions on behalf of someone else.
+        </div>
+        <div class="clear"></div>
+        
         <!--The added fields will populate here-->
         <div id="workflowfields">
             <h3>History</h3>
@@ -134,6 +170,9 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="2">Option</option>
                 <option value="3">Newline</option>
                 <option value="4">Checkbox</option>
+                <option value="5">Autofill Name</option>
+                <option value="6">Autofill Date</option>
+                <option value="7">Date</option>
             </select>
         </div>
         <div class="clear"></div>
@@ -151,6 +190,14 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="workflow workflowright style-1">
             <input type="text" id="workflowsize" name="workflowsize">
+        </div>
+        <div class="clear"></div>
+        
+        <div class="workflow workflowleft">
+            Field Settings:
+        </div>
+        <div class="workflow workflowright style-1">
+            <input type="checkbox" id="requiredfield" name="requiredfield">Required Field<br>
         </div>
         <div class="clear"></div>
         
@@ -197,7 +244,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <button type="button" class="submitbutton" onclick="preview();">Update Preview</button>
         
         <input type="hidden" id="count" name="count" value="0">
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" onclick="clearPageExit();">
     </form>
 <?php
 } else {

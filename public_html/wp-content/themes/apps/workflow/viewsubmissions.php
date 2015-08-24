@@ -15,6 +15,14 @@
 <h1>View Submissions</h1>
 
 <?php
+
+if(isset($_SESSION['ERRMSG'])) {
+    echo '<span style="color:red;font-size:30px;">'.$_SESSION['ERRMSG'].'</span><br>';
+    unset($_SESSION['ERRMSG']);
+}
+
+
+
 global $wpdb;
 
 if(isset($_POST['newuser']) && $_POST['newuser'] != '') {

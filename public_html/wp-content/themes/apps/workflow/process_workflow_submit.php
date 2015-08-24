@@ -30,7 +30,19 @@ if(!isset($_POST["ns"])) {
 
 $loggedInUser = Workflow::loggedInUser();
 if($loggedInUser == '0') {
-    die('You need to log in first.');
+    $_SESSION['ERRMSG'] = 'You need to log in first.';
+    header('location: ?page=viewsubmissions');
+    die();
+}
+
+if(isset($_POST["onbehalf"]) && $_POST["onbehalf"] != '') {
+    $behalfof = $loggedInUser;
+    $loggedInUser = $_POST["onbehalf"];
+    if(Workflow::getUserName($loggedInUser) == ''){
+        $_SESSION['ERRMSG'] = 'User does not exist';
+        header('location: ?page=viewsubmissions');
+        die();
+    }
 }
 
 
@@ -72,7 +84,7 @@ for($i = 0; $i < $numfields; $i++) {
 
 $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
-$obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext);
+$obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof);
 
 header('location: ?page=viewsubmissions');
 ?>

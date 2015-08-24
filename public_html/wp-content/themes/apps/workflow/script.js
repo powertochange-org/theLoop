@@ -10,6 +10,7 @@
 
 var totalCount = 0;
 
+
 function test() {
     alert("HAHA");
 }
@@ -55,7 +56,12 @@ function addField() {
         '</div>' +
         '<div class="clear"></div>' +
         
-        '<div class="workflow workflowleft">Rights:</div>' +
+        '<div class="workflow workflowleft">Field Settings:</div>' +
+        '<div class="workflow workflowright style-1">' +
+            requiredCheck($find("requiredfield").checked) + '<br>' +
+        '</div><div class="clear"></div>' +
+        
+        '<div class="workflow workflowleft">Approval Rights:</div>' +
         '<div class="workflow workflowright style-1">' +
             editableCheck($find("editable").checked) +
             approvalonlyCheck($find("approvalonly").checked) +
@@ -106,6 +112,21 @@ function fieldTypeCheck(selectedValue) {
     } else {
         response += '<option value="4">Checkbox</option>';
     }
+    if(selectedValue == 5) {
+        response += '<option value="5" selected>Autofill Name</option>';
+    } else {
+        response += '<option value="5">Autofill Name</option>';
+    }
+    if(selectedValue == 6) {
+        response += '<option value="6" selected>Autofill Date</option>';
+    } else {
+        response += '<option value="6">Autofill Date</option>';
+    }
+    if(selectedValue == 7) {
+        response += '<option value="7" selected>Date</option>';
+    } else {
+        response += '<option value="7">Date</option>';
+    }
     response += '</select>';
     
     return response;
@@ -142,6 +163,21 @@ function fieldTypeEdit(elem) {
     } else {
         response += '<option value="4">Checkbox</option>';
     }
+    if(selectedValue == 5) {
+        response += '<option value="5" selected>Autofill Name</option>';
+    } else {
+        response += '<option value="5">Autofill Name</option>';
+    }
+    if(selectedValue == 6) {
+        response += '<option value="6" selected>Autofill Date</option>';
+    } else {
+        response += '<option value="6">Autofill Date</option>';
+    }
+    if(selectedValue == 7) {
+        response += '<option value="7" selected>Date</option>';
+    } else {
+        response += '<option value="7">Date</option>';
+    }
     response += '</select>';
     
     $find(elem).innerHTML = response;
@@ -172,6 +208,15 @@ function approvalshowCheck(selectedValue) {
         response += ' checked'; 
     }
     response += ' onchange="toggleCheckbox(this.id);">Displayed on Finished Forms (Approval fields only)?';
+    return response;
+}
+
+function requiredCheck(selectedValue) {
+    var response = '<input type="checkbox" id="requiredfield' + totalCount + '" name="requiredfield' + totalCount + '"';
+    if(selectedValue == true) {
+        response += ' checked'; 
+    }
+    response += ' onchange="toggleCheckbox(this.id);">Required Field';
     return response;
 }
 
@@ -273,7 +318,7 @@ function formValidate() {
     return true;
 }
 
-function saveSubmission(status) {
+function saveSubmission(status, approver) {
     $find("ns").value = status;
     
     if(status == 10) {
@@ -281,19 +326,38 @@ function saveSubmission(status) {
             return;
         }
     } else if(status == 8) {
-        if (confirm("Are you sure you want to cancel this previously denied form?") == false) {
-            return;
+        if(approver == 1) {
+            if (confirm("Are you sure you want to deny this form?") == false) {
+                return;
+            }
+        } else {
+            if (confirm("Are you sure you want to cancel this form submission?") == false) {
+                return;
+            }
         }
     }
     
-    //alert("changed to " + status);
-    document.getElementById('workflowsubmission').submit();
+    if(status == 2 || status == 3 || status == 8 || status == 10) {
+        document.getElementById('workflowsubmission').submit();
+    } else {
+        document.getElementById('formsubmitbutton').click();
+    }
+        
+    //document.getElementById('workflowsubmission').submit();
 }
 
 
 function preview() {
     $find("count").value = totalCount;
     var updateText = '';
+    
+    if($find("behalfof").checked) {
+        updateText += '<div class="workflow workflowlabel">Submit on behalf of Employee Number:</div>' +
+            '<div class="workflow workflowright style-1" style="width:150px;"><input type="text" id="onbehalf" name="onbehalf"'+
+            'placeholder="Emp Num"></div>' +
+            '<div class="clear" style="height: 50px;"></div>';
+    }
+    
     
     for(var i = 0; i < totalCount; i++) {
         //$find("previewform").innerHTML += i + " ";
@@ -339,7 +403,11 @@ function preview() {
             } else if($find("fieldtype"+i).value == 2) { //Option
                 updateText += ' ';
             } else if($find("fieldtype"+i).value == 3) { //Newline
-                updateText += '<div class="clear"></div>';
+                updateText += '<div class="clear" ';
+                if($find("workflowsize"+i).value != "") {
+                    updateText += ' style="height:' + $find("workflowsize"+i).value + 'px;"';
+                }
+                updateText += '></div>';
             } else if($find("fieldtype"+i).value == 4) { //Checkbox
                 if($find("approvalonly"+i).checked) {
                     updateText += '<div class="workflow workflowlabel approval"';
@@ -356,6 +424,61 @@ function preview() {
                 
                 updateText += 'checked';
                 updateText +='>' + $find("workflowlabel"+i).value + '</div>';
+            } else if($find("fieldtype"+i).value ==  5) { //Autofill Name
+                if($find("approvalonly"+i).checked)
+                    updateText += '<div class="workflow workflowright style-1 approval"';
+                else
+                    updateText += '<div class="workflow workflowright style-1"';
+                
+                if($find("workflowsize"+i).value != "") {
+                    updateText += ' style="width:' + $find("workflowsize"+i).value + 'px;"';
+                }
+                
+                updateText += '>';
+                
+                updateText += '<input type="text" placeholder="' + $find("workflowlabel"+i).value + '" value="Current User Name" disabled>';
+                
+                updateText += '</div>';
+            } else if($find("fieldtype"+i).value ==  6) { //Autofill Date
+                if($find("approvalonly"+i).checked)
+                    updateText += '<div class="workflow workflowright style-1 approval"';
+                else
+                    updateText += '<div class="workflow workflowright style-1"';
+                
+                if($find("workflowsize"+i).value != "") {
+                    updateText += ' style="width:' + $find("workflowsize"+i).value + 'px;"';
+                }
+                
+                updateText += '>';
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1;
+                var yyyy = today.getFullYear();
+                if(dd < 10){
+                    dd = '0' + dd
+                } 
+                if(mm < 10) {
+                    mm = '0'+ mm
+                }
+                today = yyyy + '-' + mm + '-' + dd;
+                updateText += '<input type="date"' + ' value="' + today + '" disabled>';
+                
+                updateText += '</div>';
+            } else if($find("fieldtype"+i).value ==  7) { //Date
+                if($find("approvalonly"+i).checked)
+                    updateText += '<div class="workflow workflowright style-1 approval"';
+                else
+                    updateText += '<div class="workflow workflowright style-1"';
+                
+                if($find("workflowsize"+i).value != "") {
+                    updateText += ' style="width:' + $find("workflowsize"+i).value + 'px;"';
+                }
+                
+                updateText += '>';
+                
+                updateText += '<input type="date" placeholder="mm/dd/yyyy">';
+                
+                updateText += '</div>';
             }
         
     }

@@ -10,14 +10,10 @@
 */
 ?>
 
-<div id="main-content">
 
-    <div id="content-workflow">
-        <h1>Form Links</h1>
-        <?php
-        
-        $obj = new Workflow();
-        echo $obj->viewAllWorkflows();
-        ?>
-    </div>
-</div>
+<h1>Form Links</h1>
+<?php
+
+$obj = new Workflow();
+echo $obj->viewAllWorkflows();
+?>
