@@ -1,5 +1,8 @@
 <?php
 
+update_option('siteurl','https://theloop.adv-01d0986.powertochange.local:444');
+update_option('home','https://theloop.adv-01d0986.powertochange.local:444');
+
 //adding menu
 add_theme_support('nav-menus');
 register_nav_menus(array(

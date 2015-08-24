@@ -1,11 +1,12 @@
 # Copyright (C) 2014 Wordpress Popular Posts
 # This file is distributed under the same license as the Wordpress Popular Posts package.
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Wordpress Popular Posts\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wordpress-popular-posts\n"
-"POT-Creation-Date: 2015-04-08 10:20-0430\n"
-"PO-Revision-Date: 2015-04-08 10:20-0430\n"
+"POT-Creation-Date: 2015-06-12 21:35-0430\n"
+"PO-Revision-Date: 2015-04-24 13:30-0430\n"
 "Last-Translator: Héctor Cabrera <hcabrerab@gmail.com>\n"
 "Language-Team: Héctor Cabrera <hcabrerab@gmail.com>\n"
 "Language: en\n"
@@ -13,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.1\n"
 "X-Poedit-KeywordsList: _e;__;__ngettext;__ngettext_noop;_n_noop;_x;_nx;_nx_noop;_ex;"
 "esc_attr__;esc_attr_e;esc_attr_x;esc_html__;esc_html_e;esc_html_x;_c;_nc;_n:1,2\n"
 "X-Poedit-Basepath: .\n"
@@ -244,6 +245,15 @@ msgstr ""
 msgid "WPP Cache Expiry Policy"
 msgstr ""
 
+#: ../views/admin.php:316 ../views/admin.php:344 ../views/form.php:2
+#: ../views/form.php:12 ../views/form.php:24 ../views/form.php:34 ../views/form.php:40
+#: ../views/form.php:43 ../views/form.php:52 ../views/form.php:55 ../views/form.php:63
+#: ../views/form.php:66 ../views/form.php:73 ../views/form.php:101 ../views/form.php:103
+#: ../views/form.php:105 ../views/form.php:107 ../views/form.php:119
+#: ../views/form.php:125
+msgid "What is this?"
+msgstr ""
+
 #: ../views/admin.php:319
 msgid "Never cache"
 msgstr ""
@@ -299,10 +309,10 @@ msgstr ""
 msgid ""
 "By default, WordPress Popular Posts stores in database every single visit your site "
 "receives. For small / medium sites this is generally OK, but on large / high traffic "
-"sites the constant writing to the database may have an impact on performance. With "
-"data sampling, WordPress Popular Posts will store only a subset of your traffic and "
-"report on the tendencies detected in that sample set (for more on <em>data sampling</"
-"em>, please <a href=\"%1$s\" target=\"_blank\">read here</a>)"
+"sites the constant writing to the database may have an impact on performance. With <a "
+"href=\"%1$s\" target=\"_blank\">data sampling</a>, WordPress Popular Posts will store "
+"only a subset of your traffic and report on the tendencies detected in that sample set "
+"(for more, <a href=\"%2$s\" target=\"_blank\">please read here</a>)"
 msgstr ""
 
 #: ../views/admin.php:356
@@ -407,8 +417,9 @@ msgstr ""
 msgid "Text string"
 msgstr ""
 
-#: ../views/admin.php:443
-msgid "Popular Posts"
+#: ../views/admin.php:443 ../views/admin.php:499 ../views/admin.php:506
+#: ../views/admin.php:513
+msgid "None"
 msgstr ""
 
 #: ../views/admin.php:448
@@ -456,10 +467,6 @@ msgstr ""
 msgid ""
 "If set, WordPress Popular Posts will exclude the specified post(s) ID(s) form the "
 "listing."
-msgstr ""
-
-#: ../views/admin.php:499 ../views/admin.php:506 ../views/admin.php:513
-msgid "None"
 msgstr ""
 
 #: ../views/admin.php:504
@@ -575,11 +582,14 @@ msgid "Available Content Tags"
 msgstr ""
 
 #: ../views/admin.php:631
-msgid "displays thumbnail linked to post/page"
+msgid ""
+"displays thumbnail linked to post/page, requires thumbnail_width & thumbnail_height"
 msgstr ""
 
 #: ../views/admin.php:631
-msgid "displays thumbnail image without linking to post/page"
+msgid ""
+"displays thumbnail image without linking to post/page, requires thumbnail_width & "
+"thumbnail_height"
 msgstr ""
 
 #: ../views/admin.php:631
@@ -891,45 +901,37 @@ msgstr ""
 msgid "This version includes the following changes"
 msgstr ""
 
-#: ../views/admin.php:801
+#: ../views/admin.php:802
 msgid "Do you like this plugin?"
 msgstr ""
 
-#: ../views/admin.php:808
+#: ../views/admin.php:809
 msgid ""
 "Each donation motivates me to keep releasing free stuff for the WordPress community!"
 msgstr ""
 
-#: ../views/admin.php:809
+#: ../views/admin.php:810
 #, php-format
 msgid "You can <a href=\"%s\" target=\"_blank\">leave a review</a>, too!"
 msgstr ""
 
-#: ../views/admin.php:813
+#: ../views/admin.php:814
 msgid "Need help?"
 msgstr ""
 
-#: ../views/admin.php:814
+#: ../views/admin.php:815
 #, php-format
 msgid ""
 "Visit <a href=\"%s\" target=\"_blank\">the forum</a> for support, questions and "
 "feedback."
 msgstr ""
 
-#: ../views/admin.php:815
+#: ../views/admin.php:816
 msgid "Let's make this plugin even better!"
 msgstr ""
 
 #: ../views/form.php:2
 msgid "Title"
-msgstr ""
-
-#: ../views/form.php:2 ../views/form.php:12 ../views/form.php:24 ../views/form.php:34
-#: ../views/form.php:40 ../views/form.php:43 ../views/form.php:52 ../views/form.php:55
-#: ../views/form.php:63 ../views/form.php:66 ../views/form.php:73 ../views/form.php:101
-#: ../views/form.php:103 ../views/form.php:105 ../views/form.php:107
-#: ../views/form.php:119 ../views/form.php:125
-msgid "What is this?"
 msgstr ""
 
 #: ../views/form.php:7
@@ -1032,10 +1034,6 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
-#: ../views/form.php:91 ../views/form.php:94
-msgid "px"
-msgstr ""
-
 #: ../views/form.php:93
 msgid "Height"
 msgstr ""
@@ -1108,7 +1106,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1087
+#: ../wordpress-popular-posts.php:1080
 #, php-format
 msgid ""
 "Your PHP installation is too old. WordPress Popular Posts requires at least PHP "
@@ -1116,90 +1114,90 @@ msgid ""
 "to upgrade PHP to %1$s or higher."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1094
+#: ../wordpress-popular-posts.php:1087
 #, php-format
 msgid ""
 "Your WordPress version is too old. WordPress Popular Posts requires at least WordPress "
 "version %1$s to function correctly. Please update your blog via Dashboard &gt; Update."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1119
+#: ../wordpress-popular-posts.php:1112
 #, php-format
 msgid ""
 "<div class=\"error\"><p>%1$s</p><p><i>%2$s</i> has been <strong>deactivated</strong>.</"
 "p></div>"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1179
+#: ../wordpress-popular-posts.php:1172
 msgid "Success! The cache table has been cleared!"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1181
+#: ../wordpress-popular-posts.php:1174
 msgid "Error: cache table does not exist."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1188
+#: ../wordpress-popular-posts.php:1181
 msgid "Success! All data have been cleared!"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1190
+#: ../wordpress-popular-posts.php:1183
 msgid "Error: one or both data tables are missing."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1193 ../wordpress-popular-posts.php:1231
+#: ../wordpress-popular-posts.php:1186 ../wordpress-popular-posts.php:1224
 msgid "Invalid action."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1196 ../wordpress-popular-posts.php:1234
+#: ../wordpress-popular-posts.php:1189 ../wordpress-popular-posts.php:1227
 msgid ""
 "Sorry, you do not have enough permissions to do this. Please contact the site "
 "administrator for support."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1226
+#: ../wordpress-popular-posts.php:1219
 msgid "Success! All files have been deleted!"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1228
+#: ../wordpress-popular-posts.php:1221
 msgid "The thumbnail cache is already empty!"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:1778
+#: ../wordpress-popular-posts.php:1771
 msgid "Sorry. No data so far."
 msgstr ""
 
-#: ../wordpress-popular-posts.php:2305
+#: ../wordpress-popular-posts.php:2298
 #, php-format
 msgid "1 comment"
 msgid_plural "%s comments"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../wordpress-popular-posts.php:2317
+#: ../wordpress-popular-posts.php:2310
 #, php-format
 msgid "1 view per day"
 msgid_plural "%s views per day"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../wordpress-popular-posts.php:2323
+#: ../wordpress-popular-posts.php:2316
 #, php-format
 msgid "1 view"
 msgid_plural "%s views"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../wordpress-popular-posts.php:2346
+#: ../wordpress-popular-posts.php:2339
 #, php-format
 msgid "by %s"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:2352
+#: ../wordpress-popular-posts.php:2345
 #, php-format
 msgid "posted on %s"
 msgstr ""
 
-#: ../wordpress-popular-posts.php:2360
+#: ../wordpress-popular-posts.php:2353
 #, php-format
 msgid "under %s"
 msgstr ""
