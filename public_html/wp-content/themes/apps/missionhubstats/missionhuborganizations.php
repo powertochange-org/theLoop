@@ -230,7 +230,8 @@ function convertLabelToTitle($labelid) {
  ***************************************************************************************************/
 
 function getPersonName($personid) {
-    $person = showEndpoint('people', $personid)[person];
+	$people = showEndpoint('people', $personid);
+    $person = $people[person];
     
     var_dump($person);
     return "$person[first_name] $person[last_name]";
@@ -329,9 +330,9 @@ function getNestedPeopleAtThreshold($orgid, $label) {
         
     foreach ($people as $person) {
         if ($person['image_url'] == NULL) {
-            $result = $result .  '<tr><td></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id'])[0] . '</td></tr>';   
+            $result = $result .  '<tr><td></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id']) . '</td></tr>';   
         } else {
-            $result = $result .  '<tr><td><img src="' . $person['image_url'] . '"></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id'])[0] . '</td></tr>';
+            $result = $result .  '<tr><td><img src="' . $person['image_url'] . '"></td><td>' . $person['first_name'] . '</td><td>' . $person['last_name'] . '</td><td>' . getOrgName($person['org_id']) . '</td></tr>';
         }
     }
     
