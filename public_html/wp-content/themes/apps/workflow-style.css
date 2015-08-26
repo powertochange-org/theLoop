@@ -294,6 +294,16 @@ div.view-submissions-headers {
     text-align: center;
 }
 
+.errormsg {
+    color: red;
+    font-size: 30px;
+}
+
+#emailsettings td {
+    padding: 5px;
+    border: 1px solid black;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;

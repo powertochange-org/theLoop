@@ -84,7 +84,11 @@ for($i = 0; $i < $numfields; $i++) {
 
 $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
-$obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof);
+
+$obj->sendEmail($sbid);
+
+
 
 header('location: ?page=viewsubmissions');
 ?>

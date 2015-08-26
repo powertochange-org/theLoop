@@ -80,12 +80,12 @@ function parseUserValuesInput(){
 	global $current_user_id, $wpdb, $allowance_constant;
 	dump($_POST);
 	if (isset($_POST['print']) and $_POST['print'] == 'true'){
-		$completemessage = '<form action="?page=workflowentry&wfid=38" method="post" id="allowanceform">'; //Allowance test #1 = 15 #2 = 38
+		$completemessage = '<form action="?page=workflowentry&wfid=43" method="post" id="allowanceform">'; //Allowance test #1 = 15 #2 = 38 #3 = 43
 		//echo '<form action="?page=workflowentry&wfid=15" method="post" id="allowanceform">';
 		$response = '<div style="font-family:Arial;">';
 		
 		$response .= '<h2>Allowance Calculator</h2>';
-		$response .= 'Effective Date: '.(($_POST['effective'] == "") ? '_____________' : $_POST['effective']);
+		//$response .= 'Effective Date: '.(($_POST['effective'] == "") ? '_____________' : $_POST['effective']);
 		
 		$response .= '<br><br>';
 		
@@ -183,20 +183,20 @@ function parseUserValuesInput(){
 		
 		$response .= '<tr>';
 		$response .= '<td>Recommended Minimum:</td>';
-		$response .= '<td>'.$_POST['minimum'].'</td>';
-		$response .= '<td>'.$_POST['minimum_month'].'</td>';
+		$response .= '<td style="padding: 0 10px;">'.$_POST['minimum'].'</td>';
+		$response .= '<td style="padding: 0 10px;">'.$_POST['minimum_month'].'</td>';
 		$response .= '</tr>';
 		
 		$response .= '<tr>';
 		$response .= '<td>Staff Member\'s Personal Maximum:</td>';
-		$response .= '<td>'.$_POST['maximum'].'</td>';
-		$response .= '<td>'.$_POST['maximum_month'].'</td>';
+		$response .= '<td style="padding: 0 10px;">'.$_POST['maximum'].'</td>';
+		$response .= '<td style="padding: 0 10px;">'.$_POST['maximum_month'].'</td>';
 		$response .= '</tr></table>';
 		
 		$lineDrop = 4;
 		$response .= '<br>';
 		$response .= '<hr>';
-		$response .= 'Change in Allowance or Hours';
+		/*$response .= 'Change in Allowance or Hours';
 		$response .= '<br>';
 		
 		if ($_POST['preAllowance'] == ""){

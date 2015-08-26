@@ -58,11 +58,14 @@ session_start();
                     }
                     switch ($site) //load the specified site, or the dashboard by default
                     {
-                        case "uh":
-                            include 'workflow/uh.php';
+                        case "email":
+                            include 'workflow/email.php';
                             break;
-                        case "add_role":
-                            include 'workflow/add_role.php';
+                        case "emailpolicy":
+                            include 'workflow/emailpolicy.php';
+                            break;
+                        case "edit_roles":
+                            include 'workflow/edit_roles.php';
                             break;
                         case "add_workflow":
                             include 'workflow/add_workflow.php';
@@ -96,7 +99,7 @@ session_start();
                             break;
                         default:
                             //include 'staffdirectory/approval.php';
-                            include "workflow/index.php";
+                            include "workflow/viewsubmissions.php";
                     }
                 ?>
                 </div></div>
