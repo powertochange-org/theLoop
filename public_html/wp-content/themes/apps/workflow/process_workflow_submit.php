@@ -86,7 +86,7 @@ $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
 $sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof);
 
-$obj->sendEmail($sbid);
+//$obj->sendEmail($sbid); //TODO : Enable this to send emails
 
 
 

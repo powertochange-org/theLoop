@@ -886,30 +886,30 @@ class Workflow {
             $response .= '<h3>Submitting to: '.Workflow::getNextRoleName($submittingStatus, $submittingApproval, $id).'</h3>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'"><button type="button">Save Form</button></a>';
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'"><button type="button">Save Form</button></a>';//http://local.theloop.com
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Delete Form</button></a>';
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Submit Form</button></a>';
             } else if($configuration == 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'">
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'">
                     <button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Approve</button></a>';
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Request Change</button></a>';
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Not Approved</button></a>';
             } else if($configuration == 0) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Retract Submission</button></a>';
             }
@@ -1153,7 +1153,7 @@ class Workflow {
                     AND workflowformstatus.STATUS != '10') ";
         
         //        WHERE workflowformstatus.USER = '$userid'
-        $sql .= "ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED";
+        $sql .= "ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED, workflowform.NAME";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
@@ -1282,27 +1282,27 @@ class Workflow {
             }
         }
         
+        if($status == 4) {
         $template = '
-        <body style="font-family: sans-serif; color:black;">
-            <h2>You have an approval waiting for a response!</h2>
-            <p><b>'.Workflow::getUserName($userid).'</b> has submitted the form <b>'.$formName.'</b></p>
-            <p>To approve or deny this form, visit this link: 
-            <a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
-        <h3>Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
-                $status, $approvalStatus, 1, 0, 1).
-        '<br></body>';
-        
-        
-        $templateFinished = '
-        <body style="font-family: sans-serif; color:black;">
-            <h2>You have a form that has been reviewed!</h2>
-            <p><b>Form: <b>'.$formName.'</b></p>
-            <p>To view this form, visit this link: 
-            <a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
-        <h3>Email List</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
-                $status, $approvalStatus, 0, 0, 1).
-        '<br></body>';
-        
+            <body style="font-family: sans-serif; color:black;">
+                <h2>You have an approval waiting for a response!</h2>
+                <p><b>'.Workflow::getUserName($userid).'</b> has submitted the form <b>'.$formName.'</b></p>
+                <p>To approve or deny this form, visit this link: 
+                <a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
+            <h3>Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
+                    $status, $approvalStatus, 1, 0, 1).
+            '<br></body>';
+        } else {
+            $templateFinished = '
+            <body style="font-family: sans-serif; color:black;">
+                <h2>You have a form that has been reviewed!</h2>
+                <p><b>Form: <b>'.$formName.'</b></p>
+                <p>To view this form, visit this link: 
+                <a href="https://devstaff.powertochange.org/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
+            <h3>Email List</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
+                    $status, $approvalStatus, 0, 0, 1).
+            '<br></body>';
+        }
         
         
         
@@ -1339,7 +1339,7 @@ class Workflow {
                 
                                         
                 $mail->Body = $body;
-
+                echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
                 $mail->Send();
             }
         }
@@ -1579,7 +1579,7 @@ class Workflow {
     }
     
     public function getNextRoleName($currentLevel, $hasAnotherApproval, $formID) {
-        echo 'DEBUG: has approval: '.$hasAnotherApproval.' level:'.$currentLevel. ' form:'.$formID;
+        //echo 'DEBUG: has approval: '.$hasAnotherApproval.' level:'.$currentLevel. ' form:'.$formID;
         if(!$hasAnotherApproval)
             return 'Form Complete.';
         global $wpdb;

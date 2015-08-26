@@ -43,13 +43,13 @@ session_start();
     
                     <div id="content-workflow">
                 <?php 
-                    include('workflow/menu.php');
-                    
                     //Log user in to Workflow
                     if(!(isset($_SESSION['activeuser']) && $_SESSION['activeuser'] != '')) {
                         Workflow::logInUser(); //performs login
                         echo 'Now logged in through CAS system. USER ID: '.$_SESSION['activeuser'].' : '.$_SESSION['activeusername'].'<br>';
                     }
+                    
+                    include('workflow/menu.php');
                     
                     if(isset($_GET['page'])){ //check if the page has been specified
                         $site = $_GET['page']; //grab from the URL which page we're looking for
