@@ -4,7 +4,7 @@
     if($admin) { ?>
     <a href="?page=index">New Workflow</a>
     <?php } ?>
-    <a href="?page=view">View Workflow</a>
+    <a href="?page=view">Workflow Form Links</a>
     <!--<a href="?page=debugstartworkflow&wfid=">Debug Start Workflow</a>-->
     <!--<a href="?page=startworkflow&wfid=">Edit Workflow</a>-->
     <!--<a href="?page=workflowentry&wfid=13">Workflow Entry</a>-->

@@ -98,7 +98,7 @@ class Workflow {
     /**
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof) {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -144,6 +144,14 @@ class Workflow {
         
         $directApprover = Workflow::getDirectApprover($user);
         
+        if($sup) {
+            //echo 'DEBUG: You are trying to get a supervisors supervisor for : '.$directApprover.'<br>';
+             $temp = Workflow::getDirectApprover($directApprover); //Gets the supervisors supervisor
+             if($temp != 0)
+                $directApprover = $temp;
+            //echo 'DEBUG: You got: '.$directApprover.'<br>';
+            //die();
+        }
         date_default_timezone_set('America/Los_Angeles');
         $newApprovalStatus = 1;
         
@@ -345,7 +353,7 @@ class Workflow {
         /*$_GET       = array_map('stripslashes_deep', $_GET);
         $_COOKIE    = array_map('stripslashes_deep', $_COOKIE);
         $_REQUEST   = array_map('stripslashes_deep', $_REQUEST);*/
-        $configSuccess = $approver = 0;
+        $configSuccess = $approver = $supNext = 0;
         $configMsg = '';
         
         if(Workflow::loggedInUser() == '0') {
@@ -395,16 +403,25 @@ class Workflow {
             $hasAnotherApproval = 0;
             if($approvalStatus == 1) {
                 $currentApprovalRole = $row['APPROVER_ROLE'];
-                if($row['APPROVER_ROLE2'] != '')
+                if($row['APPROVER_ROLE2'] != '') {
                     $hasAnotherApproval = 1;
+                    if($row['APPROVER_ROLE2'] == 8)
+                        $supNext = 1;
+                }
             } else if($approvalStatus == 2) {
                 $currentApprovalRole = $row['APPROVER_ROLE2'];
-                if($row['APPROVER_ROLE3'] != '')
+                if($row['APPROVER_ROLE3'] != '') {
                     $hasAnotherApproval = 1;
+                    if($row['APPROVER_ROLE3'] == 8)
+                        $supNext = 1;
+                }
             } else if($approvalStatus == 3) {
                 $currentApprovalRole = $row['APPROVER_ROLE3'];
-                if($row['APPROVER_ROLE4'] != '')
+                if($row['APPROVER_ROLE4'] != '') {
                     $hasAnotherApproval = 1;
+                    if($row['APPROVER_ROLE4'] == 8)
+                        $supNext = 1;
+                }
             } else if($approvalStatus == 4) {
                 $currentApprovalRole = $row['APPROVER_ROLE4'];
             } else if($approvalStatus == 100) {
@@ -459,13 +476,15 @@ class Workflow {
             $submittedby = $loggedInUser;
             $hasAnotherApproval = 1;
             $approvalStatus = 0;
+            
+            $supNext = 1;
         }
         
         
         //TODO Authorize the person that is trying to access this function or page.
         //echo 'DEBUG: Workflow status: '.$configvalue.'<br>';
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
-            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0);
+            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext);
     }
     /**
     
@@ -481,7 +500,7 @@ class Workflow {
     *10) Cancelled 
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
-        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode) {
+        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext) {
         global $wpdb;
         $response = '';
         
@@ -579,8 +598,15 @@ class Workflow {
         
         if($behalfofShow && $configuration == 1) {//on behalf of someone else
             $response .= '<div class="workflow workflowlabel">Submit on behalf of Employee Number:</div>';
-            $response .= '<div class="workflow workflowright style-1" style="width:150px;"><input type="text" id="onbehalf" name="onbehalf"
-                         placeholder="Emp Num"></div>';
+            $response .= '<div class="workflow workflowright style-1" style="width:250px;">';
+            //<input type="text" id="onbehalf" name="onbehalf" placeholder="Emp Num"></div>';
+            
+            $response .= '<select id="onbehalf" name="onbehalf"><option></option>';
+            $values = Workflow::getAllUsers();
+            for($i = 0; $i < count($values); $i++) {
+                $response .= '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }
+            $response .= '</select></div>';
             $response .= '<div class="clear" style="height: 50px;"></div>';
         }
         
@@ -613,21 +639,22 @@ class Workflow {
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
                     if($configuration == 4 && $appLvlAccess || $approval_show) {
-                        $response .= '<div class="workflow workflowlabel approval" ';
+                        $response .= '<div class="workflow workflowlabel approval mobile ';
                     } else {
                         continue;
                     }
                 } else {
-                    $response .= '<div class="workflow workflowlabel" ';
+                    $response .= '<div class="workflow workflowlabel mobile ';
                 }
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= 'style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= 'style="';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
                 
                 if($emailMode) {
-                    $response .= ' float: left; margin-right:10px;font-weight:bold;';
+                    $response .= 'float: left; margin-right:10px;font-weight:bold;';
                 }
                 
                 $response .= '">'.$row['LABEL'].'</div>';
@@ -635,16 +662,19 @@ class Workflow {
             } else if($row['TYPE'] == 0) { //Textbox
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
-                        $response .= '<div class="workflow workflowright style-1 approval"';
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
                     else
                         continue;
                 else
-                    $response .= '<div class="workflow workflowright style-1"';
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= ' style="';
+                    //$response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
+                    
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
@@ -685,18 +715,19 @@ class Workflow {
             } else if($row['TYPE'] == 4) { //Checkbox
                 if($row['APPROVAL_ONLY'] == 1) {
                     if($configuration == 4 && $appLvlAccess || $approval_show) {
-                        $response .= '<div class="workflow workflowlabel approval"';
+                        $response .= '<div class="workflow workflowlabel approval mobile ';
                             
                     } else 
                         continue;
                 } else {
-                    $response .= '<div class="workflow workflowlabel"';
+                    $response .= '<div class="workflow workflowlabel mobile ';
                 }
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= ' style="';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
@@ -721,16 +752,17 @@ class Workflow {
             } else if($row['TYPE'] == 5) { //Autofill Name
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
-                        $response .= '<div class="workflow workflowright style-1 approval"';
+                        $response .= '<div class="workflow workflowright style-1 approval ';
                     else
                         continue;
                 else
-                    $response .= '<div class="workflow workflowright style-1"';
+                    $response .= '<div class="workflow workflowright style-1 ';
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= ' style="';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
@@ -759,16 +791,17 @@ class Workflow {
             } else if($row['TYPE'] == 6) { //Autofill Date
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
-                        $response .= '<div class="workflow workflowright style-1 approval"';
+                        $response .= '<div class="workflow workflowright style-1 approval ';
                     else
                         continue;
                 else
-                    $response .= '<div class="workflow workflowright style-1"';
+                    $response .= '<div class="workflow workflowright style-1 ';
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= ' style="';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
@@ -787,16 +820,17 @@ class Workflow {
             } else if($row['TYPE'] == 7) { //Date
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
-                        $response .= '<div class="workflow workflowright style-1 approval"';
+                        $response .= '<div class="workflow workflowright style-1 approval ';
                     else
                         continue;
                 else
-                    $response .= '<div class="workflow workflowright style-1"';
+                    $response .= '<div class="workflow workflowright style-1 ';
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    $response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
-                } else 
-                    $response .= ' style="';
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
@@ -806,7 +840,10 @@ class Workflow {
                 
                 if($editableField) {
                     $response .= '<input type="date" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
-                        '" placeholder="mm/dd/yyyy" value="'.date("Y-m-d", strtotime($fieldvalue)).'"';
+                        '" placeholder="mm/dd/yyyy" value="';
+                    if($fieldvalue != '')
+                        $response .= date("Y-m-d", strtotime($fieldvalue));
+                    $response .= '"';
                     if($emailMode) {
                         $response .= ' disabled';
                     }
@@ -841,7 +878,10 @@ class Workflow {
                 $submittingApproval = $hasAnotherApproval;
             }
             $response .= '<h3>Submitting to: '.Workflow::getNextRoleName($submittingStatus, $submittingApproval, $id).'</h3>';
-            
+            if($supNext)
+                $response .= '<input type="radio" name="nextsupervisor" value="0" checked>Direct
+                    <input type="radio" name="nextsupervisor" value="1">Next Supervisor';
+            $response .= '<div class="clear"></div>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
             $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
             $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
@@ -1607,6 +1647,75 @@ class Workflow {
         return $response;
     }
     
+    public function getAllUsers() {
+        global $wpdb;
+        $values = array();
+        
+        $sql = "SELECT employee_number, CONCAT(first_name, ' ', last_name) AS FULLNAME
+                FROM employee
+                ORDER BY FULLNAME ASC";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        foreach($result as $row) {
+            $values[] = array($row['employee_number'], $row['FULLNAME']);
+        }
+        
+        return $values;
+    }
+    
+    private function fieldWidth($size) {
+        if($size <= 25)
+            return 'field1to25';
+        else if($size <= 50)
+            return 'field26to50';
+        else if($size <= 75)
+            return 'field51to75';
+        else if($size <= 100)
+            return 'field76to100';
+        else if($size <= 125)
+            return 'field101to125';
+        else if($size <= 150)
+            return 'field126to150';
+        else if($size <= 175)
+            return 'field151to175';
+        else if($size <= 200)
+            return 'field176to200';
+        else if($size <= 225)
+            return 'field201to225';
+        else if($size <= 250)
+            return 'field226to250';
+        else if($size <= 275)
+            return 'field251to275';
+        else if($size <= 300)
+            return 'field276to300';
+        else if($size <= 325)
+            return 'field301to325';
+        else if($size <= 350)
+            return 'field326to350';
+        else if($size <= 375)
+            return 'field351to375';
+        else if($size <= 400)
+            return 'field376to400';
+        else if($size <= 425)
+            return 'field401to425';
+        else if($size <= 450)
+            return 'field426to450';
+        else if($size <= 475)
+            return 'field451to475';
+        else if($size <= 500)
+            return 'field476to500';
+        else if($size <= 525)
+            return 'field501to525';
+        else if($size <= 550)
+            return 'field526to550';
+        else if($size <= 575)
+            return 'field551to575';
+        else if($size <= 600)
+            return 'field576to600';
+        
+        return '';
+    }
 }
     
     

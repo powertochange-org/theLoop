@@ -25,7 +25,6 @@
 * author: gerald.becker
 *
 */
-include_once('workflow/config.php');
 function __autoload($class_name) {
     include_once('workflow/inc/class.' . $class_name . '.inc.php');
 }

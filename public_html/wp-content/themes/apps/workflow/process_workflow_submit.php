@@ -53,6 +53,7 @@ $newstatus = $_POST["ns"];
 $fields = array();
 $misc_content = '';
 $commenttext = '';
+$sup = 0;
 
 //echo 'The total count is: '.$_POST['count'].' and the new status is :'.$newstatus.'<br>';
 
@@ -63,6 +64,11 @@ if(isset($_POST['misc_content']) && $_POST['misc_content'] != '') {
 if(isset($_POST['commenttext']) && $_POST['commenttext'] != '') {
     $commenttext = stripslashes($_POST['commenttext']);
 } 
+
+if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
+    $sup = $_POST['nextsupervisor'];
+} 
+
 
 
 //echo '<br>';
@@ -84,7 +90,7 @@ for($i = 0; $i < $numfields; $i++) {
 
 $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup);
 
 //$obj->sendEmail($sbid); //TODO : Enable this to send emails
 

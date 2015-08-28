@@ -59,6 +59,7 @@ div.workflowleft {
 div.workflowright {
     width: 400px;
     height: 40px;
+    margin-right: 2px;
     /*font-size: 18px; TODO
     font-family: sans-serif; TODO*/ 
     /*border: 1px solid orange;*/
@@ -304,6 +305,102 @@ div.view-submissions-headers {
     border: 1px solid black;
 }
 
+div.field1to25 {
+    width: 25px;
+}
+
+div.field26to50 {
+    width: 50px;
+}
+
+div.field51to75 {
+    width: 75px;
+}
+
+div.field76to100 {
+    width: 100px;
+}
+
+div.field101to125 {
+    width: 125px;
+}
+
+div.field126to150 {
+    width: 150px;
+}
+
+div.field151to175 {
+    width: 175px;
+}
+
+div.field176to200 {
+    width: 200px;
+}
+
+div.field201to225 {
+    width: 225px;
+}
+
+div.field226to250 {
+    width: 250px;
+}
+
+div.field251to275 {
+    width: 275px;
+}
+
+div.field276to300 {
+    width: 300px;
+}
+
+div.field301to325 {
+    width: 325px;
+}
+
+div.field326to350 {
+    width: 350px;
+}
+
+div.field351to375 {
+    width: 375px;
+}
+
+div.field376to400 {
+    width: 400px;
+}
+
+div.field401to425 {
+    width: 425px;
+}
+
+div.field426to450 {
+    width: 450px;
+}
+
+div.field451to475 {
+    width: 475px;
+}
+
+div.field476to500 {
+    width: 500px;
+}
+
+div.field501to525 {
+    width: 525px;
+}
+
+div.field526to550 {
+    width: 550px;
+}
+
+div.field551to575 {
+    width: 575px;
+}
+
+div.field576to600 {
+    width: 600px;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;
@@ -322,6 +419,11 @@ div.view-submissions-headers {
     }
 
     div.workflowright {
+        width: 96%;
+        padding: 0 2%;
+    }
+    
+    div.mobile {
         width: 96%;
         padding: 0 2%;
     }
@@ -359,6 +461,10 @@ div.view-submissions-headers {
         width: 100%;
         height: 75px;
         margin: 5px 10px 5px 0;
+    }
+    
+    #workflowhistory {
+        width: 96%;
     }
     
 }

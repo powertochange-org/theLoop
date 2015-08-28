@@ -60,7 +60,13 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Member Employee #:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="text" name="addmembername" id="addmembername">
+            <!--<input type="text" name="addmembername" id="addmembername">-->
+            <select id="addmembername" name="addmembername"><option></option>';
+            <?php $values = Workflow::getAllUsers();
+            for($i = 0; $i < count($values); $i++) {
+                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }?>
+            </select>
         </div>
         <div class="clear"></div>
         
