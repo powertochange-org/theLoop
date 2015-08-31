@@ -1,3 +1,7 @@
+= 10.20.8 =
+
+* WP 4.3 bug fix
+
 = 10.20.7 =
 
 * uninstall bug fix
