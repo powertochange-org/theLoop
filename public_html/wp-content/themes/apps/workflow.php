@@ -66,6 +66,9 @@ session_start();
                         case "edit_roles":
                             include 'workflow/edit_roles.php';
                             break;
+                        case "edit_forms":
+                            include 'workflow/edit_forms.php';
+                            break;
                         case "add_workflow":
                             include 'workflow/add_workflow.php';
                             break;
@@ -90,11 +93,14 @@ session_start();
                         case "roles":
                             include 'workflow/roles.php';
                             break;
-                        case "index":
-                            include "workflow/index.php";
+                        case "createworkflow":
+                            include "workflow/createworkflow.php";
                             break;
                         case "allowance-calculator-export":
                             include 'workflow/allowance-calculator-export.php';
+                            break;
+                        case "search":
+                            include 'workflow/search.php';
                             break;
                         default:
                             //include 'staffdirectory/approval.php';

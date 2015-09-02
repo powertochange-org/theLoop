@@ -1,11 +1,14 @@
 
+<h2>Preview of Current Form</h2>
 <div id="previewform">
-    <h2>Preview of Current Form</h2>
 </div>
 <div style="clear:both;"></div>
+
 <hr>
 
-<h1>Create New Workflow Form</h1>
+<button type="button" class="submitbutton" style="width: 200px;height:35px;" onclick="scrollDown();">Scroll Down</button>
+<div style="clear:both;"></div>
+<h1>Create New Form</h1><br>
 <?php
 /*
 *Creates a new workflow form.
@@ -14,10 +17,10 @@
 * //TODO: create better documentation
 *
 *When adding a new field type, you must follow the following steps:
-*1) Add the option under id=fieldtype
-*2) Go to the javascript file and add it to : function fieldTypeCheck(selectedValue) 
-    Also add to: function fieldTypeEdit(elem)
-*3) Add logic in Workflow::loadWorkflowEntry() function
+*1) Add the option under id=fieldtype on this page
+*2) Go to the javascript file and add it to : function fieldTypeContent(selectedValue) 
+        [hint: just copy the same format as the other field types. Don't worry it will make sense.]
+*3) Add logic in Workflow::loadWorkflowEntry() function - this is how it will be displayed when the form is opened
 *4) Go to the javascript file and update: function preview()  -  this is used for building the form
 *
 *
@@ -56,20 +59,20 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     
     <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();">
         <div class="workflow workflowleft">
-            Workflow Name:
+            Form Name:
         </div>
         <div class="workflow workflowright style-1">
             <input type="text" name="workflowname" id="workflowname">
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <!--<div class="workflow workflowleft">
             Access to Start:
         </div>
         <div class="workflow workflowright style-1">
             <input type="text" name="startaccess">
         </div>
-        <div class="clear"></div>
+        <div class="clear"></div>-->
         
         <div class="workflow workflowleft">
             Approver Level 1:
@@ -148,7 +151,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         
         <!--The added fields will populate here-->
         <div id="workflowfields">
-            <h3>History</h3>
+            <h3 style="text-align: center;">History</h3>
         </div>
         <!--<div id="debugworkflowfields">
             <h3>Debug History</h3>
@@ -159,39 +162,45 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <!--Field Addition Template-->
+        <!--Field Addition Template
+            Add various types of fields here.-->
         <div class="workflow workflowleft">
             Field type:
         </div>
         <div class="workflow workflowright style-1">
-            <select id="fieldtype" name="fieldtype" form="addnewworkflow">
-                <option value="0">Textbox</option>
-                <option value="1">Label</option>
-                <option value="2">Option</option>
-                <option value="3">Newline</option>
-                <option value="4">Checkbox</option>
+            <select id="fieldtype" name="fieldtype" form="addnewworkflow" onchange="updateWorkflowCreation(this.id);">
+                <option value="10">Heading</option>
+                <option value="1">Instruction Text</option>
+                <option value="0">Entry Box Input</option>
+                <option value="4">Checkbox Input</option>
+                <option value="7">Date Input</option>
+                <option value="8">Ask a Question</option>
+                <option value="3">Create a Newline</option>
+                <option value="9">Header Row</option>
                 <option value="5">Autofill Name</option>
                 <option value="6">Autofill Date</option>
-                <option value="7">Date</option>
+                <option value="2">Option</option>
             </select>
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
-            Value:
+        <div id="workflowdetails">
+            <div class="workflow workflowleft">
+                Value:
+            </div>
+            <div class="workflow workflowright style-1">
+                <input type="text" id="workflowlabel" name="workflowlabel">
+            </div>
+            <div class="clear"></div>
+            
+            <div class="workflow workflowleft hide">
+                Field Size:
+            </div>
+            <div class="workflow workflowright style-1 hide">
+                <input type="text" id="workflowsize" name="workflowsize">
+            </div>
+            <div class="clear"></div>
         </div>
-        <div class="workflow workflowright style-1">
-            <input type="text" id="workflowlabel" name="workflowlabel">
-        </div>
-        <div class="clear"></div>
-        
-        <div class="workflow workflowleft">
-            Field Size:
-        </div>
-        <div class="workflow workflowright style-1">
-            <input type="text" id="workflowsize" name="workflowsize">
-        </div>
-        <div class="clear"></div>
         
         <div class="workflow workflowleft">
             Field Settings:
@@ -205,12 +214,12 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Approval Rights:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="checkbox" id="editable" name="editable">Editable on approval screen?<br>
-            <input type="checkbox" id="approvalonly" name="approvalonly">Approval screen field?
+            <input type="checkbox" id="editable" name="editable">Can this field be modified during approval steps?<br>
+            <!--<input type="checkbox" id="approvalonly" name="approvalonly">Approval screen field?-->
             
         </div>
         <div class="clear"></div>
-        <br>
+        <!--<br>-->
         <div class="workflow workflowleft">
             Approval Level:
         </div>
@@ -233,18 +242,16 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowboth" style="margin-top: 20px;">
+        <div class="workflow workflowboth" style="margin: 20px 0 45px 0;">
             <button type="button" class="buttoncustom" onclick="addField();">Add Field</button>
-            
+            <button type="button" class="submitbutton" style="width: 99%;height:35px;" onclick="preview();">Update Preview</button>
         </div>
         <div class="clear"></div>
         
         
-        
-        <button type="button" class="submitbutton" onclick="preview();">Update Preview</button>
-        
         <input type="hidden" id="count" name="count" value="0">
-        <input type="submit" value="Submit" onclick="clearPageExit();">
+        <div class="clear"></div>
+        <input type="submit" value="Create Form" onclick="clearPageExit();">
     </form>
 <?php
 } else {

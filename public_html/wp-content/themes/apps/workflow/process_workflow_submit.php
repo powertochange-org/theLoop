@@ -38,13 +38,14 @@ if($loggedInUser == '0') {
 if(isset($_POST["onbehalf"]) && $_POST["onbehalf"] != '') {
     $behalfof = $loggedInUser;
     $loggedInUser = $_POST["onbehalf"];
-    if(Workflow::getUserName($loggedInUser) == ''){
+    if(Workflow::getUserName($loggedInUser) == '') {
         $_SESSION['ERRMSG'] = 'User does not exist';
         header('location: ?page=viewsubmissions');
         die();
     }
 }
 
+//TODO: Add more security to make sure that the submission is from the correct person.
 
 $numfields = $_POST['count'];
 $wfid = $_POST["wfid"];

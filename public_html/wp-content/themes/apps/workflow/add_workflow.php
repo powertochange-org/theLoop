@@ -11,6 +11,7 @@
 *
 */
 
+
 if(!isset($_POST['workflowname']) || $_POST['workflowname'] == '') {
     die("workflowname field missing");
 }
@@ -55,7 +56,7 @@ for($i = 0; $i < $numfields; $i++) {
     else
         $editable = 0;
     
-    if(isset($_POST['approvalonly'.$i]) && $_POST['approvalonly'.$i] == 'on')
+    if($_POST['approvallevel'.$i] != 0)//if(isset($_POST['approvalonly'.$i]) && $_POST['approvalonly'.$i] == 'on')
         $approvalonly = 1;
     else
         $approvalonly = 0;
@@ -70,8 +71,17 @@ for($i = 0; $i < $numfields; $i++) {
     else
         $requiredfield = 0;
     
-    $myWorkflow->addField($_POST['fieldtype'.$i], $_POST['workflowlabel'.$i], $editable, $approvalonly, $approvalshow, 
-        $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield);
+    if(isset($_POST['workflowtypecheck'.$i]) && $_POST['workflowtypecheck'.$i] == 8) {
+        $myWorkflow->addField(1, $_POST['workflowlabela'.$i], $editable, $approvalonly, $approvalshow, 
+            $_POST['workflowsizea'.$i], $_POST['approvallevel'.$i], $requiredfield);
+        $myWorkflow->addField(0, $_POST['workflowlabelb'.$i], $editable, $approvalonly, $approvalshow, 
+            $_POST['workflowsizeb'.$i], $_POST['approvallevel'.$i], $requiredfield);
+    } else {
+        $myWorkflow->addField($_POST['fieldtype'.$i], $_POST['workflowlabel'.$i], $editable, $approvalonly, $approvalshow, 
+            $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield);
+    }
+    
+    
 }
 
 $myWorkflow->storeToDatabase();

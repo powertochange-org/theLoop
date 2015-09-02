@@ -81,7 +81,7 @@ div.workflowlabel {
 }
 
 #workflowfields {
-    width: 600px;
+    width: 660px;
     background-color: #f6f9ca;
 }
 
@@ -119,6 +119,11 @@ div.clear {
     border-radius: none;
 }
 
+#content-workflow .inputfix input[type="text"] {
+    display: initial;
+    height: 40px;
+}
+
 #content-workflow input[type="text"]:focus {
     outline: none;
 }
@@ -144,6 +149,11 @@ div.clear {
     /*appearance: none;*/
     box-shadow: none;
     border-radius: none;
+}
+
+#content-workflow .inputfix input[type="date"] {
+    display: initial;
+    height: 40px;
 }
 
 #content-workflow input[type="date"]:focus {
@@ -183,6 +193,15 @@ input[type="submit"] {
     box-shadow: 0 0 5px 1px #969696;
 }
 
+input[type="reset"] {
+    display: block;
+    margin: 20px 0;
+    /*width: 99%;*/
+    font-family: sans-serif;
+    font-size: 18px;
+    box-shadow: 0 0 5px 1px #969696;
+}
+
 button.buttoncustom {
     display: block;
     background-color: #8fff89;
@@ -196,7 +215,7 @@ button.buttoncustom {
 
 button.savebutton {
     display: block;
-    background-color: #8fff89;
+    background-color: #e8e8e8;
     margin: 20px 10px 20px 0;
     width: 200px;
     font-family: sans-serif;
@@ -207,7 +226,7 @@ button.savebutton {
 
 button.deletebutton {
     display: block;
-    background-color: #ff8989;
+    background-color: #F58220;
     margin: 20px 10px 20px 0;
     /*width: 200px;*/
     min-width: 200px;
@@ -219,7 +238,7 @@ button.deletebutton {
 
 button.submitbutton {
     display: block;
-    background-color: #51abff;
+    background-color: #0079C1;
     margin: 20px 10px 20px 0;
     width: 200px;
     font-family: sans-serif;
@@ -247,6 +266,13 @@ p.reviewing {
     background-color: #51abff;
     text-align: center;
     margin: 0;
+}
+
+p.status {
+    font-size: 24px;
+    margin: 0;
+    padding: 10px 0 0 0;
+    
 }
 
 p.comments-section {
@@ -295,6 +321,10 @@ div.view-submissions-headers {
     text-align: center;
 }
 
+td.center {
+    text-align: center;
+}
+
 .errormsg {
     color: red;
     font-size: 30px;
@@ -303,6 +333,19 @@ div.view-submissions-headers {
 #emailsettings td {
     padding: 5px;
     border: 1px solid black;
+}
+
+#submissionsearchbar {
+    background-color: #EEEEEE;
+    margin: 10px auto;
+}
+
+#submissionsearchbar tr {
+    padding: 0 100px;
+}
+
+div.hide {
+    display: none;
 }
 
 div.field1to25 {
