@@ -133,6 +133,10 @@ function updateThresholdDetails($orgid, $people, $label) {
     }
 }
 
+/****************************************************************************************************
+ * Interaction Details
+ ***************************************************************************************************/
+
 function updateInteractionDetails($orgid, $person) {
     global $orgdb;
     $format = array(
@@ -173,6 +177,11 @@ function updateInteractionDetails($orgid, $person) {
         }
     }    
 }
+
+/****************************************************************************************************
+ * Originally this was going to be used as an argument for an array_map, but that didn't work.
+ * It still helps readability though...
+ ***************************************************************************************************/
 
 function updateInteractionHelper($interaction) {
     if ($interaction['interaction_type_id'] == 4) {

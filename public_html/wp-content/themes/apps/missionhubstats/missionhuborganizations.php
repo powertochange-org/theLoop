@@ -103,7 +103,7 @@ function getListOfOrgNames() {
  * int ordid: The ID of the organization for which we want to get the name.
  *
  * Returns:
- * array names: An array with the desired name in it.  TODO: see about returning it not in an array.
+ * string name: The desired organization name.
  ***************************************************************************************************/
 
 function getOrgName($orgid) {
@@ -114,7 +114,7 @@ function getOrgName($orgid) {
         ),
         ARRAY_N
     );
-    return $name[0];
+    return $name[0][0];
 }
 
 /****************************************************************************************************
@@ -363,19 +363,21 @@ function createDecisionReport() {
     $tableheaders = "<tr>
                         <th>Organization</th>
                         <th>Receiver</th>
-                        <th>Initiatior</th>
+                        <th>Initiatiors</th>
                         <th>Date</th>
                         <th>Story</th>
                     <tr>";
     
     $tablerows = "";
+    
     foreach($people as $person) {
-        $tablerows = $tablerows . "<tr><td>" . $person[org_id] . "</td><td>" . $person[receiver_id] . "</td><td>" . $person[initiator_ids] . "<td></td>$person[date]</td><td>$person[story]</td></tr>";
+        $date = strtotime($person['date']);
+        $tablerows = $tablerows . "<tr><td>" . getOrgName($person[org_id]) . "</td><td>" . $person[receiver_name] . "</td><td>" . $person[initiator_names] . "</td><td>" . date("M d Y", $date). "</td><td>" . $person[story]. "</td></tr>";
     }
     
     $response = "<table>$tableheaders$tablerows</table>";
     
-    return "Sorry! This service is currently unavailable."; //This is here so it doesn't show a broken table.
+    return $response;
     
 }
 
@@ -443,7 +445,7 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
         $childthresholds = array();
         array_pad($childthresholds, sizeof($labels), 0);
         $arrayindex = 0;
-        $childrenrows = $childrenrows . "<tr><td>" . $childname[0] ."</td>";
+        $childrenrows = $childrenrows . "<tr><td>" . $childname ."</td>";
         foreach ($labels as $label) {
             $count = getCountAtThreshold($child[0], $label);
             $childthresholds[$arrayindex] = $count;

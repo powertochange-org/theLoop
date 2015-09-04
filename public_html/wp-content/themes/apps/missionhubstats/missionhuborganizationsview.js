@@ -30,6 +30,9 @@ function showDropdowns(selection) {
         } else if (selection == "decision") {
             $("#daterange").slideUp();
             $("#organizations").slideUp();
+        } else {
+            $("#daterange").slideUp();
+            $("#organizations").slideUp();
         }
     });
 }

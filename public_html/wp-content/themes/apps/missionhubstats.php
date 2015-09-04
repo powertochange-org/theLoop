@@ -34,15 +34,7 @@
                     ?> 
 					};
 					</script>
-                    <div id="report-nav">
-                        <ul>
-                            <li><a href="?report=missionhub">MissionHub</a></li>
-                            <li><a href="?report=pat">PAT</a></li>
-                            <li><a href="?report=eventbrite">EventBrite</a></li>
-                            <li><a href="?report=theloop">The Loop</a></li>
-                            <li><a href="?report=admin">Admin</a></li>
-                        </ul>
-                    </div>
+                    
                     <div id="filter"></div>
                     <div id="report-content">
                     <?php
@@ -51,32 +43,33 @@
                     } else {
                         $report = "";
                     }
-                    switch($report) {
-                        case "missionhub":  
-                            include "missionhubstats/missionhuborganizationsview.php";
-                            break;
-                        case "pat":
-                            include "missionhubstats/missionhubpat.php";
-                            break;
-                        case "eventbrite":
-                            include "missionhubstats/missionhubeventbrite.php";
-                            break;
-                        case "theloop":
-                            include "missionhubstats/missionhubtheloop.php";
-                            break;
-                        case "admin":
-                            include "missionhubstats/missionhubadmin.php";
-                            break;
-                        case "reporttype":
-                            include "missionhubstats/missionhubreporttypeview.php";
-                            break;
-                        case "people":
-                            include "missionhubstats/missionhubpeople.php";
-                            break;
-                        default:
-                            echo "Select a report button on the left to get started";
-                            break;
-                    }
+//                    switch($report) {
+//                        case "missionhub":  
+//                            include "missionhubstats/missionhuborganizationsview.php";
+//                            break;
+//                        case "pat":
+//                            include "missionhubstats/missionhubpat.php";
+//                            break;
+//                        case "eventbrite":
+//                            include "missionhubstats/missionhubeventbrite.php";
+//                            break;
+//                        case "theloop":
+//                            include "missionhubstats/missionhubtheloop.php";
+//                            break;
+//                        case "admin":
+//                            include "missionhubstats/missionhubadmin.php";
+//                            break;
+//                        case "reporttype":
+//                            include "missionhubstats/missionhubreporttypeview.php";
+//                            break;
+//                        case "people":
+//                            include "missionhubstats/missionhubpeople.php";
+//                            break;
+//                        default:
+//                            echo "Select a report button on the left to get started";
+//                            break;
+//                    }
+                    include "missionhubstats/missionhuborganizationsview.php";
 
                     ?>
                     </div>
