@@ -46,55 +46,57 @@ $organizations = getIndexOfEndpoint('organizations');
 
 //Iterate through all the objects returned from the curl request and put them into an associative array to pass to the database.
 foreach($organizations['organizations'] as $organization) {
-//    $admins = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'admins'));
-//    $users = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'users'));
-//    $total = getIndexOfEndpoint('people', 'interactions', $organization['id']);
-//    foreach($total['people'] as $person) {
-//        if ($person['interactions'] != NULL) {
-//            updateInteractionDetails($organization['id'], $person);
-//        }
-//    }
-//    $t1 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14121));
-//    updateThresholdDetails($organization['id'], $t1['people'], 14121);
-//    $t2 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14122));
-//    updateThresholdDetails($organization['id'], $t2['people'], 14122);
-//    $t3 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels '=> 14123));
-//    updateThresholdDetails($organization['id'], $t3['people'], 14123);
-//    $t4 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14124));
-//    updateThresholdDetails($organization['id'], $t4['people'], 14124);
-//    $t5 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14125));
-//    updateThresholdDetails($organization['id'], $t5['people'], 14125);
-//    $d1 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14126));
-//    updateThresholdDetails($organization['id'], $d1['people'], 14126);
-//    $d2 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14127));
-//    updateThresholdDetails($organization['id'], $d2['people'], 14127);
-//    $d3 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14128));
-//    updateThresholdDetails($organization['id'], $d3['people'], 14128);
-//    $orgarray = array(
-//        'id' => $organization['id'],
-//        'parent_id' => (int) substr(strrchr($organization['ancestry'], '/'), 1),
-//        'name' => $organization['name'],
-//        't1' => sizeof($t1['people']),
-//        't2' => sizeof($t2['people']),
-//        't3' => sizeof($t3['people']),
-//        't4' => sizeof($t4['people']),
-//        't5' => sizeof($t5['people']),
-//        'd1' => sizeof($d1['people']),
-//        'd2' => sizeof($d2['people']),
-//        'd3' => sizeof($d3['people']),
-//        'exposures' => sizeof($total['people']) - (sizeof($admins['people']) + sizeof($users['people'])),
-//        'admins' => sizeof($admins['people']),
-//        'users' => sizeof($users['people'])
-//    );
-//    $result = $orgdb->replace('mh_org_tree', $orgarray, $format);
-//	if ($result) {
-//		echo "Successfully updated $organization[name]\r\n";
-//	} else {
-//		echo "Problem updating $organization[name]\r\n";
-//	}
+    $admins = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'admins'));
+    $users = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'users'));
+    $total = getIndexOfEndpoint('people', 'interactions', $organization['id']);
+    if ($total['people'] != NULL) {
+        foreach($total['people'] as $person) {
+            if ($person['interactions'] != NULL) {
+                updateInteractionDetails($organization['id'], $person);
+            }
+        }
+    }
+    $t1 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14121));
+    updateThresholdDetails($organization['id'], $t1['people'], 14121);
+    $t2 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14122));
+    updateThresholdDetails($organization['id'], $t2['people'], 14122);
+    $t3 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels '=> 14123));
+    updateThresholdDetails($organization['id'], $t3['people'], 14123);
+    $t4 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14124));
+    updateThresholdDetails($organization['id'], $t4['people'], 14124);
+    $t5 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14125));
+    updateThresholdDetails($organization['id'], $t5['people'], 14125);
+    $d1 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14126));
+    updateThresholdDetails($organization['id'], $d1['people'], 14126);
+    $d2 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14127));
+    updateThresholdDetails($organization['id'], $d2['people'], 14127);
+    $d3 = getIndexOfEndpoint('people', 'interactions,organizational_labels', $organization['id'], '', '', '', array('labels' => 14128));
+    updateThresholdDetails($organization['id'], $d3['people'], 14128);
+    $orgarray = array(
+        'id' => $organization['id'],
+        'parent_id' => (int) substr(strrchr($organization['ancestry'], '/'), 1),
+        'name' => $organization['name'],
+        't1' => sizeof($t1['people']),
+        't2' => sizeof($t2['people']),
+        't3' => sizeof($t3['people']),
+        't4' => sizeof($t4['people']),
+        't5' => sizeof($t5['people']),
+        'd1' => sizeof($d1['people']),
+        'd2' => sizeof($d2['people']),
+        'd3' => sizeof($d3['people']),
+        'exposures' => sizeof($total['people']) - (sizeof($admins['people']) + sizeof($users['people'])),
+        'admins' => sizeof($admins['people']),
+        'users' => sizeof($users['people'])
+    );
+    $result = $orgdb->replace('mh_org_tree', $orgarray, $format);
+	if ($result) {
+		echo "Successfully updated $organization[name]\r\n";
+	} else {
+		echo "Problem updating $organization[name]\r\n";
+	}
 }
 
-updateInteractionDetails(8411, showEndpoint('people', 251594, 'interactions'));
+
 
 /****************************************************************************************************
  * Threshold Details
@@ -142,69 +144,37 @@ function updateInteractionDetails($orgid, $person) {
         '%s' //story
     );
     
+//    var_dump($person['person']['interactions']);
+    
     foreach($person['interactions'] as $i) {
         $interaction = updateInteractionHelper($i);
         $initiatornames = "";
-        if ($interaction != NULL) {
+        if ($interaction != NULL && $person['id'] == $interaction['receiver_id']) {
             $people = getIndexOfEndpoint('people', '', $orgid);
-            foreach($people['people'] as $person) {
-                if (in_array($person['id'], $interaction['initiator_ids'])) {
-                    $initiatornames = $initiatornames . $person['first_name'] . " " . $person['last_name']. " ";
+            foreach($people['people'] as $p) {
+                if (in_array($p['id'], $interaction['initiator_ids'])) {
+                    $initiatornames = $initiatornames . $p['first_name'] . " " . $p['last_name']. " ";
                 }
             }
+            $interactionarray = array(
+                'receiver_id' => $interaction['receiver_id'],
+                'receiver_name' => $person['first_name'] . " " . $person['last_name'],
+                'initiator_names' => $initiatornames,
+                'org_id' => $orgid,
+                'date' => $interaction['timestamp'],
+                'story' => $interaction['comment']
+            );
+            $result = $orgdb->replace('mh_interactions_details', $interactionarray, $format);
+            if ($result) {
+                echo "Successfully updated $interaction[receiver_id] interaction.\n";
+            } else {
+                echo $orgdb->error->get_error_message() . "\n";
+            }
         }
-        $interactionarray = array(
-            'receiver_id' => $interaction['receiver_id'],
-            'receiver_name' => $person['first_name'] . " " . $person['last_name'],
-            'initiator_names' => $initiatornames,
-            'org_id' => $orgid,
-            'date' => $interaction['timestamp'],
-            'story' => $interaction['comment']);
-    }
-    $result = $orgdb->replace('mh_interactions_details', $interactionarray, $format);
-    if ($result) {
-        echo "Successfully updated $interaction[receiver_id] interaction.\n";
-    } else {
-        echo $orgdb->error->get_error_message() . "\n";
-    }
-    
-//    foreach($person['interactions'] as $interaction) {
-//        if ($interaction['interaction_type_id'] == 4) {
-//            //This section is ugly.  I don't recommend looking at it.
-//            $initiatornames = "";
-//            echo "\nReceiver is " . $person['first_name'];
-//            $people = getIndexOfEndpoint('people', '', $orgid);
-//            foreach($interaction['initiator_ids'] as $initiator) {
-//                echo $initiator;
-//                foreach($people['people'] as $person) {
-//                    echo "\nDoes $initiator match $person[id]?\n";
-//                    if ($person['id'] == $initiator) {
-//                        $initiatornames = $initiatornames . $person['first_name'] . " " . $person['last_name'] . " ";
-//                    }
-//                }
-//            }
-//            //The ugly bit is over now...not that the rest is amazing but it's not as bad.
-//            $interactionarray = array(
-//                'receiver_id' => $interaction['receiver_id'],
-//                'receiver_name' => $person['first_name'] . " " . $person['last_name'],
-//                'initiator_names' => $initiatornames,
-//                'org_id' => $interaction['organization_id'],
-//                'date' => $interaction['timestamp'],
-//                'story' => $interaction['comment']
-//            );
-//            $result = $orgdb->replace('mh_interactions_details', $interactionarray, $format);
-//            if ($result) {
-//                echo "Successfully updated $interaction[receiver_id] interaction.\n";
-//            } else {
-//                echo $orgdb->error->get_error_message() . "\n";
-//            }
-//        }
-//    }
-    
+    }    
 }
 
 function updateInteractionHelper($interaction) {
-    echo "\n $interaction[interaction_type_id]";
     if ($interaction['interaction_type_id'] == 4) {
         return $interaction;
     }
