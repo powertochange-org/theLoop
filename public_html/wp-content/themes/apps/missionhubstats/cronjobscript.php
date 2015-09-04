@@ -148,8 +148,6 @@ function updateInteractionDetails($orgid, $person) {
         '%s' //story
     );
     
-//    var_dump($person['person']['interactions']);
-    
     foreach($person['interactions'] as $i) {
         $interaction = updateInteractionHelper($i);
         $initiatornames = "";
