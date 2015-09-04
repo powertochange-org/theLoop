@@ -25,10 +25,17 @@ function changeDefaultVal(elem) {
     find(elem).defaultValue = find(elem).value;
 }
 
+function fixQuotes(text) {
+    text = text.split('"').join('&quot;');
+    text = text.split('<').join('&lt;');
+    text = text.split('>').join('&gt;');
+    return text;
+}
+
 function addField() {
     var text = '';
     
-    text += 
+    text += '<div id="fieldwrap' + totalCount + '"><div id="field' + totalCount + '">' +
         '<div class="workflow workflowleft">Field type:</div>' +
         '<div class="workflow workflowright style-1">' +
             fieldTypeLoad(find("fieldtype").value) +
@@ -38,7 +45,7 @@ function addField() {
         '<div id="workflowdetails' + totalCount + '">';
         
     if(find("fieldtype").value != '8') {
-        text += workflowDetailsFix(totalCount, find("fieldtype").value, find("workflowlabel").value, find("workflowsize").value, '', '', 1);
+        text += workflowDetailsFix(totalCount, find("fieldtype").value, fixQuotes(find("workflowlabel").value), find("workflowsize").value, '', '', 1);
     } else if(find("fieldtype").value == '8') {
         text += workflowDetailsFix(totalCount, find("fieldtype").value, find("workflowlabela").value, find("workflowsizea").value, 
             find("workflowlabelb").value, find("workflowsizeb").value, 1);
@@ -63,8 +70,14 @@ function addField() {
         '<div class="workflow workflowleft">Display Settings:</div>' +
         '<div class="workflow workflowright style-1">' +
             approvalshowCheck(find("approvalshow").checked) +
-            '<br></div><div class="clear"></div>' + 
-        '<div class="workflow workflowboth" style="margin-top: 20px;"><hr></div><div class="clear"></div>';
+            '<br></div><div class="clear"></div></div>' + 
+            '<br><div class="workflow workflowleft">Position:</div>' + 
+            '<div class="workflow workflowright style-1">' + 
+            '<button type="button" style="width: 100px;" onclick="swap('+totalCount+', 1);">Move Up</button>&nbsp;' + 
+            '<button type="button" style="width: 100px;" onclick="swap('+totalCount+', 0);">Move Down</button>&nbsp;' +
+            '<button type="button" style="width: 100px;" onclick="removeField('+totalCount+');">Remove</button></div>' + 
+            '<div class="clear"></div>' + 
+        '<div class="workflow workflowboth" style="margin-top: 0px;"><hr style="border-width:4px;"></div><div class="clear"></div></div>';
     
     find("workflowfields").innerHTML += text;
     
@@ -281,6 +294,8 @@ function toggleCheckbox(elem) {
 function formValidate() {
     if(find("workflowname").value == "") {
         find("workflowname").className = "error";
+        pageExitOK = false;
+        window.scrollTo(0, 0);
         return false;
     } else {
         find("workflowname").className = "";
@@ -555,7 +570,7 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         }
         text += '">' +
                 '<input type="text" id="workflowlabel' + id + '" name="workflowlabel' + id + 
-                '" ';
+                '" maxlength="500" ';
         if(history == 1) {
             text += 'onchange="changeDefaultVal(this.id);" value="' + label + '"';
         }
@@ -580,7 +595,7 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         text += 
             '<div class="workflow workflowleft">Question:</div>' +
             '<div class="workflow workflowright style-1"><input type="hidden" name="workflowtypecheck'+ id +'" value="8">' +
-                '<input type="text" id="workflowlabela' + id + '" name="workflowlabela' + id + '" ';
+                '<input type="text" id="workflowlabela' + id + '" name="workflowlabela' + id + '" maxlength="500" ';
         if(history == 1) {
             text += 'onchange="changeDefaultVal(this.id);" value="' + label + '"';
         }
@@ -596,7 +611,7 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         
         '<div class="workflow workflowleft">Entry box Hint:</div>' +
         '<div class="workflow workflowright style-1">' +
-            '<input type="text" id="workflowlabelb' + id + '" name="workflowlabelb' + id + '" ';
+            '<input type="text" id="workflowlabelb' + id + '" name="workflowlabelb' + id + '" maxlength="500" ';
         if(history == 1) {
             text += 'onchange="changeDefaultVal(this.id);" value="' + labelb + '"';
         }
@@ -679,4 +694,78 @@ function clearSearch() {
 
 function scrollDown() {
     window.scrollTo(0,document.body.scrollHeight);
+}
+
+
+function swap(id, moveup) {
+    var exists = 0;
+    var fieldToSwap = -1;
+    if(moveup) {
+        if(find("field" + (id - 1)) != null) {
+            exists = 1;
+            fieldToSwap = id - 1;
+        }
+    } else {
+        if(find("field" + (id + 1)) != null) {
+            exists = 1;
+            fieldToSwap = id + 1;
+        }
+    }
+    
+    if(fieldToSwap == -1) {
+        //alert("Can't swap.");
+        return;
+    } 
+    //alert("Swapping field: " + id + " with field: " + fieldToSwap);
+    
+    
+    var field1 = find("field" + id).innerHTML;
+    var field2 = find("field" + fieldToSwap).innerHTML;
+    
+    find("field" + fieldToSwap).innerHTML = swapConversion(field1, id, fieldToSwap);
+    find("field" + id).innerHTML = swapConversion(field2, fieldToSwap, id);
+    
+    //alert('done');
+    
+    
+    
+}
+
+function swapConversion(text, oldID, newID) {
+    text = text.split("fieldtype" + oldID).join("fieldtype" + newID);
+    text = text.split("workflowlabel" + oldID).join("workflowlabel" + newID);
+    text = text.split("workflowsize" + oldID).join("workflowsize" + newID);
+    text = text.split("requiredfield" + oldID).join("requiredfield" + newID);
+    text = text.split("editable" + oldID).join("editable" + newID);
+    text = text.split("approvallevel" + oldID).join("approvallevel" + newID);
+    text = text.split("approvalshow" + oldID).join("approvalshow" + newID);
+    
+    text = text.split("workflowlabela" + oldID).join("workflowlabela" + newID);
+    text = text.split("workflowsizea" + oldID).join("workflowsizea" + newID);
+    text = text.split("workflowlabelb" + oldID).join("workflowlabelb" + newID);
+    text = text.split("workflowsizeb" + oldID).join("workflowsizeb" + newID);
+    text = text.split("workflowtypecheck" + oldID).join("workflowtypecheck" + newID);
+    
+    return text;
+}
+
+function removeField(id) {
+    
+    for(var i = id; i < totalCount - 1; i++) {
+        swap(i, 0);
+    }
+    
+    document.getElementById("fieldwrap"+(totalCount - 1)).remove();
+    totalCount--;
+}
+
+function processWorkflow(status) {
+    
+    find("submitmode").value = status;
+    if(status == 1 || status == 2) {
+        find("savedData").defaultValue = find("workflowfields").innerHTML;
+    }
+    
+    
+    document.getElementById('formsubmitbutton').click();
 }

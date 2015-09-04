@@ -38,7 +38,37 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     
 
     $workflow = new Workflow();
-    echo $workflow->getForm();
+    //echo $workflow->getForm();
+    
+    
+    
+    if(isset($_GET['wfid']) && $_GET['wfid'] != '') {
+        $wfid = $_GET['wfid'];
+        
+        global $wpdb;
+        
+        $sql = "SELECT *
+                FROM workflowform
+                WHERE FORMID = '$wfid'";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        
+        if(count($result) != 0) {
+            $formname = $result[0]['NAME'];
+            $approver1 = $result[0]['APPROVER_ROLE'];
+            $approver2 = $result[0]['APPROVER_ROLE2'];
+            $approver3 = $result[0]['APPROVER_ROLE3'];
+            $approver4 = $result[0]['APPROVER_ROLE4'];
+            $behalfof = $result[0]['BEHALFOF_SHOW'];
+            $savedfields = $result[0]['SAVED_FIELDS'];
+            $numfields = $result[0]['NUM_FIELDS'];
+            $draft = $result[0]['DRAFT'];
+        }
+        
+    }
+    
+    
+    
 ?>
     <script>
     /*
@@ -62,7 +92,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Form Name:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="text" name="workflowname" id="workflowname">
+            <input type="text" name="workflowname" id="workflowname" value="<?php echo $formname;?>">
         </div>
         <div class="clear"></div>
         
@@ -82,7 +112,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
-                    echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+                    echo '<option value="'.$values[$i][0].'" ';
+                    if($values[$i][0] == $approver1)
+                        echo 'selected';
+                    echo '>'.$values[$i][1].'</option>';
                 }
                 ?>
             </select>
@@ -99,7 +132,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
-                    echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+                    echo '<option value="'.$values[$i][0].'"';
+                    if($values[$i][0] == $approver2)
+                        echo 'selected';
+                    echo '>'.$values[$i][1].'</option>';
                 }
                 ?>
             </select>
@@ -116,7 +152,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
-                    echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+                    echo '<option value="'.$values[$i][0].'"';
+                    if($values[$i][0] == $approver3)
+                        echo 'selected';
+                    echo '>'.$values[$i][1].'</option>';
                 }
                 ?>
             </select>
@@ -133,7 +172,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
-                    echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+                    echo '<option value="'.$values[$i][0].'"';
+                    if($values[$i][0] == $approver4)
+                        echo 'selected';
+                    echo '>'.$values[$i][1].'</option>';
                 }
                 ?>
             </select>
@@ -145,13 +187,15 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Behalf Of Submissions:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="checkbox" id="behalfof" name="behalfof">Allow submissions on behalf of someone else.
+            <input type="checkbox" id="behalfof" name="behalfof" <?php if($behalfof)echo 'checked';?>>Allow submissions on behalf of someone else.
         </div>
         <div class="clear"></div>
         
         <!--The added fields will populate here-->
         <div id="workflowfields">
+            <?php if(!$draft) {?>
             <h3 style="text-align: center;">History</h3>
+            <?php } else { echo $savedfields;}?>
         </div>
         <!--<div id="debugworkflowfields">
             <h3>Debug History</h3>
@@ -189,7 +233,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 Value:
             </div>
             <div class="workflow workflowright style-1">
-                <input type="text" id="workflowlabel" name="workflowlabel">
+                <input type="text" id="workflowlabel" name="workflowlabel" maxlength="500">
             </div>
             <div class="clear"></div>
             
@@ -249,12 +293,24 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <div class="clear"></div>
         
         
-        <input type="hidden" id="count" name="count" value="0">
-        <div class="clear"></div>
-        <input type="submit" value="Create Form" onclick="clearPageExit();">
+        <input type="hidden" id="count" name="count" value="<?php if($draft)echo $numfields;else echo '0';?>">
+        <input type="hidden" id="submitmode" name="submitmode" value="3">
+        <input type="hidden" id="savedData" name="savedData" value="">
+        <input type="hidden" id="previousID" name="previousID" value="<?php echo $wfid?>">
+        <div class="clear" style="height:40px;"></div>
+        <input type="submit" id="formsubmitbutton" value="Create Form" onclick="clearPageExit();" style="display: none;">
+        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '4'; else echo '3';?>);">Create Form</button>
+        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '2'; else echo '1';?>);">Save Form</button>
+        <br><br>
     </form>
 <?php
 } else {
     echo('<br>You do you not have access to create new workflows.');
 }
 ?>
+
+<script>
+//alert(find("count").value);
+totalCount = find("count").value;
+//alert('TOTALCOUNT IS: ' + totalCount);
+</script>
