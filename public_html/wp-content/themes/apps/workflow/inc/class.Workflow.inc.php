@@ -27,7 +27,11 @@ class Workflow {
     private $approvers;
     private $behalfof;
     private $fields; 
-    
+    private $draft;
+    private $savedData;
+    private $numFields;
+    private $mode;
+    private $previousID;
     
     public function __construct() {
     }
@@ -36,12 +40,21 @@ class Workflow {
         
     }
     
-    public function createWorkflow($name, $startAccess, $approver, $approver2, $approver3, $approver4, $behalfof) {
+    public function createWorkflow($name, $startAccess, $approver, $approver2, $approver3, $approver4, $behalfof, 
+                                    $draft, $savedData, $numFields, $mode, $previousID) {
+        
         $this->name = $name;
         $this->startAccess = $startAccess;
         $this->approvers = array($approver, $approver2, $approver3, $approver4);
         $this->behalfof = $behalfof;
         $this->fields = array();
+        
+        $this->draft = $draft;
+        $this->savedData = str_replace("'", "\'", str_replace("\\", "\\\\", $savedData));;
+        $this->numFields = $numFields;
+        $this->mode = $mode;
+        $this->previousID = $previousID;
+        
     }
     
     public function addField($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield) {
@@ -50,33 +63,104 @@ class Workflow {
         $this->fields[] = array($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield);
     }
     
-    /**
+    /*
         Stores the new workflow layout.
     */
     public function storeToDatabase() {
         global $wpdb;
-        
-        $sql = "INSERT INTO workflowform (NAME, APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, BEHALFOF_SHOW)
-                VALUES ('$this->name', '".$this->approvers['0']."'";
-        
-        for($i = 1; $i < count($this->approvers); $i++) {
-            if($this->approvers[$i] != -1) {
+        if($this->draft)
+            echo '<br>DRAFT MODE ON<br>';
+        if($this->mode == 1 || $this->mode == 3) {
+            $sql = "INSERT INTO workflowform (NAME, APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, BEHALFOF_SHOW,
+                                                DRAFT, SAVED_FIELDS, NUM_FIELDS, ENABLED)
+                    VALUES ('$this->name', '".$this->approvers['0']."'";
+            
+            for($i = 1; $i < count($this->approvers); $i++) {
+                if($this->approvers[$i] != -1) {
+                    $sql .= ", '".$this->approvers[$i]."'";
+                } else {
+                    $sql .= ", NULL";
+                }
+            }
+            
+            $sql .= ", '".$this->behalfof."', ";
+            
+            $sql .= "'".$this->draft."', ";
+            if($this->draft)
+                $sql .= "'".$this->savedData."', ";
+            else
+                $sql .= "NULL, ";
+            if($this->draft)
+                $sql .= "'".$this->numFields."', ";
+            else
+                $sql .= "NULL, ";
+            
+            $sql .= "'".(!$this->draft)."')";
+        } else if($this->mode == 2 || $this->mode == 4) {
+            $sql = "UPDATE workflowform 
+                    SET NAME = '".$this->name."', 
+                        APPROVER_ROLE = '".$this->approvers['0']."', ";
+                        
+            /*if($this->approvers[$i] != -1) {
                 $sql .= ", '".$this->approvers[$i]."'";
             } else {
                 $sql .= ", NULL";
+            } */
+            
+            for($i = 1; $i < count($this->approvers); $i++) {
+                $sql .= "APPROVER_ROLE".($i + 1)." = ";
+                if($this->approvers[$i] != -1) {
+                    $sql .= "'".$this->approvers[$i]."', ";
+                } else {
+                    $sql .= "NULL, ";
+                }
             }
+            $sql .= "   BEHALFOF_SHOW = '".$this->behalfof."',
+                        DRAFT = '".$this->draft."', 
+                        SAVED_FIELDS = ";
+                        
+            if($this->draft)
+                $sql .= "'".$this->savedData."', ";
+            else
+                $sql .= "NULL, ";
+            
+            $sql .= "NUM_FIELDS = ";
+            
+            if($this->draft)
+                $sql .= "'".$this->numFields."', ";
+            else
+                $sql .= "NULL, ";
+                       
+            $sql .= "ENABLED = '".(!$this->draft)."' ";
+            
+            $sql .= "WHERE FORMID = '".$this->previousID."'";
+            
+            
+            
+            
         }
         
-        $sql .= ", '".$this->behalfof."')";
+        
+        //die(htmlspecialchars($sql));
         
         
         $result = $wpdb->query($sql, ARRAY_A);
-        $inserted_id = $wpdb->insert_id;
+        
+        if($this->mode == 1 || $this->mode == 3) {
+            $inserted_id = $wpdb->insert_id;
+        } else {
+            $inserted_id = $this->previousID;
+        }
         
         if(!$result) {
-            header("location: ?page=index");
-        } 
+            die('failed to update<br>'.htmlspecialchars($sql));
+        }
         
+        if($this->mode == 1 || $this->mode == 2) {
+            header("location: ?page=view");
+            die();
+        } 
+        //die('SUCCESS!!!<br>'.htmlspecialchars($sql));
         //echo '<br>Inserted the ID: '.$inserted_id.'<br>';
         
         //Store fields into WorkflowDetails
@@ -101,7 +185,7 @@ class Workflow {
         }
     }
     
-    /**
+    /*
     Updates the database with the user submissions.
     */
     public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup) {
@@ -270,7 +354,7 @@ class Workflow {
         return $submissionID;
     }
     
-    /**
+    /*
     Loads a workflow.
     */
     public function loadWorkflowID() {
@@ -352,7 +436,7 @@ class Workflow {
         return 'DEBUG: You attempted to load ID: '.$id.' : '.$response;
     }
     
-    /**
+    /*
     Decides which layout should be displayed.
     */
     public function configureWorkflow() {
@@ -1151,7 +1235,8 @@ class Workflow {
         $response = '';
         
         $sql = "SELECT *
-                FROM workflowform";
+                FROM workflowform
+                ORDER BY DRAFT, NAME";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         $response .= '<form id="toggleactiveform" action="?page=edit_forms" method="POST" autocomplete="off">';
@@ -1161,15 +1246,30 @@ class Workflow {
             /*$response .= '<b>'.$row['NAME'].'</b> Link:<a href="?page=startworkflow&wfid='.$row['FORMID'].
                 '">localhost/testing/workflow/startworkflow.php?wfid='.$row['FORMID'].'</a> ::: <a href="?page=debugstartworkflow&wfid='.$row['FORMID'].
                 '">DEBUG</a> ::: <a href="?page=workflowentry&wfid='.$row['FORMID'].'">Create New Entry</a><br>';*/
-            $response .= '<tr><td><b>'.$row['NAME'].'</b></td><td><a href="?page=workflowentry&wfid='.$row['FORMID'].'">
-                /forms-information/workflow/?page=workflowentry&wfid='.$row['FORMID'].'</a></td><td class="center">';
+            $response .= '<tr><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
             
+            if($row['DRAFT'])
+                $response .= 'createworkflow';
+            else
+                $response .= 'workflowentry';
             
-            $response .= '<input type="hidden" id="FORM'.$row['FORMID'].'" name="FORM'.$row['FORMID'].'" value="0">
-                <input type="checkbox" id="FORM'.$row['FORMID'].'" name="FORM'.$row['FORMID'].'" ';
-            if($row['ENABLED'])
-                $response .= 'checked';
-            $response .= '></td></tr>';
+            $response .= '&wfid='.$row['FORMID'].'">';
+            
+            if(!$row['DRAFT'])
+                $response .= '/forms-information/workflow/?page=workflowentry&wfid='.$row['FORMID'];
+            else
+                $response .= 'EDIT FORM '.$row['NAME'];
+            $response .= '</a></td><td class="center">';
+            
+            if(!$row['DRAFT']) {
+                $response .= '<input type="hidden" id="FORM'.$row['FORMID'].'" name="FORM'.$row['FORMID'].'" value="0">
+                    <input type="checkbox" id="FORM'.$row['FORMID'].'" name="FORM'.$row['FORMID'].'" ';
+                if($row['ENABLED'])
+                    $response .= 'checked';
+                $response .= '>';
+            } else 
+                $response .= 'DRAFT';
+            $response .= '</td></tr>';
         }
         $response .= '<tr><td colspan=3><input type="submit" value="Save"></td></tr>';
         $response .= '</table></form>';
