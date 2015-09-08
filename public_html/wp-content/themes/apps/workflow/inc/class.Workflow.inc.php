@@ -535,9 +535,9 @@ class Workflow {
             
             //$approver = 1;
             if($configvalue == 4 && $approver) {
-                echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
+                //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
-                echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
+                //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
                 $configvalue = 9;
             } else if($submittedby != $loggedInUser) {
                 echo 'You do not have access to view this form.<br>';
@@ -698,7 +698,7 @@ class Workflow {
         $response .='<hr>';
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode)
-            $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" >';
+            $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();">';
         
         //Display the misc content
         if($misc_content != '') {
@@ -758,7 +758,7 @@ class Workflow {
             
             //Determines whether the field will be an approval field and if it is an editable field.
             $editableField = ($configuration != 4  
-                || ((($row['APPROVAL_ONLY'] == 1 && ($row['APPROVAL_LEVEL'] == $approvalStatus) || $row['APPROVAL_LEVEL'] == 0)
+                || ((($row['APPROVAL_ONLY'] == 1 && ($row['APPROVAL_LEVEL'] == $approvalStatus))
                 || $row['EDITABLE'] == 1) && $configuration == 4));
             
             $approval_show = ($configuration >= 7 && $row['APPROVAL_SHOW']) || $configuration == 9 || 
@@ -766,11 +766,11 @@ class Workflow {
             
             $appLvlAccess = $row['APPROVAL_LEVEL'] <= $approvalStatus;
             
-            
-            //echo 'DEBUG: ID:'.$row['FIELDID'].' | configuration:'.$configuration.' | APPROVAL_SHOW:'.$row['APPROVAL_SHOW'].' | APPROVAL_LEVEL:'.$row['APPROVAL_LEVEL']. ' | approvalStatus:'.$approvalStatus.' | Value:'.$fieldvalue.'<br>';
-            
             if($configuration >= 7 || $configuration == 0)
                 $editableField = 0;
+            
+            // echo 'DEBUG: ID:'.$row['FIELDID'].' | configuration:'.$configuration.' | editable:'.$editableField.' | APPROVAL_SHOW:'.$row['APPROVAL_SHOW'].' | APPROVAL_LEVEL:'.$row['APPROVAL_LEVEL']. ' | approvalStatus:'.$approvalStatus.' | Value:'.$fieldvalue.'<br>';
+            
             
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1085,6 +1085,8 @@ class Workflow {
             $response .= '<h3>Submitting to: '.Workflow::getNextRoleName($submittingStatus, $submittingApproval, $id, ($configuration == 0), 
                 $submissionID).'</h3>';
             
+            $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
+            
             if( 0 < $configuration && $configuration < 4) {
                 $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
@@ -1098,15 +1100,15 @@ class Workflow {
             } else if($configuration == 4) {
                 $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'">
                     <button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
-                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
+                    display: block;font-family: sans-serif;font-size: 18px;margin: 20px 10px 0px 0;
                     min-width: 200px;">Approve</button></a>';
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
-                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
+                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                    display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 0px 0;
                     min-width: 200px;">Request Change</button></a>';
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
-                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
+                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                    display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 20px 0;
                     min-width: 200px;">Not Approved</button></a>';
             } else if($configuration == 0) {
                 $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
@@ -1160,9 +1162,9 @@ class Workflow {
         }
         $response .= '<div class="clear"></div>';
         
-        
+        //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
-            echo '<br>DEBUG: You have chosen the command: '.$_GET['response'];
+            //echo '<br>DEBUG: You have chosen the command: '.$_GET['response'];
             if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus)
                 echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
             else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
@@ -1306,7 +1308,7 @@ class Workflow {
         
         
         $response .= '<table id="view-submissions">';
-        $response .= '<tr><td colspan=3 class="center"><h2>Forms for User</h2></td></tr>';
+        $response .= '<tr><td colspan=3 class="center"><h2>'.Workflow::loggedInUserName().'\'s Submissions</h2></td></tr>';
         $response .= '<tr><td colspan=3>';
         
         $response .= '<table id="view-submissions" style="margin-left: auto; margin-right:auto;">';
@@ -1475,7 +1477,7 @@ class Workflow {
             $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
         //        WHERE workflowformstatus.USER = '$userid'
-        $sql .= "ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED, workflowform.NAME";
+        $sql .= "ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED DESC, workflowform.NAME ASC";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
@@ -1522,7 +1524,7 @@ class Workflow {
                     $response .= '<tr><td colspan=5><div class="view-submissions-headers approved">Approved Forms</div></td></tr>'.$tableHeader;
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Denied Forms</div></td></tr>'.$tableHeader;
+                    $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Forms Not Approved</div></td></tr>'.$tableHeader;
                     $prevState = 8;
                 } else if($row['STATUS'] == 10) {
                     $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Cancelled</div></td></tr>'.$tableHeader;
@@ -1567,13 +1569,7 @@ class Workflow {
         /*$headers = "From: hr@powertochange.org";
         $subject = "Test";
         $emailMessage = 
-        "This is a message that will be sent to your email when you have submitted something.
-
-        I just want to see the formatting right now.
-
-        It seems to auto break the text.
-
-        Thank you MR. ".Workflow::getUserName($loggedInUser);
+        "put the message in here";
 
         //mail('gerald.becker@p2c.com', $subject, $emailMessage, $headers);*/
 
@@ -1655,10 +1651,13 @@ class Workflow {
             $template = '
             <body style="font-family: sans-serif; color:black;">
                 <h2>You have an approval waiting for a response!</h2>
-                <p><b>'.Workflow::getUserName($userid).'</b> has submitted the form <b>'.$formName.'</b></p>
-                <p>To approve or deny this form, visit this link: 
-                <a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
-            <h3>Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
+                <p>'.Workflow::getUserName($userid).' has submitted the form: '.$formName.'</p>
+                <p><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
+                (click to view form online)</p>
+                <p>If you require clarification on any items, please contact the submitter directly or use the request changes button.   
+                Some forms may result in a fundamental change in the employment relationship of a staff member, 
+                please review carefully before approving. </p>
+            <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, ($supNext != ''), 0, 1, ($supNext == 8)).
             '<br></body>';
         } else {
@@ -1681,7 +1680,7 @@ class Workflow {
                     $body = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
                 else 
                     $body = $templateFinished;
-                $body .= '<div style="clear:both;"></div><br>Your email address is: '.$recepients[$i][1];
+                //$body .= '<div style="clear:both;"></div><br>DEBUG:Your email address is: '.$recepients[$i][1];
             
                 //$body .= '<br>'.htmlspecialchars($sql1).'<br>'.htmlspecialchars($sql).'<br>';
                 

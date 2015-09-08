@@ -58,6 +58,13 @@ $sup = 0;
 
 //echo 'The total count is: '.$_POST['count'].' and the new status is :'.$newstatus.'<br>';
 
+//This happens if the user did not click the approve or deny button and someone clicked the submit button by pressing enter
+if($newstatus == 0) { 
+    $_SESSION['ERRMSG'] = 'Error submitting form.';
+    header('location: ?page=viewsubmissions');
+    die();
+}
+
 if(isset($_POST['misc_content']) && $_POST['misc_content'] != '') {
     $misc_content = stripslashes($_POST['misc_content']);
 } 

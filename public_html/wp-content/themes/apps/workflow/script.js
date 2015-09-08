@@ -321,6 +321,8 @@ function saveSubmission(status, approver) {
                 return;
             }
         }
+    } else if(status == 0) {
+        return;
     }
     
     if(status == 2 || status == 3 || status == 8 || status == 10) {
@@ -332,6 +334,13 @@ function saveSubmission(status, approver) {
     //document.getElementById('workflowsubmission').submit();
 }
 
+function submissioncheck() {
+    if(find("ns").value == 0) {
+        return false;
+    } 
+    
+    return true;
+}
 
 function preview() {
     find("count").value = totalCount;
