@@ -39,7 +39,11 @@ $format = array(
     '%d', //Exposures
     '%d', //Admins
     '%d', //Users
+    '%s' //Last updated
 );
+
+//Setting up the timezone
+date_default_timezone_set('America/Vancouver');
 
 $organizations = getIndexOfEndpoint('organizations');
 
@@ -86,7 +90,8 @@ foreach($organizations['organizations'] as $organization) {
         'd3' => sizeof($d3['people']),
         'exposures' => sizeof($total['people']) - (sizeof($admins['people']) + sizeof($users['people'])),
         'admins' => sizeof($admins['people']),
-        'users' => sizeof($users['people'])
+        'users' => sizeof($users['people']),
+        'last_updated' => date(DATE_RFC2822)
     );
     $result = $orgdb->replace('mh_org_tree', $orgarray, $format);
 	if ($result) {

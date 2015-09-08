@@ -183,6 +183,32 @@ function getPeopleAtThreshold($orgid, $labelid) {
 }
 
 /****************************************************************************************************
+ * Function getDatabaseTimestamp($orgid)
+ *
+ * This functon gets the timestamp for the last time that the dtabase was updated.  The value should
+ * be the same for all organizations, but an optional parameter to specify the orgnaization has been 
+ * included.  It defaults to the root P2C organization on missionhub.
+ *
+ * Parameters:
+ * int orgid: The organization from which to get the "last updated" timestamp
+ *
+ * Returns:
+ * string: The phrase to display at the bottom of the page, below the table.
+ ***************************************************************************************************/
+
+function getDatabaseTimestamp($orgid = 8411) { //hardcoded to the P2C root group
+    global $wpdb;
+    $queryresult = $wpdb->get_results( $wpdb->prepare(
+            "SELECT `last_updated` FROM `mh_org_tree` WHERE `id` = %d",
+            $orgid
+        ),
+        ARRAY_N
+    );
+    
+    return "<i>Last updated on " . $queryresult[0][0] . "</i>";
+}
+
+/****************************************************************************************************
  * Function convertLabelToTitle($labelid)
  *
  * This function takes a labelid and returns a string title for the label. This will need to be modified
@@ -262,8 +288,10 @@ function createEngagementReport($orgname, $labels) {
     $tableheaders = generateTableHeaders($labels);
   
     $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
+    
+    $pagefooter = getDatabaseTimestamp($orgid);
         
-    $response = "<table>{$tableheaders}{$tablerows}</table>";
+    $response = "<table>{$tableheaders}{$tablerows}</table><br><br>{$pagefooter}";
     
     return $response;
 }
@@ -301,9 +329,9 @@ function createThresholdReport($orgname, $label) {
     
     $tablerows = getNestedPeopleAtThreshold($orgid[0], $label);
     
+    $pagefooter = getDatabaseTable($orgid);
     
-    
-    $response = "<table>" . $title . $tableheaders . $tablerows . "</table>";
+    $response = "<table>" . $title . $tableheaders . $tablerows . "</table><br><br>" . $pagefooter;
     
     return $response;
     
@@ -375,7 +403,9 @@ function createDecisionReport() {
         $tablerows = $tablerows . "<tr><td>" . getOrgName($person[org_id]) . "</td><td>" . $person[receiver_name] . "</td><td>" . $person[initiator_names] . "</td><td>" . date("M d Y", $date). "</td><td>" . $person[story]. "</td></tr>";
     }
     
-    $response = "<table>$tableheaders$tablerows</table>";
+    $pagefooter = getDatabaseTimestamp();
+    
+    $response = "<table>$tableheaders$tablerows</table><br><br>$pagefooter";
     
     return $response;
     

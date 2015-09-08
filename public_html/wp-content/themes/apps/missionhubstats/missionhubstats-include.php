@@ -48,6 +48,8 @@ function handle_submit() {
 	if (!wp_verify_nonce($nonce, 'missionhubstats-nonce'))
 		die('You do not have permission to use this web serive');
 	
+    
+    
     switch ($report) {
         case 'engagement':
             create_engagement_report();
@@ -86,8 +88,13 @@ function create_engagement_report() {
 //Uses same table generation function as engagement reports but with different labels.
 function create_discipleship_report() {
     $orgname = $_POST['orgname'];
+    if (strpos($orgname, "'")) {
+        substr_replace("\\'", "'", $orgname);
+    }
     $labels = array(14126, 14127, 14128);
     $response = createEngagementReport($orgname, $labels);
+    
+    echo $orgname;
     
     echo $response;
     
