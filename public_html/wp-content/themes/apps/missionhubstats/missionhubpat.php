@@ -7,6 +7,8 @@
  *
  ***************************************************************************************************/
 
+require_once('missionhuborganizations.php');
+
 /****************************************************************************************************
  * Function createPatReport($season, $year)
  * 
@@ -65,8 +67,10 @@ function createPatReport($season, $year) {
         $response = $response . "<tr><td>" . $obj->Project . "</td><td>" . $obj->Students . "</td><td>" . $obj->Interns . "</td></tr>";
     }
     $patlink = '<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>';
+    $timestamp = '<br><br>' . getDatabaseTimestamp();
     
-    return "<table>" . $response . "</table>" . $patlink;
+    
+    return "<table>" . $response . "</table>" . $patlink . $timestamp;
    
 }
 
