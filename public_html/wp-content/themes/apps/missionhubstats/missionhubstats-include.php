@@ -88,13 +88,11 @@ function create_engagement_report() {
 //Uses same table generation function as engagement reports but with different labels.
 function create_discipleship_report() {
     $orgname = $_POST['orgname'];
-    if (strpos($orgname, "'")) {
-        substr_replace("\\'", "'", $orgname);
-    }
+//    if (strpos($orgname, "'")) {
+//        substr_replace("\\'", "'", $orgname);
+//    }
     $labels = array(14126, 14127, 14128);
     $response = createEngagementReport($orgname, $labels);
-    
-    echo $orgname;
     
     echo $response;
     
