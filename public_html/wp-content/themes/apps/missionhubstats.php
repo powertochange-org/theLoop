@@ -22,7 +22,6 @@
                    
 					<?php
                     /***APP CODE STARTS HERE***/
-                    //require('missionhubstats/missionhubapirequests.php');
 					?>
 
 					<script type="text/javascript">
@@ -34,6 +33,9 @@
                     ?> 
 					};
 					</script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhubstats.js"></script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhuborganizationsview.js"></script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhubpat.js"></script>
                     
                     <div id="filter"></div>
                     <div id="report-content">
