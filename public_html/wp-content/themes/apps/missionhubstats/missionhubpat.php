@@ -7,12 +7,14 @@
  *
  ***************************************************************************************************/
 
+require_once('missionhuborganizations.php');
+
 /****************************************************************************************************
- * Function createPatReport($season, $startdate, $enddate)
+ * Function createPatReport($season, $year)
  * 
  * Parameters:
  * string season: optional parameter to specify season. If not specified, a report covering all seasons
- * will be generated.
+ * will be generated. Currently not in use.
  * string year: The year selected and passed through from the main page.
  *
  * Returns:
@@ -64,24 +66,12 @@ function createPatReport($season, $year) {
         if ($obj->Interns == NULL) {$obj->Interns = 0;}
         $response = $response . "<tr><td>" . $obj->Project . "</td><td>" . $obj->Students . "</td><td>" . $obj->Interns . "</td></tr>";
     }
+    $patlink = '<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>';
+    $timestamp = '<br><br>' . getDatabaseTimestamp();
     
-    return "<table>" . $response . "</table>";
+    
+    return "<table>" . $response . "</table>" . $patlink . $timestamp;
    
 }
-
-function createPatInterface() {
-    
-    $result = "
-        <div id=\"startdate\">
-        
-        </div>
-        <div id=\"enddate\">
-        
-        </div>";
-    
-    
-    
-}
-
 
 ?>
