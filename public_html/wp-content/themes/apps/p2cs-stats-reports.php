@@ -1,13 +1,13 @@
 
 <?php
 /*
- * Template Name: zApp MissionHub Stats Reporting
- * Description: Provide an interface to run reporting on stats from MissionHub and the Loop.
+ * Template Name: zApp P2C-S Stats Reports
+ * Description: Provide an interface to run reporting on stats from MissionHub, EventBrite, the PAT, and other systems
  * Author: Nathaniel Faries
  */
 ?>
 <?php get_header(); ?>
-<link href="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstatsstyle.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports-style.css" rel="stylesheet" type="text/css" />
 	<div id="content">
 		<div id="main-content">	
 			<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
@@ -29,13 +29,13 @@
 					<?php
 					/* Create some JavaScript variables used to make Ajax calls */
 					echo '"ajaxurl":"' . admin_url( 'admin-ajax.php' ) . 
-						'","nonce":"' . wp_create_nonce( 'missionhubstats-nonce' ) . '"';
+						'","nonce":"' . wp_create_nonce( 'p2cs-stats-reports-nonce' ) . '"';
                     ?> 
 					};
 					</script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhubstats.js"></script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhuborganizationsview.js"></script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/missionhubstats/missionhubpat.js"></script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/missionhubstats.js"></script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/missionhuborganizationsview.js"></script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/pat.js"></script>
                     
                     <div id="filter"></div>
                     <div id="report-content">
@@ -71,7 +71,7 @@
 //                            echo "Select a report button on the left to get started";
 //                            break;
 //                    }
-                    include "missionhubstats/missionhuborganizationsview.php";
+                    include "p2cs-stats-reports/missionhuborganizationsview.php";
 
                     ?>
                     </div>

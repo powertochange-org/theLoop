@@ -2,7 +2,7 @@
 
 require('missionhuborganizations.php');
 require('missionhubapirequests.php');
-require('missionhubpat.php');
+require('pat.php');
 
 // Register Ajax handler
 add_action('wp_ajax_handle-submit', 'handle_submit');
@@ -12,7 +12,7 @@ add_action('wp_ajax_handle-submit', 'handle_submit');
 function handle_submit() {
     $report = $_POST['report'];
 	$nonce = $_POST['nonce'];
-	if (!wp_verify_nonce($nonce, 'missionhubstats-nonce'))
+	if (!wp_verify_nonce($nonce, 'p2cs-stats-reports-nonce'))
 		die('You do not have permission to use this web serive');
   
     
