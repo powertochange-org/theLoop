@@ -1,19 +1,34 @@
 <?php
 
-/*
- * Define the parent class for all P2C-Students Stats Reports. This defines some of the
- * basic behaviour all reports should handle, such as managing parameters, rendering themselves
- * in HTML, handling column sorting, and exporting themselves to Excel
- */
+/****************************************************************************************************
+ *
+ * Name: 		P2CSReport
+ *
+ * Description: Define the parent class for all P2C-Students Stats Reports. This defines some of the
+ * 				basic behaviour all reports should handle, such as managing parameters, rendering themselves
+ * 				in HTML, and eventually handling column sorting and exporting themselves to Excel
+ *
+ * Author:		Jason Brink
+ *
+ ***************************************************************************************************/ 
 class P2CSReport {
 	// Provide a central way to determine if a report name is valid, and what filename and class name it maps to
 	public static $reportList = array(
 			"missionhubengagement" => array(
-				"fileName" => "missionhubengagement.php", 
+				"fileName" => "class.P2CSMissionHubEngagementReport.php", 
 				"className" => "P2CSMissionHubEngagementReport"),
+			"missionhubdiscipleship" => array(
+				"fileName" => "class.P2CSMissionHubDiscipleshipReport.php", 
+				"className" => "P2CSMissionHubDiscipleshipReport"),
+			"missionhubindicateddecisions" => array(
+				"fileName" => "class.P2CSMissionHubIndicatedDecisionsReport.php", 
+				"className" => "P2CSMissionHubIndicatedDecisionsReport"),
 			"missiontrips" => array(
-				"fileName" => "missiontrips.php", 
+				"fileName" => "class.P2CSMissionTripsReport.php", 
 				"className" => "P2CSMissionTripsReport"),
+			"eventbrite" => array(
+				"fileName" => "class.P2CSEventBriteReport.php", 
+				"className" => "P2CSEventBriteReport"),
 		);
 	
 	// Return whether the report has parameters that should be collected or not

@@ -81,10 +81,12 @@
 							// Get the report to display it's own parameters
 							$report->renderParameters();
 							
-							// Add a submit button
+							// Add a submit button. If the JavaScript works correctly, the report will be
+							// pulled in using Ajax. If not, a POST request will be submitted and the report
+							// will be generated that way.
 							?>
 							<br />
-							<input id="report-generate" name="report-generate" type="button" value="Generate Report" />
+							<input id="report-generate" name="report-generate" type="submit" value="Generate Report" />
 
 							<div id="ajax-loading">
 							<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />

@@ -2,14 +2,19 @@
 
 /****************************************************************************************************
  *
- * Project Application Tool interface.  This file is responsible for getting and printing data
- * from the PAT database.
+ * Name: 		P2CSMissionTripsReport
+ *
+ * Description: This class is used to generate a report on how many students and interns are going
+ *				on each mission trip in a particular school year. It pulls its data from the
+ *				PAT (Project Application Tool) database. 
+ *
+ * Author:		Nathaniel Faries / Jason Brink
  *
  ***************************************************************************************************/
 
- require_once("class.P2CSReport.php");
- 
- class P2CSMissionTripsReport extends P2CSReport {
+require_once("class.P2CSReport.php");
+
+class P2CSMissionTripsReport extends P2CSReport {
 	public function hasParameters() {
 		return true;
 	}
