@@ -32,6 +32,7 @@
                     ?> 
 					};
 					</script>
+					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/p2cs-stats-reports.js"></script>
                     
 					<div id="report-nav">
 						<ul>
@@ -56,8 +57,7 @@
 					// Pull in the parent class for all reports
 					require_once('p2cs-stats-reports/class.P2CSReport.php');
 					
-					// Determine if the report name passed in is a valid one
-					
+					// Determine if the report name passed in is a valid one					
 					if (isset(P2CSReport::$reportList[$reportName])) {
 						$fileName = P2CSReport::$reportList[$reportName]['fileName'];
 						$className = P2CSReport::$reportList[$reportName]['className'];
@@ -75,6 +75,7 @@
 							// Build a little form to embed the parameters into
 							?>
 							<form id="report-parameters" name="report-parameters" action="<?php echo get_permalink() . "?report=$reportName";?>" method="POST">
+							<input type="hidden" id="reportName" name="reportName" value="<?php echo $reportName; ?>" />
 							
 							<?php
 							// Get the report to display it's own parameters
@@ -83,20 +84,27 @@
 							// Add a submit button
 							?>
 							<br />
-							<input id="report-generate" type="submit" value="Generate Report" />
+							<input id="report-generate" name="report-generate" type="button" value="Generate Report" />
 
 							<div id="ajax-loading">
 							<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />
 							</div>
 							</form>
+							
+							<br />
+							
 							<?php
 						}
+						
+						echo '<div id="report-table">';
 						
 						// If the report doesn't have parameters, or the parameters have been
 						// collected, then generate the actual report
 						if (! $report->hasParameters() || $_SERVER['REQUEST_METHOD'] === 'POST') {
 							$report->renderHTMLReport($_POST);
 						}
+						
+						echo '</div>';
 					}
                     ?>
                     </div>

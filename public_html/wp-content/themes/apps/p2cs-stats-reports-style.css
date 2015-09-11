@@ -40,19 +40,27 @@
 	padding: 10px 0 0 0;
 }
 
-#report-table {
-	margin: 15px 0 15px 0;
-	font-size: 80%;
-}
-
-#submit {
+#report-generate {
 	float: left;
+	background-color:#f7941d;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding:10px;
+	border-style: none;
+	border-radius:5px;
 }
 
 #ajax-loading {
 	display: none;
 	float: left;
+	margin-top: 5px;
 	margin-left: 5px;
+}
+
+#report-table {
+	margin: 15px 0 15px 0;
+	font-size: 80%;
+	clear: both;
 }
 
 /* For mobile devices */
