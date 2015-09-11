@@ -23,7 +23,7 @@ function p2cs_stats_report_generate() {
 		$className = P2CSReport::$reportList[$reportName]['className'];
 		
 		// Include the necessary file
-		include_once('p2cs-stats-reports/' . $fileName);
+		include_once($fileName);
 		
 		// Create a report object of the appropriate type
 		$report = new $className();

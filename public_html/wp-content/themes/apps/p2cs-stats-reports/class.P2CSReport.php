@@ -39,11 +39,11 @@ class P2CSReport {
 			// Check if we need to add column headings
 			if ($firstRow) {
 				$firstRow = false;
-				$result .= "<th>";
+				$result .= "<tr>";
 				foreach($row as $fieldName => $fieldValue) {
-					$result .= "<td>$fieldName</td>";
+					$result .= "<th>$fieldName</th>";
 				}
-				$result .= "</th>";
+				$result .= "</tr>";
 			}
 			
 			// Add a row of data to the output table
