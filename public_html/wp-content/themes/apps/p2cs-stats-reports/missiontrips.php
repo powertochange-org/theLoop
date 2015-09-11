@@ -7,7 +7,46 @@
  *
  ***************************************************************************************************/
 
-require_once('missionhuborganizations.php');
+ require_once("class.P2CSReport.php");
+ 
+ class P2CSMissionTripsReport extends P2CSReport {
+	public function hasParameters() {
+		return true;
+	}
+	
+	public function renderParameters() {
+		?>
+<div id="daterange">
+    Select school year:
+    <select id="year">
+        <option value="">--SELECT A YEAR--</option>
+        <?php
+            $CurrYear = date("Y");
+            $CurrDate = strtotime(date("Y-m-d"));
+            $cutoff = strtotime($CurrYear . "-09-01");
+            if ($cutoff > $CurrDate) {
+                $x = 0;
+            } else {
+                $x = -1;
+            }
+            while ($CurrYear - $x >= 2007) {
+                ?><option value='<?php echo $CurrYear-$x-1;?>'>
+                <?php echo "September " . ($CurrYear - $x - 1). " to August " . ($CurrYear - $x);?></option>
+                <?php
+                $x++;
+            }
+        ?>
+    </select>    
+</div>
+		<?php
+	}
+	
+	public function renderHTMLReport($postData) {
+		?>
+Here is the report
+		<?php
+	}
+ }
 
 /****************************************************************************************************
  * Function createPatReport($season, $year)
@@ -46,7 +85,10 @@ function createPatReport($season, $year) {
     
     $mydb = new wpdb(DB_USER, DB_PASSWORD, PAT_DB_NAME, DB_HOST);
 	
-    $sql = $mydb->prepare("SELECT event_groups.id, event_groups.title, projects.id AS 'Project ID', projects.title AS 'Project', SUM(`profiles`.as_intern) AS 'Interns', COUNT(`profiles`.id) - COALESCE(SUM(`profiles`.as_intern), 0) AS 'Students'
+    $sql = $mydb->prepare(
+	"SELECT projects.title AS 'Project', 
+			COUNT(`profiles`.id) - COALESCE(SUM(`profiles`.as_intern), 0) AS '# Students',
+			SUM(`profiles`.as_intern) AS '# Interns'
     FROM `event_groups` JOIN
         `projects`ON event_groups.id = projects.event_group_id JOIN
         `profiles` ON projects.id = profiles.project_id

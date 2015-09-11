@@ -1,23 +1,37 @@
 #report-nav {
-	width: 20%;
+	width: 18%;
 	float: left;
+	padding: 0 2% 0 0;
+	font-size: 14px;
 }
 
 #report-nav ul {
     list-style-type: none;
 	padding: 0;
-	margin: 10px 20px 20px 0;
+	background-color: #005e90;	
+}
+
+#report-nav ul ul {
+	width: 90%;
+	padding: 0 0 0 10%;
+}
+
+.report-nav-heading {
+	display: block;
+	width: 94%;
+	padding: 5px 3% 5px 3%;
+	color: #cccccc;
 }
 
 #report-nav a {
-	text-align: center;
-	color: #ffffff;
-	background-color: #f7941d;
 	display: block;
-	width: 100%;
-	padding: 5px 0;
-	margin-bottom: 5px;
-	border-radius: 5px;
+	width: 94%;
+	padding: 5px 3% 5px 3%;
+	color: white;
+}
+
+#report-nav a:hover {
+	background-color: #0079c1;
 }
 
 #report-content {
@@ -39,4 +53,17 @@
 	display: none;
 	float: left;
 	margin-left: 5px;
+}
+
+/* For mobile devices */
+@media (max-width: 767px) {
+	#report-nav {
+		float: none;
+		width: 100%;
+	}
+	
+	#report-content {
+		width: 100%;
+		float: none;
+	}
 }

@@ -25,35 +25,11 @@ Organization
         ?>
     </select>
 </div>
-<div id="daterange">
-    Select school year:
-    <select id="year">
-        <option value="">--SELECT A YEAR--</option>
-        <?php
-            $CurrYear = date("Y");
-            $CurrDate = strtotime(date("Y-m-d"));
-            $cutoff = strtotime($CurrYear . "-09-01");
-            if ($cutoff > $CurrDate) {
-                $x = 0;
-            } else {
-                $x = -1;
-            }
-            while ($CurrYear - $x >= 2007) {
-                ?><option value='<?php echo $CurrYear-$x-1;?>'>
-                <?php echo "September " . ($CurrYear - $x - 1). " to August " . ($CurrYear - $x);?></option>
-                <?php
-                $x++;
-            }
-        ?>
-    </select>
-    
-</div>
+
 <br>
 
 <button id="submit" value="Generate Report!">Generate Report!</button>
-<div id="ajax-loading">
-<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />
-</div>
+
 
 <br>
 <div id="report-table"></div>
