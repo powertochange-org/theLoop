@@ -6,25 +6,9 @@
  * Author: Nathaniel Faries
  * Written: July 1, 2015
  *
- * All functions related to organizations are handled here.
+ * All functions related to MissionHub organizations are handled here.
  *
  ***************************************************************************************************/
-
-
-/****************************************************************************************************
- * Set up database object and establish connection
- ***************************************************************************************************/
- 
-//Database object
-global $wpdb;
-
-//Format of rows in database
-$format = array(
-    '%d',   //id, int
-    '%d',   //parent_id, int
-    '%s',   //name, string
-);
-
 
 
 /****************************************************************************************************
@@ -38,7 +22,6 @@ $format = array(
  * Returns:
  * array(int) children: An array containing all the ids of the children of the specified parent.
  ***************************************************************************************************/
-
 
 function getChildren($parent_id) {
     global $wpdb;
@@ -209,6 +192,35 @@ function getDatabaseTimestamp($orgid = 8411) { //hardcoded to the P2C root group
 }
 
 /****************************************************************************************************
+ * Function createOrganizationsDropDownList()
+ *
+ * This function builds an HTML drop-down list of all Organizations. It is used to generate the
+ * parameters for some MissionHub reports
+ *
+ * Parameters:
+ * none
+ *
+ * Returns:
+ * string: HTML code of organizations drop-down list
+ ***************************************************************************************************/
+
+function createOrganizationsDropDownList() {
+	$result = 'Organization:
+	<select id="orgname" name="orgname">';
+	
+	$orgs = getListOfOrgNames();
+	asort($orgs);
+
+	foreach($orgs as $org) {
+		$result .= '<option value="' . $org[0] . '">'.$org[0].'</option>';
+	}
+
+	$result .= '</select>';
+	
+	return $result;
+}
+
+/****************************************************************************************************
  * Function convertLabelToTitle($labelid)
  *
  * This function takes a labelid and returns a string title for the label. This will need to be modified
@@ -265,11 +277,11 @@ function getPersonName($personid) {
 }
 
 /****************************************************************************************************
- * Function createEngagementReport($orgname, $labels)
+ * Function createLabelsReport($orgname, $labels)
  * 
- * This function is called by missionhubstats-include.php to create engagement and discipleship reports
- * as they both have the same structure.  It calls a few helper methods in this file to put together an
- * HTML string containing the requested table.
+ * This function is called by several report classes to create engagement and discipleship reports
+ * as they both rely on labels and have the same structure.  It calls a few helper methods in this 
+ * file to put together an HTML string containing the requested table.
  *
  * Parameters:
  * string orgname: The name of the organization for which the report is being generated
@@ -279,12 +291,12 @@ function getPersonName($personid) {
  * string response: The resulting HTML to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
-function createEngagementReport($orgname, $labels) {
-
+function createLabelsReport($orgname, $labels) {
+	// Look up children of the selected organization
     $orgid = getOrgId($orgname);
     $children = getChildren($orgid[0]);
        
-    //Table headers
+    // Build up the components of the report
     $tableheaders = generateTableHeaders($labels);
   
     $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
