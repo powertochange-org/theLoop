@@ -1,45 +1,43 @@
 <?php
 
-require('missionhuborganizations.php');
-require('missionhubapirequests.php');
-require('pat.php');
+require_once('class.P2CSReport.php');
+
 
 // Register Ajax handler
-add_action('wp_ajax_handle-submit', 'handle_submit');
+add_action('wp_ajax_p2cs-stats-report-generate', 'p2cs_stats_report_generate');
 
 
-// Function that will get called when an Ajax request is submitted on the server 
-function handle_submit() {
-    $report = $_POST['report'];
+// Function that will get called when an Ajax request is submitted from the client
+// to generate a report.
+function p2cs_stats_report_generate() {
+    $reportName = $_POST['reportName'];
 	$nonce = $_POST['nonce'];
 	if (!wp_verify_nonce($nonce, 'p2cs-stats-reports-nonce'))
 		die('You do not have permission to use this web serive');
   
     
-    switch ($report) {
-        case 'engagement':
-            create_engagement_report();
-            break;
-        case 'discipleship':
-            create_discipleship_report();
-            break;
-        case 'pat':
-            create_pat_report();
-            break;
-        case 'threshold':
-            create_threshold_report($_POST['label']);
-            break;
-        case 'decision':
-            create_decision_report();
-            break;
-        default:
-            echo 'Error in generating report.';
-            break;
-    }
+    // Check if the report they are attempting to run is a valid one we recognize
+	if (isset(P2CSReport::$reportList[$reportName])) {
+		// The report is valid. Find out what file it is in, and what the className is
+		$fileName = P2CSReport::$reportList[$reportName]['fileName'];
+		$className = P2CSReport::$reportList[$reportName]['className'];
+		
+		// Include the necessary file
+		include_once('p2cs-stats-reports/' . $fileName);
+		
+		// Create a report object of the appropriate type
+		$report = new $className();
+
+		// Render the report!
+		$report->renderHTMLReport($_POST);
+	} else {
+		echo "Error: report '$reportName' is not defined";
+	}
     
     exit;
 }
 
+/*
 function create_engagement_report() {
     $orgname = $_POST['orgname'];
     //createEngagementReport exists in missionhuborganizations.php
@@ -93,6 +91,6 @@ function create_decision_report() {
     
     exit;
 }
-
+*/
 
 ?>

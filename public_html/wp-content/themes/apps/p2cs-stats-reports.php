@@ -1,4 +1,3 @@
-
 <?php
 /*
  * Template Name: zApp P2C-S Stats Reports
@@ -25,7 +24,7 @@
 					?>
 
 					<script type="text/javascript">
-					var MissionHubStatsAjax = {
+					var P2CSStatsReportsAjax = {
 					<?php
 					/* Create some JavaScript variables used to make Ajax calls */
 					echo '"ajaxurl":"' . admin_url( 'admin-ajax.php' ) . 
@@ -33,46 +32,72 @@
                     ?> 
 					};
 					</script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/missionhubstats.js"></script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/missionhuborganizationsview.js"></script>
-					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/pat.js"></script>
                     
-                    <div id="filter"></div>
-                    <div id="report-content">
+					<div id="report-nav">
+						<ul>
+							<li><span class="report-nav-heading">MissionHub Reports</span></li>
+								<ul>
+									<li><a href="?report=missionhubengagement">Engagement</a></li>
+									<li><a href="?report=missionhubdiscipleship">Discipleship</a></li>
+									<li><a href="?report=missionhubindicateddecisions">Indicated Decisions</a></li>
+								</ul>
+							<li><a href="?report=missiontrips">Mission Trip Report</a></li>
+							<li><a href="?report=eventbrite">EventBrite Report</a></li>							
+					</div>
+                    
+					<div id="report-content">
                     <?php
                     if(isset($_GET['report'])) {
-                        $report = $_GET['report'];
+                        $reportName = $_GET['report'];
                     } else {
-                        $report = "";
+                        $reportName = "";
                     }
-//                    switch($report) {
-//                        case "missionhub":  
-//                            include "missionhubstats/missionhuborganizationsview.php";
-//                            break;
-//                        case "pat":
-//                            include "missionhubstats/missionhubpat.php";
-//                            break;
-//                        case "eventbrite":
-//                            include "missionhubstats/missionhubeventbrite.php";
-//                            break;
-//                        case "theloop":
-//                            include "missionhubstats/missionhubtheloop.php";
-//                            break;
-//                        case "admin":
-//                            include "missionhubstats/missionhubadmin.php";
-//                            break;
-//                        case "reporttype":
-//                            include "missionhubstats/missionhubreporttypeview.php";
-//                            break;
-//                        case "people":
-//                            include "missionhubstats/missionhubpeople.php";
-//                            break;
-//                        default:
-//                            echo "Select a report button on the left to get started";
-//                            break;
-//                    }
-                    include "p2cs-stats-reports/missionhuborganizationsview.php";
+					
+					// Pull in the parent class for all reports
+					require_once('p2cs-stats-reports/class.P2CSReport.php');
+					
+					// Determine if the report name passed in is a valid one
+					
+					if (isset(P2CSReport::$reportList[$reportName])) {
+						$fileName = P2CSReport::$reportList[$reportName]['fileName'];
+						$className = P2CSReport::$reportList[$reportName]['className'];
+						
+						include_once('p2cs-stats-reports/' . $fileName);
+						$report = new $className();
+					} else {
+						echo "Select a report from the menu to get started.";
+					}
+					
+					// If the user selected a report, do typical handling with it
+					if (isset($report)) {
+						// First, check if the report has parameters. If so, render them.
+						if ($report->hasParameters()) {
+							// Build a little form to embed the parameters into
+							?>
+							<form id="report-parameters" name="report-parameters" action="<?php echo get_permalink() . "?report=$reportName";?>" method="POST">
+							
+							<?php
+							// Get the report to display it's own parameters
+							$report->renderParameters();
+							
+							// Add a submit button
+							?>
+							<br />
+							<input id="report-generate" type="submit" value="Generate Report" />
 
+							<div id="ajax-loading">
+							<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />
+							</div>
+							</form>
+							<?php
+						}
+						
+						// If the report doesn't have parameters, or the parameters have been
+						// collected, then generate the actual report
+						if (! $report->hasParameters() || $_SERVER['REQUEST_METHOD'] === 'POST') {
+							$report->renderHTMLReport($_POST);
+						}
+					}
                     ?>
                     </div>
                                         
