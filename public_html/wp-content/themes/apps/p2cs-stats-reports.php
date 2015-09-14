@@ -3,6 +3,20 @@
  * Template Name: zApp P2C-S Stats Reports
  * Description: Provide an interface to run reporting on stats from MissionHub, EventBrite, the PAT, and other systems
  * Author: Nathaniel Faries
+ *
+ *
+ * TO ADD A NEW REPORT TO THIS STATS REPORTING SYSTEM:
+ *
+ * 1. Create a class that extends P2CSReport. A good way to start is to copy an existing report class file
+ *	  (like class.P2CSMissionTripsReport.php), and modify it as needed.
+ *
+ * 2. Open class.P2CSReport.php, and add your new report to the $reportList collection. You need to come up
+ *	  with a string that will be used to access your report (such as "missiontrips") which links up to the
+ *	  name of the file and class you've created.
+ *
+ * 3. Add your new report to the menu down below. The link to your report should use the string you registered
+ *	  in step 2.
+ *
  */
 ?>
 <?php get_header(); ?>
@@ -20,7 +34,9 @@
 					
                    
 					<?php
-                    /***APP CODE STARTS HERE***/
+					/*****************************************************************************************
+					 * APP CODE STARTS HERE
+					 ****************************************************************************************/					
 					?>
 
 					<script type="text/javascript">
@@ -34,6 +50,11 @@
 					</script>
 					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/p2cs-stats-reports.js"></script>
                     
+					<?php					
+					/*****************************************************************************************
+					 * REPORT MENU STARTS HERE - if you create a new report, it must be added here
+					 ****************************************************************************************/					
+					?>
 					<div id="report-nav">
 						<ul>
 							<li><span class="report-nav-heading">MissionHub Reports</span></li>
@@ -112,7 +133,11 @@
                     ?>
                     </div>
                                         
-                    <?php /***APP CODE ENDS HERE***/ ?>
+                    <?php 
+					/*****************************************************************************************
+					 * APP CODE ENDS HERE
+					 ****************************************************************************************/					
+					?>
 				</div>
 				<div class="clear"></div>				
 			</div>
