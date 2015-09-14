@@ -29,13 +29,17 @@ class P2CSMissionHubEngagementReport extends P2CSReport {
 		if (!isset($postData['orgname'])) {
 			echo "You must select an organization";
 			return;
-		} 
+		}
+		
+		// Strip slashes out of org name, as WPDB "prepare" used later will take care of handling
+		// special characters.
+		$orgName = stripslashes($postData['orgname']);
 		
 		// Create an array of the label IDs that represent the levels of engagement represented in this report
 		$labels = array(14121, 14122, 14123, 14124, 14125);
 
 		// Call a helper function to generate the report
-		echo createLabelsReport($postData['orgname'], $labels);
+		echo createLabelsReport($orgName, $labels);
 	}
 }
 
