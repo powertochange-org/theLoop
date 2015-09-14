@@ -101,7 +101,8 @@
 						echo '<div id="report-table">';
 						
 						// If the report doesn't have parameters, or the parameters have been
-						// collected, then generate the actual report
+						// collected, then generate the actual report. Typically, reports with parameters
+						// wouldn't get here, as the report would be called through Ajax.
 						if (! $report->hasParameters() || $_SERVER['REQUEST_METHOD'] === 'POST') {
 							$report->renderHTMLReport($_POST);
 						}
