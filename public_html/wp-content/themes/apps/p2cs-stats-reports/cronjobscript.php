@@ -69,8 +69,7 @@ foreach($organizations['organizations'] as $organization) {
 		$timeRemainingMessage = ", est. " . floor($timeRemaining / 60) . " min " . ($timeRemaining % 60) . " sec remaining";
 	}
 
-	$index = $index + 1;	
-	if ($index > 4) break;
+	$index = $index + 1;
 	
 	// Write a message showing what we are working on. If this is 
 	fwrite(STDOUT, "Processing organization $organization[name]... ($index of " . count($organizations['organizations']) . "$timeRemainingMessage)\n");

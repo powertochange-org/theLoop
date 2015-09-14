@@ -1,3 +1,7 @@
+#main-content {
+	min-height: 0px;
+}
+
 #report-nav {
 	width: 18%;
 	float: left;
