@@ -1,0 +1,81 @@
+#main-content {
+	min-height: 0px;
+}
+
+#report-nav {
+	width: 18%;
+	float: left;
+	padding: 0 2% 0 0;
+	font-size: 14px;
+}
+
+#report-nav ul {
+    list-style-type: none;
+	padding: 0;
+	background-color: #005e90;	
+}
+
+#report-nav ul ul {
+	width: 90%;
+	padding: 0 0 0 10%;
+}
+
+.report-nav-heading {
+	display: block;
+	width: 94%;
+	padding: 5px 3% 5px 3%;
+	color: #cccccc;
+}
+
+#report-nav a {
+	display: block;
+	width: 94%;
+	padding: 5px 3% 5px 3%;
+	color: white;
+}
+
+#report-nav a:hover {
+	background-color: #0079c1;
+}
+
+#report-content {
+	width: 80%;
+	float: right;
+	padding: 10px 0 0 0;
+}
+
+#report-generate {
+	float: left;
+	background-color:#f7941d;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding:10px;
+	border-style: none;
+	border-radius:5px;
+}
+
+#ajax-loading {
+	display: none;
+	float: left;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+#report-table {
+	margin: 15px 0 15px 0;
+	font-size: 80%;
+	clear: both;
+}
+
+/* For mobile devices */
+@media (max-width: 767px) {
+	#report-nav {
+		float: none;
+		width: 100%;
+	}
+	
+	#report-content {
+		width: 100%;
+		float: none;
+	}
+}

@@ -14,6 +14,7 @@
  *
  ***************************************************************************************************/
 
+/* Include configuration information and helper functions for interacting with the MissionHub API */
 require_once('../../../../wp-config.php');
 require_once('missionhubapirequests.php');
 
@@ -42,14 +43,37 @@ $format = array(
     '%s' //Last updated
 );
 
-//Setting up the timezone
+// Setting up the timezone
 date_default_timezone_set('America/Vancouver');
+
+// Get the list of organizations we need to work through
+fwrite(STDOUT, "Getting all organizations...\n");
 
 $organizations = getIndexOfEndpoint('organizations');
 
+fwrite(STDOUT, "  Got " . count($organizations['organizations']) . " organizations.\n\n");
 
-//Iterate through all the objects returned from the curl request and put them into an associative array to pass to the database.
+// Set up some tracking variables
+$index = 0;
+$startTime = time();
+$timeRemainingMessage = "";
+
+// Iterate through all the objects returned from the curl request and put them into an associative array to pass to the database.
 foreach($organizations['organizations'] as $organization) {
+	// Attempt to guess how much time is left till the script completes (if this is not the first org we are processing)
+	if ($index >= 1) {
+		$currentTime = time();
+		$elapsedSeconds = $currentTime - $startTime;
+		$timePerOrg = $elapsedSeconds / $index;
+		$timeRemaining = $timePerOrg * ( count($organizations['organizations']) - $index );
+		$timeRemainingMessage = ", est. " . floor($timeRemaining / 60) . " min " . ($timeRemaining % 60) . " sec remaining";
+	}
+
+	$index = $index + 1;
+	
+	// Write a message showing what we are working on. If this is 
+	fwrite(STDOUT, "Processing organization $organization[name]... ($index of " . count($organizations['organizations']) . "$timeRemainingMessage)\n");
+	
     $admins = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'admins'));
     $users = getIndexOfEndpoint('people', '', $organization['id'], '', '', '', array('roles' => 'users'));
     $total = getIndexOfEndpoint('people', 'interactions', $organization['id']);
@@ -94,15 +118,15 @@ foreach($organizations['organizations'] as $organization) {
         'last_updated' => date(DATE_RFC2822)
     );
     $result = $orgdb->replace('mh_org_tree', $orgarray, $format);
+
 	if ($result) {
-		echo "Successfully updated $organization[name]\r\n";
+		fwrite(STDOUT, "  Successfully updated $organization[name]\n");
 	} else {
-		echo "Problem updating $organization[name]\r\n";
-	}
+		fwrite(STDOUT, "  Problem updating $organization[name]\n");
+	}	
 }
 
-
-
+ 
 /****************************************************************************************************
  * Threshold Details
  ***************************************************************************************************/
@@ -130,9 +154,9 @@ function updateThresholdDetails($orgid, $people, $label) {
             
             $result = $orgdb->replace('mh_threshold_details', $personarray, $format);
             if ($result) {
-                echo "Successfully updated $person[first_name] $person[last_name]\r\n";
+                fwrite(STDOUT, "  Successfully updated $person[first_name] $person[last_name]\n");
             } else {
-                echo $person['id'] . "\n" . $orgid . "\n" . $label . "\n" . $person['first_name'] . "\n" . $person['last_name'] . "\n" . $person['picture'] . "\n" . $orgdb->error->get_error_message() . "\n";
+                fwrite(STDOUT, "  Error updating person " . $person['id'] . "\n    " . $orgid . "\n    " . $label . "\n    " . $person['first_name'] . "\n    " . $person['last_name'] . "\n    " . $person['picture'] . "\n    " . $orgdb->error->get_error_message() . "\n");
             }
         }
     }
@@ -173,9 +197,9 @@ function updateInteractionDetails($orgid, $person) {
             );
             $result = $orgdb->replace('mh_interactions_details', $interactionarray, $format);
             if ($result) {
-                echo "Successfully updated $interaction[receiver_id] interaction.\n";
+                fwrite(STDOUT, "  Successfully updated $interaction[receiver_id] interaction.\n");
             } else {
-                echo $orgdb->error->get_error_message() . "\n";
+                fwrite(STDOUT, "  Error updating interation: " . $orgdb->error->get_error_message() . "\n");
             }
         }
     }    
