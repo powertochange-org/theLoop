@@ -41,6 +41,10 @@
 					/* Show the result in the appropriate area */
 					$("#report-table").html(response);
                                         tsorter.create('report');
+                                        $(".download").on('click', function (event) {
+                                            exportToCSV.apply(this, [$('#report'), 'export.csv']);
+       
+                                        });
 				})
 			)
 			

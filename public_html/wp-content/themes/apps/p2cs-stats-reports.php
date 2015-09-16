@@ -50,6 +50,7 @@
 					</script>
 					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/p2cs-stats-reports.js"></script>
                                         <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/tsorter.min.js"></script>
+                                        <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/export-csv.js"></script>
                                         
 					<?php					
 					/*****************************************************************************************
@@ -132,6 +133,7 @@
 						echo '</div>';
 					}
                     ?>
+                        
                     </div>
                                         
                     <?php 

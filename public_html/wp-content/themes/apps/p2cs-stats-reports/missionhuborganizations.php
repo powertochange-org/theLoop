@@ -302,8 +302,10 @@ function createLabelsReport($orgname, $labels) {
     $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
     
     $pagefooter = getDatabaseTimestamp($orgid);
+    
+    $downloadbutton = "<a href='#' class='download'>Download</a>";
         
-    $response = "<table id='report'><thead>{$tableheaders}</thead><tbody>{$tablerows}</tbody></table><br><br>{$pagefooter}";
+    $response = "<table id='report'><thead>{$tableheaders}</thead><tbody>{$tablerows}</tbody></table>{$downloadbutton}<br><br>{$pagefooter}";
     
     return $response;
 }
