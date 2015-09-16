@@ -43,7 +43,6 @@
                                         tsorter.create('report');
                                         $(".download").on('click', function (event) {
                                             exportToCSV.apply(this, [$('#report'), 'export.csv']);
-       
                                         });
 				})
 			)

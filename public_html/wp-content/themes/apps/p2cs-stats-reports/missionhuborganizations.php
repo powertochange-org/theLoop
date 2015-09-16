@@ -334,18 +334,20 @@ function createThresholdReport($orgname, $label) {
     
     $title = "<strong>" . convertLabelToTitle($label) . "<strong><br>";
     
-    $tableheaders = "<tr>
+    $tableheaders = "<thead><tr>
                         <th>Picture</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Organization</th>
-                    </tr>";
+                    </tr></thead>";
     
-    $tablerows = getNestedPeopleAtThreshold($orgid[0], $label);
+    $tablerows = "<tbody>".getNestedPeopleAtThreshold($orgid[0], $label)."</tbody>";
     
     $pagefooter = getDatabaseTable($orgid);
     
-    $response = "<table>" . $title . $tableheaders . $tablerows . "</table><br><br>" . $pagefooter;
+    $downloadbutton = "<a href='#' class='download'>Download</a>";
+
+    $response = "<table id='report'>" . $title . $tableheaders . $tablerows . "</table>{$downloadbutton}<br><br>" . $pagefooter;
     
     return $response;
     
@@ -402,24 +404,25 @@ function createDecisionReport() {
         ARRAY_A
     );
         
-    $tableheaders = "<tr>
+    $tableheaders = "<thead><tr>
                         <th>Organization</th>
                         <th>Receiver</th>
                         <th>Initiatiors</th>
                         <th>Date</th>
                         <th>Story</th>
-                    <tr>";
+                    <tr></thead>";
     
-    $tablerows = "";
+    $tablerows = "<tbody>";
     
     foreach($people as $person) {
         $date = strtotime($person['date']);
         $tablerows = $tablerows . "<tr><td>" . getOrgName($person[org_id]) . "</td><td>" . $person[receiver_name] . "</td><td>" . $person[initiator_names] . "</td><td>" . date("M d Y", $date). "</td><td>" . $person[story]. "</td></tr>";
     }
+    $tablerows = $tablerows . "</tbody>";
     
     $pagefooter = getDatabaseTimestamp();
     
-    $response = "<table>$tableheaders$tablerows</table><br><br>$pagefooter";
+    $response = "<table id='report'>$tableheaders$tablerows</table><a href='#' class='download'>Download</a><br><br>$pagefooter";
     
     return $response;
     

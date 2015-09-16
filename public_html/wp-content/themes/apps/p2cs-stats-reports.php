@@ -129,11 +129,20 @@
 						if (! $report->hasParameters() || $_SERVER['REQUEST_METHOD'] === 'POST') {
 							$report->renderHTMLReport($_POST);
 						}
-						
+                                                
+
 						echo '</div>';
-					}
+
+                    
+                                        }
                     ?>
-                        
+                    <script type='text/javascript'>
+                        tsorter.create('report');
+                        $('.download').on('click', function (event) {
+                            exportToCSV.apply(this, [$('#report'), 'export.csv']);
+                        });
+                    </script>
+ 
                     </div>
                                         
                     <?php 
