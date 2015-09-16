@@ -303,7 +303,7 @@ function createLabelsReport($orgname, $labels) {
     
     $pagefooter = getDatabaseTimestamp($orgid);
         
-    $response = "<table>{$tableheaders}{$tablerows}</table><br><br>{$pagefooter}";
+    $response = "<table id='report'><thead>{$tableheaders}</thead><tbody>{$tablerows}</tbody></table><br><br>{$pagefooter}";
     
     return $response;
 }
@@ -438,11 +438,11 @@ function createDecisionReport() {
 
 function generateTableHeaders($labels) {
      $result = "<tr>
-                    <th>Organization</th>";
+                    <th class='clickable'>Organization</th>";
     //One-indexed for loop.
     $i = 1; 
     foreach($labels as $label) {
-        $result = $result . '<th><a href="#" id="'. $label .'" class="threshold">' . convertLabelToTitle($label) . '</th>';
+        $result = $result . '<th data-tsorter="numeric">' . convertLabelToTitle($label) . '</th>';
         $i++;
     }
     $result = $result . "</tr>";
@@ -502,7 +502,7 @@ function generateTableRows($orgname, $orgid, $children, $labels) {
     
     $arrayindex = 0;
     while ($arrayindex < sizeof($labels)) {
-        $parentrow = $parentrow . "<td><strong>" . $thresholds[$arrayindex] . "</strong></td>";
+        $parentrow = $parentrow . "<td>" . $thresholds[$arrayindex] . "</td>";
         $arrayindex++;
     }
     $parentrow = $parentrow . "</tr>";

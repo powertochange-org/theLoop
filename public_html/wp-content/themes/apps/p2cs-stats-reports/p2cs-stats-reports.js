@@ -40,6 +40,7 @@
 					
 					/* Show the result in the appropriate area */
 					$("#report-table").html(response);
+                                        tsorter.create('report');
 				})
 			)
 			

@@ -49,7 +49,8 @@
 					};
 					</script>
 					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/p2cs-stats-reports.js"></script>
-                    
+                                        <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/tsorter.min.js"></script>
+                                        
 					<?php					
 					/*****************************************************************************************
 					 * REPORT MENU STARTS HERE - if you create a new report, it must be added here
@@ -119,7 +120,7 @@
 							<?php
 						}
 						
-						echo '<div id="report-table">';
+						echo '<div id="report-table" class="sortable">';
 						
 						// If the report doesn't have parameters, or the parameters have been
 						// collected, then generate the actual report. Typically, reports with parameters
