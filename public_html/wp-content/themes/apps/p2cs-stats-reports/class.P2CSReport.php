@@ -78,18 +78,22 @@ class P2CSReport {
 	 * a MySQL database query (through a WPDB object) into an HTML table
 	 */
 	protected function convertWPDBResultToHTMLTable($wpdbResult) {
-		$result = "<table>";
+		$result = "<table id='report'>";
 		$firstRow = true;
 		
 		foreach($wpdbResult as $row) {
 			// Check if we need to add column headings
 			if ($firstRow) {
 				$firstRow = false;
-				$result .= "<tr>";
+				$result .= "<thead><tr>";
 				foreach($row as $fieldName => $fieldValue) {
-					$result .= "<th>$fieldName</th>";
+                                    if (strpos($fieldName, '#') !== false) {
+					$result .= "<th data-tsorter='numeric'>$fieldName</th>";
+                                    } else {
+                                        $result .= "<th data-sorter='text'>$fieldName</th>";
+                                    }
 				}
-				$result .= "</tr>";
+				$result .= "</tr></thead><tbody>";
 			}
 			
 			// Add a row of data to the output table
@@ -100,7 +104,7 @@ class P2CSReport {
 			$result .= "</tr>\r\n";
 		}
 		
-		$result .= "</table>";
+		$result .= "</tbody></table>";
 		
 		return $result;
 	}
