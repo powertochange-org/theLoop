@@ -120,8 +120,8 @@
 							
 							<?php
 						}
-						
-						echo '<div id="report-table" class="sortable">';
+						echo "<div>";
+						echo '<div id="report-table" class="sortable shrink_to_fit">';
 						
 						// If the report doesn't have parameters, or the parameters have been
 						// collected, then generate the actual report. Typically, reports with parameters
@@ -132,6 +132,7 @@
                                                 
 
 						echo '</div>';
+                                                echo '</div>';
 
                     
                                         }
