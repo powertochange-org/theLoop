@@ -94,8 +94,7 @@ class P2CSMissionTripsReport extends P2CSReport {
 
 		?>
 		<a href='#' class='download'>Download</a>
-		<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>
-	   
+		<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>               
 		<?php
 	}
 }

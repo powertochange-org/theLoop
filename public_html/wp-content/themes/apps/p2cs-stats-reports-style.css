@@ -83,6 +83,10 @@
     display:block;
     text-align:right;
 }
+
+.shrink_to_fit {
+    display:inline-block;
+}
         
 /* For mobile devices */
 @media (max-width: 767px) {
