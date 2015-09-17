@@ -71,6 +71,12 @@
 	clear: both;
 }
 
+.parent td {
+    font-weight:bold;
+    color:white;
+    background-color:#005E90;
+}
+
 /* Up and Down Arrows */
 .sortable th.descend:after{
 	content: "\25B2";

@@ -22,6 +22,7 @@ class P2CSMissionHubDiscipleshipReport extends P2CSReport {
 	
 	public function renderParameters() {
 		echo createOrganizationsDropDownList();
+                echo createRecurseCheckbox();
 	}
 	
 	public function renderHTMLReport($postData) {
@@ -37,9 +38,11 @@ class P2CSMissionHubDiscipleshipReport extends P2CSReport {
 		
 		// Create an array of the label IDs that represent the levels of engagement represented in this report
 		$labels = array(14126, 14127, 14128);
+                
+                $recurse = ($postData['recurse']);
 
 		// Call a helper function to generate the report
-		echo createLabelsReport($orgName, $labels);	
+		echo createLabelsReport($orgName, $labels, $recurse);	
 	}
 }
 
