@@ -220,6 +220,21 @@ function createOrganizationsDropDownList() {
 	return $result;
 }
 
+function createRecurseCheckbox() {
+    $result = "<br/><br/>Show details?: <input id='recurse' type='checkbox' checked='checked' />";
+    $result .= "<input type='hidden' name='recurse' value='1'/><br/>";
+    $result .= "<script type='text/javascript'>";
+    $result .= "$('#recurse').on('change', function(e) {";
+    $result .= "  if($(this).prop('checked')) {";
+    $result .= "    $(this).next().val(1);";
+    $result .= "  } else {";
+    $result .= "    $(this).next().val(0);";
+    $result .= "  }";
+    $result .= "});";
+    $result .= "</script>";
+    return $result;
+}
+
 /****************************************************************************************************
  * Function convertLabelToTitle($labelid)
  *
@@ -286,20 +301,20 @@ function getPersonName($personid) {
  * Parameters:
  * string orgname: The name of the organization for which the report is being generated
  * array labels: The labels to be included in the report.
+ * optional bool recurse: whether to render the report in depth, or just 1 level
  *
  * Returns:
  * string response: The resulting HTML to produce a table to be displayed to the user.
   ***************************************************************************************************/ 
 
-function createLabelsReport($orgname, $labels) {
+function createLabelsReport($orgname, $labels, $recurse=TRUE) {
 	// Look up children of the selected organization
     $orgid = getOrgId($orgname);
-    $children = getChildren($orgid[0]);
        
     // Build up the components of the report
     $tableheaders = generateTableHeaders($labels);
   
-    $tablerows = generateTableRows($orgname, $orgid, $children, $labels);
+    $tablerows = generateTableRows($orgid, $labels, $recurse);
     
     $pagefooter = getDatabaseTimestamp($orgid);
     
@@ -456,64 +471,45 @@ function generateTableHeaders($labels) {
 }
 
 /****************************************************************************************************
- * Function generateTableRows($orgname, $orgid, $children, $labels)
+ * Function generateTableRows($$orgid, $labels)
  *
+ * Recursive
  * Generates the html for the rows of the table for a given report.
  * 
  * Parameters:
- * string orgname: The name of the parent organization for the report.
  * int orgid: The id of the parent organization for the report.
- * array children: An array of the ids of all the children of the parent organization.
  * array labels: The list of all the label ids being used for the table.
+ * optional bool recurse: Whether to show all descendents rather than just
+ *                        immediate children.
+ * prefix: ignore, used internally.
  *
  * Returns:
  * string result: The resulting html to produce all the table rows for the table.
   ***************************************************************************************************/ 
 
-function generateTableRows($orgname, $orgid, $children, $labels) {
-    
-    //Initialization
-    $childrenrows = "";
-    $parentrow = "";
-    $thresholds = array();
-    array_pad($thresholds, sizeof($labels), 0);
-    
-    //Getting counts for parent organization
-    $arrayindex = 0;
-    foreach($labels as $label) {
-        $thresholds[$arrayindex] = getCountAtThreshold($orgid[0], $label);
-        $arrayindex++;
+function generateTableRows($orgid, $labels, $recurse=true, $prefix='') {
+    $indent_char = "&nbsp;&nbsp;";
+    $children = getChildren($orgid);
+    $rowData = getRowData($prefix, $orgid, $labels);
+    if (sizeOf($children)==0) {
+        return "<tr>".$rowData."</tr>";
     }
-    
-    
-    //Creating the children rows
+    $result="<tr class='parent'>".$rowData."</tr>";
     foreach ($children as $child) {
-        $childname = getOrgName($child[0]);
-        $childthresholds = array();
-        array_pad($childthresholds, sizeof($labels), 0);
-        $arrayindex = 0;
-        $childrenrows = $childrenrows . "<tr><td>" . $childname ."</td>";
-        foreach ($labels as $label) {
-            $count = getCountAtThreshold($child[0], $label);
-            $childthresholds[$arrayindex] = $count;
-            $childrenrows = $childrenrows . "<td>" . $childthresholds[$arrayindex] . "</td>";
-            $arrayindex++;
+        if ($recurse) {
+            $result .= generateTableRows($child, $labels, $prefix.$indent_char);       
+        } else {
+            $result .="<tr>".getRowData($indent_char, $child, $labels)."</tr>";
         }
-        $childrenrows = $childrenrows . "</tr>";        
     }
-    
-    //Creating the parent rows
-    $parentrow = $parentrow . "<tr><td><strong>" . $orgname . "</strong></td>";
-    
-    $arrayindex = 0;
-    while ($arrayindex < sizeof($labels)) {
-        $parentrow = $parentrow . "<td>" . $thresholds[$arrayindex] . "</td>";
-        $arrayindex++;
+    return $result;
+}
+
+function getRowData($prefix, $orgid, $labels) {
+    $result = "<td>".$prefix.getOrgName($orgid)."</td>";
+    foreach ($labels as $label) {
+        $result .= "<td>".getCountAtThreshold($orgid, $label)."</td>";
     }
-    $parentrow = $parentrow . "</tr>";
-    
-    $result = $parentrow . $childrenrows;
-    
     return $result;
 }
 
