@@ -1,4 +1,3 @@
-
 #this only includes (in public_html/):
 #	.htaccess		in public_html/
 #   .htaccess_dev   in public_html/wp-content/uploads/; dev version of .htaccess
@@ -27,7 +26,7 @@ public_html/wp-content/*
 !public_html/wp-content/themes
 public_html/wp-content/themes/*
 !public_html/wp-content/themes/apps
-!public_html/wp-content/themes/apps/
+!public_html/wp-content/themes/apps/*
 !public_html/wp-content/themes/carmel
 !public_html/wp-content/themes/carmel/*
 !public_html/wp-content/themes/LOP
