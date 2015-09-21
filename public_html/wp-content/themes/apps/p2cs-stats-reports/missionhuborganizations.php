@@ -25,12 +25,17 @@
 
 function getChildren($parent_id) {
     global $wpdb;
-    $children = $wpdb->get_results( $wpdb->prepare(
+    $result = $wpdb->get_results( $wpdb->prepare(
             "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d",
             $parent_id
         ),
         ARRAY_N       
     );
+    // extract the single dimensional array of int
+    $children = array();
+    foreach ($result as $item) {
+        $children[] = $item[0];
+    }
     return $children;
 }
 
@@ -116,7 +121,7 @@ function getCountAtThreshold($orgid, $labelid) {
     $count = 0;
     $children = getChildren($orgid);
     foreach($children as $child) {
-        $count = $count + getCountAtThreshold($child[0], $labelid);
+        $count = $count + getCountAtThreshold($child, $labelid);
     }
 
     $people = $wpdb->get_results( $wpdb->prepare(
@@ -147,7 +152,7 @@ function getPeopleAtThreshold($orgid, $labelid) {
     $people = array();
     $children = getChildren($orgid);
     foreach($children as $child) {
-        $childrenpeople = getPeopleAtThreshold($child[0], $labelid);
+        $childrenpeople = getPeopleAtThreshold($child, $labelid);
         foreach($childrenpeople as $person) {
             array_push($people, $person);
         }
@@ -345,7 +350,6 @@ function createLabelsReport($orgname, $labels, $recurse=TRUE) {
 function createThresholdReport($orgname, $label) {
     
     $orgid = getOrgId($orgname);
-    $children = getChildren($orgid[0]);
     
     $title = "<strong>" . convertLabelToTitle($label) . "<strong><br>";
     
@@ -358,7 +362,7 @@ function createThresholdReport($orgname, $label) {
     
     $tablerows = "<tbody>".getNestedPeopleAtThreshold($orgid[0], $label)."</tbody>";
     
-    $pagefooter = getDatabaseTable($orgid);
+    $pagefooter = getDatabaseTable($orgid[0]);
     
     $downloadbutton = "<a href='#' class='download'>Download</a>";
 
@@ -497,9 +501,9 @@ function generateTableRows($orgid, $labels, $recurse=true, $prefix='') {
     $result=str_replace("<tr>","<tr class='parent'>",$rowData);
     foreach ($children as $child) {
         if ($recurse) {
-            $result .= generateTableRows($child[0], $labels, $prefix.$indent_char);       
+            $result .= generateTableRows($child, $labels, $prefix.$indent_char);       
         } else {
-            $result .=getRowData($indent_char, $child[0], $labels);
+            $result .=getRowData($indent_char, $child, $labels);
         }
     }
     return $result;
