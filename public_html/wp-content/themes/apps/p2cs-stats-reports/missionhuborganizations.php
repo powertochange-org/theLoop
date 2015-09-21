@@ -308,7 +308,7 @@ function getPersonName($personid) {
   ***************************************************************************************************/ 
 
 function createLabelsReport($orgname, $labels, $recurse=TRUE) {
-	// Look up children of the selected organization
+	
     $orgid = getOrgId($orgname);
        
     // Build up the components of the report
@@ -492,25 +492,39 @@ function generateTableRows($orgid, $labels, $recurse=true, $prefix='') {
     $children = getChildren($orgid);
     $rowData = getRowData($prefix, $orgid, $labels);
     if (sizeOf($children)==0) {
-        return "<tr>".$rowData."</tr>";
+        return $rowData;
     }
-    $result="<tr class='parent'>".$rowData."</tr>";
+    $result=str_replace("<tr>","<tr class='parent'>",$rowData);
     foreach ($children as $child) {
         if ($recurse) {
-            $result .= generateTableRows($child, $labels, $prefix.$indent_char);       
+            $result .= generateTableRows($child[0], $labels, $prefix.$indent_char);       
         } else {
-            $result .="<tr>".getRowData($indent_char, $child, $labels)."</tr>";
+            $result .=getRowData($indent_char, $child[0], $labels);
         }
     }
     return $result;
 }
+
+/*******************************************************************************
+ * Function getRowData($prefix, $orgid, $labels)
+ * 
+ * Generates one row of table data for the specified orgid
+ * 
+ * Parameters
+ * string prefix: string to prefix the orgname with - for indentation purposes
+ * int orgid: The id of the organization to list data for
+ * array labels: The list of all the label ids for this row
+ * 
+ * Returns:
+ * string result: one <tr> of table data
+ *******************************************************************************/
 
 function getRowData($prefix, $orgid, $labels) {
     $result = "<td>".$prefix.getOrgName($orgid)."</td>";
     foreach ($labels as $label) {
         $result .= "<td>".getCountAtThreshold($orgid, $label)."</td>";
     }
-    return $result;
+    return "<tr>".$result."</tr>";
 }
 
 ?>
