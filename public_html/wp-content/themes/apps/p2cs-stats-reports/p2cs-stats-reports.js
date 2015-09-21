@@ -44,6 +44,19 @@
                                         $(".download").on('click', function (event) {
                                             exportToCSV.apply(this, [$('#report'), 'export.csv']);
                                         });
+                                        $('.parent').click(function() {
+                                            var lvl = $(this).attr('class').split("level")[1].split(' ')[0];
+                                            if ($(this).hasClass('collapsed')) {
+                                                $(this).nextUntil('tr.parent.level'+lvl, 'tr.level'+(parseInt(lvl)+1)).show();
+                                                $(this).removeClass('collapsed');
+                                            } else {
+                                                $(this).addClass('collapsed');
+                                                $(this).nextUntil('tr.parent.level'+lvl,'tr').addClass('collapsed').hide();
+                                            }
+                                        });
+                                        // Start with only the first level expanded
+                                        $('.level1').addClass('collapsed');
+                                        $('.level1').nextUntil('tr.parent.level1','tr').addClass('collapsed').hide();
 				})
 			)
 			
