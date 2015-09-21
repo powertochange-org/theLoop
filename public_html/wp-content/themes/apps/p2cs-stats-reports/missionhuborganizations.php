@@ -462,7 +462,7 @@ function createDecisionReport() {
 
 function generateTableHeaders($labels) {
      $result = "<tr>
-                    <th class='clickable'>Organization</th>";
+                    <th class='no_sort'>Organization</th>";
     //One-indexed for loop.
     $i = 1; 
     foreach($labels as $label) {
