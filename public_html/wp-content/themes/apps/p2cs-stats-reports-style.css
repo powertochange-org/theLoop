@@ -9,7 +9,7 @@
 	font-size: 14px;
 }
 
-.sortable th {
+.sortable th:not(.no_sort) {
     color:#0079C1;
 }
 
@@ -24,7 +24,9 @@ tr.parent.collapsed :first-child:before {
 }
 
 th {
-    padding-right:30px;
+    padding-left:15px;
+    padding-right:15px;
+    vertical-aling:bottom;
 }
 
 tr.parent:not(.collapsed) :first-child:before {
