@@ -85,6 +85,7 @@ class P2CSMissionTripsReport extends P2CSReport {
 		// Check if there was an error
 		if (is_wp_error($mydb->error)) {
 			echo "Error accessing the PAT database."; // More detailed error message for debugging: $mydb->error->get_error_message();
+                        echo $mydb->error->get_error_message();
 			return;
 		}
 		
@@ -92,9 +93,8 @@ class P2CSMissionTripsReport extends P2CSReport {
 		echo P2CSReport::convertWPDBResultToHTMLTable($result);
 
 		?>
-		
-		<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>
-	   
+		<a href='#' class='download'>Download</a>
+		<br><br><font size="small"><i>Login to the <a href="https://pat.powertochange.org/">PAT</a> for more info</i></font>               
 		<?php
 	}
 }

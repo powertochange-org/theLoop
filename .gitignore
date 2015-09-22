@@ -44,3 +44,4 @@ public_html/wp-content/uploads/*
 # This is a file type created by Mac OS that stores folder attributes
 # Should have no impact on code
 .DS_Store
+/public_html/wp-content/themes/apps/nbproject/private/

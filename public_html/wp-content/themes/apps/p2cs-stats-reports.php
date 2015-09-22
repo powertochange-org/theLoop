@@ -49,7 +49,9 @@
 					};
 					</script>
 					<script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/p2cs-stats-reports.js"></script>
-                    
+                                        <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/tsorter.min.js"></script>
+                                        <script type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/p2cs-stats-reports/export-csv.js"></script>
+                                        
 					<?php					
 					/*****************************************************************************************
 					 * REPORT MENU STARTS HERE - if you create a new report, it must be added here
@@ -118,8 +120,8 @@
 							
 							<?php
 						}
-						
-						echo '<div id="report-table">';
+						echo "<div>";
+						echo '<div id="report-table" class="sortable shrink_to_fit">';
 						
 						// If the report doesn't have parameters, or the parameters have been
 						// collected, then generate the actual report. Typically, reports with parameters
@@ -127,10 +129,21 @@
 						if (! $report->hasParameters() || $_SERVER['REQUEST_METHOD'] === 'POST') {
 							$report->renderHTMLReport($_POST);
 						}
-						
+                                                
+
 						echo '</div>';
-					}
+                                                echo '</div>';
+
+                    
+                                        }
                     ?>
+                    <script type='text/javascript'>
+                        tsorter.create('report');
+                        $('.download').on('click', function (event) {
+                            exportToCSV.apply(this, [$('#report'), 'export.csv']);
+                        });
+                    </script>
+ 
                     </div>
                                         
                     <?php 
