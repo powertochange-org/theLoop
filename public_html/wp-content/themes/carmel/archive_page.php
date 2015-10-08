@@ -19,19 +19,19 @@
 			$link .= "/$parts[$i]";
 			if ($i < count($parts) - 2){
 				if ($i % 3 == 0 and $i > 0) {?>
-					<tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+					<tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs-image' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
 				<?php } ?>
 				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
-				<td class ='crumbs' style='width:22px;'><img class ='crumbs' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+				<td class ='crumbs' style='width:22px;'><img class ='crumbs-image' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
 			<?php } else if ($i < count($parts) - 1){
 				if ($i % 3 == 0 and $i > 0) {?>
-					</tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
+					</tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs-image' src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
 				<?php } ?>
 				<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
-				<td class ='crumbs' style='width:22px;'><img class ='crumbs' src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
+				<td class ='crumbs' style='width:22px;'><img class ='crumbs-image' src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
 			<?php } else { 
 				if ($i % 3 == 0 and $i > 0) {?>
-					</tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs' src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
+					</tr></table><table style='width:100%;margin:-25px 0 30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class ='crumbs-image' src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
 				<?php } ?>
 				<td class ='crumbs' style='background-color:#f7941d;'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 			<?php }
