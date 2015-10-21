@@ -207,38 +207,46 @@ $financials = $_POST['financials'];
 $vac_year = $_POST['vac_year'];
 $OUTPUTFRMT = $_POST['OutputFormat'];
 
-//Used for financial health reporting via email. Prefills the fields with requested details.
 /*
-reports/?actnum=110110&report=mdr&mo=5&yr=2015                  >> Monthly Donation Report
-reports/?actnum=110110&report=rmd                               >> Monthly Donors
-reports/?actnum=110110&report=13mdr&mo=5&yr=2015                >> 13 Month Donor Report
-reports/?actnum=110110&report=die&smo=5&emo=6&syr=2014&eyr=2015 >> detailed income and expense
-*/
-if(isset($_GET["emailreport"])) {
-    $emailreport = $_GET["emailreport"];
+ * Allow the report to be selected and certain parameters to be set using query string variables.
+ * All the needed information is packed into 1 query string variable, because the CAS server seems
+ * to strip off everything after the first one.
+ *
+ * Query string typically follows this format:
+ *
+ *   ?reportlink=RRRPPPPPPMMYYYY
+ *
+ * where:
+ *    RRR is a 3-character report identifier
+ *    PPPPPP is the 6-character project code (staff / ministry account)
+ *    MM is the month
+ *    YYYY is the year
+ */
+if(isset($_GET["reportlink"])) {
+    $reportlink = $_GET["reportlink"];
     
-    $actnum = substr($emailreport, 0, 6);
-    $report = substr($emailreport, 6, 3);
+    $report = substr($reportlink, 0, 3);
+    $actnum = substr($reportlink, 3, 6);
     
     
     $_POST["DESGCODE"] = $actnum;
     
     if($report == "mdr") {
         $REPORT = "DonorReport";
-        $RPTMONTH = substr($emailreport, 9, 2);
-        $RPTYEAR = substr($emailreport, 11, 4);
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
     } else if($report == "rmd") {
         $REPORT = "MonthlyDonors";
-    } else if($report == "13m") {//local.theloop.com/reports/?emailreport=82345713m062015
+    } else if($report == "13m") {// reports/?reportlink=13m823457201506
         $REPORT = "InvestorReport";
-        $RPTMONTH = substr($emailreport, 9, 2);
-        $RPTYEAR = substr($emailreport, 11, 4);
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
     } else if($report == "die") {
         $REPORT = "DetailedRangeReport";
-        $RPTSTARTMONTH = substr($emailreport, 9, 2);
-        $RPTENDMONTH = substr($emailreport, 11, 2);
-        $RPTSTARTYEAR = substr($emailreport, 13, 4);
-        $RPTENDYEAR = substr($emailreport, 17, 4);
+        $RPTSTARTMONTH = substr($reportlink, 9, 2);
+        $RPTSTARTYEAR = substr($reportlink, 11, 4);
+        $RPTENDMONTH = substr($reportlink, 15, 2);
+        $RPTENDYEAR = substr($reportlink, 17, 4);
     }
     
 }
