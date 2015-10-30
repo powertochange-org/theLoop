@@ -199,7 +199,7 @@ include('functions/js_functions.php'); ?>
 				}
 				else {
 					//user has no spouse or id
-					$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, 'coverage_int', `decline`, `decline_dental`,`salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,0,0,90,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 60
+					$sql = "INSERT INTO `support_calculator`(`id`, `hours`, `hours_s`, `coverage`, 'coverage_int', `decline`, `decline_dental`,`salary`, `salary_s`, `hcsa`, `conference`, `mpd`, `expenses`, `support`) VALUES (0,0,0,0,0,0,0,0,0,0,60,100,100,0)"; //defaulting mpd and expenses to 100 and conference to 60
 					$wpdb->get_results($sql);
 					$support_dataID = $wpdb->insert_id;
 					update_user_meta( $ID, 'support_calculator_id', $support_dataID);
@@ -1130,7 +1130,7 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<input type="text" name="input_conference" id="input_conference" onchange="calculate();" title="For one person enter $90 or for two people enter $180" value="<?php echo getData("conference"); ?>">
+					<input type="text" name="input_conference" id="input_conference" onchange="calculate();" title="For one person enter $60 or for two people enter $120" value="<?php echo getData("conference"); ?>">
 				</td>
 			</tr>
 				<td>

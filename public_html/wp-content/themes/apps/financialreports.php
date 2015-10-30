@@ -207,6 +207,52 @@ $financials = $_POST['financials'];
 $vac_year = $_POST['vac_year'];
 $OUTPUTFRMT = $_POST['OutputFormat'];
 
+/*
+ * Allow the report to be selected and certain parameters to be set using query string variables.
+ * All the needed information is packed into 1 query string variable, because the CAS server seems
+ * to strip off everything after the first one.
+ *
+ * Query string typically follows this format:
+ *
+ *   ?reportlink=RRRPPPPPPMMYYYY
+ *
+ * where:
+ *    RRR is a 3-character report identifier
+ *    PPPPPP is the 6-character project code (staff / ministry account)
+ *    MM is the month
+ *    YYYY is the year
+ */
+if(isset($_GET["reportlink"])) {
+    $reportlink = $_GET["reportlink"];
+    
+    $report = substr($reportlink, 0, 3);
+    $actnum = substr($reportlink, 3, 6);
+    
+    
+    $_POST["DESGCODE"] = $actnum;
+    
+    if($report == "mdr") {
+        $REPORT = "DonorReport";
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
+    } else if($report == "rmd") {
+        $REPORT = "MonthlyDonors";
+    } else if($report == "13m") {// reports/?reportlink=13m823457201506
+        $REPORT = "InvestorReport";
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
+    } else if($report == "die") {
+        $REPORT = "DetailedRangeReport";
+        $RPTSTARTMONTH = substr($reportlink, 9, 2);
+        $RPTSTARTYEAR = substr($reportlink, 11, 4);
+        $RPTENDMONTH = substr($reportlink, 15, 2);
+        $RPTENDYEAR = substr($reportlink, 17, 4);
+    }
+    
+}
+
+
+
 get_header(); ?>
 	<div id="content">
 		<div id="main-content">	
@@ -227,17 +273,17 @@ get_header(); ?>
 			<P>Choose Your Report:<BR>
 			<SELECT ID="repchoice" NAME="REPORT" onChange="showHelpButton(this.selectedIndex == 4);">
                   <OPTION VALUE="">--DONATION REPORTS--</OPTION>
-                  <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected");}?>>Monthly Donation Report</OPTION>
-                  <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected");}?>>13 Month Donor Report</OPTION>
-                  <OPTION VALUE="MonthlyDonors" <?php if($REPORT == 'MonthlyDonors'){echo("selected");}?>>Recurring Monthly Donors</OPTION>
-				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected");}?>>Account Donors</OPTION>
+                  <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected='selected'");}?>>Monthly Donation Report</OPTION>
+                  <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected='selected'");}?>>13 Month Donor Report</OPTION>
+                  <OPTION VALUE="MonthlyDonors" <?php if($REPORT == 'MonthlyDonors'){echo("selected='selected'");}?>>Recurring Monthly Donors</OPTION>
+				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected='selected'");}?>>Account Donors</OPTION>
 	              <OPTION VALUE="">--FINANCIAL REPORTS--</OPTION>
-                  <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected");}?>>Detailed Income and Expense</OPTION>
-                  <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected");}?>>Summary Income and Expense</OPTION>
-                  <OPTION VALUE="AccountBalance" <?php if($REPORT == 'AccountBalance'){echo("selected");}?>>Account Balance</OPTION>
+                  <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected='selected'");}?>>Detailed Income and Expense</OPTION>
+                  <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected='selected'");}?>>Summary Income and Expense</OPTION>
+                  <OPTION VALUE="AccountBalance" <?php if($REPORT == 'AccountBalance'){echo("selected='selected'");}?>>Account Balance</OPTION>
                   <OPTION VALUE="">--STAFF REPORTS--</OPTION>
-				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected");}?>>Staff List</OPTION>
-				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected");}?>>Staff Vacation and Wellness</OPTION>
+				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected='selected'");}?>>Staff List</OPTION>
+				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation and Wellness</OPTION>
             </SELECT>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
@@ -250,18 +296,18 @@ get_header(); ?>
 				<P>Choose the month and year to report on.<BR>
 				<SELECT NAME="RPTMONTH">
                   <OPTION VALUE="">--Month--</OPTION>
-                  <OPTION VALUE="01" <?php if($RPTMONTH == '01'){echo("selected");}?>>January</OPTION>
-                  <OPTION VALUE="02" <?php if($RPTMONTH == '02'){echo("selected");}?>>February</OPTION>
-                  <OPTION VALUE="03" <?php if($RPTMONTH == '03'){echo("selected");}?>>March</OPTION>
-                  <OPTION VALUE="04" <?php if($RPTMONTH == '04'){echo("selected");}?>>April</OPTION>
-                  <OPTION VALUE="05" <?php if($RPTMONTH == '05'){echo("selected");}?>>May</OPTION>
-                  <OPTION VALUE="06" <?php if($RPTMONTH == '06'){echo("selected");}?>>June</OPTION>
-                  <OPTION VALUE="07" <?php if($RPTMONTH == '07'){echo("selected");}?>>July</OPTION>
-                  <OPTION VALUE="08" <?php if($RPTMONTH == '08'){echo("selected");}?>>August</OPTION>
-                  <OPTION VALUE="09" <?php if($RPTMONTH == '09'){echo("selected");}?>>September</OPTION>
-                  <OPTION VALUE="10" <?php if($RPTMONTH == '10'){echo("selected");}?>>October</OPTION>
-                  <OPTION VALUE="11" <?php if($RPTMONTH == '11'){echo("selected");}?>>November</OPTION>
-                  <OPTION VALUE="12" <?php if($RPTMONTH == '12'){echo("selected");}?>>December</OPTION>
+                  <OPTION VALUE="01" <?php if($RPTMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
+                  <OPTION VALUE="02" <?php if($RPTMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
+                  <OPTION VALUE="03" <?php if($RPTMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
+                  <OPTION VALUE="04" <?php if($RPTMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
+                  <OPTION VALUE="05" <?php if($RPTMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
+                  <OPTION VALUE="06" <?php if($RPTMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
+                  <OPTION VALUE="07" <?php if($RPTMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
+                  <OPTION VALUE="08" <?php if($RPTMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
+                  <OPTION VALUE="09" <?php if($RPTMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
+                  <OPTION VALUE="10" <?php if($RPTMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
+                  <OPTION VALUE="11" <?php if($RPTMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
+                  <OPTION VALUE="12" <?php if($RPTMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
                 </SELECT>
 				<SELECT NAME="RPTYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
@@ -270,7 +316,7 @@ get_header(); ?>
 						 WHILE ($CurrYear-$x >= 1989){
 						 ?>
 						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected");}?>>
+								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
 									 <?php echo $CurrYear-$x;?></OPTION>
 						 <?php
 						 $x++;
@@ -285,18 +331,18 @@ get_header(); ?>
 				<SPAN STYLE="width:50px; float:left">START:</SPAN>
 				<SELECT NAME="RPTSTARTMONTH">
 					  <OPTION VALUE="">--Month--</OPTION>
-					  <OPTION VALUE="01" <?php if($RPTSTARTMONTH == '01'){echo("selected");}?>>January</OPTION>
-					  <OPTION VALUE="02" <?php if($RPTSTARTMONTH == '02'){echo("selected");}?>>February</OPTION>
-					  <OPTION VALUE="03" <?php if($RPTSTARTMONTH == '03'){echo("selected");}?>>March</OPTION>
-					  <OPTION VALUE="04" <?php if($RPTSTARTMONTH == '04'){echo("selected");}?>>April</OPTION>
-					  <OPTION VALUE="05" <?php if($RPTSTARTMONTH == '05'){echo("selected");}?>>May</OPTION>
-					  <OPTION VALUE="06" <?php if($RPTSTARTMONTH == '06'){echo("selected");}?>>June</OPTION>
-					  <OPTION VALUE="07" <?php if($RPTSTARTMONTH == '07'){echo("selected");}?>>July</OPTION>
-					  <OPTION VALUE="08" <?php if($RPTSTARTMONTH == '08'){echo("selected");}?>>August</OPTION>
-					  <OPTION VALUE="09" <?php if($RPTSTARTMONTH == '09'){echo("selected");}?>>September</OPTION>
-					  <OPTION VALUE="10" <?php if($RPTSTARTMONTH == '10'){echo("selected");}?>>October</OPTION>
-					  <OPTION VALUE="11" <?php if($RPTSTARTMONTH == '11'){echo("selected");}?>>November</OPTION>
-					  <OPTION VALUE="12" <?php if($RPTSTARTMONTH == '12'){echo("selected");}?>>December</OPTION>
+					  <OPTION VALUE="01" <?php if($RPTSTARTMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
+					  <OPTION VALUE="02" <?php if($RPTSTARTMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
+					  <OPTION VALUE="03" <?php if($RPTSTARTMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
+					  <OPTION VALUE="04" <?php if($RPTSTARTMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
+					  <OPTION VALUE="05" <?php if($RPTSTARTMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
+					  <OPTION VALUE="06" <?php if($RPTSTARTMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
+					  <OPTION VALUE="07" <?php if($RPTSTARTMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
+					  <OPTION VALUE="08" <?php if($RPTSTARTMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
+					  <OPTION VALUE="09" <?php if($RPTSTARTMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
+					  <OPTION VALUE="10" <?php if($RPTSTARTMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
+					  <OPTION VALUE="11" <?php if($RPTSTARTMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
+					  <OPTION VALUE="12" <?php if($RPTSTARTMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
 				</SELECT>
 				<SELECT NAME="RPTSTARTYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
@@ -305,7 +351,7 @@ get_header(); ?>
 						 WHILE ($CurrYear-$x >= 1989){
 						 ?>
 						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTSTARTYEAR == $CurrYear-$x){echo("selected");}?>>
+								     <?php if($RPTSTARTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
 									 <?php echo $CurrYear-$x;?></OPTION>
 						 <?php
 						 $x++;
@@ -315,18 +361,18 @@ get_header(); ?>
 				<BR><SPAN STYLE="width:50px; float:left">END:</SPAN>
 				<SELECT NAME="RPTENDMONTH">
 					  <OPTION VALUE="">--Month--</OPTION>
-					  <OPTION VALUE="01" <?php if($RPTENDMONTH == '01'){echo("selected");}?>>January</OPTION>
-					  <OPTION VALUE="02" <?php if($RPTENDMONTH == '02'){echo("selected");}?>>February</OPTION>
-					  <OPTION VALUE="03" <?php if($RPTENDMONTH == '03'){echo("selected");}?>>March</OPTION>
-					  <OPTION VALUE="04" <?php if($RPTENDMONTH == '04'){echo("selected");}?>>April</OPTION>
-					  <OPTION VALUE="05" <?php if($RPTENDMONTH == '05'){echo("selected");}?>>May</OPTION>
-					  <OPTION VALUE="06" <?php if($RPTENDMONTH == '06'){echo("selected");}?>>June</OPTION>
-					  <OPTION VALUE="07" <?php if($RPTENDMONTH == '07'){echo("selected");}?>>July</OPTION>
-					  <OPTION VALUE="08" <?php if($RPTENDMONTH == '08'){echo("selected");}?>>August</OPTION>
-					  <OPTION VALUE="09" <?php if($RPTENDMONTH == '09'){echo("selected");}?>>September</OPTION>
-					  <OPTION VALUE="10" <?php if($RPTENDMONTH == '10'){echo("selected");}?>>October</OPTION>
-					  <OPTION VALUE="11" <?php if($RPTENDMONTH == '11'){echo("selected");}?>>November</OPTION>
-					  <OPTION VALUE="12" <?php if($RPTENDMONTH == '12'){echo("selected");}?>>December</OPTION>
+					  <OPTION VALUE="01" <?php if($RPTENDMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
+					  <OPTION VALUE="02" <?php if($RPTENDMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
+					  <OPTION VALUE="03" <?php if($RPTENDMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
+					  <OPTION VALUE="04" <?php if($RPTENDMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
+					  <OPTION VALUE="05" <?php if($RPTENDMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
+					  <OPTION VALUE="06" <?php if($RPTENDMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
+					  <OPTION VALUE="07" <?php if($RPTENDMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
+					  <OPTION VALUE="08" <?php if($RPTENDMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
+					  <OPTION VALUE="09" <?php if($RPTENDMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
+					  <OPTION VALUE="10" <?php if($RPTENDMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
+					  <OPTION VALUE="11" <?php if($RPTENDMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
+					  <OPTION VALUE="12" <?php if($RPTENDMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
 				</SELECT>
 				<SELECT NAME="RPTENDYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
@@ -335,7 +381,7 @@ get_header(); ?>
 						 WHILE ($CurrYear-$x >= 1989){
 						 ?>
 						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTENDYEAR == $CurrYear-$x){echo("selected");}?>>
+								     <?php if($RPTENDYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
 									 <?php echo $CurrYear-$x;?></OPTION>
 						 <?php
 						 $x++;
