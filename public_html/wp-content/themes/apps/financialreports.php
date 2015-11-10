@@ -31,7 +31,7 @@ unset($error);
 if (isset($_POST['REPORT']) 
 	&& (($_POST['REPORT'] == "AccountBalance" && strlen($_POST['DESGCODE']) < 6)
 	||  ($_POST['REPORT'] != "AccountBalance" && strlen($_POST['DESGCODE']) != 6))
-	&& !in_array($_POST['REPORT'] , array ("StaffList", "StaffVacation"))) //%list  (just a label)
+	&& !in_array($_POST['REPORT'] , array ("StaffList", "StaffVacation", "StaffFinancialHealth"))) //%list  (just a label)
 	{
 	$error = "Your account number must be 6 digits in length\n";
 } 
@@ -182,6 +182,13 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffV
   $error = $errorMsg;
 }
 
+elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffFinancialHealth") {
+  require('financialreports/sql_report_functions.php');
+  
+  produceSQLReport('StaffFinancialHealth', $_POST['employee_number'], $_POST['report_month'] . '-01');
+  exit;
+}
+
 //%elif-block (just a label)
 
 //If there is an error with a preview, do not display the whole page
@@ -284,6 +291,14 @@ get_header(); ?>
                   <OPTION VALUE="">--STAFF REPORTS--</OPTION>
 				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected='selected'");}?>>Staff List</OPTION>
 				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation and Wellness</OPTION>
+				  <?php
+				  if (in_array($user_id, array('jasonb','matthewc','annf'))) {
+					  echo '<OPTION VALUE="">--TEST REPORTS--</OPTION>';
+					  echo '<OPTION VALUE="StaffFinancialHealth" ';
+					  if($REPORT == 'StaffFinancialHealth'){echo("selected='selected'");}
+					  echo '>Staff Financial Health</OPTION>';
+				  }
+				  ?>
             </SELECT>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
@@ -409,6 +424,13 @@ get_header(); ?>
 						 ?>				  										  								 	 <?php echo (date("Y") -4);?></OPTION>
 				</SELECT>		
 			</div>
+			<div id='staffHealth_options' style='display:none'>
+				Employee Number:
+				<input type="text" name="employee_number" />
+				<br />
+				Report Month:
+				<input type="text" name="report_month" value="2015-10" /> (in YYYY-MM format)
+			</div>
 			<DIV ID="output" STYLE="display:none">
 				<P>
 				Output Format:
@@ -452,7 +474,7 @@ get_header(); ?>
 				alert("Please select a report from the drop-down list");
 				return false;
 			}
-			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation"){
+			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation" && $("#repchoice").val() != "StaffFinancialHealth"){
 				alert("Please enter your ministry/staff account number before running the report");
 				return false;
 			}
@@ -551,6 +573,15 @@ get_header(); ?>
 					$("#financials_opt").slideUp();
 					$("#reportToMe_opt").slideDown();
 					$("#staffVaction_options").slideDown();
+				} else if ($(this).val() == "StaffFinancialHealth"){
+					$("#staffaccount").slideUp();
+					$("#monthyear").slideUp();
+					$("#daterange").slideUp();
+					$("#financials_opt").slideUp();
+					$("#reportToMe_opt").slideUp();
+					$("#staffVaction_options").slideUp();
+					$("#output").slideUp();
+					$("#staffHealth_options").slideDown();
 				}
 				
 				/* Buttons */
