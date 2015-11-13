@@ -103,6 +103,9 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					else if($phone->phone_type == 'CELL'){
 						$type = 'Cell';
 					}
+					else if($phone->phone_type == 'CELL-BUS'){
+						$type = 'Cell (bus)';
+					}
 					else if($phone->phone_type == 'FAX'){
 						$type = 'Fax';
 					}
