@@ -91,7 +91,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				echo "<BR>";
 			}
 				
-			$phones = $wpdb->get_results('SELECT * FROM phone_number, employee WHERE employee.external_id = phone_number.employee_id AND phone_number.is_ministry=1 AND phone_number.employee_id = "' . $user->external_id . '"');
+			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE is_ministry=1 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
 					if($phone->phone_type == 'BUS'){
@@ -121,7 +121,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.is_ministry = 1 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE is_ministry = 1 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo "<strong>Email:</strong> $email->email_address<BR>";
@@ -177,12 +177,12 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			echo "<BR>";
-			if(isset($user->spouse_id)){ //if you're married to someone on staff we link your profiles.
-				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE external_id = '" . $user->spouse_id . "'");
+			if(isset($user->spouse_employee_number)){ //if you're married to someone on staff we link your profiles.
+				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE employee_number = '" . $user->spouse_employee_number . "'");
 				echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br />"; 
 			}
 			//grab phone numbers that are shared, then display them
-			$phones = $wpdb->get_results('SELECT * FROM phone_number, employee WHERE employee.external_id = phone_number.employee_id AND phone_number.share_phone=1 AND phone_number.is_ministry=0 AND phone_number.employee_id = "' . $user->external_id . '"');
+			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE phone_number.share_phone=1 AND phone_number.is_ministry=0 AND phone_number.employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
 					if($phone->phone_type == 'BUS'){
@@ -193,6 +193,9 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					}
 					else if($phone->phone_type == 'CELL'){
 						$type = 'Cell';
+					}
+					else if($phone->phone_type == 'CELL-BUS'){
+						$type = 'Cell (bus)';
 					}
 					else if($phone->phone_type == 'FAX'){
 						$type = 'Fax';
@@ -209,7 +212,7 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				}
 			}
 			//grab emails that are shared, then display them
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.share_email=1 AND email_address.is_ministry = 0 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE share_email=1 AND is_ministry = 0 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo '<strong>Email:</strong> '. $email->email_address . '<BR>';
