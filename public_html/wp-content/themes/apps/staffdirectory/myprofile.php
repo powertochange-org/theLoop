@@ -147,29 +147,29 @@ $max_file_size = 30000000; // size in bytes
 	        <!-- Remove photo -->
             <input type="hidden" id="deleteImage" name="deleteImage" />
         	
-        	<p><b>Note: </b>To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to <b>My HR</b>. Changes made there will typically show up in the Staff Directory within 24 hours.</p>
+        	<p><b>Note: </b>To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to <b><a href="https://sso.dayforcehcm.com/p2c">My HR</a></b>. Changes made there will typically show up in the Staff Directory within 24 hours.</p>
         	
 			<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 			<div class='form'>
 				<table>
 				<tr>
 					<td><span style='font-weight:600;'>Address:</span></td>
-					<td>
-					<?php 
+				</tr>
+				<tr>
+					<td> <?php 
 						echo $user->ministry_address_line1;
 						if ($user->ministry_address_line2) {
 							echo "<br>".$user->ministry_address_line2;
 						}
 					echo "<br>".$user->ministry_city.", ".$user->ministry_province."  ". $user->ministry_postal_code;
-					echo "<br>".$user->ministry_country;
-					?>
+					echo "<br>".$user->ministry_country; ?>
 					</td>
-				</tr></table>
+				</tr>
+				</table>
 			</div>
 
 			<div class="form">
-			<table>
-				<?php
+			<table> <?php
 				$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1' ORDER BY share_phone DESC");
 				if($phones){
 					$last = end($phones); ?>
@@ -177,16 +177,14 @@ $max_file_size = 30000000; // size in bytes
 					<td colspan=2>
 						<span style='font-weight:600;'>Phone Numbers: </span>
 					</td>
-					</tr>
-					<?php
+					</tr> <?php
 					foreach($phones as $phone){
 						$isLast = $last === $phone;
 						$id = $phone->phone_number_id;
 						$contact = split("-", $phone->contact_number, 2); ?>
 					<tr>
 						<td></td>
-						<td style="text-align:left;">
-						<?php 
+						<td style="text-align:left;"> <?php 
 							if ($phone->phone_type == 'CELL') { echo 'Cell:';} 
 							else if ($phone->phone_type == 'CELL-BUS') { echo 'Cell (bus):';} 
 							else if ($phone->phone_type == 'BUS') { echo 'Office:';} 
@@ -213,8 +211,10 @@ $max_file_size = 30000000; // size in bytes
 				<table>
 				<tr>
 					<td><span style="font-weight:600;">Ministry&nbsp;Email:</span></td>
-					<td> <?php
-					foreach($emails as $email){
+				</tr>
+					<?php
+					foreach($emails as $email){ ?>
+						<tr> <?php
 						$isLast = $last === $email;
 						if ($isLast){
 							echo "<div style='position:relative;'>";
@@ -225,10 +225,9 @@ $max_file_size = 30000000; // size in bytes
 						<?php
 						if ($isLast){ ?>
 							</div> <?php
-						}
+						}?>
+						</tr> <?php
 					} //foreach ?>
-					</td>
-				</tr>
 				</table> <?php
 			} //if ?>
 			
@@ -242,9 +241,10 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form">
 				<table>
 					<tr>
-						<td><span style='font-weight:600;'>Address: </span></td>
-						<td>
-						<?php 
+						<td colspan=2><span style='font-weight:600;'>Address: </span></td>
+					</tr>
+					<tr>
+						<td> <?php 
 							echo $user->address_line1;
 							if($user->address_line2) { 
 								echo "<br>".$user->address_line2; 
