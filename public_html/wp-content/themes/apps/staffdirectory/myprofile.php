@@ -161,7 +161,7 @@ $max_file_size = 30000000; // size in bytes
 						if ($user->ministry_address_line2) {
 							echo "<br>".$user->ministry_address_line2;
 						}
-					echo "<br>".$user->ministry_city.", ".$user->ministry_province."  ". $user->ministry_postal_code;
+					echo "<br>$user->ministry_city, $user->ministry_province  $user->ministry_postal_code";
 					echo "<br>".$user->ministry_country; ?>
 					</td>
 				</tr>
@@ -204,33 +204,34 @@ $max_file_size = 30000000; // size in bytes
 			</table>
 			</div>
 
+			<div class="form">
+			<table>
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1'");
 			if($emails){
 				$last = end($emails);?>
-				<table>
 				<tr>
 					<td><span style="font-weight:600;">Ministry&nbsp;Email:</span></td>
-				</tr>
-					<?php
-					foreach($emails as $email){ ?>
-						<tr> <?php
+				</tr> <?php
+				foreach($emails as $email){ ?>
+					<tr> <?php
 						$isLast = $last === $email;
-						if ($isLast){
-							echo "<div style='position:relative;'>";
+						if ($isLast){ ?>
+							<div style='position:relative;'>
 						}
 						$id = $email->email_address_id;	?>
-						<div class="form">
 							<td style='width:100%'>&nbsp;<?php echo $email->email_address; ?></td>
 						<?php
 						if ($isLast){ ?>
 							</div> <?php
 						}?>
-						</tr> <?php
-					} //foreach ?>
-				</table> <?php
+					</tr> <?php
+				} //foreach 
 			} //if ?>
-			
+			</table> 
+			</div>
+
+
 			<div class="form" id="editMinSocialMedia">
 				<input type="text" placeholder='Website' name="ministryWebsite" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
 				<input type="text" placeholder='Twitter' name="ministryTwitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:446px"><BR>
