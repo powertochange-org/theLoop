@@ -166,7 +166,7 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form">
 				<table>
 				<?php
-				$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1' ORDER BY share_phone DESC");
+				$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1' ORDER BY share_phone DESC");
 				if($phones){
 					$last = end($phones);
 					foreach($phones as $phone){
@@ -179,14 +179,19 @@ $max_file_size = 30000000; // size in bytes
 							<input type='hidden' name='phone[<?php echo $id; ?>][share]' value='ministryshare' >
 						</td>
 						<td style="text-align:left;">
-							<?php echo '&nbsp;'.$phone->country_code ?>
-							&nbsp;&nbsp;(
-							<?php echo $phone->area_code ?>
-							)&nbsp;
-							<?php echo $contact[0] ?> 
-							-
-							<?php echo $contact[1] ?>
-							&nbsp;Ext: <?php echo $phone->extension ?>
+							<?php echo $phone->country_code ?>
+							&nbsp;
+							<?php 
+							if ($phone->phone_type == 'CELL') { echo 'Cell';} 
+							else if ($phone->phone_type == 'CELL-BUS') { echo 'Cell';} 
+							else if ($phone->phone_type == 'HOME') { echo 'Home';} 
+							else if ($phone->phone_type == 'FAX'){ echo 'Fax';} 
+							else if ($phone->phone_type == 'ALT'){ echo 'Other';}?>
+							&nbsp;&nbsp;&nbsp;
+							<?php echo '&nbsp;'.$phone->phone_number; 
+							 if($phone->extension) { ?>
+								&nbsp;Ext: <?php echo $phone->extension
+							}?>
 						</td>
 					 </tr>
 				 	<?php
@@ -196,7 +201,7 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 
 			<?php
-			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='1'");
+			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1'");
 			if($emails){
 				$last = end($emails);
 				foreach($emails as $email){
@@ -249,14 +254,13 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form" id="editPhone">
 				<table>
 					<?php
-					$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0' ORDER BY share_phone DESC");
+					$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='0' ORDER BY share_phone DESC");
 					if($phones){
 						$last = end($phones);
 						foreach($phones as $phone){
 							$isLast = $last === $phone;
 							
 							$id = $phone->phone_number_id;
-							$contact = split("-", $phone->contact_number, 2);
 							?>
 							<tr>
 								<td><span style='font-weight:600;'>Phone:</span></td>
@@ -269,10 +273,10 @@ $max_file_size = 30000000; // size in bytes
 									else if ($phone->phone_type == 'FAX'){ echo 'Fax';} 
 									else if ($phone->phone_type == 'ALT'){ echo 'Other';}?>
 									&nbsp;&nbsp;&nbsp;
-									(<?php echo $phone->area_code ?>)
-									<?php echo $contact[0] ?> -
-									<?php echo $contact[1] ?>
-									Ext: <?php echo $phone->extension ?>
+									<?php echo '&nbsp;'.$phone->phone_number; 
+									if($phone->extension) { ?>
+										&nbsp;Ext: <?php echo $phone->extension
+									}?>
 								</td>
 								<td><select name="phone[<?php echo $id; ?>][share]" style="width:90px;">
 									<option value="personalshare" style="padding:10px 4px;" <?php if ($phone->share_phone) { echo 'selected="selected"'; } ?>> Shared</option>
@@ -288,7 +292,7 @@ $max_file_size = 30000000; // size in bytes
 			<div class="form" id="editEmail">
 				<table>
 					<?php
-					$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_id = '" . $user->external_id . "' AND is_ministry='0'");
+					$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='0'");
 					if($emails){
 						$last = end($emails);
 						foreach($emails as $email){
