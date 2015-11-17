@@ -168,45 +168,42 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 
 			<div class="form">
-				<table>
+			<table>
 				<?php
 				$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1' ORDER BY share_phone DESC");
 				if($phones){
-					$last = end($phones);
-				?>
-				<tr>
-					<td>
+					$last = end($phones); ?>
+					<tr>
+					<td colspan=2>
 						<span style='font-weight:600;'>Phone Numbers: </span>
 					</td>
-				</tr>
-				<?php
-				foreach($phones as $phone){
-					$isLast = $last === $phone;
-					$id = $phone->phone_number_id;
-					$contact = split("-", $phone->contact_number, 2);
-				?>
+					</tr>
+					<?php
+					foreach($phones as $phone){
+						$isLast = $last === $phone;
+						$id = $phone->phone_number_id;
+						$contact = split("-", $phone->contact_number, 2); ?>
 					<tr>
+						<td></td>
 						<td style="text-align:left;">
 						<?php 
-							if ($phone->phone_type == 'CELL') { echo 'Cell';} 
-							else if ($phone->phone_type == 'CELL-BUS') { echo 'Cell (bus)';} 
-							else if ($phone->phone_type == 'BUS') { echo 'Office';} 
-							else if ($phone->phone_type == 'HOME') { echo 'Home';} 
-							else if ($phone->phone_type == 'FAX'){ echo 'Fax';} 
-							else if ($phone->phone_type == 'ALT'){ echo 'Other';}?>
-							:&nbsp;&nbsp;
-							<?php echo $phone->country_code ?>
-							&nbsp;&nbsp;
-							<?php echo '&nbsp;'.$phone->phone_number; 
-							 if($phone->extension) { ?>
+							if ($phone->phone_type == 'CELL') { echo 'Cell:';} 
+							else if ($phone->phone_type == 'CELL-BUS') { echo 'Cell (bus):';} 
+							else if ($phone->phone_type == 'BUS') { echo 'Office:';} 
+							else if ($phone->phone_type == 'HOME') { echo 'Home:';} 
+							else if ($phone->phone_type == 'FAX'){ echo 'Fax:';} 
+							else if ($phone->phone_type == 'ALT'){ echo 'Other:';}
+							else {echo '??:';}
+							
+							echo '&nbsp;'.$phone->phone_number; 
+							if($phone->extension) { ?>
 								&nbsp;Ext: <?php echo $phone->extension;
 							}?>
 						</td>
-					 </tr>
-				 	<?php
-					}
-				} ?>
-				</table>
+					 </tr> <?php
+					} //foreach
+				} //if ?>
+			</table>
 			</div>
 
 			<?php
@@ -214,25 +211,25 @@ $max_file_size = 30000000; // size in bytes
 			if($emails){
 				$last = end($emails);?>
 				<table>
-				<?php
-				foreach($emails as $email){
-					$isLast = $last === $email;
-					if ($isLast){
-						echo "<div style='position:relative;'>";
-					}
-					$id = $email->email_address_id;	?>
-					<div class="form">
-					<tr>
-						<td><span style="font-weight:600;">Ministry&nbsp;Email: </span></td>
-						<td style='width:100%'>&nbsp;<?php echo $email->email_address; ?></td>
-					</tr>
-					<?php
-					if ($isLast){
-						echo "</div>";
-					}
-				} //foreach ?>
-				</table>
-			<?php
+				<tr>
+					<td><span style="font-weight:600;">Ministry&nbsp;Email:</span></td>
+					<td> <?php
+					foreach($emails as $email){
+						$isLast = $last === $email;
+						if ($isLast){
+							echo "<div style='position:relative;'>";
+						}
+						$id = $email->email_address_id;	?>
+						<div class="form">
+							<td style='width:100%'>&nbsp;<?php echo $email->email_address; ?></td>
+						<?php
+						if ($isLast){ ?>
+							</div> <?php
+						}
+					} //foreach ?>
+					</td>
+				</tr>
+				</table> <?php
 			} //if ?>
 			
 			<div class="form" id="editMinSocialMedia">
@@ -273,8 +270,7 @@ $max_file_size = 30000000; // size in bytes
 					if($phones){
 						$last = end($phones);?>
 						<tr>
-							<td><span style='font-weight:600;'>Phone:</span></td>
-							<td>&nbsp;</td>
+							<td colspan=3><span style='font-weight:600;'>Phone:</span></td>
 						</tr>
 						<?php
 						foreach($phones as $phone){
@@ -284,14 +280,13 @@ $max_file_size = 30000000; // size in bytes
 							<tr>
 								<td>
 									<?php 
-									if ($phone->phone_type == 'CELL') { echo 'Cell';} 
-									else if ($phone->phone_type == 'HOME') { echo 'Home';} 
-									else if ($phone->phone_type == 'FAX'){ echo 'Fax';} 
-									else if ($phone->phone_type == 'ALT'){ echo 'Other';}?>
-									&nbsp;&nbsp;
-									<?php echo $phone->country_code ?>
-									&nbsp;&nbsp;
-									<?php echo '&nbsp;'.$phone->phone_number; 
+									if ($phone->phone_type == 'CELL') { echo 'Cell:';} 
+									else if ($phone->phone_type == 'HOME') { echo 'Home:';} 
+									else if ($phone->phone_type == 'FAX'){ echo 'Fax:';} 
+									else if ($phone->phone_type == 'ALT'){ echo 'Other:';}
+									else {echo '??:';}
+									
+									echo '&nbsp;'.$phone->phone_number; 
 									if($phone->extension) { ?>
 										&nbsp;Ext: <?php echo $phone->extension;
 									}?>
@@ -311,6 +306,9 @@ $max_file_size = 30000000; // size in bytes
 
 			<div class="form" id="editEmail">
 				<table>
+				<tr>
+					<td colspan=3><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
+				</tr>
 					<?php
 					$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='0'");
 					if($emails){
@@ -319,13 +317,13 @@ $max_file_size = 30000000; // size in bytes
 							$isLast = $last === $email;
 							$id = $email->email_address_id; ?>
 							<tr>
-								<td><span style='font-weight:600;'>Personal&nbsp;Email: </span></td>
+								<td></td>
 								<td><?php echo $email->email_address ?></td>
 								<td>
-								<select style='width:90px;' name="email[<?php echo $id; ?>][share]">
-									<option value="1" style="padding:10px 4px;" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
-									<option value="0" style="padding:10px 4px;" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
-								</select>
+									<select style='width:90px;' name="email[<?php echo $id; ?>][share]">
+										<option value="1" style="padding:10px 4px;" <?php if($email->share_email) { echo 'selected'; } ?> >Shared</option>
+										<option value="0" style="padding:10px 4px;" <?php if(!$email->share_email) { echo 'selected'; } ?> >Not Shared</option>
+									</select>
 								</td>
 							</tr>
 					<?php
