@@ -230,11 +230,10 @@ $max_file_size = 30000000; // size in bytes
 					if ($isLast){
 						echo "</div>";
 					}
-				}?>
+				} //foreach ?>
 				</table>
 			<?php
-			}
-			?>
+			} //if ?>
 			
 			<div class="form" id="editMinSocialMedia">
 				<input type="text" placeholder='Website' name="ministryWebsite" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
