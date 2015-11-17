@@ -275,7 +275,7 @@ $max_file_size = 30000000; // size in bytes
 									&nbsp;&nbsp;&nbsp;
 									<?php echo '&nbsp;'.$phone->phone_number; 
 									if($phone->extension) { ?>
-										&nbsp;Ext: <?php echo $phone->extension
+										&nbsp;Ext: <?php echo $phone->extension;
 									}?>
 								</td>
 								<td><select name="phone[<?php echo $id; ?>][share]" style="width:90px;">
