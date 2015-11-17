@@ -212,8 +212,9 @@ $max_file_size = 30000000; // size in bytes
 			<?php
 			$emails	 = $wpdb-> get_results("SELECT * FROM email_address WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1'");
 			if($emails){
-				$last = end($emails);
+				$last = end($emails);?>
 				<table>
+				<?php
 				foreach($emails as $email){
 					$isLast = $last === $email;
 					if ($isLast){
