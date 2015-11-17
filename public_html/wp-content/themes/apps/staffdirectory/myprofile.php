@@ -160,7 +160,7 @@ $max_file_size = 30000000; // size in bytes
 						if ($user->ministry_address_line2) {
 							echo "<br>".$user->ministry_address_line2;
 						}
-					echo "<br>".$user->ministry_city.", "$user->ministry_province."  ". $user->ministry_postal_code;
+					echo "<br>".$user->ministry_city.", ".$user->ministry_province."  ". $user->ministry_postal_code;
 					echo "<br>".$user->ministry_country;
 					?>
 					</td>
