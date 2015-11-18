@@ -3,7 +3,7 @@
 Plugin Name: WordPress Popular Posts
 Plugin URI: http://wordpress.org/extend/plugins/wordpress-popular-posts
 Description: WordPress Popular Posts is a highly customizable widget that displays the most popular posts on your blog
-Version: 3.3.1
+Version: 3.3.2
 Author: Hector Cabrera
 Author URI: http://cabrerahector.com
 Author Email: hcabrerab@gmail.com
@@ -61,7 +61,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 		 * @since	1.3.0
 		 * @var		string
 		 */
-		private $version = '3.3.1';
+		private $version = '3.3.2';
 
 		/**
 		 * Plugin identifier.
@@ -690,7 +690,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 				wp_enqueue_script( 'thickbox' );
 				wp_enqueue_style( 'thickbox' );
 				wp_enqueue_script( 'media-upload' );
-				wp_enqueue_script( $this->plugin_slug .'-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array('jquery'), $this->version );
+				wp_enqueue_script( $this->plugin_slug .'-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array('jquery'), $this->version, true );
 			}
 
 		} // end register_admin_scripts
@@ -1305,7 +1305,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 		 */
 		public function print_ajax(){
 
-			if ( $this->current_post_id ) {
+			if ( 0 != $this->current_post_id ) {
 				?>
 				<!-- WordPress Popular Posts v<?php echo $this->version; ?> -->
 				<script type="text/javascript">//<![CDATA[
@@ -1744,6 +1744,10 @@ if ( !class_exists('WordpressPopularPosts') ) {
 				$this->defaults,
 				$instance
 			);
+			
+			// Pass the widget ID, might come in handy
+			if ( isset($this->id) )
+				$instance['widget_id'] = $this->id;
 
 			$content = "";
 
@@ -1912,7 +1916,7 @@ if ( !class_exists('WordpressPopularPosts') ) {
 				  : '';
 				
 				$content =
-					'<li>'
+					'<li' . ( ( $this->current_post_id == $p->id ) ? ' class="current"' : '' ) . '>'
 					. $thumb
 					. '<a ' . ( ( $this->current_post_id == $p->id ) ? '' : 'href="' . $permalink . '"' ) . ' title="' . esc_attr($title) . '" class="wpp-post-title" target="' . $this->user_settings['tools']['link']['target'] . '">' . $title_sub . '</a> '
 					. $excerpt . $_stats
@@ -2526,33 +2530,36 @@ if ( !class_exists('WordpressPopularPosts') ) {
 
 				/** @var wpdb $wpdb */
 				global $wpdb;
+				
+				if ( $content = $wpdb->get_var( "SELECT post_content FROM {$wpdb->posts} WHERE ID = {$id};" ) ) {
 
-				$content = $wpdb->get_results("SELECT post_content FROM {$wpdb->posts} WHERE ID = " . $id, ARRAY_A);
-				$count = substr_count($content[0]['post_content'], '<img');
-
-				// images have been found
-				// TODO: try to merge these conditions into one IF.
-				if ($count > 0) {
-
-					preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content[0]['post_content'], $content_images);
-
-					if (isset($content_images[1][0])) {
-						$attachment_id = $this->__get_attachment_id($content_images[1][0]);
-
-						// image from Media Library
-						if ($attachment_id) {
-							$file_path = get_attached_file($attachment_id);
-							// There's a file path, so return it
-							if ( !empty($file_path) )
-								return $file_path;
-						} // external image?
-						else {
-							$external_image = $this->__fetch_external_image($id, $content_images[1][0]);
-							if ( $external_image ) {
-								return $external_image;
+					// at least one image has been found
+					if ( preg_match( '/<img[^>]+>/i', $content, $img ) ) {
+						
+						// get img src attribute from the first image found
+						preg_match( '/(src)="([^"]*)"/i', $img[0], $src_attr );
+						
+						if ( isset($src_attr[2]) && !empty($src_attr[2]) ) {
+						
+							// image from Media Library
+							if ( $attachment_id = $this->__get_attachment_id( $src_attr[2] ) ) {
+								
+								$file_path = get_attached_file($attachment_id);
+								
+								// There's a file path, so return it
+								if ( !empty($file_path) ) {
+									return $file_path;
+								}
+								
+							} // external image?
+							else {
+								return $this->__fetch_external_image($id, $src_attr[2]);
 							}
+						
 						}
+						
 					}
+					
 				}
 
 			}
@@ -2647,29 +2654,38 @@ if ( !class_exists('WordpressPopularPosts') ) {
 
 			if ( !is_wp_error($response) && in_array(wp_remote_retrieve_response_code($response), $accepted_status_codes) ) {
 				
-				if ( function_exists('exif_imagetype') ) {
-					$image_type = exif_imagetype( $url );
-				} else {
-					$image_type = getimagesize( $url );
-					$image_type = ( isset($image_type[2]) ) ? $image_type[2] : NULL;
-				}
-
-				if ( in_array($image_type, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG)) ) {
-					require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
-					$url = str_replace( 'https://', 'http://', $url );
-					$tmp = download_url( $url );
-
-					// move file to Uploads
-					if ( !is_wp_error( $tmp ) && rename($tmp, $full_image_path) ) {
-						// borrowed from WP - set correct file permissions
-						$stat = stat( dirname( $full_image_path ));
-						$perms = $stat['mode'] & 0000644;
-						@chmod( $full_image_path, $perms );
-
-						return $full_image_path;
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				$url = str_replace( 'https://', 'http://', $url );
+				$tmp = download_url( $url );
+				
+				if ( !is_wp_error( $tmp ) ) {
+					
+					if ( function_exists('exif_imagetype') ) {
+						$image_type = exif_imagetype( $tmp );
+					} else {
+						$image_type = getimagesize( $tmp );
+						$image_type = ( isset($image_type[2]) ) ? $image_type[2] : NULL;
 					}
+	
+					if ( in_array($image_type, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG)) ) {
+	
+						// move file to Uploads
+						if ( @rename($tmp, $full_image_path) ) {
+							// borrowed from WP - set correct file permissions
+							$stat = stat( dirname( $full_image_path ));
+							$perms = $stat['mode'] & 0000644;
+							@chmod( $full_image_path, $perms );
+	
+							return $full_image_path;
+						}
+						
+					}
+					
+					// remove temp file
+					@unlink( $tmp );
+					
 				}
+				
 			}
 
 			return false;
@@ -2932,20 +2948,12 @@ if ( !class_exists('WordpressPopularPosts') ) {
 				$string = str_replace( "{stats}", $data['stats'], $string );
 			}
 
-			if ( in_array("{excerpt}", $matches[0]) ) {
-				$string = str_replace( "{excerpt}", htmlentities($data['summary'], ENT_QUOTES, $this->charset), $string );
+			if ( in_array("{excerpt}", $matches[0]) || in_array("{summary}", $matches[0]) ) {
+				$string = str_replace( array("{excerpt}", "{summary}"), $data['summary'], $string );
 			}
 
-			if ( in_array("{summary}", $matches[0]) ) {
-				$string = str_replace( "{summary}", htmlentities($data['summary'], ENT_QUOTES, $this->charset), $string );
-			}
-
-			if ( in_array("{image}", $matches[0]) ) {
-				$string = str_replace( "{image}", $data['img'], $string );
-			}
-
-			if ( in_array("{thumb}", $matches[0]) ) {
-				$string = str_replace( "{thumb}", $data['img'], $string );
+			if ( in_array("{image}", $matches[0]) || in_array("{thumb}", $matches[0]) ) {
+				$string = str_replace( array("{image}", "{thumb}"), $data['img'], $string );
 			}
 			
 			if ( in_array("{thumb_img}", $matches[0]) ) {
