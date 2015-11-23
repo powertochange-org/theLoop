@@ -31,7 +31,7 @@ unset($error);
 if (isset($_POST['REPORT']) 
 	&& (($_POST['REPORT'] == "AccountBalance" && strlen($_POST['DESGCODE']) < 6)
 	||  ($_POST['REPORT'] != "AccountBalance" && strlen($_POST['DESGCODE']) != 6))
-	&& !in_array($_POST['REPORT'] , array ("StaffList", "StaffVacation"))) //%list  (just a label)
+	&& !in_array($_POST['REPORT'] , array ("StaffList", "StaffVacation", "StaffFinancialHealth"))) //%list  (just a label)
 	{
 	$error = "Your account number must be 6 digits in length\n";
 } 
@@ -182,6 +182,13 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffV
   $error = $errorMsg;
 }
 
+elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffFinancialHealth") {
+  require('financialreports/sql_report_functions.php');
+  
+  produceSQLReport('StaffFinancialHealth', $_POST['employee_number'], $_POST['report_month'] . '-01');
+  exit;
+}
+
 //%elif-block (just a label)
 
 //If there is an error with a preview, do not display the whole page
@@ -207,38 +214,46 @@ $financials = $_POST['financials'];
 $vac_year = $_POST['vac_year'];
 $OUTPUTFRMT = $_POST['OutputFormat'];
 
-//Used for financial health reporting via email. Prefills the fields with requested details.
 /*
-reports/?actnum=110110&report=mdr&mo=5&yr=2015                  >> Monthly Donation Report
-reports/?actnum=110110&report=rmd                               >> Monthly Donors
-reports/?actnum=110110&report=13mdr&mo=5&yr=2015                >> 13 Month Donor Report
-reports/?actnum=110110&report=die&smo=5&emo=6&syr=2014&eyr=2015 >> detailed income and expense
-*/
-if(isset($_GET["emailreport"])) {
-    $emailreport = $_GET["emailreport"];
+ * Allow the report to be selected and certain parameters to be set using query string variables.
+ * All the needed information is packed into 1 query string variable, because the CAS server seems
+ * to strip off everything after the first one.
+ *
+ * Query string typically follows this format:
+ *
+ *   ?reportlink=RRRPPPPPPMMYYYY
+ *
+ * where:
+ *    RRR is a 3-character report identifier
+ *    PPPPPP is the 6-character project code (staff / ministry account)
+ *    MM is the month
+ *    YYYY is the year
+ */
+if(isset($_GET["reportlink"])) {
+    $reportlink = $_GET["reportlink"];
     
-    $actnum = substr($emailreport, 0, 6);
-    $report = substr($emailreport, 6, 3);
+    $report = substr($reportlink, 0, 3);
+    $actnum = substr($reportlink, 3, 6);
     
     
     $_POST["DESGCODE"] = $actnum;
     
     if($report == "mdr") {
         $REPORT = "DonorReport";
-        $RPTMONTH = substr($emailreport, 9, 2);
-        $RPTYEAR = substr($emailreport, 11, 4);
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
     } else if($report == "rmd") {
         $REPORT = "MonthlyDonors";
-    } else if($report == "13m") {//local.theloop.com/reports/?emailreport=82345713m062015
+    } else if($report == "13m") {// reports/?reportlink=13m823457201506
         $REPORT = "InvestorReport";
-        $RPTMONTH = substr($emailreport, 9, 2);
-        $RPTYEAR = substr($emailreport, 11, 4);
+        $RPTMONTH = substr($reportlink, 9, 2);
+        $RPTYEAR = substr($reportlink, 11, 4);
     } else if($report == "die") {
         $REPORT = "DetailedRangeReport";
-        $RPTSTARTMONTH = substr($emailreport, 9, 2);
-        $RPTENDMONTH = substr($emailreport, 11, 2);
-        $RPTSTARTYEAR = substr($emailreport, 13, 4);
-        $RPTENDYEAR = substr($emailreport, 17, 4);
+        $RPTSTARTMONTH = substr($reportlink, 9, 2);
+        $RPTSTARTYEAR = substr($reportlink, 11, 4);
+        $RPTENDMONTH = substr($reportlink, 15, 2);
+        $RPTENDYEAR = substr($reportlink, 17, 4);
     }
     
 }
@@ -276,6 +291,14 @@ get_header(); ?>
                   <OPTION VALUE="">--STAFF REPORTS--</OPTION>
 				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected='selected'");}?>>Staff List</OPTION>
 				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation and Wellness</OPTION>
+				  <?php
+				  if (in_array($user_id, array('jasonb','matthewc','annf'))) {
+					  echo '<OPTION VALUE="">--TEST REPORTS--</OPTION>';
+					  echo '<OPTION VALUE="StaffFinancialHealth" ';
+					  if($REPORT == 'StaffFinancialHealth'){echo("selected='selected'");}
+					  echo '>Staff Financial Health</OPTION>';
+				  }
+				  ?>
             </SELECT>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
@@ -401,6 +424,13 @@ get_header(); ?>
 						 ?>				  										  								 	 <?php echo (date("Y") -4);?></OPTION>
 				</SELECT>		
 			</div>
+			<div id='staffHealth_options' style='display:none'>
+				Employee Number:
+				<input type="text" name="employee_number" />
+				<br />
+				Report Month:
+				<input type="text" name="report_month" value="2015-10" /> (in YYYY-MM format)
+			</div>
 			<DIV ID="output" STYLE="display:none">
 				<P>
 				Output Format:
@@ -444,7 +474,7 @@ get_header(); ?>
 				alert("Please select a report from the drop-down list");
 				return false;
 			}
-			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation"){
+			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation" && $("#repchoice").val() != "StaffFinancialHealth"){
 				alert("Please enter your ministry/staff account number before running the report");
 				return false;
 			}
@@ -543,6 +573,15 @@ get_header(); ?>
 					$("#financials_opt").slideUp();
 					$("#reportToMe_opt").slideDown();
 					$("#staffVaction_options").slideDown();
+				} else if ($(this).val() == "StaffFinancialHealth"){
+					$("#staffaccount").slideUp();
+					$("#monthyear").slideUp();
+					$("#daterange").slideUp();
+					$("#financials_opt").slideUp();
+					$("#reportToMe_opt").slideUp();
+					$("#staffVaction_options").slideUp();
+					$("#output").slideUp();
+					$("#staffHealth_options").slideDown();
 				}
 				
 				/* Buttons */
@@ -566,14 +605,3 @@ get_header(); ?>
 <div class="clear"></div>			
 <?php get_footer(); 
 ?>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-64999993-2', 'auto');
-  ga('send', 'pageview');
-
-</script>

@@ -25,10 +25,10 @@
 * author: gerald.becker
 *
 */
-function __autoload($class_name) {
-    include_once('workflow/inc/class.' . $class_name . '.inc.php');
-}
-session_start();
+
+// Include the main Workflow class
+require_once('workflow/inc/class.Workflow.inc.php');
+
 ?>
 <?php get_header(); ?>
     <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css" rel="stylesheet" type="text/css" />
@@ -42,12 +42,6 @@ session_start();
     
                     <div id="content-workflow">
                 <?php 
-                    //Log user in to Workflow
-                    if(!(isset($_SESSION['activeuser']) && $_SESSION['activeuser'] != '')) {
-                        Workflow::logInUser(); //performs login
-                        echo 'Now logged in through CAS system. USER ID: '.$_SESSION['activeuser'].' : '.$_SESSION['activeusername'].'<br>';
-                    }
-                    
                     include('workflow/menu.php');
                     
                     if(isset($_GET['page'])){ //check if the page has been specified
@@ -103,7 +97,6 @@ session_start();
                             include 'workflow/search.php';
                             break;
                         default:
-                            //include 'staffdirectory/approval.php';
                             include "workflow/viewsubmissions.php";
                     }
                 ?>

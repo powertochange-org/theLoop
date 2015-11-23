@@ -1,14 +1,3 @@
-
-<h2>Preview of Current Form</h2>
-<div id="previewform">
-</div>
-<div style="clear:both;"></div>
-
-<hr>
-
-<button type="button" class="submitbutton" style="width: 200px;height:35px;" onclick="scrollDown();">Scroll Down</button>
-<div style="clear:both;"></div>
-<h1>Create New Form</h1><br>
 <?php
 /*
 *Creates a new workflow form.
@@ -35,13 +24,25 @@
 */
 
 if(Workflow::isAdmin(Workflow::loggedInUser())) {
-    
+?>
 
+<h1>Create New Form</h1><br>
+
+<h2>Preview of Current Form</h2>
+<div id="previewform">
+</div>
+<div style="clear:both;"></div>
+
+<hr>
+
+<button type="button" class="submitbutton" style="width: 200px;height:35px;" onclick="scrollDown();">Scroll Down</button>
+<div style="clear:both;"></div>
+
+<?php
     $workflow = new Workflow();
     //echo $workflow->getForm();
     
-    
-    
+        
     if(isset($_GET['wfid']) && $_GET['wfid'] != '') {
         $wfid = $_GET['wfid'];
         
@@ -66,9 +67,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         }
         
     }
-    
-    
-    
+      
 ?>
     <script>
     /*
@@ -194,7 +193,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <!--The added fields will populate here-->
         <div id="workflowfields">
             <?php if(!$draft) {?>
-            <h3 style="text-align: center;">History</h3>
+            <!--<h3 style="text-align: center;">History</h3>-->
             <?php } else { echo $savedfields;}?>
         </div>
         <!--<div id="debugworkflowfields">

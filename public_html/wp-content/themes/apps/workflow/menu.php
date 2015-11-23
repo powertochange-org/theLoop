@@ -1,4 +1,4 @@
-<div id="navbar">
+<div id="workflow-navbar">
     <?php
     $admin = Workflow::isAdmin(Workflow::loggedInUser());
     if($admin) { ?>

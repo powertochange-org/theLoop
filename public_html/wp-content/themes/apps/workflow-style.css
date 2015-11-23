@@ -4,11 +4,6 @@
 *
 */
 
-body {
-    margin: 0;
-    font-family: sans-serif;
-}
-
 #content-workflow a {
     text-decoration: none;
     color: blue;
@@ -17,29 +12,27 @@ body {
 #content-workflow a:hover {
     background-color: black;
     color: white;
-    
 }
 
-#navbar {
+#workflow-navbar {
     margin-bottom: 30px;
 }
-#content-workflow #navbar a {
-    text-decoration: none;
-    color: black;
-    font-size: 20px;
-    font-weight: bold;
-    padding-right: 10px;
+#workflow-navbar a {
+	background-color:#f7941d;
+	color: #000000;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding:10px;
+	border-style: none;
+	border-radius:5px;
 }
 
-#content-workflow #navbar a:hover {
-    background-color: black;
-    color: white;
-    
+#workflow-navbar a:hover {
+	background-color:#f7941d;
 }
 
 #content-workflow {
-    margin: 0 5px;
-    
+    margin: 0 5px; 
 }
 
 div.workflow {
@@ -171,10 +164,6 @@ div.clear {
     box-shadow: 0 0 5px 1px #969696;
 }
 
-
-select option {
-    
-}
 
 select {
     width: 99%;
