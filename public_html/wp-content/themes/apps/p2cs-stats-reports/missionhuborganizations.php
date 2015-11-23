@@ -431,7 +431,7 @@ function createDecisionReport() {
     
     foreach($people as $person) {
         $date = strtotime($person['date']);
-        $tablerows = $tablerows . "<tr><td>" . getOrgName($person[org_id]) . "</td><td>" . $person[receiver_name] . "</td><td>" . $person[initiator_names] . "</td><td>" . date("M d Y", $date). "</td><td>" . $person[story]. "</td></tr>";
+        $tablerows = $tablerows . "<tr><td>" . getOrgName($person[org_id]) . "</td><td>" . $person[receiver_name] . "</td><td>" . $person[initiator_names] . "</td><td>" . date("M d\, Y", $date). "</td><td>" . $person[story]. "</td></tr>";
     }
     $tablerows = $tablerows . "</tbody>";
     
