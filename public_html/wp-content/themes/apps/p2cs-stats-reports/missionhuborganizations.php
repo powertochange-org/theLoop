@@ -426,7 +426,7 @@ function createDecisionReport() {
     $tableheaders = "<thead><tr>
                         <th>Organization</th>
                         <th>Receiver</th>
-                        <th>Initiatiors</th>
+                        <th>Initiator(s)</th>
                         <th>Date</th>
                         <th>Story</th>
                     <tr></thead>";
