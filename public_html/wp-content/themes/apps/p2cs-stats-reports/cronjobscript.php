@@ -184,9 +184,10 @@ function updateInteractionDetails($orgid, $person) {
             $people = getIndexOfEndpoint('people', '', $orgid);
             foreach($people['people'] as $p) {
                 if (in_array($p['id'], $interaction['initiator_ids'])) {
-                    $initiatornames = $initiatornames . $p['first_name'] . " " . $p['last_name']. " ";
+                    $initiatornames = $initiatornames . $p['first_name'] . " " . $p['last_name']. ", ";
                 }
             }
+            $initiatornames = rtrim($initiatornames, ', ');
             $interactionarray = array(
                 'receiver_id' => $interaction['receiver_id'],
                 'receiver_name' => $person['first_name'] . " " . $person['last_name'],
