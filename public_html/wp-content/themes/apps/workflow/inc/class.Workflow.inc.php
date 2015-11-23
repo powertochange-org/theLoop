@@ -11,15 +11,10 @@
 *
 *
 *
-*
-*
 * author: gerald.becker
 *
 */
 
-
-//include_once('workflow/config.php');
-//include_once('./config-staff.php');
 
 class Workflow {
     private $name;
@@ -32,7 +27,10 @@ class Workflow {
     private $numFields;
     private $mode;
     private $previousID;
-    
+	private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
+    private static $impersonateEmployeeNum;  // When this is set to a valid employee number, the current user will impersonate that employee. Otherwise, they will just operate as themselves
+	
+	
     public function __construct() {
     }
     
@@ -1725,30 +1723,7 @@ class Workflow {
         //return $content;
     }
     
-    
-    public static function logInUser() {
-        global $wpdb;
-        $empid = 0;
-        $current = wp_get_current_user()->id;
-        
-        $sql = "SELECT employee.employee_number,
-                        CONCAT(first_name, ' ', last_name) AS name
-                FROM employee 
-                INNER JOIN wp_users ON employee.user_login = wp_users.user_login
-                WHERE wp_users.ID = '$current'";
-        
-        $result = $wpdb->get_results($sql, ARRAY_A);
-        
-        if(count($result) == 1) {
-            $row = $result[0];
-            $empid = $_SESSION['activeuser'] = $row['employee_number'];
-            $_SESSION['activeusername'] = $row['name'];
-        }
-        
-        return $empid;
-        
-    }
-    
+       
     /*DEBUG FUNCTION*/
     public static function actualloggedInUser() {
         global $wpdb;
@@ -1769,19 +1744,54 @@ class Workflow {
     }
     
     public static function loggedInUser() {
-        if(isset($_SESSION['activeuser']) && $_SESSION['activeuser'] != '') {
-            return $_SESSION['activeuser'];
-        } else {
-            return '0';
-        }
+		// Check if we are impersonating someone else
+		if ($impersonateEmployeeNum)
+			return $impersonateEmployeeNum;
+		
+		// Check if the current employee number has already been looked up and cached
+		else if ($currentUserEmployeeNum)
+			return $currentUserEmployeeNum;
+		
+		// If none of those are true, we need to look up the employee number of the current person
+		else {
+			global $wpdb;
+			$currentUserId = wp_get_current_user()->id;
+			
+			$sql = "SELECT employee.employee_number FROM employee 
+					INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+					WHERE wp_users.ID = '$currentUserId'";
+			
+			$result = $wpdb->get_results($sql, ARRAY_A);
+			
+			if(count($result) == 1) {
+				$row = $result[0];
+				$currentUserEmployeeNum = $row['employee_number'];
+			} 
+			return $currentUserEmployeeNum;
+		}
     }
     
     public static function loggedInUserName() {
-        if(isset($_SESSION['activeusername']) && $_SESSION['activeusername'] != '') {
-            return $_SESSION['activeusername'];
-        } else {
-            return '0';
-        }
+		// If we are impersonating someone, need to look up the username
+		if ($impersonateEmployeeNum) {
+			global $wpdb;
+			
+			$sql = "SELECT user_login 
+					FROM employee 
+					WHERE employee_number = $impersonateEmployeeNum";
+			
+			$result = $wpdb->get_results($sql, ARRAY_A);
+			
+			if(count($result) == 1) {
+				$row = $result[0];
+				$userLogin = $row['user_login'];
+			} 
+			
+			return $userLogin;
+		} else {
+			// Otherwise, just return the current user login
+			return wp_get_current_user()->user_login;
+		}
     }
     
     public static function hasRoleAccess($user, $roleSearch) {
