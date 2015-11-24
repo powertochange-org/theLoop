@@ -235,6 +235,28 @@ function createRecurseCheckbox() {
     return $result;
 }
 
+function createSchoolYearDropDownList() {
+    $result = "Select school year: "
+            . "  <select name='schoolYear'>"
+            . "    <option value=''>--SELECT A YEAR--</option>";
+    $CurrYear = date("Y");
+    $CurrDate = strtotime(date("Y-m-d"));
+    $cutoff = strtotime($CurrYear . "-09-01");
+    if ($cutoff > $CurrDate) {
+        $x = 0;
+    } else {
+        $x = -1;
+    }
+    while ($CurrYear - $x >= 2007) {
+        $result .= "<option value='" . ($CurrYear-$x-1) ."'>"
+            . "September " . ($CurrYear - $x - 1) . " to August " . ($CurrYear - $x) 
+            . "</option>";
+        $x++;
+    }
+    $result .= "</select>";
+    return $result;
+}
+
 /****************************************************************************************************
  * Function convertLabelToTitle($labelid)
  *
@@ -412,18 +434,18 @@ function getNestedPeopleAtThreshold($orgid, $label) {
  * string response: The HTML to create the table for the decision report.
  ***************************************************************************************************/
 
-function createDecisionReport() {
+function createDecisionReport($startdate, $enddate) {
     global $wpdb; 
-    $people = $wpdb->get_results( 
-        "SELECT * FROM `mh_interactions_details`",
-        ARRAY_A
-    );
+    $sql = $wpdb->prepare(
+            "SELECT * FROM `mh_interactions_details`"
+            . "WHERE date > %s AND date < %s", $startdate, $enddate);
+    $people = $wpdb->get_results($sql, ARRAY_A);
         
     $tableheaders = "<thead><tr>
-                        <th>Organization</th>
-                        <th>Receiver</th>
-                        <th>Initiator(s)</th>
-                        <th>Date</th>
+                        <th style='min-width:130px'>Organization</th>
+                        <th style='min-width:130px'>Receiver</th>
+                        <th style='min-width:130px'Initiator(s)</th>
+                        <th style='min-width:100px'>Date</th>
                         <th>Story</th>
                     <tr></thead>";
     
@@ -437,7 +459,7 @@ function createDecisionReport() {
     
     $pagefooter = getDatabaseTimestamp();
     
-    $response = "<table id='report'>$tableheaders$tablerows</table><a href='#' class='download'>Download</a><br><br>$pagefooter";
+    $response = "<br /><table id='report'>$tableheaders$tablerows</table><a href='#' class='download'>Download</a><br><br>$pagefooter";
     
     return $response;
     
