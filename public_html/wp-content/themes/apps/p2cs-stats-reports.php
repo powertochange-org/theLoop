@@ -110,7 +110,7 @@
 							?>
 							<br />
 							<input id="report-generate" name="report-generate" type="submit" value="Generate Report" />
-
+                                                        
 							<div id="ajax-loading">
 							<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/ajax-loading.gif" />
 							</div>
