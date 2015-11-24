@@ -13,35 +13,15 @@
  ***************************************************************************************************/
 
 require_once("class.P2CSReport.php");
+require_once('missionhuborganizations.php');
 
 class P2CSMissionTripsReport extends P2CSReport {
 	public function hasParameters() {
-		return true;
+            return true;
 	}
 	
-	public function renderParameters() {
-		?>
-		Select school year:
-		<select name="schoolYear">
-			<option value="">--SELECT A YEAR--</option>
-			<?php
-				$CurrYear = date("Y");
-				$CurrDate = strtotime(date("Y-m-d"));
-				$cutoff = strtotime($CurrYear . "-09-01");
-				if ($cutoff > $CurrDate) {
-					$x = 0;
-				} else {
-					$x = -1;
-				}
-				while ($CurrYear - $x >= 2007) {
-					?><option value='<?php echo $CurrYear-$x-1;?>'>
-					<?php echo "September " . ($CurrYear - $x - 1). " to August " . ($CurrYear - $x);?></option>
-					<?php
-					$x++;
-				}
-			?>
-		</select>    
-		<?php
+        public function renderParameters() {
+            echo createSchoolYearDropDownList();
 	}
 	
 	public function renderHTMLReport($postData) {
