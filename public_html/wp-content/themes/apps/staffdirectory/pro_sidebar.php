@@ -6,11 +6,11 @@
 			<? /* Use GET method instead of POST so the URL to get to specific search results is
 			      visible to the end-user, and can be bookmarked or linked to */ ?>
 			<form id='s_s_s' method="GET" action=""><div class='search-box' style='border-color:#adafb2'>
-				<input class='search-input' type='textbox' name='search' placeholder='Search' />
+				<input id='staff-search' class='search-input' type='textbox' name='search' placeholder='Search' />
 				<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
 			</div></form>
 			<BR>
-			<p>You can search using any relevant keywords, like name, jop title, ministry, city, postal code, etc.</p>
+			<p>You can search using any relevant keywords, like name, job title, ministry, city, postal code, etc.</p>
 			<!-- BR>
 			<a class='false-link' onclick='$("#simple-search-staff").hide();$("#advanced-search-staff").show();'><h2>Show Adavanced Search</h2></a -->
 		</div>

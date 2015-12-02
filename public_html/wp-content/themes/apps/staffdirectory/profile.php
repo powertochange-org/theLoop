@@ -6,7 +6,7 @@
 *
 **/
 $profile = $_GET['person']; //grab from URL the profile we want
-	$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile . "'"); //go to DB and get 
+$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile . "'"); //go to DB and get 
 ?>
 
 	<p/>
@@ -62,63 +62,42 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				echo "<strong>Address:</strong> ";
                 // If we have the first line
                 if (!empty($user->ministry_address_line1))  {
-                    echo $user->ministry_address_line1;
-				    if (!empty($user->ministry_address_line2))  {
-				    	echo ", $user->ministry_address_line2";
-				    }
-				    if (!empty($user->ministry_address_line3)) {
-				    	echo ", $user->ministry_address_line3"; 
-				    }
-				    if (!empty($user->ministry_city)) {
-				    	echo ", $user->ministry_city";
-				    }
-				    if (!empty($user->ministry_province)) {
-				    	echo ", $user->ministry_province";
-				    }
-				    if (!empty($user->ministry_postal_code)) {
-				    	echo ", $user->ministry_postal_code";
-				    }
-                }
-                else { // We don't have the first line, meaning we do have the city
-                    echo "$user->ministry_city";
-				    if (!empty($user->ministry_province)) {
-				    	echo ", $user->ministry_province";
-				    }
-                }
-				if (!empty($user->ministry_country)) {
-					echo ", $user->ministry_country";
+					echo $user->ministry_address_line1;
+					if (!empty($user->ministry_address_line2)) { echo ", $user->ministry_address_line2";}
+					if (!empty($user->ministry_address_line3)) { echo ", $user->ministry_address_line3";}
+					if (!empty($user->ministry_city)) { echo ", $user->ministry_city";}
+					if (!empty($user->ministry_province)) { echo ", $user->ministry_province";}
+					if (!empty($user->ministry_postal_code)) { echo ", $user->ministry_postal_code";}
 				}
+				else { // We don't have the first line, meaning we do have the city
+					echo "$user->ministry_city";
+					if (!empty($user->ministry_province)) { echo ", $user->ministry_province";}
+                }
+				if (!empty($user->ministry_country) &&($user->ministry_country <> 'CA')) { echo ", $user->ministry_country";}
 				echo "<BR>";
 			}
 				
-			$phones = $wpdb->get_results('SELECT * FROM phone_number, employee WHERE employee.external_id = phone_number.employee_id AND phone_number.is_ministry=1 AND phone_number.employee_id = "' . $user->external_id . '"');
+			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE is_ministry=1 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){
-						$type = 'Office';
-					}
-					else if($phone->phone_type == 'HOME'){
-						$type = 'Home';
-					}
-					else if($phone->phone_type == 'CELL'){
-						$type = 'Cell';
-					}
-					else if($phone->phone_type == 'FAX'){
-						$type = 'Fax';
-					}
-					else if($phone->phone_type == 'OTHER'){
-						$type = 'Other';
-					}
-					echo "<strong>" . $type . ':</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
+					if($phone->phone_type == 'BUS'){ $type = 'Office';}
+					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
+					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
+					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
+					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
+					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
+					else { $type = '??';}
+					
+					echo "<strong>".$type .": </strong>".$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
-						echo "-$phone->extension";
+						echo " EXT: $phone->extension";
 					}
 					echo '<BR>';
 				}
 			}
 			
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.is_ministry = 1 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE is_ministry = 1 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo "<strong>Email:</strong> $email->email_address<BR>";
@@ -145,13 +124,20 @@ $profile = $_GET['person']; //grab from URL the profile we want
 					echo '<strong>Facebook:</strong> ' . $user->ministry_facebook. '<BR>';
 				}
 			}
+			echo "<br>";
+			if(isset($user->spouse_employee_number)){ //if you're married to someone on staff we link your profiles.
+				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE employee_number = '" . $user->spouse_employee_number . "'");
+				if(isset($spouse->employee_number)){
+					echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br /><br />"; 
+				}
+			}
 			?>
 			</p>
 			<hr>
 			<h4>PERSONAL INFORMATION</h4>
-			<BR><p style='margin:0;'>
+			<p style='margin:0;'>
 			<?php
-            /* Ensure user wants to share address, and has at least the first line */
+			/* Ensure user wants to share address, and has at least the first line */
 			if($user->share_address == 'FULL' && (!empty($user->address_line1))){
 				echo "<strong>Address:</strong> $user->address_line1";
 				if (!empty($user->address_line2)) {
@@ -169,44 +155,34 @@ $profile = $_GET['person']; //grab from URL the profile we want
 				if (!empty($user->postal_code)) {
 					echo ", $user->postal_code";
 				}
-				if (!empty($user->country	)) {
+				if (!empty($user->country) && ($user->country <> 'CA')) {
 					echo ", $user->country";
 				}
 			}
-			echo "<BR>";
-			if(isset($user->spouse_id)){ //if you're married to someone on staff we link your profiles.
-				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE external_id = '" . $user->spouse_id . "'");
-				echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br />"; 
-			}
+			echo"<br>";
+
 			//grab phone numbers that are shared, then display them
-			$phones = $wpdb->get_results('SELECT * FROM phone_number, employee WHERE employee.external_id = phone_number.employee_id AND phone_number.share_phone=1 AND phone_number.is_ministry=0 AND phone_number.employee_id = "' . $user->external_id . '"');
+			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE share_phone=1 AND is_ministry=0 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){
-						$type = 'Office';
-					}
-					else if($phone->phone_type == 'HOME'){
-						$type = 'Home';
-					}
-					else if($phone->phone_type == 'CELL'){
-						$type = 'Cell';
-					}
-					else if($phone->phone_type == 'FAX'){
-						$type = 'Fax';
-					}
-					else if($phone->phone_type == 'OTHER'){
-						$type = 'Other';
-					}
-					echo '<strong>' . $type . ':</strong> ('. $phone->area_code . ') ' . $phone->contact_number;
+					if($phone->phone_type == 'BUS'){ $type = 'Office';}
+					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
+					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
+					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
+					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
+					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
+					else { $type = '??';}
+
+					echo '<strong>' . $type . ': </strong> '.$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
-						echo '-' . $phone->extension;
+						echo ' EXT: '.$phone->extension;
 					}
 				    echo '<BR>';
 				}
 			}
 			//grab emails that are shared, then display them
-			$emails = $wpdb->get_results('SELECT * FROM email_address, employee WHERE employee.external_id = email_address.employee_id AND email_address.share_email=1 AND email_address.is_ministry = 0 AND email_address.employee_id = "' . $user->external_id . '"  ORDER BY is_ministry DESC');
+			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE share_email=1 AND is_ministry = 0 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
 						echo '<strong>Email:</strong> '. $email->email_address . '<BR>';

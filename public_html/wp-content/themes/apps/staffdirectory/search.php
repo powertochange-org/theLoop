@@ -168,6 +168,10 @@
 <div id="content-right" class='download staff-directory staff-directory-sidebar' >   
 	<?php the_content();
 	include('pro_sidebar.php') ?>
+	<script type="text/javascript">
+	/* On this search page, set the focus to the search box */
+	document.getElementById("staff-search").focus();
+	</script>
 </div><div style='clear:both;'></div>
 <?php
 	function objectToArray($d) {
@@ -328,12 +332,6 @@ function ministry($ministry) { //see if the given word matches a keyword associa
 			return 'HQ Operations';
 		case 'operations':
 			return 'HQ Operations';
-		case 'marketing':
-			return 'Marketing & Communications';
-		case 'communication':
-			return 'Marketing & Communications';
-		case 'communications':
-			return 'Marketing & COmmunications';
 			
 		default:
 			return false;

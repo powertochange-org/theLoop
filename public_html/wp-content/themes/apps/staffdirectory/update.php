@@ -40,16 +40,7 @@
 				|| strip_tags($_POST['ministryAddress']['country']) != $user->ministry_country
 				|| strip_tags($_POST['ministryAddress']['pc']) != $user->ministry_postal_code){
 				
-			$wpdb->insert( 'sync',
-				array(  'table_name'    => 'employee',
-						'record_id'     => $user->external_id,
-						'sync_action'   => 'update',
-						'field_changed' => 'ministry_address',
-						'changed_date'	=>	date('Y-m-d H-i-s'),
-						'user_login'	=> $user->user_login
-				));
-
-            // Store all of the changes needed
+			// Store all of the changes needed
 			$employeeChanges['ministry_address_line1'] = strip_tags($_POST['ministryAddress']['line1']);
 			$employeeChanges['ministry_address_line2'] = strip_tags($_POST['ministryAddress']['line2']);
 			$employeeChanges['ministry_city'] = strip_tags($_POST['ministryAddress']['city']);
@@ -57,10 +48,10 @@
 			$employeeChanges['ministry_country'] = strip_tags($_POST['ministryAddress']['country']);
 			$employeeChanges['ministry_postal_code'] = strip_tags($_POST['ministryAddress']['pc']);
 
-            // Add to the changes for the email
-            $changes['Ministry Address'] = array(
-                'old' => 
-		            getField($user->ministry_address_line1) . " <br/>" .
+			// Add to the changes for the email
+			$changes['Ministry Address'] = array(
+				'old' => 
+					getField($user->ministry_address_line1) . " <br/>" .
 		            getField($user->ministry_address_line2) . " <br/>" .
 		            getField($user->ministry_city) . " <br/>" .
 		            getField($user->ministry_province) . " <br/>" .
@@ -104,7 +95,20 @@
 				 
 			}
 		}
-		
+		//Spouse Employee Number
+		if (strip_tags($_POST['spouseEmployeeNumber']) != $user->spouse_employee_number ){
+
+			if (empty(strip_tags($_POST['spouseEmployeeNumber']))) {
+				$spouse_employee_number = NULL;
+			}
+			else {
+				$spouse_employee_number = strip_tags($_POST['spouseEmployeeNumber']);
+			}
+
+			$wpdb->update( 'employee', 
+				array( 'spouse_employee_number' => $spouse_employee_number),
+				array(	'employee_number' => $user->employee_number));
+		}
 		
 		//Email
 		foreach($_POST['email'] as $key => $value){
