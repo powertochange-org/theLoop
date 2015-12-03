@@ -14,15 +14,6 @@ RewriteEngine On
 # END WPSuperCache
 
 
-# WP-AVOID-SLOW Begin
-# Add Expires headers
-ExpiresActive On
-ExpiresDefault "access plus 5 days"
-ExpiresByType text/css "modification plus 2 minutes"
-# ETags
-FileETag none
-# WP-AVOID-SLOW END
-
 
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
