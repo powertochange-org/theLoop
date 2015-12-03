@@ -42,13 +42,16 @@
 						}
 					}
 					//check if province/territory
-					$j=0;
+					//JasonB: commented this out, as province abbreviations seem to return too many false-positive
+					// search results.
+					/*$j=0;
 					for($i=0; $i < count($names); $i++){ //for erach term searched
 						$province = province($names[$i]);
 						if($province != false){
 							$names[$i] = $province;
 						}
-					}
+					}*/
+					
 					//end of identification
 					$j = 0; //next spot in array
 					$alldata = array();
@@ -126,36 +129,46 @@
 					// Obtain a list of columns
 					
 					for($i = 0; $i < count($alldata); $i++){
-						echo "<div class='person'>";
-							if(is_null($alldata[$i]['photo']) || $alldata[$i]['share_photo'] == 0){ //if we do not have a picture for this user
-								//echo $alldata[$i]['share_photo'];
-                                // Attempt to use their public giving site photo; use the smaller "icon" image for search results
-                                $url = "http://secure.powertochange.org/images/Product/icon/" . $alldata[$i]['staff_account'] . ".jpg";
-                                // Check to see if that url is valid
-                                // Use curl to test validity of URL; init the handle
-                                $handle = curl_init($url);
-                                // Set the option so that it returns the response to a variable
-                                // (which we don't actually use), as opposed to printing out the
-                                // response to the page
-                                curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-                                // Actually try to get the response from the url
-                                curl_exec($handle);
-                                // Check the response code
-                                if (curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
-                                    // It's INVALID (ie, user doesn't have a giving site image)
-                                    // Use the standard image
-                                    $url = "../../wp-content/uploads/staff_photos/anonymous.jpg";
-                                } 
-				                echo '<img style=\'display:inline;float:left;\' src="' . $url . '" width=50 />';
+						echo "<div class='person'><div style='float:left;width:50px;min-height:10px;'>";
+						if(is_null($alldata[$i]['photo']) || $alldata[$i]['share_photo'] == 0){ //if we do not have a picture for this user
+							$useAnonymous = true; // This will be the fall-back option
+							$url = '';
+
+							// If they have a staff account, attempt to use their public giving site 
+							// photo; use the smaller "icon" image for search results
+							if ($alldata[$i]['staff_account'] > '800000') {
+								$url = "http://secure.powertochange.org/images/Product/icon/" . $alldata[$i]['staff_account'] . ".jpg";
+								// Check to see if that url is valid
+								// Use curl to test validity of URL; init the handle
+								$handle = curl_init($url);
+								// Set the option so that it returns the response to a variable
+								// (which we don't actually use), as opposed to printing out the
+								// response to the page
+								curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+								// Actually try to get the response from the url
+								curl_exec($handle);
+								// Check the response code
+								if (curl_getinfo($handle, CURLINFO_HTTP_CODE) == 200) {
+									// It's VALID! So, use it instead of the anonymous image
+									$useAnonymous = false;
+								}
 							}
-							else { //if we do have a picture for this user
-								echo '<a style=\'display:inline;float:left;\' href ="?page=profile&person=' . $alldata[$i]['user_login'] . '"><img src="../../wp-content/uploads/staff_photos/' . $alldata[$i]['photo'] . '" width=50 /></a>';
+							
+							if ($useAnonymous) {
+								// Use the standard image
+								$url = "../../wp-content/uploads/staff_photos/anonymous.jpg";
 							}
-							echo "<div style='display:inline;float:left;margin:5px 13px;'>";
-								echo '<a style="line-height:20px;" href ="?page=profile&person=' . $alldata[$i]['user_login'] . '">' . strtoupper ($alldata[$i]['first_name'] . ' ' . $alldata[$i]['last_name']) . '</a><BR>';
-								echo  $alldata[$i]['role_title'].", " ;
-								echo $alldata[$i]['ministry'] ;
-							echo "</div><div style='clear:both'></div>";
+							
+							echo '<img src="' . $url . '" width="50" />';
+						}
+						else { //if we do have a picture for this user
+							echo '<a href="?page=profile&person=' . $alldata[$i]['user_login'] . '"><img src="../../wp-content/uploads/staff_photos/' . $alldata[$i]['photo'] . '" width="50" /></a>';
+						}
+						echo "</div><div style='float:left;margin:5px 13px;'>";
+							echo '<a style="line-height:20px;" href ="?page=profile&person=' . $alldata[$i]['user_login'] . '">' . strtoupper ($alldata[$i]['first_name'] . ' ' . $alldata[$i]['last_name']) . '</a><BR>';
+							echo  $alldata[$i]['role_title'].", " ;
+							echo $alldata[$i]['ministry'] ;
+						echo "</div><div style='clear:both'></div>";
 							
 						echo "</div>";
 						echo "<hr style='border-color:#d6d7d4;margin:0;height:0;'>";
@@ -206,132 +219,38 @@
 		}
 	
 	}
-	//test to see if a word matches a key word associated with a certain ministry
-function ministry($ministry) { //see if the given word matches a keyword associated with a ministry
-	switch (strtolower($ministry)) //load the specified site, or the dashboard by default
+
+// Test to see if a word matches a key word or abbreviation associated with a certain ministry. If so,
+// return the full ministry name
+function ministry($ministry) { 
+	switch (strtolower($ministry))
 	{
-		case 'athletes':
-			return 'Athletes in Action';
 		case 'aia':
 			return 'Athletes in Action';
-		case 'action':
-			return 'Athletes in Action';
 		case 'students':
-			return 'Power to Change - Students';
+			return 'P2C-Students';
 		case 'student':
-			return 'Power to Change - Students';
+			return 'P2C-Students';
 		case 'campus':
-			return 'Power to Change - Students';
-		case 'finance':
-			return 'Finance';
-		case 'finances':
-			return 'Finance';
+			return 'P2C-Students';
 		case 'icn':
 			return 'Intercultural Network';
-		case 'intercultural':
-			return 'Intercultural Network';
-		case 'network':
-			return 'Intercultural Network';
-		case 'development':
-			return 'Development';
-		case 'international':
-			return 'International';
-		case 'resource':
-			return 'PTC Resource Centre';
-		case 'centre':
-			return 'PTC Resource Centre';
-		case 'center':
-			return 'PTC Resource Centre';
-		case 'zones':
-			return 'Zones Teams';
-		case 'zone':
-			return 'Zones Teams';
-		case 'teams':
-			return 'Zones Teams';
-		case 'team':
-			return 'Zones Teams';
-		case 'gain':
-			return 'GAiN';
 		case 'global':
 			return 'GAiN';
 		case 'aid':
 			return 'GAiN';
-		case 'ministries':
-			return 'Ministries Office';
-		case 'ministry':
-			return 'Ministries Office';
-		case 'office':
-			return 'Ministries Office';
 		case 'tm':
 			return 'TruthMedia';
-		case 'truth':
-			return 'TruthMedia';
-		case 'media':
-			return 'TruthMedia';
 		case 'it':
-			return 'Information Technology';
-		case 'information':
-			return 'Information Technology';
-		case 'technology':
 			return 'Information Technology';
 		case 'computer':
 			return 'Information Technology';
 		case 'fl':
 			return 'FamilyLife';
-		case 'family':
-			return 'FamilyLife';
-		case 'life':
-			return 'FamilyLife';
 		case 'hr':
 			return 'Human Resources';
-		case 'human':
-			return 'Human Resources';
-		case 'resource':
-			return 'Human Resources';
-		case 'resources':
-			return 'Human Resources';
-		case 'breakthrough':
-			return 'Breakthrough Prayer Ministry';
-		case 'prayer':
-			return 'Breakthrough Prayer Ministry';
-		case 'oasis':
-			return 'Oasis';
-		case 'connecting':
-			return 'Connecting Streams';
-		case 'streams':
-			return 'Connecting Streams';
 		case 'lig':
 			return 'LeaderImpact';
-		case 'leader':
-			return 'LeaderImpact';
-		case 'impact':
-			return 'LeaderImpact';
-		case 'drime':
-			return 'DRIME';
-		case 'christian':
-			return 'Christian Embassy';
-		case 'embassy':
-			return 'Christian Embassy';
-		case 'president':
-			return "President's Office";
-		case "president's":
-			return "President's Office";
-		case 'corporate':
-			return 'Corporate Services';
-		case 'services':
-			return 'Corporate Services';
-		case 'advancement':
-			return 'Advancement';
-		case 'church':
-			return 'Church Relations';
-		case 'relations':
-			return 'Church Relations';
-		case 'hq':
-			return 'HQ Operations';
-		case 'operation':
-			return 'HQ Operations';
-		case 'operations':
-			return 'HQ Operations';
 			
 		default:
 			return false;
@@ -343,33 +262,21 @@ function province($province) {
 	switch(strtolower($province))
 	{
 		case 'ontario':
-			return 'ON';
-		case 'on':
-			return 'ON';
+			return ' ON ';
 		case 'brunswick':
-			return 'NB';
-		case 'nb':
-			return 'NB';
+			return ' NB ';
 		case 'manitoba':
-			return 'MB';
-		case 'mb':
-			return 'MB';
+			return ' MB ';
 		case 'nova':
-			return 'NS';
+			return ' NS ';
 		case 'scotia':
-			return 'NS';
-		case 'ns':
-			return 'NS';
+			return ' NS ';
 		case 'quebec':
-			return 'QC';
-		case 'qc':
-			return 'QC';
+			return ' QC ';
 		case 'saskatchewan':
-			return 'SK';
-		case 'sk':
-			return 'SK';
+			return ' SK ';
 		case 'alberta':
-			return 'AB';
+			return ' AB ';
 		default:
 			return false;
 	

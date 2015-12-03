@@ -18,12 +18,10 @@
 			<form id='a_s_s' method="post" action="">
 				<input class='a_search' type='textbox' name='first_name' placeholder='First Name' />
 				<input class='a_search' type='textbox' name='last_name' placeholder='Last Name' />
-				<input class='a_search' type='textbox' name='spouse_name' placeholder="Spouse's Name" />
+				<input class='a_search' type='textbox' name='ministry' placeholder='Ministry' />
 				<input class='a_search' type='textbox' name='city' placeholder='City' />
 				<input class='a_search' type='textbox' name='province' placeholder='Province' />
-				<input class='a_search' type='textbox' name='postal_code' placeholder='Postal Code' />
-				<input class='a_search' type='textbox' name='country' placeholder='Country' />
-				<input class='a_search' type='textbox' name='ministry' placeholder='Ministry' />
+				
 				<input value='Search' style='background-color:#f7941d;border:0px solid #000000;color:#ffffff;border-radius:5px;padding:3px 6px;font-size:12px;' type='submit' />
 			</form>
 			<BR>
