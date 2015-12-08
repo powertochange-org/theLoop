@@ -3,34 +3,34 @@
 class WikiWidget extends WP_Widget {
 		function __construct() {
 			global $wiki;
-			
+
 			$widget_ops = array( 'description' => __('Display Wiki Pages', 'wiki') );
 			$control_ops = array( 'title' => __('Wiki', 'wiki'), 'hierarchical' => 'yes', 'order_by' => $wiki->get_setting('sub_wiki_order_by'), 'order' => $wiki->get_setting('sub_wiki_order'));
-					
+
 			parent::WP_Widget( 'incsub_wiki', __('Wiki', 'wiki'), $widget_ops, $control_ops );
 		}
-		
+
 		function widget($args, $instance) {
 		global $wpdb, $current_site, $post, $wiki_tree;
-		
+
 		extract($args);
-		
+
 		$options = $instance;
-		
+
 		$title = apply_filters('widget_title', empty($instance['title']) ? __('Wiki', 'wiki') : $instance['title'], $instance, $this->id_base);
 		$hierarchical = $instance['hierarchical'];
 		$order_by = $instance['order_by'];
 		$order = $instance['order'];
-		
+
 		if ($hierarchical == 'yes') {
 			$hierarchical = 0;
 		} else if ($hierarchical == 'no') {
 			$hierarchical = 1;
 		}
-		
+
 		echo $before_widget;
 		echo $before_title . $title . $after_title;
-		
+
 		$wiki_posts = get_posts(
 			array(
 				'post_parent' => 0,
@@ -57,10 +57,10 @@ class WikiWidget extends WP_Widget {
 		<?php
 		echo $after_widget;
 		}
-		
+
 		function _print_sub_wikis($wiki, $order_by, $order, $level, $current_level) {
 		global $post;
-		
+
 		$sub_wikis = get_posts(
 				array('post_parent' => $wiki->ID,
 						 'post_type' => 'incsub_wiki',
@@ -83,26 +83,26 @@ class WikiWidget extends WP_Widget {
 		</ul>
 		<?php
 		}
-		
+
 		function update($new_instance, $old_instance) {
 		global $wiki;
-		
+
 		$instance = $old_instance;
-		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => __('Wiki', 'wiki'), 'hierarchical' => 'yes', 'order_by' => $wiki->get_setting('sub_wiki_order_by'), 'order' => $wiki->get_setting('sub_wiki_order')) );
+		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => __('Wiki', 'wiki'), 'hierarchical' => 'yes', 'order_by' => $wiki->get_setting('sub_wiki_order_by'), 'order' => $wiki->get_setting('sub_wiki_order')) );	 				         		  
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['hierarchical'] = $new_instance['hierarchical'];
 		$instance['order_by'] = $new_instance['order_by'];
 		$instance['order'] = $new_instance['order'];
-		
+
 		return $instance;
 	}
-		
+
 	function form($instance) {
 		global $wiki;
-		
+
 		$instance = wp_parse_args( (array) $instance, array( 'title' => __('Wiki', 'wiki'), 'hierarchical' => 'yes', 'order_by' => $wiki->get_setting('sub_wiki_order_by'), 'order' => $wiki->get_setting('sub_wiki_order')));
 		$options = array('title' => strip_tags($instance['title']), 'hierarchical' => $instance['hierarchical'], 'order_by' => $instance['order_by'], 'order' => $instance['order']);
-		
+
 		if ($options['hierarchical'] == 'yes') {
 			$options['hierarchical'] = 0;
 		} else if ($options['hierarchical'] == 'no') {
@@ -139,4 +139,3 @@ class WikiWidget extends WP_Widget {
 		<?php
 		}
 }
-

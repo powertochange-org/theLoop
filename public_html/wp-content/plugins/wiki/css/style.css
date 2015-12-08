@@ -85,7 +85,7 @@
 
 .incsub_wiki_tabs li a {
 	display: block;
-	line-height: 1 !important;	
+	line-height: 1 !important;
 	padding: 5px 8px !important;
 	text-decoration: none !important;
 	color: inherit !important;
@@ -127,7 +127,7 @@
 }
 
 .wp_themeSkin tr.mceFirst td.mceToolbar {
-	background: url("../images/ed-bg.gif") repeat-x scroll left top #DFDFDF;
+	background: url("../images/ed-bg.gif") repeat-x scroll left top #DFDFDF;	 				         		  
 	border-color: #DFDFDF;
 }
 
@@ -140,7 +140,7 @@
 	margin: 0 2px 2px;
 }
 
-div.incsub_wiki_top span.incsub_wiki_crumbs, 
+div.incsub_wiki_top span.incsub_wiki_crumbs,
 div.incsub_wiki_top a.incsub_wiki_crumbs {
 	font-size: 1.2em;
 	color: #888;
@@ -205,3 +205,6 @@ input.incsub_wiki_title {
 		-webkit-box-sizing: content-box;
 	box-sizing: content-box;
 }
+
+
+/* 384868-1449540880 */
