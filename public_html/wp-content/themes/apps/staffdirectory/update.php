@@ -98,7 +98,7 @@
 		//Spouse Employee Number
 		if (strip_tags($_POST['spouseEmployeeNumber']) != $user->spouse_employee_number ){
 
-			if (empty(strip_tags($_POST['spouseEmployeeNumber']))) {
+			if (!strip_tags($_POST['spouseEmployeeNumber'])) {
 				$spouse_employee_number = NULL;
 			}
 			else {
