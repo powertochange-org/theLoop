@@ -17,8 +17,9 @@ function parseAdminInput(){
 		}
 		else{
 			$ID = $user->ID;
-			update_user_meta( $ID, 'support_calculator_admin', 1);
-			echo '<BR>Made user: '. $admin. ' an administrator<BR>';
+			$l = intval(get_user_meta($ID, 'support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"])));
+			update_user_meta( $ID, 'support_calculator_admin', $l);
+			echo '<BR>Made user: '. $admin. ' an admin<BR>';
 		}
 		
 	}
@@ -44,11 +45,13 @@ function parseAdminRemove(){
 	}
 }
 
-function getAdmins(){
+function getAdmins($level=0){
 	$string="";
-	$admins = get_users(array('meta_key' => 'support_calculator_admin', 'meta_value' => '1'));
+	$admins = get_users(array('meta_key' => 'support_calculator_admin'));
 	foreach($admins as $user){
-		$string .= "<li>".$user->user_login."<input type='button' value='Remove' onclick='demoteUser(\"".$user->user_login."\");'></li>";
+		if(pow(2, $level) & intval(get_user_meta($user->id, 'support_calculator_admin', true))){		
+			$string .= "<li>".$user->user_login."<input type='button' value='Remove' onclick='demoteUser(\"".$user->user_login."\");'></li>";
+		}
 	}
 	return $string;
 }
@@ -110,8 +113,11 @@ function setStringConstant($field, $data){
 	}
 }	
 
-function printAdminChangeInterface(){
-	echo '<script type="text/javascript">
+function printAdminChangeInterface($levels=null){
+	if(is_null($levels)){
+		$levels = array('Administrators' => 0);
+	}
+	$e = '<script type="text/javascript">
 	var show_admin = false;
 
 	function toggle_admin(){
@@ -137,21 +143,25 @@ function printAdminChangeInterface(){
 	<BR><BR>
 	<div name="admin_view" id="admin_view" style="display:none;background-color:#fafafa;padding:10px;">
 		<table><tr>
-		<td>Make administrator:</td>
+		<td>Make admin:</td>
 		<td><form name="add_admin" id="add_admin" action="" method="get">
 				<input type="text" name="input_add_admin" id="input_add_admin" />
+				 <select name="input_admin_level">';
+	foreach ($levels as $k => $v){
+		$e .= "<option value='$v'>$k</option>";
+	}
+	$e .= '</select> 
 		</form></td>
 		<td><input type="button" value="Make Admin" onclick="add_admin.submit();"></td>
 		</tr></table>
 		<BR>
 		<form name="remove_admin" id="remove_admin" action="" method="get">
 				<input type="hidden" name="input_remove_admin" id="input_remove_admin" />
-		</form>
-		Administrators : 
-		<ul>
-		'.getAdmins().'
-		</ul>
-	';
+		</form>';
+		foreach ($levels as $k => $v){
+			$e .= "$k:<ul>".getAdmins($v)."</ul>";
+		}
+	echo $e;
 }
 	
 ?>
