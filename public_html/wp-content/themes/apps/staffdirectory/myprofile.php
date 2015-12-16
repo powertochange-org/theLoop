@@ -142,7 +142,7 @@ $max_file_size = 30000000; // size in bytes
 				<!-- Remove photo -->
 				<input type="hidden" id="deleteImage" name="deleteImage" />
 
-				<p><b>NOTE: </b>To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to <b><a href="https://sso.dayforcehcm.com/p2c">My HR</a></b>. Changes made there will typically show up in the Staff Directory within 24 hours.</p>
+				<p><b>NOTE: </b>To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to <b><a href="https://sso.dayforcehcm.com/p2c">Dayforce</a></b>. Changes made there will typically show up in the Staff Directory within 24 hours.</p>
 
 				<h4 style='font-size:16pt'>MINISTRY INFORMATION</h4>
 				<div class='form'>
