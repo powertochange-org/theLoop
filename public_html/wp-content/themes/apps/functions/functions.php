@@ -41,10 +41,12 @@ function getFieldEmployee($field, $id=null){
 
 //returns wether the current user is an admin
 function isAdmin(){
+	return AdminLevel(0);
+}
+
+function AdminLevel($l){
 	global $current_user_id;
-	$ID = $current_user_id;
-	$result = get_user_meta($ID, 'support_calculator_admin', true);			
-	return $result == 1;
+	return (pow(2, $l) & intval(get_user_meta($current_user_id, 'support_calculator_admin', true))) > 0;
 }
 
 function getConstant($field){

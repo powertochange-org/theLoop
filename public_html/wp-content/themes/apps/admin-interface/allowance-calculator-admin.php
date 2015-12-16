@@ -580,7 +580,8 @@ printAdmin();
 function printAdmin(){
 	global $allowance_constant;
 	if (isAdmin()){	
-		printAdminChangeInterface();?>
+		printAdminChangeInterface(array('Administrators' => 0, 'Calculate for anyone' => 1)); 
+		?>
 		<form class='border' action="" method="post">
 			<table style='width:100%'>
 			<tr><th></th><th>Recommended<BR>Minimum</th><th>Absolute<BR>Maximum</th></tr>
