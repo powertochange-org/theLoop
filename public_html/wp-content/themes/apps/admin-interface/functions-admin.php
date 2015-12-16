@@ -158,6 +158,9 @@ function printAdminChangeInterface($levels=null){
 		<form name="remove_admin" id="remove_admin" action="" method="get">
 				<input type="hidden" name="input_remove_admin" id="input_remove_admin" />
 		</form>';
+		if (1 < count($levels)){
+			$e .= "Note: Removing Admins removes them from all groups.<br/><br/>";
+		}
 		foreach ($levels as $k => $v){
 			$e .= "$k:<ul>".getAdmins($v)."</ul>";
 		}
