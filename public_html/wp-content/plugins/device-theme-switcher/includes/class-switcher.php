@@ -37,7 +37,7 @@
         } // function get_instance
 
 		/**
-		 * Here we use the contructor more like the main controller
+		 * Here we use the constructor more like the main controller
 		 * Below the three main facets of theme delivery occur;
 		 * 1) Grab the saved theme preferences from the DB
 		 * 2) Detect the device the current user is using
@@ -46,6 +46,12 @@
 		 * @param  void
 		 */
 		public function __construct() {
+
+			 // Hook into the template output function with a filter and change the template delivered if need be
+            add_filter( 'template', array( $this, 'deliver_template' ), 10, 0 );
+
+            // Hook into the stylesheet output function with a filter and change the stylesheet delivered if need be
+            add_filter( 'stylesheet', array( $this, 'deliver_stylesheet' ), 10, 0 );
 
 			// Retrieve the admin's saved device theme
 			$this->retrieve_saved_device_themes();
@@ -201,7 +207,7 @@
 			// Ensure our dts_cookie_name option is set
 			$cookie_name = get_option( 'dts_cookie_name' ) ;
 			if ( empty( $cookie_name ) ) {
-				$cookie_name = DTS_Core::get_instance()->build_cookie_name();
+				$cookie_name = DTS_Core::build_cookie_name();
 				update_option( 'dts_cookie_name', $cookie_name );
 			}
 
@@ -263,7 +269,7 @@
 								false
 							);
 
-							// Return the requested
+							// Update our internal reference to which theme was requested
 							$this->theme_override = $requested_theme;
 
 						} // end if
@@ -334,7 +340,7 @@
 		 *
 		 * All the logic prior to this sets a few variables, the actual delivery is here..
 		 *
-		 * @internal     Called via 'template' filter setup in DTS_Core->hook_into_wordpress()
+		 * @internal     Called via 'template' filter setup in DTS_Core hook_into_wordpress()
 		 * @return array WordPress expected array containing the theme 'name', 'template', and 'stylesheet'
 		 */
 		static function deliver_stylesheet(){
@@ -407,7 +413,7 @@
 		 * return it for use as a string.
 		 * @return  string  HTML Anchor Link
 		 */
-		public static function build_html_link ( $link_type = 'active', $link_text = "View Full Website", $css_classes = array(), $echo = true ) {
+		public static function build_html_link ( $link_type = 'active', $link_text = "View Full Website", $css_classes = array(), $echo = false ) {
 
 			// Grab the single instance of our dts switcher for use below
 			$dts = DTS_Switcher::get_instance();
@@ -488,7 +494,13 @@
 				array_unshift( $css_classes, 'dts-link' );
 
 				// Build the HTML link
-				$html_output = "<a href='$link_href' title='$link_text' class='" . implode( ' ', $css_classes ) . "'>$link_text</a>\n";
+				$html_output = sprintf(
+					"<a href='%s' title='%s' class='%s' rel='nofollow'>%s</a>",
+					esc_url( $link_href ),
+					esc_attr( $link_text ),
+					esc_attr( implode( ' ', $css_classes ) ),
+					esc_html( $link_text )
+				);
 			}
 
 			if ( $echo ) {
@@ -503,5 +515,13 @@
 
 	} // Class DTS_Switcher
 
+	/**
+	 * Accessor function to get the DTS_Switcher singleton instance
+	 *
+	 * @return object
+	 */
+	function get_dts_switcher() {
+		return DTS_Switcher::get_instance();
+	}
 
 	// EOF

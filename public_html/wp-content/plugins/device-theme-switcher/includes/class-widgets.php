@@ -13,17 +13,15 @@
 		 * Construct our new widget
 		 *
 		 * @param   null
-		 * @return  null
 		 */
-		function DTS_View_Full_Website() {
-			// Set the new widget css class and description
-			$widget_ops = array(
-				'classname'   => 'dts_view_full_website',
-				'description' => 'Add a link for mobile users'
-			);
+		function __construct() {
 
 			// Build an instance of the new widget
-			$this->WP_Widget('dts_view_full_website', 'View Full Website', $widget_ops);
+			parent::__construct(
+				'dts_view_full_website',
+				__( 'View Full Website', 'device-theme-switcher' ),
+				array( 'description' => __( 'Add a link for mobile users', 'device-theme-switcher' ), )
+			);
 
 		} // DTS_View_Full_Website
 
@@ -35,7 +33,6 @@
 		 * @return null
 		 */
 		function widget ( $args, $instance ) {
-			extract( $args, EXTR_SKIP );
 
 			if ( empty( $instance['link_text'] ) ) {
 				$link_text =  ' ';
@@ -43,15 +40,11 @@
 				$link_text = apply_filters( 'dts_widget_to_full_website_link_text', $instance['link_text'] );
 			}
 
-			echo $before_widget;
+			echo $args['before_widget'];
 
-			//Globals the $dts variable created on load
-			//Use the DTS_Switcher::build_html_link() method
-	        //This variable is created in /dts-controller.php around line 70
-	        global $dts;
-	        return $dts->build_html_link( 'active', $link_text, array(), true );
+			DTS_Switcher::build_html_link( 'active', $link_text, array(), true );
 
-			echo $after_widget;
+			echo $args['after_widget'];
 
 		} // function widget
 
@@ -117,17 +110,16 @@
 		 * Construct our new widget
 		 *
 		 * @param   null
-		 * @return  null
 		 */
-		function DTS_Return_To_Mobile_Website () {
-			// Set the new widget css class and description
-			$widget_ops = array(
-				'classname'   => 'dts_return_to_mobile_website',
-				'description' => 'Add a link for mobile users to return to the mobile website'
-			);
+		function __construct() {
 
 			// Build an instance of the new widget
-			$this->WP_Widget('dts_return_to_mobile_website', 'Return to Mobile Website', $widget_ops);
+			parent::__construct(
+				'dts_return_to_mobile_website',
+				__( 'Return to Mobile Website', 'device-theme-switcher' ),
+				array( 'description' => __( 'Add a link for mobile users to return to the mobile website', 'device-theme-switcher' ), )
+			);
+
 		} // function DTS_Return_To_Mobile_Website
 
 
@@ -138,8 +130,7 @@
 		 * @param  object $instance The widget instance
 		 * @return null
 		 */
-		function widget ( $args, $instance ) {
-			extract( $args, EXTR_SKIP );
+		function widget( $args, $instance ) {
 
 			if ( empty( $instance['link_text'] ) ) {
 				$link_text =  ' ';
@@ -147,12 +138,11 @@
 				$link_text = apply_filters( 'dts_widget_to_device_website_link_text', $instance['link_text'] );
 			}
 
-			//Globals the $dts variable created on load
-			//Use the DTS_Switcher::build_html_link() metho
-		    //This variable is created in /dts-controller.php around line 70
-		    global $dts;
-		    return $dts->build_html_link( 'device', $link_text, array(), true );
-			echo $after_widget;
+			echo $args['before_widget'];
+
+		    DTS_Switcher::build_html_link( 'device', $link_text, array(), true );
+
+			echo $args['after_widget'];
 
 		} // function widget
 
@@ -164,7 +154,7 @@
 		 * @param  array $old_instance The instance of the new widget data
 		 * @return array               The new widget data
 		 */
-		function update ( $new_instance, $old_instance ) {
+		function update( $new_instance, $old_instance ) {
 			$instance = $old_instance;
 			$instance['link_text'] = strip_tags($new_instance['link_text']);
 			return $instance;
@@ -176,8 +166,7 @@
 		 * @param  $array $instance The widget data
 		 * @return null
 		 */
-		function form ( $instance ) {
-
+		function form( $instance ) {
 
 			//Output admin widget options form
 			$instance 	= wp_parse_args( (array) $instance, array( 'link_text' => '' ) );
