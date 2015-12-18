@@ -209,7 +209,10 @@ $RPTSTARTYEAR = $_POST["RPTSTARTYEAR"] ? $_POST["RPTSTARTYEAR"] : date("Y");
 $RPTENDMONTH = $_POST["RPTENDMONTH"] ? $_POST["RPTENDMONTH"] : date("m");
 $RPTENDYEAR = $_POST["RPTENDYEAR"] ? $_POST["RPTENDYEAR"] : date("Y");
 $RPTPERIOD = $_POST["RPTPERIOD"] ? $_POST["RPTPERIOD"] : 'MONTH';
-$reportToMe = $_POST['reportToMe'];
+$reportToMe = 1; // Default to yes
+if (isset($_POST['reportToMe'])) { // But, if POST variable is set, override with that
+	$reportToMe = $_POST['reportToMe'];
+}	
 $financials = $_POST['financials'];
 $vac_year = $_POST['vac_year'];
 $OUTPUTFRMT = $_POST['OutputFormat'];
@@ -254,7 +257,11 @@ if(isset($_GET["reportlink"])) {
         $RPTSTARTYEAR = substr($reportlink, 11, 4);
         $RPTENDMONTH = substr($reportlink, 15, 2);
         $RPTENDYEAR = substr($reportlink, 17, 4);
-    }
+    } else if ($report == "stl") {
+		$REPORT = "StaffList";
+		$reportToMe = substr($reportlink, 3, 1);
+		$financials = substr($reportlink, 4, 1);
+	}
     
 }
 
@@ -405,8 +412,8 @@ get_header(); ?>
 				</SELECT>
 				</P>
 			</DIV>
-			<div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' checked ><label for='reportToMe'>Report To Me Only</label></div><BR>
-			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials'><label for='financials'>Show Financials</label></div>
+			<div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label></div><BR>
+			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
 			<div id='staffVaction_options'  style='display:none'>
 				YEAR:
 				<SELECT NAME="vac_year">
