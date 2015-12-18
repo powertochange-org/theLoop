@@ -216,7 +216,7 @@
 		}
 		
 		//Personal Note
-		if(substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,255)  != $user->notes){
+		if(substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,8000) != $user->notes){
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
@@ -228,7 +228,7 @@
 			
 			
 			
-			$employeeChanges['notes'] = substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,255);
+			$employeeChanges['notes'] = substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,8000);
 		}
 
         // If we have changes to the employee table

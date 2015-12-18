@@ -195,15 +195,7 @@ $max_file_size = 30000000; // size in bytes
 						<tr>
 							<td>&nbsp;</td>
 							<td style="text-align:left;"> <?php 
-								if ($phone->phone_type == 'CELL') { echo 'Cell:';} 
-								else if ($phone->phone_type == 'CELL-BUS') { echo 'Cell (bus):';} 
-								else if ($phone->phone_type == 'BUS') { echo 'Office:';} 
-								else if ($phone->phone_type == 'HOME') { echo 'Home:';} 
-								else if ($phone->phone_type == 'FAX'){ echo 'Fax:';} 
-								else if ($phone->phone_type == 'ALT'){ echo 'Other:';}
-								else {echo '??:';}
-
-								echo '&nbsp;'.$phone->phone_number; 
+								echo $phone->phone_type.':&nbsp;'.$phone->phone_number; 
 								if($phone->extension) { ?>
 									&nbsp;Ext: <?php echo $phone->extension;
 								}?>
@@ -293,13 +285,7 @@ $max_file_size = 30000000; // size in bytes
 								<tr>
 									<td>&nbsp;</td>
 									<td> <?php 
-										if ($phone->phone_type == 'CELL') { echo 'Cell:';} 
-										else if ($phone->phone_type == 'HOME') { echo 'Home:';} 
-										else if ($phone->phone_type == 'FAX'){ echo 'Fax:';} 
-										else if ($phone->phone_type == 'ALT'){ echo 'Other:';}
-										else {echo '??:';}
-
-										echo '&nbsp;'.$phone->phone_number; 
+										echo $phone->phone_type.':&nbsp;'.$phone->phone_number; 
 										if($phone->extension) { ?>
 											&nbsp;Ext: <?php echo $phone->extension;
 										}?>
