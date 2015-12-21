@@ -135,8 +135,8 @@
 				<h1>Popular Pages</h1>
 				<?php
 				    if (function_exists('wpp_get_mostpopular'))
-				    wpp_get_mostpopular('pid="754, 8306, 8379, 8388, 8332, 8761, 7807, 8335, 8309"& 
-				    	limit=3&range="monthly"&stats_views=0');
+				    wpp_get_mostpopular('pid="754, 8306, 8379, 8388, 8332, 8761, 7807, 8335, 8309, 5077, 4617, 8362"& 
+				    	limit=3&range="daily"&stats_views=0');
 				?>
 				<hr>
 				<h1 style="margin-bottom:5px">Recent Comments</h1>
