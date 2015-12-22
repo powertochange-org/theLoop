@@ -152,6 +152,17 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo ", $user->country";
 				}
 			}
+			else {
+				if (!empty($user->city)) {
+					echo "$user->city";
+				}
+				if (!empty($user->province)) {
+					echo ", $user->province";
+				}
+				if (!empty($user->country) && ($user->country <> 'CA')) {
+					echo ", $user->country";
+				}
+			}
 			echo"<br>";
 
 			//grab phone numbers that are shared, then display them
