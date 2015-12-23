@@ -155,7 +155,7 @@
 			<div class="homepage-tiles">
 				<hr>
 				<span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-					News &amp; Update</span><BR>
+					News &amp; Updates</span><BR>
 					<span class="newsUpdate">
 					<?php
 						$post_number = 6;
