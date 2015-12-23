@@ -60,36 +60,25 @@
 					
 					//this section of the code concatenate all of the shared information in the database into one easy to search column.
 					$concatquery = "
-						
-							CONCAT_WS(' ',
-								IFNULL(first_name, ''), IFNULL(last_name, ''), IFNULL(ministry, ''), IFNULL(role_title, ''), IFNULL(region, ''), 
-								IFNULL(ministry_address_line1, ''), IFNULL(ministry_address_line2, ''), IFNULL(ministry_address_line3, ''),
-								IFNULL(ministry_city, ''), IFNULL(ministry_province, ''), IFNULL(ministry_country, ''), IFNULL(ministry_postal_code, ''),
-								IFNULL(website, ''), IFNULL(twitter_handle, ''), IFNULL(skype, ''), IFNULL(ministry_website, ''), 
-								IFNULL(ministry_twitter_handle, ''), IFNULL(ministry_skype, ''),
-								IF( share_photo =1, IFNULL(photo, ''),  ' ' ) ,
-								IF( share_address ='None', ' ', 
-													CONCAT(
-														IFNULL(province, '') ,
-														IF( share_address ='PROVONLY', ' ', 
-																		CONCAT(
-																			IFNULL(city, ''),
-																			IF( share_address ='CITY&PROV', ' ',
-																							CONCAT(
-																							IFNULL(address_line1,''),
-																							IFNULL(address_line2,''),
-																							IFNULL(address_line3,''),
-																							IFNULL(postal_code,''))
-																			)
-																		)
-														)
-													)
-								)
-							) 
-					";
+						CONCAT_WS(' ',
+							IFNULL(first_name, ''), IFNULL(last_name, ''), IFNULL(ministry, ''), IFNULL(role_title, ''), 
+							IFNULL(ministry_address_line1, ''), IFNULL(ministry_address_line2, ''), IFNULL(ministry_address_line3, ''),
+							IFNULL(ministry_city, ''), IFNULL(ministry_province, ''), IFNULL(ministry_country, ''), IFNULL(ministry_postal_code, ''),
+							IFNULL(website, ''), IFNULL(twitter_handle, ''), IFNULL(skype, ''), IFNULL(ministry_website, ''), 
+							IFNULL(ministry_twitter_handle, ''), IFNULL(ministry_skype, ''),
+							IFNULL(city, ''),
+							IF(share_address='FULL', 
+								CONCAT_WS(' ',
+									IFNULL(address_line1,''),
+									IFNULL(address_line2,''),
+									IFNULL(address_line3,''),
+									IFNULL(postal_code,'')),
+								' '
+							)
+						)";
 					
 					
-					$queryPart1 = " SELECT *,  ";
+					$queryPart1 = " SELECT user_login, photo, first_name, last_name, role_title, ministry, share_photo, staff_account,  ";
 					$queryPart2 = "";
 					$queryPart4 = "";
 					$first=true;			  
@@ -108,6 +97,7 @@
 					$queryPart3 = " AS relevance FROM employee ";
 					$queryPart5 = " ORDER BY relevance DESC, first_name, last_name ";
 					//echo $queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5 ;
+					
 					$results = $wpdb-> get_results($wpdb->prepare($queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5  , Search::twice($names)));
 
 					foreach($results as $result){ //populate this array with data from query
