@@ -21,6 +21,37 @@ to an another report you need to:
 $current_user = wp_get_current_user();
 $user_id = $current_user->user_login;
 
+/* For the Staff List report, we need the current user's employee number, and also a list
+ * of the staff who report to the current user */
+$reportsToMeResults = $wpdb->get_results(
+	$wpdb->prepare( 
+		/* First select is for the current user; next is for everyone who reports to the current user */
+		"SELECT e.employee_number, e.user_login, '                           ' AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
+		FROM employee e
+		WHERE e.user_login = %s
+		  AND e.staff_account IS NOT NULL
+		  
+		UNION
+		
+		SELECT e.employee_number, e.user_login, s1.user_login AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
+		FROM employee e
+		LEFT JOIN employee s1 ON s1.employee_number = e.supervisor
+		LEFT JOIN employee s2 ON s2.employee_number = s1.supervisor
+		LEFT JOIN employee s3 ON s3.employee_number = s2.supervisor
+		LEFT JOIN employee s4 ON s4.employee_number = s3.supervisor
+		LEFT JOIN employee s5 ON s5.employee_number = s4.supervisor
+		LEFT JOIN employee s6 ON s6.employee_number = s5.supervisor
+		LEFT JOIN employee s7 ON s7.employee_number = s6.supervisor
+		WHERE %s IN (s1.user_login, s2.user_login, s3.user_login, s4.user_login, s5.user_login, s6.user_login, s7.user_login)
+		  AND e.staff_account IS NOT NULL		
+
+		ORDER BY CASE WHEN user_login = %s THEN 1
+				      WHEN supervisor_login = %s THEN 2
+					  ELSE 3 END,
+			full_name", /* Order by current user first, then direct reports, then everyone else */
+		$user_id, $user_id, $user_id, $user_id));
+
+
 //Set proper output format for preview
 if(isset($_POST['previewBtn'])){
 	$_POST['OutputFormat'] = "HTML4.0";
@@ -165,7 +196,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffL
   }
   $error = $errorMsg;
 }
-
+// Code for Staff Vacation and Wellness report
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffVacation") {
   require('financialreports/rs_functions.php');
 
@@ -181,15 +212,31 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffV
   }
   $error = $errorMsg;
 }
-
+// Code for Staff Financial Health report
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffFinancialHealth") {
   require('financialreports/sql_report_functions.php');
   
-  produceSQLReport('StaffFinancialHealth', $_POST['employee_number'], $_POST['report_month'] . '-01');
+  /* Before running the report, double check that the person actually has access */
+  $hasAccess = false;
+  foreach($reportsToMeResults as $result) {
+	  if ($result->employee_number == $_POST['employee_number']) {
+		  $hasAccess = true;
+		  break;
+	  }
+  }
+  
+  if ($hasAccess) {
+	  produceSQLReport( 'StaffFinancialHealth', 
+						$_POST['employee_number'], 
+						$_POST['RPTYEAR'].'-'.$_POST['RPTMONTH'].'-01' );
+  } else {
+	  echo "You don't have access to run this report for this staff member.";
+  }
   exit;
 }
 
-//%elif-block (just a label)
+//%elif-block (just a label - see instructions for adding a new report at top of file)
+
 
 //If there is an error with a preview, do not display the whole page
 if(isset($_POST['previewBtn']) && isset($error)){
@@ -200,6 +247,8 @@ if(isset($_POST['previewBtn']) && isset($error)){
 <?php
 	exit;
 }
+
+
 //Values used to set the selected options
 $REPORT = $_POST["REPORT"]; 
 $RPTMONTH = $_POST["RPTMONTH"] ? $_POST["RPTMONTH"] : date("m");
@@ -266,7 +315,6 @@ if(isset($_GET["reportlink"])) {
 }
 
 
-
 get_header(); ?>
 	<div id="content">
 		<div id="main-content">	
@@ -285,7 +333,7 @@ get_header(); ?>
 				echo $_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 			?>">
 			<P>Choose Your Report:<BR>
-			<SELECT ID="repchoice" NAME="REPORT" onChange="showHelpButton(this.selectedIndex == 4);">
+			<SELECT ID="repchoice" NAME="REPORT">
                   <OPTION VALUE="">--DONATION REPORTS--</OPTION>
                   <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected='selected'");}?>>Monthly Donation Report</OPTION>
                   <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected='selected'");}?>>13 Month Donor Report</OPTION>
@@ -298,14 +346,7 @@ get_header(); ?>
                   <OPTION VALUE="">--STAFF REPORTS--</OPTION>
 				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected='selected'");}?>>Staff List</OPTION>
 				  <OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation and Wellness</OPTION>
-				  <?php
-				  if (in_array($user_id, array('jasonb','matthewc','annf'))) {
-					  echo '<OPTION VALUE="">--TEST REPORTS--</OPTION>';
-					  echo '<OPTION VALUE="StaffFinancialHealth" ';
-					  if($REPORT == 'StaffFinancialHealth'){echo("selected='selected'");}
-					  echo '>Staff Financial Health</OPTION>';
-				  }
-				  ?>
+				  <OPTION VALUE="StaffFinancialHealth" <?php if($REPORT == 'StaffFinancialHealth'){echo("selected='selected'");} ?>>Staff Financial Health</OPTION>
             </SELECT>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
@@ -313,6 +354,16 @@ get_header(); ?>
 				<P>Please enter your ministry/staff account number:<BR>  
 					<INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="10" VALUE="<?php echo $_POST["DESGCODE"];?>">
 				</P>
+			</DIV>
+			<DIV id='staffHealth_options' style='display:none'>
+				For Staff member:
+				<SELECT NAME="employee_number">
+				<?php
+				foreach($reportsToMeResults as $result) {
+					echo "<OPTION VALUE='" . $result->employee_number . "'>" . $result->full_name . "</OPTION>\r\n";
+				}
+				?>
+				</SELECT>
 			</DIV>
 			<DIV ID="monthyear" STYLE="display:none">
 				<P>Choose the month and year to report on.<BR>
@@ -412,7 +463,7 @@ get_header(); ?>
 				</SELECT>
 				</P>
 			</DIV>
-			<div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label></div><BR>
+			<div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
 			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
 			<div id='staffVaction_options'  style='display:none'>
 				YEAR:
@@ -428,15 +479,8 @@ get_header(); ?>
 						 <?php
 						 $x++;
 						 }
-						 ?>				  										  								 	 <?php echo (date("Y") -4);?></OPTION>
+						 ?>	<?php echo (date("Y") -4);?></OPTION>
 				</SELECT>		
-			</div>
-			<div id='staffHealth_options' style='display:none'>
-				Employee Number:
-				<input type="text" name="employee_number" />
-				<br />
-				Report Month:
-				<input type="text" name="report_month" value="2015-10" /> (in YYYY-MM format)
 			</div>
 			<DIV ID="output" STYLE="display:none">
 				<P>
@@ -448,11 +492,14 @@ get_header(); ?>
 				</select>
 				</P>
 			</DIV>
-			<DIV ID="buttonsDownloadPreview" <?php if (isset($_POST['REPORT']) && $_POST['REPORT'] == "AccountBalance") { echo 'STYLE="display:none"'; } ?>>
+			<DIV ID="message" STYLE="display:none"></DIV>
+			<DIV ID="buttonsDownload" STYLE="display:none;float:left;margin-right:5px;">
 				<INPUT TYPE="submit" ID="actionBtn" NAME="actionBtn" VALUE="Download" onClick="return CheckForm(this.form, 'download')">
+			</DIV>
+			<DIV ID="buttonsPreview" STYLE="display:none;float:left;margin-right:5px;">
 				<INPUT TYPE="submit" ID="previewBtn" NAME="previewBtn" VALUE="View Online" onClick="return CheckForm(this.form, 'preview')">
 			</DIV>
-			<DIV ID="buttonsCheck" <?php if (!isset($_POST['REPORT']) || $_POST['REPORT'] != "AccountBalance") { echo 'STYLE="display:none"'; } ?>>
+			<DIV ID="buttonsCheck" STYLE="display:none;float:left;">
 				<INPUT TYPE="submit" ID="checkBtn" NAME="checkBtn" VALUE="Check Balance" onClick="return CheckForm(this.form, 'check')">
 			</DIV>
 			</FORM>
@@ -467,14 +514,6 @@ get_header(); ?>
 		<!--
 		// Set focus to the project code field
 		//document.getElementById('DESGCODE').focus();
-
-		function showHelpButton(visible) {
-			if (visible) {
-				$("#dieHelpButton").show();
-			} else {
-				$("#dieHelpButton").hide();
-			}
-		}
 		
 		function CheckForm(form, subType){
 			if($("#repchoice").val() == "") {
@@ -496,112 +535,64 @@ get_header(); ?>
 			}
 			return true;
 		}//end of CheckForm
-			
+		
 		//Display only the relevant form fields
 		$("#repchoice").change(function () {
 			$("#repchoice option:selected").each(function () {
 				/* Form fields */
 				if($(this).val() == "DonorReport"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideDown();
-					$("#output").slideDown();
-					$("#daterange").slideUp();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
+					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "InvestorReport"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideDown();
-					$("#output").slideDown();
-					$("#daterange").slideUp();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
+					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "MonthlyDonors"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideUp();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
-				} else if($(this).val() == "DetailedRangeReport"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideDown();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
+					showHideFields(["#staffaccount","#output","#buttonsDownload","#buttonsPreview"]);
+				} else if($(this).val() == "DetailedRangeReport"){				
+					showHideFields(["#staffaccount","#daterange","#output","#dieHelpButton","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "SummaryReport"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideDown();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
+					showHideFields(["#staffaccount","#daterange","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "AccountBalance"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideUp();
-					$("#output").slideUp();
-					$("#daterange").slideUp();
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
+					showHideFields(["#staffaccount","#buttonsCheck"]);
+					
+					/* Add custom help text to the DESGCODE field */
 					$("#DESGCODE").attr("title",'Indicate multiple accounts by separating them using commas');
 				} else if($(this).val() == "AccountDonors"){
-					$("#staffaccount").slideDown();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideDown();				
-					$("#reportToMe_opt").slideUp();
-					$("#financials_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#DESGCODE").removeAttr("title");
+					showHideFields(["#staffaccount","#daterange","#output","#buttonsDownload","#buttonsPreview"]);					
 				} else if($(this).val() == "StaffList"){
-					$("#staffaccount").slideUp();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideUp();
-					$("#reportToMe_opt").slideDown();
-					$("#financials_opt").slideDown();
-					$("#staffVaction_options").slideUp();
+					showHideFields(["#reportToMe_opt","#financials_opt","#output","#buttonsDownload","#buttonsPreview"]);
 				}  else if($(this).val() == "StaffVacation"){
-					$("#staffaccount").slideUp();
-					$("#monthyear").slideUp();
-					$("#output").slideDown();
-					$("#daterange").slideUp();
-					$("#financials_opt").slideUp();
-					$("#reportToMe_opt").slideDown();
-					$("#staffVaction_options").slideDown();
+					showHideFields(["#reportToMe_opt","#staffVaction_options","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if ($(this).val() == "StaffFinancialHealth"){
-					$("#staffaccount").slideUp();
-					$("#monthyear").slideUp();
-					$("#daterange").slideUp();
-					$("#financials_opt").slideUp();
-					$("#reportToMe_opt").slideUp();
-					$("#staffVaction_options").slideUp();
-					$("#output").slideUp();
-					$("#staffHealth_options").slideDown();
-				}
-				
-				/* Buttons */
-				if ($(this).val() == "AccountBalance"){
-					$("#buttonsDownloadPreview").slideUp();
-					$("#buttonsCheck").slideDown();
-				} else {
-					$("#buttonsDownloadPreview").slideDown();
-					$("#buttonsCheck").slideUp();
-				}
-				
-			});
+					<?php if (count($reportsToMeResults) > 0) { ?>
+						showHideFields(["#staffHealth_options","#monthyear","#buttonsPreview"]);
+					<?php } else { ?>
+						$("#message").html("You don't have access to run this report for any staff. If you believe you should have access, please email <a href='mailto:helpdesk@p2c.com'>helpdesk@p2c.com</a>");
+						showHideFields(["#message"]);
+					<?php } ?>
+				}			
+			});			
 		}).change();
+		
+		function showHideFields(show) {
+			/* The list of field groupings that can be shown or hidden for different reports */
+			var fields = ["#staffaccount", "#monthyear", "#output", "#daterange", "#financials_opt", 
+						"#reportToMe_opt", "#staffVaction_options", "#staffHealth_options", "#message",
+						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck"];
+			
+			/* Iterate through the list of field groupings */
+			for (var i = 0; i < fields.length; i++) {
+				/* If it is not in the list to show, do a slideUp; if it IS in the list to show,
+				 * do a slideDown to reveal it */
+				if (show.indexOf(fields[i]) == -1) {
+					$(fields[i]).slideUp();
+				} else {
+					$(fields[i]).slideDown();
+				}
+			}
+			
+			/* For one specific report, we add custom help text to this field; for all the rest,
+			 * we don't want it. So, always remove it and let that one report option re-add it */
+			$("#DESGCODE").removeAttr("title");
+		}
 		//-->
 		</SCRIPT>
 		</div>
