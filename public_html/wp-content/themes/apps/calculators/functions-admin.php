@@ -19,7 +19,7 @@ function parseAdminInput(){
 			$ID = $user->ID;
 			$l = intval(get_user_meta($ID, 'support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"])));
 			update_user_meta( $ID, 'support_calculator_admin', $l);
-			echo '<BR>Made user: '. $admin. ' an admin<BR>';
+			echo '<BR>Granted special access to: '. $admin. '<BR>';
 		}
 		
 	}
@@ -39,7 +39,7 @@ function parseAdminRemove(){
 		else{
 			$ID = $user->ID;
 			update_user_meta( $ID, 'support_calculator_admin', 0);
-			echo '<BR>Removed user: '. $admin. ' as administrator<BR>';
+			echo '<BR>Removed access for: '. $admin. '<BR>';
 		}
 		
 	}
@@ -126,7 +126,7 @@ function printAdminChangeInterface($levels=null){
 		show_admin = !show_admin;
 		if (show_admin){
 			block.style.display = "block";
-			button.value="Hide Administrative Option";
+			button.value="Hide Administrative Options";
 		}
 		else{
 			block.style.display = "none";
@@ -143,7 +143,7 @@ function printAdminChangeInterface($levels=null){
 	<BR><BR>
 	<div name="admin_view" id="admin_view" style="display:none;background-color:#fafafa;padding:10px;">
 		<table><tr>
-		<td>Make admin:</td>
+		<td>Grant access:</td>
 		<td><form name="add_admin" id="add_admin" action="" method="get">
 				<input type="text" name="input_add_admin" id="input_add_admin" />
 				 <select name="input_admin_level">';
@@ -152,14 +152,14 @@ function printAdminChangeInterface($levels=null){
 	}
 	$e .= '</select> 
 		</form></td>
-		<td><input type="button" value="Make Admin" onclick="add_admin.submit();"></td>
+		<td><input type="button" value="Grant Access" onclick="add_admin.submit();"></td>
 		</tr></table>
 		<BR>
 		<form name="remove_admin" id="remove_admin" action="" method="get">
 				<input type="hidden" name="input_remove_admin" id="input_remove_admin" />
 		</form>';
 		if (1 < count($levels)){
-			$e .= "Note: Removing Admins removes them from all groups.<br/><br/>";
+			$e .= "Note: Removing a user from the list below removes all special access that has been granted.<br/><br/>";
 		}
 		foreach ($levels as $k => $v){
 			$e .= "$k:<ul>".getAdmins($v)."</ul>";
