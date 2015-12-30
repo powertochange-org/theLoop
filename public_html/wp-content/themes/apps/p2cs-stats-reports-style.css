@@ -9,8 +9,30 @@
 	font-size: 14px;
 }
 
-.sortable th {
+.sortable th:not(.no_sort) {
     color:#0079C1;
+}
+
+.center {
+    text-align:center;
+}
+
+tr.parent.collapsed :first-child:before {
+    content:'+';
+    margin-right:10px;
+    color:black;
+}
+
+th {
+    padding-left:15px;
+    padding-right:15px;
+    vertical-aling:bottom;
+}
+
+tr.parent:not(.collapsed) :first-child:before {
+    content:'-';
+    margin-right:10px;
+    color:black;
 }
 
 #report-nav ul {

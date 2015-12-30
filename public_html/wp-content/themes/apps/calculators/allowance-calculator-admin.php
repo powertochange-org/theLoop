@@ -42,6 +42,10 @@ $points_width = 5; //specify the width of the points and max_points textboxes
 
 parseInput();
 
+printAdmin();
+
+
+
 //returns a string of the checkbox to be displayed
 function printCheckbox($pre, $id, $check_id, $checked, $disabled=false){
 	global $allowance_constant;
@@ -576,11 +580,11 @@ function move_answer($quest_id, $answer_id, $after){
 	add_answer($quest_id, $result[0]->label, $result[0]->points, $after, $answer_id);
 }
 
-printAdmin();
 function printAdmin(){
 	global $allowance_constant;
 	if (isAdmin()){	
-		printAdminChangeInterface();?>
+		printAdminChangeInterface(array('Administrators' => 0, 'Calculate for anyone' => 1)); 
+		?>
 		<form class='border' action="" method="post">
 			<table style='width:100%'>
 			<tr><th></th><th>Recommended<BR>Minimum</th><th>Absolute<BR>Maximum</th></tr>

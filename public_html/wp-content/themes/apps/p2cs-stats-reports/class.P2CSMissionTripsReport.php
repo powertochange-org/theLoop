@@ -55,7 +55,8 @@ class P2CSMissionTripsReport extends P2CSReport {
 				`projects`ON event_groups.id = projects.event_group_id JOIN
 				`profiles` ON projects.id = profiles.project_id
 			WHERE parent_id = 1 AND projects.start > %s AND projects.start < %s AND profiles.status = 'accepted'
-			GROUP BY event_groups.id, event_groups.title, projects.id, projects.title",
+			GROUP BY event_groups.id, event_groups.title, projects.id, projects.title
+                        ORDER BY projects.title",
 			$startdate,
 			$enddate
 			);
