@@ -120,7 +120,7 @@
 							
 							<?php
 						}
-						echo "<div>";
+						echo "<div style='float:left'>";
 						echo '<div id="report-table" class="sortable shrink_to_fit">';
 						
 						// If the report doesn't have parameters, or the parameters have been

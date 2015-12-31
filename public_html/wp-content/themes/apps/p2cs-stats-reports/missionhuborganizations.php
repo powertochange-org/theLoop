@@ -25,12 +25,17 @@
 
 function getChildren($parent_id) {
     global $wpdb;
-    $children = $wpdb->get_results( $wpdb->prepare(
-            "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d",
+    $result = $wpdb->get_results( $wpdb->prepare(
+            "SELECT `id` FROM `mh_org_tree` WHERE `parent_id` = %d ORDER BY `name`",
             $parent_id
         ),
         ARRAY_N       
     );
+    // extract the single dimensional array of int
+    $children = array();
+    foreach ($result as $item) {
+        $children[] = $item[0];
+    }
     return $children;
 }
 
@@ -116,7 +121,7 @@ function getCountAtThreshold($orgid, $labelid) {
     $count = 0;
     $children = getChildren($orgid);
     foreach($children as $child) {
-        $count = $count + getCountAtThreshold($child[0], $labelid);
+        $count = $count + getCountAtThreshold($child, $labelid);
     }
 
     $people = $wpdb->get_results( $wpdb->prepare(
@@ -147,7 +152,7 @@ function getPeopleAtThreshold($orgid, $labelid) {
     $people = array();
     $children = getChildren($orgid);
     foreach($children as $child) {
-        $childrenpeople = getPeopleAtThreshold($child[0], $labelid);
+        $childrenpeople = getPeopleAtThreshold($child, $labelid);
         foreach($childrenpeople as $person) {
             array_push($people, $person);
         }
@@ -367,7 +372,6 @@ function createLabelsReport($orgname, $labels, $recurse=TRUE) {
 function createThresholdReport($orgname, $label) {
     
     $orgid = getOrgId($orgname);
-    $children = getChildren($orgid[0]);
     
     $title = "<strong>" . convertLabelToTitle($label) . "<strong><br>";
     
@@ -380,7 +384,7 @@ function createThresholdReport($orgname, $label) {
     
     $tablerows = "<tbody>".getNestedPeopleAtThreshold($orgid[0], $label)."</tbody>";
     
-    $pagefooter = getDatabaseTable($orgid);
+    $pagefooter = getDatabaseTable($orgid[0]);
     
     $downloadbutton = "<a href='#' class='download'>Download</a>";
 
@@ -480,7 +484,7 @@ function createDecisionReport($startdate, $enddate) {
 
 function generateTableHeaders($labels) {
      $result = "<tr>
-                    <th class='clickable'>Organization</th>";
+                    <th class='no_sort'>Organization</th>";
     //One-indexed for loop.
     $i = 1; 
     foreach($labels as $label) {
@@ -493,7 +497,7 @@ function generateTableHeaders($labels) {
 }
 
 /****************************************************************************************************
- * Function generateTableRows($$orgid, $labels)
+ * Function generateTableRows($orgid, $labels, $level)
  *
  * Recursive
  * Generates the html for the rows of the table for a given report.
@@ -503,37 +507,35 @@ function generateTableHeaders($labels) {
  * array labels: The list of all the label ids being used for the table.
  * optional bool recurse: Whether to show all descendents rather than just
  *                        immediate children.
- * prefix: ignore, used internally.
+ * level: ignore, used internally.
  *
  * Returns:
  * string result: The resulting html to produce all the table rows for the table.
   ***************************************************************************************************/ 
 
-function generateTableRows($orgid, $labels, $recurse=true, $prefix='') {
-    $indent_char = "&nbsp;&nbsp;";
+function generateTableRows($orgid, $labels, $recurse=true, $level=0) {
     $children = getChildren($orgid);
-    $rowData = getRowData($prefix, $orgid, $labels);
+    $rowData = getRowData($orgid, $labels);
     if (sizeOf($children)==0) {
-        return $rowData;
+        return str_replace("<tr>","<tr class='level".$level."'>",$rowData);
     }
-    $result=str_replace("<tr>","<tr class='parent'>",$rowData);
+    $result=str_replace("<tr>","<tr class='parent level".$level."'>",$rowData);
     foreach ($children as $child) {
         if ($recurse) {
-            $result .= generateTableRows($child[0], $labels, $prefix.$indent_char);       
+            $result .= generateTableRows($child, $labels, true, $level+1);       
         } else {
-            $result .=getRowData($indent_char, $child[0], $labels);
+            $result .=getRowData( $child, $labels);
         }
     }
     return $result;
 }
 
 /*******************************************************************************
- * Function getRowData($prefix, $orgid, $labels)
+ * Function getRowData($orgid, $labels)
  * 
  * Generates one row of table data for the specified orgid
  * 
  * Parameters
- * string prefix: string to prefix the orgname with - for indentation purposes
  * int orgid: The id of the organization to list data for
  * array labels: The list of all the label ids for this row
  * 
@@ -541,10 +543,10 @@ function generateTableRows($orgid, $labels, $recurse=true, $prefix='') {
  * string result: one <tr> of table data
  *******************************************************************************/
 
-function getRowData($prefix, $orgid, $labels) {
-    $result = "<td>".$prefix.getOrgName($orgid)."</td>";
+function getRowData($orgid, $labels) {
+    $result = "<td>".getOrgName($orgid)."</td>";
     foreach ($labels as $label) {
-        $result .= "<td>".getCountAtThreshold($orgid, $label)."</td>";
+        $result .= "<td class='center'>".getCountAtThreshold($orgid, $label)."</td>";
     }
     return "<tr>".$result."</tr>";
 }

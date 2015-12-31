@@ -56,7 +56,8 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			</div>
 			<div class="profile-content">
 			<h4>MINISTRY INFORMATION</h4>
-			<BR><p style='margin:0;'>
+			<BR>
+			<p style='margin:0;'>
 			<?php 
 			if(!empty($user->ministry_address_line1) || !empty($user->ministry_city)){
 				echo "<strong>Address:</strong> ";
@@ -80,15 +81,8 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE is_ministry=1 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){ $type = 'Office';}
-					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
-					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
-					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
-					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
-					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
-					else { $type = '??';}
-					
-					echo "<strong>".$type .": </strong>".$phone->phone_number;
+
+					echo "<strong>".$phone->phone_type .": </strong>".$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo " EXT: $phone->extension";
@@ -100,7 +94,7 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE is_ministry = 1 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
-						echo "<strong>Email:</strong> $email->email_address<BR>";
+						echo "<strong>Email:</strong> <a href=\"mailto:".$email->email_address."\">".$email->email_address."</a><BR>";
 				}
 			}
 			if (!empty($user->ministry_website) || !empty($user->ministry_twitter_handle) || !empty($user->ministry_skype) || !empty($user->ministry_facebook)) {
@@ -124,11 +118,10 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo '<strong>Facebook:</strong> ' . $user->ministry_facebook. '<BR>';
 				}
 			}
-			echo "<br>";
 			if(isset($user->spouse_employee_number)){ //if you're married to someone on staff we link your profiles.
 				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE employee_number = '" . $user->spouse_employee_number . "'");
 				if(isset($spouse->employee_number)){
-					echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br /><br />"; 
+					echo '<br><strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a>"; 
 				}
 			}
 			?>
@@ -159,21 +152,25 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo ", $user->country";
 				}
 			}
+			else {
+				if (!empty($user->city)) {
+					echo "$user->city";
+				}
+				if (!empty($user->province)) {
+					echo ", $user->province";
+				}
+				if (!empty($user->country) && ($user->country <> 'CA')) {
+					echo ", $user->country";
+				}
+			}
 			echo"<br>";
 
 			//grab phone numbers that are shared, then display them
 			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE share_phone=1 AND is_ministry=0 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){ $type = 'Office';}
-					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
-					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
-					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
-					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
-					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
-					else { $type = '??';}
 
-					echo '<strong>' . $type . ': </strong> '.$phone->phone_number;
+					echo '<strong>' . $phone->phone_type . ': </strong> '.$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo ' EXT: '.$phone->extension;
@@ -185,9 +182,9 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE share_email=1 AND is_ministry = 0 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
-						echo '<strong>Email:</strong> '. $email->email_address . '<BR>';
+					echo "<strong>Email:</strong> <a href=\"mailto:".$email->email_address."\">".$email->email_address."</a><BR>";
 				}
-			}					
+			}
 			if (!empty($user->website) || !empty($user->twitter_handle) || !empty($user->skype) || !empty($user->facebook)) {
 				//if user has a website, share that too
 				if(!empty($user->website)){

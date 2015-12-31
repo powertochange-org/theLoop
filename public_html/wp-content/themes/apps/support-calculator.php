@@ -241,7 +241,7 @@ include('functions/js_functions.php'); ?>
 		}
 		
 		if (isAdmin()){
-			include('admin-interface/support-calculator-admin.php');
+			include('calculators/support-calculator-admin.php');
 		}
 		
 		//these next six functions just help generate the table
