@@ -22,42 +22,33 @@ if(isset($_SESSION['ERRMSG'])) {
 }
 
 
-
+/*Impersonating an employee in debug mode.*/
 global $wpdb;
 
 $debugText = '';
-if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
-    $_SESSION['activeuser'] = $_POST['newuser'];
-    $debugText .= 'Now logged in as:';
+if(Workflow::debugMode() && isset($_POST['newuser']) && $_POST['newuser'] != '') {
+    //Assign the impersonate variable to allow for impersonation. 
+    if(Workflow::actualloggedInUser() == $_POST['newuser'])
+        Workflow::stopImpersonateEmployee();
+    else 
+        Workflow::impersonateEmployee($_POST['newuser']);
     
-    $sql = "SELECT CONCAT(first_name, ' ', last_name) AS name
-            FROM employee
-            WHERE employee_number = '$_SESSION[activeuser]'";
     
-    $result = $wpdb->get_results($sql, ARRAY_A);
-    
-    if(count($result) == 1) {
-        $_SESSION['activeusername'] = $result[0]['name'];
-    } else {
-        $_SESSION['activeusername'] = 'Unknown User';
-    }
-    
-} else if(isset($_SESSION['activeuser']) && $_SESSION['activeuser'] != '') {
-    $debugText .= 'Currently logged in as:';
-} else {
-    $_SESSION['activeuser'] = $_SESSION['activeusername'] = '0';
-    $debugText .= 'Defaulting to log in as: ';
+} else if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
+    echo '<script> alert("Debug mode is turned off");</script>';
 }
 
-$debugText .= $_SESSION['activeuser'].' | '.$_SESSION['activeusername'];
-$debugText .= '   ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
+$debugText .= 'Currently logged in as: ';
+$debugText .= Workflow::loggedInUser().' - '.Workflow::loggedInUserName();
+$debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
 
+/*End of impersonating an employee.*/
 ?>
 
 
 
 <?php
-if($_SESSION['activeuser'] != '0') {
+if(Workflow::loggedInUser() != '0') {
     
 ?>
     
@@ -102,11 +93,11 @@ if($_SESSION['activeuser'] != '0') {
     <?php
     
     $obj = new Workflow();
-    echo $obj->viewAllSubmissions($_SESSION['activeuser'], $formsearch, $datesearch, $idsearch);
+    echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
     ?>
     
     <?php
-    echo $obj->viewAllSubmissionsAsApprover($_SESSION['activeuser'], $formsearch, $submittedsearch, $datesearch, $idsearch);
+    echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch);
 } else {
     echo('<br>You need to log in!');
 }

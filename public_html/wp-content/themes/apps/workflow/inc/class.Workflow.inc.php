@@ -28,7 +28,6 @@ class Workflow {
     private $mode;
     private $previousID;
 	private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
-    private static $impersonateEmployeeNum;  // When this is set to a valid employee number, the current user will impersonate that employee. Otherwise, they will just operate as themselves
 	
 	
     public function __construct() {
@@ -1226,10 +1225,17 @@ class Workflow {
     public function viewAllWorkflows() {
         global $wpdb;
         
-        if($_SESSION['activeuser'] == 0) { //TODO: Change this to an ADMIN only function. Basically call the admin function here
+        if(Workflow::loggedInUser() == 0) { 
             $_SESSION['ERRMSG'] = 'You need to log in first.';
             header('location: ?page=viewsubmissions');
             die();
+        }
+        
+        if(Workflow::isAdmin(Workflow::loggedInUser())) {
+            if(Workflow::debugMode())
+                echo '<b>**DEBUG MODE - ADMIN ACCESS ENABLED**</b>';
+        } else if(Workflow::debugMode()) {
+            echo '<b>**DEBUG MODE - NOT VISIBLE ON THE LIVE PRODUCTION SITE**</b>';
         }
         
         $response = '';
@@ -1743,17 +1749,59 @@ class Workflow {
         return $empid;
     }
     
+    public static function impersonateEmployee($num) {
+        if(isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1 && $num == $_SESSION['impersonateuser']) {
+            echo '<script>alert("You are actually the person you are trying to impersonate.");</script>';
+        } else {
+            $_SESSION['impersonate'] = 1;
+            $_SESSION['impersonateuser'] = $num;
+            
+            global $wpdb;
+            
+            $sql = "SELECT user_login 
+                    FROM employee 
+                    WHERE employee_number = '".$_SESSION['impersonateuser']."'";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            if(count($result) == 1) {
+                $row = $result[0];
+                $_SESSION['impersonateusername'] = $row['user_login'];
+            } else {
+                $_SESSION['impersonateusername'] = 'UserName not found';
+            }
+            
+            echo '<script>alert("You are now trying to impersonate.'.$_SESSION['impersonateuser'].' - '.$_SESSION['impersonateusername'].'");</script>';
+        }
+        
+    }
+    
+    public static function stopImpersonateEmployee() {
+        unset($_SESSION['impersonate']);
+        unset($_SESSION['impersonateuser']);
+        unset($_SESSION['impersonateusername']);
+        echo '<script>alert("You are now logged in as yourself.");</script>';
+    }
+    
     public static function loggedInUser() {
-		// Check if we are impersonating someone else
-		if ($impersonateEmployeeNum)
-			return $impersonateEmployeeNum;
-		
-		// Check if the current employee number has already been looked up and cached
-		else if ($currentUserEmployeeNum)
-			return $currentUserEmployeeNum;
-		
-		// If none of those are true, we need to look up the employee number of the current person
+        //Need to reference the global variable
+        global $currentUserEmployeeNum;
+        
+        // Check if we are impersonating someone else
+		if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
+            return $_SESSION['impersonateuser'];
+        }
+        // Check if the current employee number has already been looked up and cached - this saves from having to look up in the db again
+        else if ($currentUserEmployeeNum) {
+            //echo '<script> alert("current emp successful");</script>'; //DEBUG
+            return $currentUserEmployeeNum;
+        }
+		// If none of those are true, we need to look up the employee number of the current person and for this page load
 		else {
+            //echo '<script> alert("resorting to fallback");</script>'; //DEBUG
+            //Give them no access unless they are found
+            $currentUserEmployeeNum = 0;
+            
 			global $wpdb;
 			$currentUserId = wp_get_current_user()->id;
 			
@@ -1772,22 +1820,9 @@ class Workflow {
     }
     
     public static function loggedInUserName() {
-		// If we are impersonating someone, need to look up the username
-		if ($impersonateEmployeeNum) {
-			global $wpdb;
-			
-			$sql = "SELECT user_login 
-					FROM employee 
-					WHERE employee_number = $impersonateEmployeeNum";
-			
-			$result = $wpdb->get_results($sql, ARRAY_A);
-			
-			if(count($result) == 1) {
-				$row = $result[0];
-				$userLogin = $row['user_login'];
-			} 
-			
-			return $userLogin;
+		// If we are impersonating someone, return the name stored in the session
+        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
+            return $_SESSION['impersonateusername'];
 		} else {
 			// Otherwise, just return the current user login
 			return wp_get_current_user()->user_login;
@@ -2074,6 +2109,11 @@ class Workflow {
             return 'field576to600';
         
         return '';
+    }
+    
+    /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
+    public static function debugMode() {
+        return 1;
     }
 }
     
