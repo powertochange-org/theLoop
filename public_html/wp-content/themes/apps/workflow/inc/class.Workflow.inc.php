@@ -979,7 +979,7 @@ class Workflow {
                     $response .= date("m/d/Y", strtotime($fieldvalue));
                 }
                 $response .= '</div>';
-            } else if($row['TYPE'] == 9) { //Header Row
+            } else if($row['TYPE'] == 9) { //Horizontal Line
                 $response .= '<div class="clear"></div>';
                 $response .= '<hr>';
             } else if($row['TYPE'] == 10) { //Heading

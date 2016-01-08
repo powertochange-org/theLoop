@@ -154,9 +154,9 @@ function fieldTypeContent(selectedValue) {
         response += '<option value="3">Create a Newline</option>';
     }
     if(selectedValue == 9) {
-        response += '<option value="9" selected>Header Row</option>';
+        response += '<option value="9" selected>Horizontal Line</option>';
     } else {
-        response += '<option value="9">Header Row</option>';
+        response += '<option value="9">Horizontal Line</option>';
     }
     if(selectedValue == 5) {
         response += '<option value="5" selected>Autofill Name</option>';
@@ -346,6 +346,8 @@ function preview() {
     find("count").value = totalCount;
     var updateText = '';
     
+    updateText += '<h2 class="center" style="color:black;">Preview of Current Form</h2>';
+    
     if(find("behalfof").checked) {
         updateText += '<div class="workflow workflowlabel">Submit on behalf of Employee:</div>' +
             '<div class="workflow workflowright style-1" style="width:150px;"><select></select></div>' +
@@ -495,7 +497,7 @@ function preview() {
             updateText += '</div>';
             
             
-        } else if(find("fieldtype"+i).value ==  9) { //Header Row
+        } else if(find("fieldtype"+i).value ==  9) { //Horizontal Line
             updateText += '<div style="clear:both;"></div><hr>';
         } else if(find("fieldtype"+i).value == 10) { //Heading
             if(find("approvallevel"+i).value != 0) {
@@ -508,8 +510,15 @@ function preview() {
         }
     }
     
+    //updateText += '<button type="button" onclick="closePreview();" class="btn1 close-btn">Close the Preview</button>'; 
+    
     find("previewform").innerHTML = updateText;
-    window.scrollTo(0, 0);
+    //window.scrollTo(0, 0);
+    find("screen-blackout").style.display = 'inherit';
+}
+
+function closePreview() {
+    find("screen-blackout").style.display = 'none';
 }
 
 /*

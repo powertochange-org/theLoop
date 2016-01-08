@@ -433,6 +433,49 @@ div.field576to600 {
     width: 600px;
 }
 
+#screen-blackout {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
+}
+
+#popuppreview {
+    width: 1000px;/* Changed from 90% to 1000px because the actual form will be 990 pixels*/
+    min-height: 90%;
+    
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    
+    border: 3px solid black;
+    background-color: rgba(220, 220, 220, 1);
+    
+    text-align: center;
+}
+
+#previewform {
+    overflow-y: scroll;
+    height: 80vh;
+    background-color: white;
+    width: 990px;
+    margin: auto;
+}
+
+.center {
+    text-align: center;
+}
+
+.close-btn {
+    cursor: pointer;
+    text-align: center;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;

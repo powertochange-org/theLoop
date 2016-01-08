@@ -28,8 +28,15 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
 
 <h1>Create New Form</h1><br>
 
-<h2>Preview of Current Form</h2>
-<div id="previewform">
+
+<div id="screen-blackout">
+    <div id="popuppreview">
+        <div id="previewform">
+        <h2 class="center">Preview of Current Form</h2>
+        </div>
+        <div style="clear:both;"></div>
+        <button type="button" onclick="closePreview();" class="btn1 close-btn">Close the Preview</button>
+    </div>
 </div>
 <div style="clear:both;"></div>
 
@@ -219,7 +226,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="7">Date Input</option>
                 <option value="8">Ask a Question</option>
                 <option value="3">Create a Newline</option>
-                <option value="9">Header Row</option>
+                <option value="9">Horizontal Line</option>
                 <option value="5">Autofill Name</option>
                 <option value="6">Autofill Date</option>
                 <option value="2">Option</option>
@@ -287,7 +294,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         
         <div class="workflow workflowboth" style="margin: 20px 0 45px 0;">
             <button type="button" class="buttoncustom" onclick="addField();">Add Field</button>
-            <button type="button" class="submitbutton" style="width: 99%;height:35px;" onclick="preview();">Update Preview</button>
+            <button type="button" class="submitbutton" style="width: 99%;height:35px;" onclick="preview();">Preview Form</button>
         </div>
         <div class="clear"></div>
         
