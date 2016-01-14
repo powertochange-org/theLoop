@@ -1275,7 +1275,7 @@ class Wiki {
 			if (is_user_logged_in()) {
 			$tabs .= '<li class="'.join(' ', $classes['advanced_edit']).'" ><a href="' . get_edit_post_link() . '" >' . __('Advanced', 'wiki') . '</a></li>';
 			}
-			$tabs .= '<li class="'.join(' ', $classes['create']).'"><a href="' . add_query_arg(array('action' => 'edit', 'eaction' => 'create'), $permalink) . '">'.__('Create new', 'wiki').'</a></li>';
+			$tabs .= '<li class="'.join(' ', $classes['create']).'"><a href="' . add_query_arg(array('action' => 'edit', 'eaction' => 'create'), $permalink) . '">'.__('Create new sub article', 'wiki').'</a></li>';
 			$tabs .= '</ul>';
 		}
 
