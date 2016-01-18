@@ -54,10 +54,10 @@ class Workflow {
         
     }
     
-    public function addField($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield) {
+    public function addField($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield, $newgroup) {
         if($size == '')
             $size = 0;
-        $this->fields[] = array($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield);
+        $this->fields[] = array($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield, $newgroup);
     }
     
     /*
@@ -161,10 +161,17 @@ class Workflow {
         //echo '<br>Inserted the ID: '.$inserted_id.'<br>';
         
         //Store fields into WorkflowDetails
+        $formCount = -1;
         for($i = 0; $i < count($this->fields); $i++) {
+            //Update the FieldID if it is not part of a radio group
+            //Skips this line if it is another radio button as part of that group, otherwise this is run
+            if(!($this->fields[$i][0] == 13 && $this->fields[$i][8] == 0))
+                $formCount++;
+            
+            
             $sql = "INSERT INTO workflowformdetails (FORMID, FIELDID, POSITION, TYPE, LABEL, EDITABLE, APPROVAL_ONLY, 
                                                     APPROVAL_SHOW, REQUIRED, APPROVAL_LEVEL, FIELD_WIDTH)
-                    VALUES ('$inserted_id', '$i', '$i', '".$this->fields[$i][0]."', '".$this->fields[$i][1]."', '".$this->fields[$i][2]."', 
+                    VALUES ('$inserted_id', '$formCount', '$i', '".$this->fields[$i][0]."', '".$this->fields[$i][1]."', '".$this->fields[$i][2]."', 
                     '".$this->fields[$i][3]."', '".$this->fields[$i][4]."', '".$this->fields[$i][7]."', '".$this->fields[$i][6]."', ";
             
             if($this->fields[$i][5] == 0)
@@ -1016,6 +1023,39 @@ class Workflow {
                     $response .= '2';
                 
                 $response .= '></div>';
+                
+            } else if($row['TYPE'] == 13) { //Radio boxes
+                if($row['APPROVAL_ONLY'] == 1) {
+                    if($configuration == 4 && $appLvlAccess || $approval_show) {
+                        $response .= '<div class="workflow workflowlabel approval mobile ';
+                            
+                    } else 
+                        continue;
+                } else {
+                    $response .= '<div class="workflow workflowlabel mobile ';
+                }
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= '" style="';
+                
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                
+                $response .= '">';
+                
+                $response .= '<input type="radio" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
+                    $row['FIELDID'].'" value="'.$row['LABEL'].'" ';
+                
+                if(!$editableField || $emailMode) {
+                    $response .= 'disabled ';
+                }
+                if($fieldvalue == $row['LABEL'])
+                    $response .= 'checked';
+                $response .='>'.$row['LABEL'].'</div>';
                 
             }
         }

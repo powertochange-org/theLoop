@@ -89,14 +89,23 @@ if($submitmode == 3 || $submitmode == 4) {
         else
             $requiredfield = 0;
         
-        if(isset($_POST['workflowtypecheck'.$i]) && $_POST['workflowtypecheck'.$i] == 8) {
+        if(isset($_POST['workflowtypecheck'.$i]) && $_POST['workflowtypecheck'.$i] == 8) { //Handle the ask a question input
             $myWorkflow->addField(1, $_POST['workflowlabela'.$i], $editable, $approvalonly, $approvalshow, 
-                $_POST['workflowsizea'.$i], $_POST['approvallevel'.$i], $requiredfield);
+                $_POST['workflowsizea'.$i], $_POST['approvallevel'.$i], $requiredfield, 0);
             $myWorkflow->addField(0, $_POST['workflowlabelb'.$i], $editable, $approvalonly, $approvalshow, 
-                $_POST['workflowsizeb'.$i], $_POST['approvallevel'.$i], $requiredfield);
+                $_POST['workflowsizeb'.$i], $_POST['approvallevel'.$i], $requiredfield, 0);
+        } else if($_POST['fieldtype'.$i] == 13) {//isset($_POST['workflowtypecheck'.$i]) && $_POST['workflowtypecheck'.$i] == 13) { //Handle the radio button
+            $numBtns = $_POST['workflowradiocount'.$i];
+            for($x = 0; $x < $numBtns; $x++) {
+                $newgroup = ($x == 0) ? 1 : 0;
+                $myWorkflow->addField(13, $_POST['workflowradio'.$i.'-'.$x], $editable, $approvalonly, $approvalshow, 
+                    $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield, $newgroup);
+            }
+            
+            
         } else {
             $myWorkflow->addField($_POST['fieldtype'.$i], $_POST['workflowlabel'.$i], $editable, $approvalonly, $approvalshow, 
-                $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield);
+                $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield, 0);
         }
         
         

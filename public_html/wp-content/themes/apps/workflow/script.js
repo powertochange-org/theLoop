@@ -807,7 +807,6 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
     } else if(type == '13') { //Radio Button
         text += 
             '<div class="workflow workflowleft">Radio Options:<input type="hidden" name="workflowtypecheck'+ id +'" value="13">' +
-            '<input type="hidden" name="workflowradiocountha'+ id +'" value="0">' +
             '</div>';
         
         //Add a "Add radio" button only to the new field section. History does not have this option yet
@@ -1011,6 +1010,11 @@ function swapConversion(text, oldID, newID) {
     text = text.split("editable" + oldID).join("editable" + newID);
     text = text.split("approvallevel" + oldID).join("approvallevel" + newID);
     text = text.split("approvalshow" + oldID).join("approvalshow" + newID);
+    
+    //Fix radio inputs
+    text = text.split("workflowradio" + oldID).join("workflowradio" + newID);
+    text = text.split("workflowradiocount" + oldID).join("workflowradiocount" + newID);
+    
     
     text = text.split("workflowlabela" + oldID).join("workflowlabela" + newID);
     text = text.split("workflowsizea" + oldID).join("workflowsizea" + newID);
