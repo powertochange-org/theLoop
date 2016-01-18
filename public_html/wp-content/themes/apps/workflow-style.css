@@ -91,7 +91,7 @@ div.workflowlabel {
 }
 
 .approval {
-    background-color: #ffbe89;
+    background-color: #fff3ea; /*#ffbe89*/
     
 }
 
@@ -474,6 +474,12 @@ div.field576to600 {
 .close-btn {
     cursor: pointer;
     text-align: center;
+}
+
+#fieldaddconfirm {
+    /*display: none;*/
+    opacity: 0;
+    transition: opacity 1500ms;
 }
 
 @media (max-width: 767px) {

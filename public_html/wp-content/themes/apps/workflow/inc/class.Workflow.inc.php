@@ -982,7 +982,7 @@ class Workflow {
             } else if($row['TYPE'] == 9) { //Horizontal Line
                 $response .= '<div class="clear"></div>';
                 $response .= '<hr>';
-            } else if($row['TYPE'] == 10) { //Heading
+            } else if($row['TYPE'] == 10 || $row['TYPE'] == 11 || $row['TYPE'] == 12) { //Heading 1,2,3
                 if($row['APPROVAL_ONLY'] == 1) {
                     if($configuration == 4 && $appLvlAccess || $approval_show) {
                         $response .= '<div class="workflow workflowlabel approval mobile ';
@@ -999,7 +999,23 @@ class Workflow {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '"><h2>'.$row['LABEL'].'</h2></div>';
+                $response .= '"><h';
+                if($row['TYPE'] == 11)
+                    $response .= '1';
+                else if($row['TYPE'] == 12)
+                    $response .= '3';
+                else
+                    $response .= '2';
+                
+                $response .= '>'.$row['LABEL'].'</h';
+                if($row['TYPE'] == 11)
+                    $response .= '1';
+                else if($row['TYPE'] == 12)
+                    $response .= '3';
+                else
+                    $response .= '2';
+                
+                $response .= '></div>';
                 
             }
         }

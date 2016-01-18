@@ -9,7 +9,9 @@
 */
 
 var totalCount = 0;
-
+var timeout;
+var newRadioFields = 2;
+var DEFAULTNEWRADIOFIELDS = 2;
 
 function test() {
     alert("HAHA");
@@ -33,43 +35,62 @@ function fixQuotes(text) {
 }
 
 function addField() {
+    //Clear the timeout callback that might cause the confirmation checkmark to stop being displayed
+    clearTimeout(timeout);
+    find("fieldaddconfirm").style.opacity = "0";
+    
+    var fieldType = find("fieldtype").value;
+    
+    //Add the field
     var text = '';
     
     text += '<div id="fieldwrap' + totalCount + '"><div id="field' + totalCount + '">' +
         '<div class="workflow workflowleft">Field type:</div>' +
         '<div class="workflow workflowright style-1">' +
-            fieldTypeLoad(find("fieldtype").value) +
+            fieldTypeLoad(fieldType) +
         '</div>' +
         '<div class="clear"></div>' +
         
         '<div id="workflowdetails' + totalCount + '">';
         
-    if(find("fieldtype").value != '8') {
-        text += workflowDetailsFix(totalCount, find("fieldtype").value, fixQuotes(find("workflowlabel").value), find("workflowsize").value, '', '', 1);
-    } else if(find("fieldtype").value == '8') {
-        text += workflowDetailsFix(totalCount, find("fieldtype").value, find("workflowlabela").value, find("workflowsizea").value, 
+    if(fieldType != '8' && fieldType != '13') {
+        text += workflowDetailsFix(totalCount, fieldType, fixQuotes(find("workflowlabel").value), find("workflowsize").value, '', '', 1);
+    } else if(fieldType == '8') {
+        text += workflowDetailsFix(totalCount, fieldType, find("workflowlabela").value, find("workflowsizea").value, 
             find("workflowlabelb").value, find("workflowsizeb").value, 1);
+    } else if(fieldType == '13') { //radio
+        var radioFields = new Array();
+        
+        for(var i = 0; i < newRadioFields; i++) {
+            radioFields[i] = find("workflowradio-" + i).value;
+        }
+        
+        text += workflowDetailsRadioFix(totalCount, fieldType, 1, radioFields);
+        
+        //Reset the new radio fields to 2. //TODO, make sure it resets back to 2 on the new entry
+        newRadioFields = 2;
     }
+    
     text += '</div>';
     text += 
         '<div class="workflow workflowleft">Field Settings:</div>' +
         '<div class="workflow workflowright style-1">' +
-            requiredCheck(find("requiredfield").checked) + '<br>' +
+            requiredCheck(find("requiredfield").checked, fieldType) + '<br>' +
         '</div><div class="clear"></div>' +
         
         '<div class="workflow workflowleft">Approval Rights:</div>' +
         '<div class="workflow workflowright style-1">' +
-            editableCheck(find("editable").checked) +
+            editableCheck(find("editable").checked, fieldType) +
             //approvalonlyCheck(find("approvalonly").checked) +
         '</div>' +
         '<div class="clear"></div>' + //<br>
         '<div class="workflow workflowleft">Approval Level:</div>' + 
         '<div class="workflow workflowright style-1">' +
-            approvalLevel(find("approvallevel").value) +
+            approvalLevel(find("approvallevel").value, fieldType) +
         '</div><div class="clear"></div>' +
         '<div class="workflow workflowleft">Display Settings:</div>' +
         '<div class="workflow workflowright style-1">' +
-            approvalshowCheck(find("approvalshow").checked) +
+            approvalshowCheck(find("approvalshow").checked, fieldType) +
             '<br></div><div class="clear"></div></div>' + 
             '<br><div class="workflow workflowleft">Position:</div>' + 
             '<div class="workflow workflowright style-1">' + 
@@ -84,7 +105,15 @@ function addField() {
     totalCount++;
     find("count").value = totalCount;
     
-    window.scrollTo(0,document.body.scrollHeight);
+    
+    setTimeout(function() { find("fieldaddconfirm").style.opacity = "1"; }, 500);
+    
+    //window.scrollTo(0,document.body.scrollHeight);
+    document.getElementById("fieldaddconfirmscroll").scrollIntoView();
+    
+    timeout = setTimeout(function() { find("fieldaddconfirm").style.opacity = "0"; }, 4000);
+    
+    
 }
 
 /*
@@ -122,6 +151,16 @@ function fieldTypeContent(selectedValue) {
         response += '<option value="10" selected>Heading</option>';
     } else {
         response += '<option value="10">Heading</option>';
+    }
+    if(selectedValue == 11) {
+        response += '<option value="11" selected>Heading 1</option>';
+    } else {
+        response += '<option value="11">Heading 1</option>';
+    }
+    if(selectedValue == 12) {
+        response += '<option value="12" selected>Heading 3</option>';
+    } else {
+        response += '<option value="12">Heading 3</option>';
     }
     if(selectedValue == 1) {
         response += '<option value="1" selected>Instruction Text</option>';
@@ -173,15 +212,32 @@ function fieldTypeContent(selectedValue) {
     } else {
         response += '<option value="2">Option</option>';
     }
+    if(selectedValue == 13) {
+        response += '<option value="13" selected>Radio</option>';
+    } else {
+        response += '<option value="13">Radio</option>';
+    }
     return response;
 }
 
-function editableCheck(selectedValue) {
+function editableCheck(selectedValue, type) {
     var response = '<input type="checkbox" id="editable' + totalCount + '" name="editable' + totalCount + '"';
     if(selectedValue == true) {
         response += ' checked'; 
     }
-    response += ' onchange="toggleCheckbox(this.id);">Can this field be modified during approval steps?<br>';
+    response += ' onchange="toggleCheckbox(this.id);" ';
+    
+    if(type == 1 || //Instruction
+        type == 3 || //create new line
+        type == 5 || //Autofill Name
+        type == 6 || //Autofill Date
+        type == 9 || //horizontal line
+        type == 10 ||  //Heading
+        type == 11 ||  //Heading 1
+        type == 12)  //Heading 3
+        response += 'hidden';
+    
+    response += '>Can this field be modified during approval steps?<br>';
     return response;
 }
 
@@ -194,27 +250,55 @@ function approvalonlyCheck(selectedValue) {
     return response;
 }
 
-function approvalshowCheck(selectedValue) {
+function approvalshowCheck(selectedValue, type) {
     var response = '<input type="checkbox" id="approvalshow' + totalCount + '" name="approvalshow' + totalCount + '"';
     if(selectedValue == true) {
         response += ' checked'; 
     }
-    response += ' onchange="toggleCheckbox(this.id);">Displayed on Finished Forms (Approval fields only)?';
+    response += ' onchange="toggleCheckbox(this.id);"';
+    
+    if(type == 3 || //create new line
+        type == 9) { //horizontal line 
+         response += ' hidden';
+    }
+    
+    response += '>Displayed on Finished Forms (Approval fields only)?';
     return response;
 }
 
-function requiredCheck(selectedValue) {
+function requiredCheck(selectedValue, type) {
     var response = '<input type="checkbox" id="requiredfield' + totalCount + '" name="requiredfield' + totalCount + '"';
     if(selectedValue == true) {
         response += ' checked'; 
     }
-    response += ' onchange="toggleCheckbox(this.id);">Required Field';
+    response += ' onchange="toggleCheckbox(this.id);" ';
+    
+    
+    if(type == 1 || //Instruction
+        type == 3 || //create new line
+        type == 4 || //Checkbox
+        type == 5 || //Autofill Name
+        type == 6 || //Autofill Date
+        type == 9 || //horizontal line
+        type == 10 ||  //Heading
+        type == 11 ||  //Heading 1
+        type == 12)  //Heading 3
+        response += 'hidden';
+    
+    response += '>Required Field';
     return response;
 }
 
-function approvalLevel(selectedValue) {
+function approvalLevel(selectedValue, fieldType) {
     var response = '<select id="approvallevel' + totalCount + '" name="approvallevel' + totalCount + '" form="addnewworkflow" '+
-        'onchange="approvalLevelEdit(this.id)">';
+        'onchange="approvalLevelEdit(this.id)"';
+    if(fieldType == 3 || //create new line
+        fieldType == 9) { //horizontal line 
+         response += ' hidden';
+    }
+    
+    response += '>';
+    
     if(selectedValue == 0) {
         response += '<option value="0" selected></option>';
     } else {
@@ -355,7 +439,7 @@ function preview() {
     }
     
     for(var i = 0; i < totalCount; i++) {
-        
+        var fieldType = find("fieldtype"+i).value;
         if(find("fieldtype"+i).value == 1) { //Label
             if(find("approvallevel"+i).value != 0) {
                 updateText += '<div class="workflow workflowlabel approval" ';
@@ -499,18 +583,53 @@ function preview() {
             
         } else if(find("fieldtype"+i).value ==  9) { //Horizontal Line
             updateText += '<div style="clear:both;"></div><hr>';
-        } else if(find("fieldtype"+i).value == 10) { //Heading
+        } else if(fieldType == 10 || fieldType == 11 || fieldType == 12) { //Heading
             if(find("approvallevel"+i).value != 0) {
                 updateText += '<div class="workflow workflowlabel approval" ';
             } else {
                 updateText += '<div class="workflow workflowlabel" ';
             }
+            updateText += '><h';
+            if(fieldType == 11) {
+                updateText += '1';
+            } else if(fieldType == 12) {
+                updateText += '3';
+            } else {
+                updateText += '2';
+            }
+            updateText += '>' + find("workflowlabel"+i).value + '</h';
+            if(fieldType == 11) {
+                updateText += '1';
+            } else if(fieldType == 12) {
+                updateText += '3';
+            } else {
+                updateText += '2';
+            }
+            updateText += '></div>';
+        } else if(find("fieldtype"+i).value == 13) { //Radio
+            if(find("approvallevel"+i).value != 0) {
+                updateText += '<div class="workflow workflowlabel approval"';
+            } else {
+                updateText += '<div class="workflow workflowlabel"';
+            }
+            /*if(find("workflowsize"+i).value != "") {
+                updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
+            }*/
             
-            updateText += '><h2>' + find("workflowlabel"+i).value + '</h2></div>';
-        }
+            updateText += '>';
+            
+            for(x = 0; x < find("workflowradiocount"+i).value; x++) {
+                updateText += '<input type="radio" name="workflowradio' + i + '" value="' + find("workflowradio"+i+"-"+x).value +'">' +
+                find("workflowradio"+i+"-"+x).value; 
+            }
+            /*updateText += '<input type="checkbox" value="1" ';
+            
+            updateText += 'checked';
+            updateText +='>' + find("workflowradio"+i+"-0").value + '</div>';*/
+            
+            updateText += '</div>';
+        } 
     }
-    
-    //updateText += '<button type="button" onclick="closePreview();" class="btn1 close-btn">Close the Preview</button>'; 
     
     find("previewform").innerHTML = updateText;
     //window.scrollTo(0, 0);
@@ -528,9 +647,16 @@ function closePreview() {
  */
 function updateWorkflowCreation(elem) {
     var selectedValue = find(elem).value;
+    
+    //Reset the number of displayed radio fields
+    if(selectedValue == 13) {
+        newRadioFields = DEFAULTNEWRADIOFIELDS;
+    }
+    
     var text = workflowDetailsFix('', selectedValue, '', '', '', '', 0);
     
     document.getElementById('workflowdetails').innerHTML = text;
+    fixExtraFields("", selectedValue);
 }
 
 /*
@@ -547,19 +673,32 @@ function updateWorkflowCreationHistory(elem) {
     if(value == 8) {
         label = find('workflowlabel' + id).value;
         size = find('workflowsize' + id).value;
-    } else if(value == 0 || value == 1 || value == 4) {
+    } else if(value == 0 || value == 1 || value == 4 || value == 10 || value == 11 || value == 12) {
         if(find('workflowlabela' + id) != null) {
             label = find('workflowlabela' + id).value;
             size = find('workflowsizea' + id).value;
         } else {
-            label = find('workflowlabel' + id).value;
-            size = find('workflowsize' + id).value;
+            if(find('workflowlabel' + id) != null) {
+               label = find('workflowlabel' + id).value;
+                size = find('workflowsize' + id).value; 
+            }
+            
         }
     }
     var text = workflowDetailsFix(id, find(elem).value, label, size, labelb, sizeb, 1);
     document.getElementById('workflowdetails' + id).innerHTML = text;
     
+    //Remove fields that aren't needed for certain input types
+    fixExtraFields(id, value);
     
+}
+
+function workflowDetailsRadioFix(id, type, history, radioFields) {
+    return workflowDetailsFixAll(id, type, "", "", "", "", history, radioFields);
+}
+
+function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
+    return workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, "");
 }
 
 /*Changes the fields that are displayed on the create workflow page when you are trying to add a new field.
@@ -572,18 +711,38 @@ function updateWorkflowCreationHistory(elem) {
  *@param history If history is enabled, this will configure and change an item in the history only.
  *               If history is disabled, it will configure the section where you add a new field. 
  */
-function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
+function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, radioFields) {
+    //alert("your id is: " + id + " type: " + type);
+    
+    var valueFieldHide = 0;
+    var sizeFieldHide = 0;
+    
+    if(type == 3 || //create new line
+        type == 9) { //horizontal line
+        valueFieldHide = 1;
+    }
+    
+    if(type == 10 || //heading
+        type == 11 || //heading 1
+        type == 12 || //heading 3
+        type == 9) { //horizontal line
+        sizeFieldHide = 1;
+    }
+    
+    
     var text = '';
-    if(type != '8') {
+    if(type != '8' && type != '13') {
         text += 
             '<div class="workflow workflowleft ';
-        if(type == 3 || type == 9) { //Hides the value field
+        //Hides the value field
+        if(valueFieldHide) { 
             text += 'hide';
         }
         
         text += '">Value:</div>' +
             '<div class="workflow workflowright style-1 ';
-        if(type == 3 || type == 9) { //Hides the value field
+        //Hides the value field
+        if(valueFieldHide) { 
             text += 'hide';
         }
         text += '">' +
@@ -595,12 +754,14 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         text += '></div><div class="clear"></div>' +
             
             '<div class="workflow workflowleft ';
-        if(type == 9) { //Hides the field size
+        //Hides the field size
+        if(sizeFieldHide) { 
             text += 'hide';
         }
         text += '">Field Size:</div>' +
             '<div class="workflow workflowright style-1 ';
-        if(type == 9) { //Hides the field size
+        //Hides the field size
+        if(sizeFieldHide) { 
             text += 'hide';
         }
         text += '">' +
@@ -608,8 +769,8 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         if(history == 1) {
             text += 'onchange="changeDefaultVal(this.id);" value="' + size + '"';
         }
-        text += '></div><div class="clear"></div>';
-    } else if(type == '8') {
+        text += ' title="Enter the width of the field in pixels. (Ex: very small = 50, small = 100, medium = 200, large = 275, x-large = 350)"></div><div class="clear"></div>';
+    } else if(type == '8') { //Ask a Question 
         text += 
             '<div class="workflow workflowleft">Question:</div>' +
             '<div class="workflow workflowright style-1"><input type="hidden" name="workflowtypecheck'+ id +'" value="8">' +
@@ -643,9 +804,101 @@ function workflowDetailsFix(id, type, label, size, labelb, sizeb, history) {
         }
         text += '></div><div class="clear"></div>';
             
+    } else if(type == '13') { //Radio Button
+        text += 
+            '<div class="workflow workflowleft">Radio Options:<input type="hidden" name="workflowtypecheck'+ id +'" value="13">' +
+            '<input type="hidden" name="workflowradiocountha'+ id +'" value="0">' +
+            '</div>';
+        
+        //Add a "Add radio" button only to the new field section. History does not have this option yet
+        if(!history) {
+            text += '<div class="workflow workflowright style-1"><button type="button" onclick="addExtraRadioField(0,0);">Add Radio Box</button></div><div class="clear"></div>';
+        }
+        
+        
+        //Repeat extras
+        var length = (radioFields.length == 0) ? newRadioFields : radioFields.length;
+        for(var x = 0; x < length; x++) {
+            //Fix to add the Add Radio button in the new portion only.
+            if(x != 0 || !history) { 
+                text += '<div class="workflow workflowleft"></div>';
+            }
+            text += '<div class="workflow workflowright style-1">' +
+                '<input type="text" id="workflowradio' + id + '-' + x + '" name="workflowradio' + id + '-' + x + '" maxlength="500" ';
+            if(history == 1) {
+                text += 'onchange="changeDefaultVal(this.id);" value="' + radioFields[x] + '"';
+            }
+            text += '></div><div class="clear"></div>';
+        }
+        
+        text += '<input type="hidden" id="workflowradiocount'+ id +'" name="workflowradiocount'+ id +'" value="' + length + '">';
+            
     }
     return text;
 }
+
+/*
+ * Removes the extra fields that are not needed for certain field types.
+ * Ex: Create New Line does not need to have to be a required field or appear on approval view only.
+ */
+function fixExtraFields(id, type) {
+    
+    //Set Required Field
+    if(type == 1 || //Instruction
+        type == 3 || //create new line
+        type == 4 || //Checkbox
+        type == 5 || //Autofill Name
+        type == 6 || //Autofill Date
+        type == 9 || //horizontal line
+        type == 10 ||  //Heading
+        type == 11 ||  //Heading 1
+        type == 12)  //Heading 3
+        find("requiredfield" + id).setAttribute("hidden", "true");
+    else
+        find("requiredfield" + id).removeAttribute("hidden");
+    
+    
+    //Set if field is editable
+    if(type == 1 || //Instruction
+        type == 3 || //create new line
+        type == 5 || //Autofill Name
+        type == 6 || //Autofill Date
+        type == 9 || //horizontal line
+        type == 10 ||  //Heading
+        type == 11 ||  //Heading 1
+        type == 12)  //Heading 3
+        find("editable" + id).setAttribute("hidden", "true");
+    else
+        find("editable" + id).removeAttribute("hidden");
+    
+    
+    //Approval level and Displayed on finished forms page for everyone to see
+    if(type == 3 || //create new line
+        type == 9) { //horizontal line
+        find("approvallevel" + id).setAttribute("hidden", "true");
+        find("approvalshow" + id).setAttribute("hidden", "true");
+    } else {
+        find("approvallevel" + id).removeAttribute("hidden");
+        find("approvalshow" + id).removeAttribute("hidden");
+    }
+}
+
+
+function addExtraRadioField(id, x) {
+    id = '';
+    x = newRadioFields++;
+    text = '<div class="workflow workflowleft"></div>';
+
+    text += '<div class="workflow workflowright style-1">' +
+        '<input type="text" id="workflowradio' + id + '-' + x + '" name="workflowradio' + id + '-' + x + '" maxlength="500" ';
+    /*if(history == 1) {
+        text += 'onchange="changeDefaultVal(this.id);" value="' + radioFields[x] + '"';
+    }*/
+    text += '></div><div class="clear"></div>';
+    find('workflowdetails').innerHTML += text;
+}
+
+
 
 var savedSupervisor;
 var savedSup = 0;
@@ -750,6 +1003,7 @@ function swap(id, moveup) {
 }
 
 function swapConversion(text, oldID, newID) {
+    text = text.split("workflowdetails" + oldID).join("workflowdetails" + newID);
     text = text.split("fieldtype" + oldID).join("fieldtype" + newID);
     text = text.split("workflowlabel" + oldID).join("workflowlabel" + newID);
     text = text.split("workflowsize" + oldID).join("workflowsize" + newID);

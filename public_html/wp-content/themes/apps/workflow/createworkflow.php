@@ -206,7 +206,8 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <!--<div id="debugworkflowfields">
             <h3>Debug History</h3>
         </div>-->
-        
+        <div id ="fieldaddconfirmscroll" style="height: 40px;"></div>
+        <img id ="fieldaddconfirm" src="/wp-content/uploads/2015/11/check.png" width="30px" height="30px"/>
         <div class="workflow workflowboth" style="margin-top: 20px;">
             <hr>
         </div>
@@ -220,6 +221,8 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <div class="workflow workflowright style-1">
             <select id="fieldtype" name="fieldtype" form="addnewworkflow" onchange="updateWorkflowCreation(this.id);">
                 <option value="10">Heading</option>
+                <option value="11">Heading 1</option>
+                <option value="12">Heading 3</option>
                 <option value="1">Instruction Text</option>
                 <option value="0">Entry Box Input</option>
                 <option value="4">Checkbox Input</option>
@@ -230,6 +233,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="5">Autofill Name</option>
                 <option value="6">Autofill Date</option>
                 <option value="2">Option</option>
+                <option value="13">Radio</option>
             </select>
         </div>
         <div class="clear"></div>
@@ -319,4 +323,5 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
 //alert(find("count").value);
 totalCount = find("count").value;
 //alert('TOTALCOUNT IS: ' + totalCount);
+fixExtraFields("", 10);
 </script>
