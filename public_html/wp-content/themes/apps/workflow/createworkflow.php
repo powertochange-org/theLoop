@@ -240,7 +240,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         
         <div id="workflowdetails">
             <div class="workflow workflowleft">
-                Value:
+                Text:
             </div>
             <div class="workflow workflowright style-1">
                 <input type="text" id="workflowlabel" name="workflowlabel" maxlength="500">
@@ -260,7 +260,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Field Settings:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="checkbox" id="requiredfield" name="requiredfield">Required Field<br>
+            <input type="checkbox" id="requiredfield" name="requiredfield" title="Does the field have to be filled out by the user?">Required Field<br>
         </div>
         <div class="clear"></div>
         
@@ -292,7 +292,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             Display Settings:
         </div>
         <div class="workflow workflowright style-1">
-            <input type="checkbox" id="approvalshow" name="approvalshow">Displayed on Finished Forms (Approval fields only)?<br>
+            <input type="checkbox" id="approvalshow" name="approvalshow" title="Can the user who submitted the form see this field once completed?">Displayed on Finished Forms (Approval fields only)?<br>
         </div>
         <div class="clear"></div>
         

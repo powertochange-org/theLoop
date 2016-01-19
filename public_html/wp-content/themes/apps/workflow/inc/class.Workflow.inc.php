@@ -165,7 +165,7 @@ class Workflow {
         for($i = 0; $i < count($this->fields); $i++) {
             //Update the FieldID if it is not part of a radio group
             //Skips this line if it is another radio button as part of that group, otherwise this is run
-            if(!($this->fields[$i][0] == 13 && $this->fields[$i][8] == 0))
+            if(!($this->fields[$i][8] == 0 && ($this->fields[$i][0] == 13 || $this->fields[$i][0] == 2)))
                 $formCount++;
             
             
@@ -752,7 +752,21 @@ class Workflow {
         
         //For each field that is part of the form
         $count = 0;
+        $anotherOption = 0;
+        $prevId = -1;
         foreach($result as $row) {
+            //Set flags if the current field is part of an option list
+            if($row['TYPE'] == 2 && $prevId == $row['FIELDID']) {
+                $anotherOption = 1;
+            } else {
+                //Close the option list
+                if($anotherOption)
+                    $response .='</select></div>';
+                $anotherOption = 0;
+                $prevId = $row['FIELDID']; //Set prevId for next time
+            }
+            
+            
             $count++;
             $fieldvalue = '';
             if($configuration != 1) {
@@ -833,8 +847,6 @@ class Workflow {
                     $response .= $fieldvalue;
                 }
                 $response .= '</div>';
-            } else if($row['TYPE'] == 2) { //Option
-                $response .= ' ';
             } else if($row['TYPE'] == 3) { //Newline
                 $response .= '<div class="clear" ';
                 if($row['FIELD_WIDTH'] != NULL) {
@@ -1050,6 +1062,10 @@ class Workflow {
                 $response .= '<input type="radio" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
                     $row['FIELDID'].'" value="'.$row['LABEL'].'" ';
                 
+                if($editableField && $row['REQUIRED'])
+                    $response .= 'required ';
+                
+                
                 if(!$editableField || $emailMode) {
                     $response .= 'disabled ';
                 }
@@ -1057,8 +1073,54 @@ class Workflow {
                     $response .= 'checked';
                 $response .='>'.$row['LABEL'].'</div>';
                 
-            }
+            } else if($row['TYPE'] == 2) { //Option List
+                if(!$anotherOption) {
+                    if($row['APPROVAL_ONLY'] == 1) {
+                        if($configuration == 4 && $appLvlAccess || $approval_show) {
+                            $response .= '<div class="workflow workflowlabel approval mobile ';
+                                
+                        } else 
+                            continue;
+                    } else {
+                        $response .= '<div class="workflow workflowlabel mobile ';
+                    }
+                    
+                    if($row['FIELD_WIDTH'] != NULL) {
+                        $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                    }
+                    
+                    $response .= '" style="';
+                    
+                    if($emailMode) {
+                        $response .= 'float: left; margin-right:10px;';
+                    }
+                    
+                    $response .= '">';
+                    $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
+                        $row['FIELDID'].'" ';
+                    
+                    if(!$editableField || $emailMode) {
+                        $response .= 'disabled ';
+                    }
+                    
+                    $response .= '>';
+                }
+                
+                
+                $response .= '<option value="'.$row['LABEL'].'" ';
+                if($fieldvalue == $row['LABEL'])
+                    $response .= 'selected';
+                $response .= '>'.$row['LABEL'].'</option>';
+                
+                /*if($editableField && $row['REQUIRED'])
+                    $response .= 'required ';*/
+                
+            } 
         }
+        //In case the loop ended and the last id was an option list, close the field and div
+        if($anotherOption)
+            $response .='</select></div>';
+         
         $response .= '<div class="clear"></div>';
         if($emailMode) {
             $response .= '<div style="clear:both;"></div>';

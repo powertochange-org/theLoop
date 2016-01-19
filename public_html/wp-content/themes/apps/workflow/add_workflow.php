@@ -94,11 +94,11 @@ if($submitmode == 3 || $submitmode == 4) {
                 $_POST['workflowsizea'.$i], $_POST['approvallevel'.$i], $requiredfield, 0);
             $myWorkflow->addField(0, $_POST['workflowlabelb'.$i], $editable, $approvalonly, $approvalshow, 
                 $_POST['workflowsizeb'.$i], $_POST['approvallevel'.$i], $requiredfield, 0);
-        } else if($_POST['fieldtype'.$i] == 13) {//isset($_POST['workflowtypecheck'.$i]) && $_POST['workflowtypecheck'.$i] == 13) { //Handle the radio button
+        } else if($_POST['fieldtype'.$i] == 13 || $_POST['fieldtype'.$i] == 2) { //Radio buttons or Option list
             $numBtns = $_POST['workflowradiocount'.$i];
             for($x = 0; $x < $numBtns; $x++) {
                 $newgroup = ($x == 0) ? 1 : 0;
-                $myWorkflow->addField(13, $_POST['workflowradio'.$i.'-'.$x], $editable, $approvalonly, $approvalshow, 
+                $myWorkflow->addField($_POST['fieldtype'.$i], $_POST['workflowradio'.$i.'-'.$x], $editable, $approvalonly, $approvalshow, 
                     $_POST['workflowsize'.$i], $_POST['approvallevel'.$i], $requiredfield, $newgroup);
             }
             
