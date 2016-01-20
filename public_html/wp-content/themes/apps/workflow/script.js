@@ -45,7 +45,7 @@ function addField() {
     var text = '';
     
     text += '<div id="fieldwrap' + totalCount + '"><div id="field' + totalCount + '">' +
-        '<div class="workflow workflowleft">Field type:</div>' +
+        '<div class="workflow workflowleft">Field type:<span class="red">*</span></div>' +
         '<div class="workflow workflowright style-1">' +
             fieldTypeLoad(fieldType) +
         '</div>' +
@@ -767,7 +767,7 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
         if(type == 0) {
             text += 'Hint:';
         } else {
-            text += 'Text:'; //Value
+            text += 'Text:' + ((type == 7) ? '' : '<span class="red">*</span>'); //Value
         }
         
         
@@ -803,7 +803,7 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
         text += ' title="Enter the width of the field in pixels. (Ex: very small = 50, small = 100, medium = 200, large = 275, x-large = 350)"></div><div class="clear"></div>';
     } else if(type == '8') { //Ask a Question 
         text += 
-            '<div class="workflow workflowleft">Question:</div>' +
+            '<div class="workflow workflowleft">Question:<span class="red">*</span></div>' +
             '<div class="workflow workflowright style-1"><input type="hidden" name="workflowtypecheck'+ id +'" value="8">' +
                 '<input type="text" id="workflowlabela' + id + '" name="workflowlabela' + id + '" maxlength="500" ';
         if(history == 1) {
@@ -837,12 +837,12 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
             
     } else if(type == '13') { //Radio Button
         text += 
-            '<div class="workflow workflowleft">Radio Options:<input type="hidden" name="workflowtypecheck'+ id +'" value="13">' +
+            '<div class="workflow workflowleft">Radio Options:<span class="red">*</span><input type="hidden" name="workflowtypecheck'+ id +'" value="13">' +
             '</div>';
         
         //Add a "Add radio" button only to the new field section. History does not have this option yet
         if(!history) {
-            text += '<div class="workflow workflowright style-1"><button type="button" onclick="addExtraRadioField(0,0);">Add Radio Box</button></div><div class="clear"></div>';
+            text += '<div class="workflow workflowright style-1"><button type="button" onclick="addExtraRadioField(0,0);">Add Another Radio Box</button></div><div class="clear"></div>';
         }
         
         
@@ -884,12 +884,12 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
         
         
         text += 
-            '<div class="workflow workflowleft">List Options:<input type="hidden" name="workflowtypecheck'+ id +'" value="2">' +
+            '<div class="workflow workflowleft">List Options:<span class="red">*</span><input type="hidden" name="workflowtypecheck'+ id +'" value="2">' +
             '</div>';
         
         //Add a "Add radio" button only to the new field section. History does not have this option yet
         if(!history) {
-            text += '<div class="workflow workflowright style-1"><button type="button" onclick="addExtraRadioField(0,0);">Add another Option</button></div><div class="clear"></div>';
+            text += '<div class="workflow workflowright style-1"><button type="button" onclick="addExtraRadioField(0,0);">Add Another Option Box</button></div><div class="clear"></div>';
         }
         
         
@@ -1118,9 +1118,11 @@ function removeField(id) {
 function processWorkflow(status) {
     
     find("submitmode").value = status;
-    if(status == 1 || status == 2) {
+    //The workflow will now be saved even if it is being created right away. This allows for
+    //copying of the forms later on.
+    //if(status == 1 || status == 2) {
         find("savedData").defaultValue = find("workflowfields").innerHTML;
-    }
+    //}
     
     
     document.getElementById('formsubmitbutton').click();

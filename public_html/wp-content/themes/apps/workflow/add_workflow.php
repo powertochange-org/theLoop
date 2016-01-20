@@ -1,7 +1,7 @@
 <?php
 /*
 *Used to save a new Workflow configuration to the server. 
-*
+*Also will save the workflow and allow the user to continue later on.
 *
 * //TODO: create better documentation
 *
@@ -49,12 +49,15 @@ $numfields = $_POST['count'];
 
 $submitmode = $_POST['submitmode'];
 
-echo "<br>SUBMIT MODE : ".$submitmode.'<br>';
+//echo "<br>SUBMIT MODE : ".$submitmode.'<br>';
 if($submitmode == 1 || $submitmode == 2) {
     $draft = 1;
     $savedData = $_POST['savedData'];
     //echo stripslashes($savedData);
     
+} else {
+    //The saved data allows for copying of forms later on.
+    $savedData = $_POST['savedData'];
 }
 
 if(isset($_POST['previousID']) && ($submitmode == 2 || $submitmode == 4))

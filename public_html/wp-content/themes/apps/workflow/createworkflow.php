@@ -49,7 +49,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     $workflow = new Workflow();
     //echo $workflow->getForm();
     
-        
+    $copy = 0;
     if(isset($_GET['wfid']) && $_GET['wfid'] != '') {
         $wfid = $_GET['wfid'];
         
@@ -60,7 +60,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 WHERE FORMID = '$wfid'";
         $result = $wpdb->get_results($sql, ARRAY_A);
         
-        
+        $numfields = 0;
         if(count($result) != 0) {
             $formname = $result[0]['NAME'];
             $approver1 = $result[0]['APPROVER_ROLE'];
@@ -69,10 +69,29 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             $approver4 = $result[0]['APPROVER_ROLE4'];
             $behalfof = $result[0]['BEHALFOF_SHOW'];
             $savedfields = $result[0]['SAVED_FIELDS'];
-            $numfields = $result[0]['NUM_FIELDS'];
+            if($result[0]['NUM_FIELDS'] != null)
+                $numfields = $result[0]['NUM_FIELDS'];
             $draft = $result[0]['DRAFT'];
         }
         
+        if(isset($_GET['copy'])) {
+            $draft = 0; //This configures the page to actually create a new form instead.
+            $copy = 1;
+            $sql = "SELECT CONTENT, NUM_FIELDS
+                    FROM workflowformsave
+                    WHERE FORMID = '$wfid'
+                    ORDER BY DATE_SAVED DESC
+                    LIMIT 1";
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) != 0) {
+                $numfields = $result[0]['NUM_FIELDS'];
+                $savedfields = $result[0]['CONTENT'];
+            }
+        } else if(!$draft) {
+            $_SESSION['ERRMSG'] = 'This form can no longer be edited. Please copy the form in order to make modifications.';
+            header("location: ?page=viewsubmissions");
+            die();
+        }
     }
       
 ?>
@@ -95,7 +114,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     
     <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();">
         <div class="workflow workflowleft">
-            Form Name:
+            Form Name:<span class="red">*</span>
         </div>
         <div class="workflow workflowright style-1">
             <input type="text" name="workflowname" id="workflowname" value="<?php echo $formname;?>">
@@ -111,7 +130,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <div class="clear"></div>-->
         
         <div class="workflow workflowleft">
-            Approver Level 1:
+            Approver Level 1:<span class="red">*</span>
         </div>
         <div class="workflow workflowright style-1">
             <select name="destination1">
@@ -199,9 +218,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         
         <!--The added fields will populate here-->
         <div id="workflowfields">
-            <?php if(!$draft) {?>
-            <!--<h3 style="text-align: center;">History</h3>-->
-            <?php } else { echo $savedfields;}?>
+            <?php if($draft || $copy) { echo $savedfields;}?>
         </div>
         <!--<div id="debugworkflowfields">
             <h3>Debug History</h3>
@@ -216,7 +233,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <!--Field Addition Template
             Add various types of fields here.-->
         <div class="workflow workflowleft">
-            Field type:
+            Field type:<span class="red">*</span>
         </div>
         <div class="workflow workflowright style-1">
             <select id="fieldtype" name="fieldtype" form="addnewworkflow" onchange="updateWorkflowCreation(this.id);">
@@ -240,7 +257,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         
         <div id="workflowdetails">
             <div class="workflow workflowleft">
-                Text:
+                Text:<span class="red">*</span>
             </div>
             <div class="workflow workflowright style-1">
                 <input type="text" id="workflowlabel" name="workflowlabel" maxlength="500">
@@ -303,7 +320,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <div class="clear"></div>
         
         
-        <input type="hidden" id="count" name="count" value="<?php if($draft)echo $numfields;else echo '0';?>">
+        <input type="hidden" id="count" name="count" value="<?php if($draft || $copy)echo $numfields;else echo '0';?>">
         <input type="hidden" id="submitmode" name="submitmode" value="3">
         <input type="hidden" id="savedData" name="savedData" value="">
         <input type="hidden" id="previousID" name="previousID" value="<?php echo $wfid?>">
@@ -321,7 +338,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
 
 <script>
 //alert(find("count").value);
-totalCount = find("count").value;
 //alert('TOTALCOUNT IS: ' + totalCount);
+
+//When loading a draft or a previous form, the count field needs to be set correctly to allow adding of other fields
+totalCount = find("count").value;
+//Set the second value to the field type that is first displayed when this page loads.
 fixExtraFields("", 10);
 </script>

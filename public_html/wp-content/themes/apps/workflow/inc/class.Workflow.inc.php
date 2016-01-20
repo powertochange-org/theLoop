@@ -150,9 +150,11 @@ class Workflow {
         }
         
         if(!$result) {
-            die('failed to update<br>'.htmlspecialchars($sql));
+            //die('failed to update<br>'.htmlspecialchars($sql));
+            die('failed to update');
         }
         
+        //If the workflow is being saved, there is no more work needed to be done. 
         if($this->mode == 1 || $this->mode == 2) {
             header("location: ?page=view");
             die();
@@ -186,6 +188,15 @@ class Workflow {
             if(!$result) {
                 die('Failed to insert form fields.');
             }
+        }
+        
+        //Save the form creation data so that it can easily be copied later
+        $sql = "INSERT INTO workflowformsave (FORMID, CONTENT, VERSION, DATE_SAVED, NUM_FIELDS)
+                VALUES ('$inserted_id', '".$this->savedData."', 1, '".date('Y-m-d H:i:s')."', '".$this->numFields."')";
+        
+        $result = $wpdb->query($sql);
+        if(!$result) {
+            die('Failed to insert save history.<br>'.$sql);
         }
     }
     
@@ -225,7 +236,7 @@ class Workflow {
             $oldstatus = $row['STATUS'];
             $oldApprovalStatus = $row['STATUS_APPROVAL'];
             $oldcomment = $row['COMMENT'];
-            if($row['USER'] != $user) {
+            if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
             }
             //echo 'DEBUG: Old Status:'.$oldstatus.'<br>';
@@ -1231,9 +1242,9 @@ class Workflow {
                     min-width: 200px;">Retract Submission</button></a>';
             }
         } else if(!$emailMode) {
-            //Display approval history
+            //Display approval history //Uncomment the below code to have it only show up once the form is complete.
             
-            $sql = "SELECT *
+            /*$sql = "SELECT *
                     FROM workflowformhistory
                     WHERE SUBMISSION_ID = '$submissionID'
                     ORDER BY DATE_SUBMITTED ASC";
@@ -1273,13 +1284,61 @@ class Workflow {
                 
             }
             
+            $response .= '</table>';*/
+        }
+        
+        //Show the history of the submission
+        if(true) {
+            $sql = "SELECT *
+                    FROM workflowformhistory
+                    WHERE SUBMISSION_ID = '$submissionID'
+                    ORDER BY DATE_SUBMITTED ASC";
+        
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            $response .= '<div class="clear"></div>';
+            $response .= '<table id="workflowhistory"><tr><td colspan=3><h3>Approval History</h3></td></tr>';
+            $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
+            foreach($result as $row) {
+                
+                
+                if($row['ACTION'] == 2) {
+                    //$temp .= 'Saved';
+                    continue;
+                } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
+                    //$temp = 'Retracted - Saved';
+                    continue;
+                } else if($row['ACTION'] == 3) {
+                    $temp = 'Review Required Lvl: '.$row['APPROVAL_LEVEL'];
+                } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
+                    $temp = 'Submitted';
+                } else if($row['ACTION'] == 4) {
+                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
+                } else if($row['ACTION'] == 7) {
+                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
+                } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
+                    $temp = 'Cancelled Submission';
+                } else if($row['ACTION'] == 8) {
+                    $temp = 'Denied Lvl: '.$row['APPROVAL_LEVEL'];
+                } else {
+                    continue;
+                }
+                $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td>';
+                $response .= $temp;
+                $response .= '</td>';
+                $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
+                
+            }
+            
             $response .= '</table>';
         }
+        
+        
+        
         $response .= '<div class="clear"></div>';
         
         //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
-            //echo '<br>DEBUG: You have chosen the command: '.$_GET['response'];
             if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus)
                 echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
             else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
@@ -1288,7 +1347,6 @@ class Workflow {
                 echo '<script>window.onload = function() {document.getElementById("denylink").click();};</script>';
         }
         
-        //return 'DEBUG: You attempted to load ID: '.$id.' : <br>'.$response;
         return $response;
     }
     
@@ -1358,13 +1416,13 @@ class Workflow {
         
         $response = '';
         
-        $sql = "SELECT *
+        $sql = "SELECT FORMID, NAME, DRAFT, ENABLED
                 FROM workflowform
                 ORDER BY DRAFT, NAME";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         $response .= '<form id="toggleactiveform" action="?page=edit_forms" method="POST" autocomplete="off">';
-        $response .= '<table id="view-submissions"><tr><th>Form Name</th><th>Link</th><th>Enabled</th></tr>';
+        $response .= '<table id="view-submissions"><tr><th>Form Name</th><th>Link</th><th>Enabled</th><th>Copy</th></tr>';
         
         foreach($result as $row) {
             /*$response .= '<b>'.$row['NAME'].'</b> Link:<a href="?page=startworkflow&wfid='.$row['FORMID'].
@@ -1393,6 +1451,9 @@ class Workflow {
                 $response .= '>';
             } else 
                 $response .= 'DRAFT';
+            $response .= '</td><td>';
+            if(!$row['DRAFT'])
+                $response .= '<a href="?page=createworkflow&wfid='.$row['FORMID'].'&copy=1">Copy</a>';
             $response .= '</td></tr>';
         }
         $response .= '<tr><td colspan=3><input type="submit" value="Save"></td></tr>';

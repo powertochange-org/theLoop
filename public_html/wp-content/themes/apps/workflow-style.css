@@ -299,6 +299,9 @@ div.view-submissions-headers {
 
 #workflowhistory {
     margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
     width: 550px;
 }
 
@@ -480,6 +483,10 @@ div.field576to600 {
     /*display: none;*/
     opacity: 0;
     transition: opacity 1500ms;
+}
+
+span.red {
+    color:red;
 }
 
 @media (max-width: 767px) {
