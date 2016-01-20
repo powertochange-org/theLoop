@@ -300,7 +300,7 @@ hr{
 	margin:10px 0;
 }
 
-#main-content .btn1 {
+#main-content .btn1, input#btn_save {
 	width:225px;
 	height:55px;
 	background:#f7941d;
@@ -871,6 +871,15 @@ ul.wpp-list li {
 }
 
 
+/*Wiki Styling*/
+h1.entry-title {
+    font-family: 'Open Sans', sans-serif;
+    color: #0079C1;
+}
+
+#wikicontent {
+	border: 2px solid black;
+}
 
 /*
 	This is the media query for displaying content based on screen size.
@@ -1165,7 +1174,7 @@ ul.wpp-list li {
 		font-size: 1.5em;
 		padding-left: 10px;
 	}
-	#main-content .btn1 { 
+	#main-content .btn1, input#btn_save { 
 		width: 100%;
 		font-size: 12pt;
 		font-weight: bold;
@@ -1245,6 +1254,23 @@ ul.wpp-list li {
 	#main-content.form .post div.nav-option-inside {
 		width: 100%; 
 	}
+	
+	/*Wiki style*/
+	#wikicontent {
+		width: 92%;
+		margin-left: 1%;
+	}
+	
+	#incsub_wiki-tags {
+		width: 130px;
+	}
+	
+	#wiki-page-wrapper input.incsub_wiki_title {
+		width: 94%;
+		margin-left: 1%;
+	}
+	
+	
 }
 
 
