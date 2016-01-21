@@ -342,7 +342,7 @@ $max_file_size = 30000000; // size in bytes
 					<textarea id="notes" name="notes" cols="60" rows="5"><?php echo $user->notes ?></textarea>
 					<br />
 					<br />
-					<input class='orange' type="submit" value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
+					<input class='orange' onclick='alert("NOTE: To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to Dayforce. Changes made there will typically show up in the Staff Directory within 24 hours.");' value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
 				</div>
 
 			</form>
