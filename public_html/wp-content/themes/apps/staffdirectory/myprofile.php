@@ -79,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a class='false-link' onclick='preSubmit(); document.getElementById("theForm").submit();' style="color:#adafb2;font-weight:bold;">SAVE & VIEW PROFILE</a></h4><br /><br /><br /><br />
+		<p/><h4 style="float:right;position:relative;top:30px;"><a href='?page=profile'   style="color:#adafb2;font-weight:bold;">VIEW PROFILE</a></h4><br /><br /><br /><br />
     
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
@@ -342,7 +342,7 @@ $max_file_size = 30000000; // size in bytes
 					<textarea id="notes" name="notes" cols="60" rows="5"><?php echo $user->notes ?></textarea>
 					<br />
 					<br />
-					<input class='orange' onclick='alert("NOTE: To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to Dayforce. Changes made there will typically show up in the Staff Directory within 24 hours.");' value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;' />
+					<a class='orange' href='?page=profile' style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;'>VIEW PROFILE</a>
 				</div>
 
 			</form>
