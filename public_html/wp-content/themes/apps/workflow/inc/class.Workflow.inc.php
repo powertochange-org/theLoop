@@ -1416,18 +1416,27 @@ class Workflow {
         
         $response = '';
         
-        $sql = "SELECT FORMID, NAME, DRAFT, ENABLED
+        $enabled = 1;
+        $draft = 0;
+        if(isset($_GET['draft'])) {
+            $enabled = 0;
+            $draft = 1;
+        } else if(isset($_GET['disabled'])) {
+            $enabled = 0;
+            $draft = 0;
+        }
+        
+        $sql = "SELECT workflowform.FORMID, NAME, DRAFT, ENABLED, DATE_SAVED
                 FROM workflowform
+                LEFT OUTER JOIN workflowformsave ON workflowform.FORMID = workflowformsave.FORMID
+                WHERE ENABLED = '$enabled' AND DRAFT = '$draft'
                 ORDER BY DRAFT, NAME";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         $response .= '<form id="toggleactiveform" action="?page=edit_forms" method="POST" autocomplete="off">';
-        $response .= '<table id="view-submissions"><tr><th>Form Name</th><th>Link</th><th>Enabled</th><th>Copy</th></tr>';
+        $response .= '<table id="view-submissions"><tr><th style="width: 250px;">Form Name</th><th style="width: 450px;">Link</th><th>Date</th><th>Enabled</th><th>Copy</th></tr>';
         
         foreach($result as $row) {
-            /*$response .= '<b>'.$row['NAME'].'</b> Link:<a href="?page=startworkflow&wfid='.$row['FORMID'].
-                '">localhost/testing/workflow/startworkflow.php?wfid='.$row['FORMID'].'</a> ::: <a href="?page=debugstartworkflow&wfid='.$row['FORMID'].
-                '">DEBUG</a> ::: <a href="?page=workflowentry&wfid='.$row['FORMID'].'">Create New Entry</a><br>';*/
             $response .= '<tr><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
             
             if($row['DRAFT'])
@@ -1441,7 +1450,11 @@ class Workflow {
                 $response .= '/forms-information/workflow/?page=workflowentry&wfid='.$row['FORMID'];
             else
                 $response .= 'EDIT FORM '.$row['NAME'];
-            $response .= '</a></td><td class="center">';
+            $response .= '</a></td>';
+            
+            $response .= '<td class="center">'.($row['DATE_SAVED'] == NULL ?'' : date("Y-m-d", strtotime($row['DATE_SAVED']))).'</td>';
+            
+            $response .= '<td class="center">';
             
             if(!$row['DRAFT']) {
                 $response .= '<input type="hidden" id="FORM'.$row['FORMID'].'" name="FORM'.$row['FORMID'].'" value="0">
@@ -1452,11 +1465,11 @@ class Workflow {
             } else 
                 $response .= 'DRAFT';
             $response .= '</td><td>';
-            if(!$row['DRAFT'])
+            if(!$row['DRAFT'] && $row['DATE_SAVED'] != NULL)
                 $response .= '<a href="?page=createworkflow&wfid='.$row['FORMID'].'&copy=1">Copy</a>';
             $response .= '</td></tr>';
         }
-        $response .= '<tr><td colspan=3><input type="submit" value="Save"></td></tr>';
+        $response .= '<tr><td colspan=4><input type="submit" value="Save"></td></tr>';
         $response .= '</table></form>';
         return $response;
     }

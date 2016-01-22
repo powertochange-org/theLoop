@@ -478,6 +478,10 @@ div.field576to600 {
     text-align: center;
 }
 
+.workflow.workflowlabel {
+    text-align: left;
+}
+
 #previewform {
     overflow-y: scroll;
     height: 80vh;

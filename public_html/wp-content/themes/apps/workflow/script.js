@@ -612,23 +612,28 @@ function preview() {
             }
             updateText += '></div>';
         } else if(find("fieldtype"+i).value == 13) { //Radio
-            if(find("approvallevel"+i).value != 0) {
-                updateText += '<div class="workflow workflowlabel approval"';
-            } else {
-                updateText += '<div class="workflow workflowlabel"';
-            }
-            /*if(find("workflowsize"+i).value != "") {
-                updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
-            }*/
-            
-            updateText += '>';
             
             for(x = 0; x < find("workflowradiocount"+i).value; x++) {
+            
+                if(find("approvallevel"+i).value != 0) {
+                    updateText += '<div class="workflow workflowlabel approval"';
+                } else {
+                    updateText += '<div class="workflow workflowlabel"';
+                }
+                /*if(find("workflowsize"+i).value != "") {
+                    updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
+                }*/
+                
+                updateText += '>';
+            
+            
                 updateText += '<input type="radio" name="workflowradio' + i + '" value="' + find("workflowradio"+i+"-"+x).value +'">' +
                     find("workflowradio"+i+"-"+x).value; 
+                
+                updateText += '</div>';
             }
             
-            updateText += '</div>';
+            
         } else if(find("fieldtype"+i).value == 2) { //Option List
             if(find("approvallevel"+i).value != 0) {
                 updateText += '<div class="workflow workflowlabel approval"';
