@@ -1461,6 +1461,150 @@ class Workflow {
         return $response;
     }
     
+    public function viewSubmissionSummary($userid, $formName, $submittedby, $date, $id) {
+        global $wpdb;
+        $response = '';
+        
+        //User submissions
+        $sql = "SELECT STATUS, COUNT(STATUS) AS COUNT
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                WHERE workflowformstatus.USER = '$userid'";
+        
+        if($formName != '') {
+            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
+        }
+        if($date != '') {
+            $sql .= " AND workflowformstatus.DATE_SUBMITTED = '$date' ";
+        }
+        if($id != '') {
+            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
+        }
+        
+        $sql .= " GROUP BY workflowformstatus.STATUS";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $saved = $approved = $input = $denied = $pending = $cancelled = 0;
+        foreach($result as $row) {
+            if($row['STATUS'] == 2) { //saved
+                $saved = $row['COUNT'];
+            } else if($row['STATUS'] == 3) { //input required
+                $input = $row['COUNT'];
+            } else if($row['STATUS'] == 4) { //approval pending
+                $pending = $row['COUNT'];
+            } else if($row['STATUS'] == 7) { //approved
+                $approved = $row['COUNT'];
+            } else if($row['STATUS'] == 8) { //denied
+                $denied = $row['COUNT'];
+            }
+        }
+        
+        //Approver
+        $sql = "SELECT  workflowformstatus.STATUS,
+                        COUNT(workflowformstatus.STATUS) AS COUNT
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                WHERE ( 
+                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
+                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' OR employee.supervisor = '$userid') ) ";
+                
+                
+                //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
+                //    //OR employee.supervisor = '$userid')) ";
+        $roles = Workflow::getRole($userid);
+        
+        for($x = 1; $x <= 4; $x++) {
+            $sql .= "OR (STATUS_APPROVAL = '".$x."' OR STATUS_APPROVAL = '100') AND (";
+            for($i = 0; $i < count($roles); $i++) {
+                if($i != 0)
+                    $sql .= "OR ";
+                $sql .= "workflowform.APPROVER_ROLE";
+                if($x != 1)
+                    $sql .= $x;
+                $sql .= " = '$roles[$i]' ";
+            }
+            $sql .= ") ";
+        
+        }
+        
+        //$sql .= "OR STATUS_APPROVAL = '100' AND (";
+        
+        
+        $sql .= ") AND (workflowformstatus.STATUS != '2' 
+                    AND workflowformstatus.STATUS != '3' 
+                    AND workflowformstatus.STATUS != '10') ";
+        if($formName != '') {
+            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
+        }
+        if($submittedby != '') {
+            $sql .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+        }
+        if($date != '') {
+            $sql .= " AND (workflowformstatus.DATE_SUBMITTED = '$date' OR workflowformstatus.DATE_SUBMITTED = '$date') ";
+        }
+        if($id != '') {
+            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
+        }
+        //        WHERE workflowformstatus.USER = '$userid'
+        $sql .= "GROUP BY workflowformstatus.STATUS";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $approverPending = $approverApproved = $approverDenied = 0;
+        foreach($result as $row) {
+            if($row['STATUS'] == 4) { //approval pending
+                $approverPending = $row['COUNT'];
+            } else if($row['STATUS'] == 7) { //approved
+                $approverApproved = $row['COUNT'];
+            } else if($row['STATUS'] == 8) { //denied
+                $approverDenied = $row['COUNT'];
+            }
+        }
+        
+        
+        //Display summary
+        $response .= '<div id="workflow-summary">';
+        $response .= '<table style="margin-left: auto; margin-right:auto;">';
+        $response .= '<tr><td style="border-right: 1px solid black;padding:10px;">';
+        
+        $response .= '<a href="#user-submissions" class="nav-option-link" onclick="switchRole(0);"><div class="nav-option-outside">
+        <div class="nav-option-inside"><h2 style="color:inherit;">'.Workflow::loggedInUserName().'\'s <br>Submissions</h2>';
+        
+        $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
+        $response .= '<tr><th>Status</th><th>Count</th></tr>';
+        $response .= '<tr><td class="left">Saved</td><td class="center">'.$saved.'</td></tr>';
+        $response .= '<tr><td class="left">Input Required</td><td class="center">'.$input.'</td></tr>';
+        $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$pending.'</td></tr>';
+        $response .= '<tr><td class="left">Approved</td><td class="center">'.$approved.'</td></tr>';
+        $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$denied.'</td></tr>';
+        $response .= '</table>';
+        $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
+        
+        $response .= '</td><td style="padding:10px;vertical-align: top;">';
+        
+        $response .= '<a href="#approver-submissions" class="nav-option-link" onclick="switchRole(1);"><div class="nav-option-outside">
+        <div class="nav-option-inside"><h2 style="color:inherit;">Forms Requiring Approval</h2>';
+        
+        $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
+        $response .= '<tr><th>Status</th><th>Count</th></tr>';
+        $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$approverPending.'</td></tr>';
+        $response .= '<tr><td class="left">Approved</td><td class="center">'.$approverApproved.'</td></tr>';
+        $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$approverDenied.'</td></tr>';
+        $response .= '</table>';
+        $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
+        
+        $response .= '</td></tr></table>';
+        
+        $response .= '</div>';
+        
+        return $response;
+    }
+    
     public function viewAllSubmissions($userid, $formName, $date, $id) {
         global $wpdb;
         $LOADMOREAMT = 7; //Changes the number of submissions displayed under each section
@@ -1470,7 +1614,7 @@ class Workflow {
             return 'You need to be logged in to view submissions.';
         }
         
-        $sql = "SELECT *
+        $sql = "SELECT SUBMISSIONID, STATUS, DATE_SUBMITTED, NAME
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                 WHERE workflowformstatus.USER = '$userid'";
@@ -1489,103 +1633,109 @@ class Workflow {
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
+        $response .= '<div id="user-submissions">';
+        $response .= '<table>';
         
-        $response .= '<table id="view-submissions">';
-        $response .= '<tr><td colspan=3 class="center"><h2>'.Workflow::loggedInUserName().'\'s Submissions</h2></td></tr>';
-        $response .= '<tr><td colspan=3>';
+        $response .= '<tr><td colspan="4"><h2>'.Workflow::loggedInUserName().'\'s Submissions</h2><br></td></tr>';
         
-        $response .= '<table id="view-submissions" style="margin-left: auto; margin-right:auto;">';
-        $response .= '<tr><th>Status</th><th>Count</th></tr>';
-        $response .= '<tr><td>Saved</td><td>%SAVED%</td></tr>';
-        $response .= '<tr><td>Input Required</td><td>%INPUTREQUIRED%</td></tr>';
-        $response .= '<tr><td>Approval Pending</td><td>%PENDING%</td></tr>';
-        $response .= '<tr><td>Approved</td><td>%APPROVED%</td></tr>';
-        $response .= '<tr><td>Not Approved</td><td>%DENIED%</td></tr>';
-        $response .= '</table><br></td></tr>';
+        $response .= '<tr><td colspan="4">
+                        <div id="user-status-link2" class="workflow-status-link" onclick="switchTab(0, 2);">Saved (%SAVED%)</div>
+                        <div id="user-status-link3" class="workflow-status-link workflow-status-header" onclick="switchTab(0, 3);">Input Required (%INPUTREQUIRED%)</div>
+                        <div id="user-status-link4" class="workflow-status-link" onclick="switchTab(0, 4);">Approval Pending (%PENDING%)</div>
+                        <div id="user-status-link7" class="workflow-status-link" onclick="switchTab(0, 7);">Approved (%APPROVED%)</div>
+                        <div id="user-status-link8" class="workflow-status-link" onclick="switchTab(0, 8);">Not Approved (%DENIED%)</div>
+                    </td></tr>';
         
-        $tableHeader = '<tr><th>ID</th><th>Form Name</th><th>Last Date Modified</th></tr>';
+        
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th>ID</th><th>Form Name</th><th>Last Modified By</th><th>Date Modified</th></tr>';
         
         
         $prevState = 1;
         $saved = $approved = $input = $denied = $pending = $cancelled = 0;
         foreach($result as $row) {
             if($row['STATUS'] != $prevState) {
-                
-                if($prevState == 4 && ceil($pending / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="pendingmore"><td colspan=3 class="center"><div><a onclick="extendResults(\'pending\', '.ceil($pending / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                } else if($prevState == 7 && ceil($approved / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="approvedmore"><td colspan=3 class="center"><div><a onclick="extendResults(\'approved\', '.ceil($approved / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                } else if($prevState == 8 && ceil($denied / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="deniedmore"><td colspan=3 class="center"><div><a onclick="extendResults(\'denied\', '.ceil($denied / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                } else if($prevState == 10 && ceil($cancelled / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="cancelledmore"><td colspan=3 class="center"><div><a onclick="extendResults(\'cancelled\', '.ceil($cancelled / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                }
-                
+                //Add status headers
                 if($row['STATUS'] == 2) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers approved">Saved Forms</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-2 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Saved Forms</div></td></tr>'.str_replace('%CLASS%', "user-2  hide", $tableHeader);
                     $prevState = 2;
                 } else if($row['STATUS'] == 3) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers denied">Forms Needing Input</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-3"><td colspan=4><div class="view-submissions-headers workflow-status-header">Forms Needing Input</div></td></tr>'.str_replace('%CLASS%', "user-3", $tableHeader);
                     $prevState = 3;
                 } else if($row['STATUS'] == 4) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers reviewing">Currently Under Review</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-4 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Currently Under Review</div></td></tr>'.str_replace('%CLASS%', "user-4  hide", $tableHeader);
                     $prevState = 4;
                 } else if($row['STATUS'] == 7) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers approved">Approved Forms</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-7 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "user-7  hide", $tableHeader);
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers denied">Forms Not Approved</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-8 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "user-8  hide", $tableHeader);
                     $prevState = 8;
                 } else if($row['STATUS'] == 10) {
-                    $response .= '<tr><td colspan=3><div class="view-submissions-headers denied">Cancelled</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="user-10 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Cancelled</div></td></tr>'.str_replace('%CLASS%', "user-10  hide", $tableHeader);
                     $prevState = 10;
                 }
                 
             }
             
-            $response .= '<tr class="';
+            $response .= '<tr class="selectedblackout ';
             
             if($row['STATUS'] == 2) {
+                $response .= 'user-2 hide';
                 $saved++;
-                $response .= 'saved'.floor($saved / $LOADMOREAMT);
             } else if($row['STATUS'] == 3) {
+                $response .= 'user-3';
                 $input++;
             } else if($row['STATUS'] == 4) {
-                $response .= 'pending'.floor($pending / $LOADMOREAMT);
-                if(floor($pending / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'user-4 hide';
                 $pending++;
             } else if($row['STATUS'] == 7) {
-                $response .= 'approved'.floor($approved / $LOADMOREAMT);
-                if(floor($approved / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'user-7 hide';
                 $approved++;
             } else if($row['STATUS'] == 8) {
-                $response .= 'denied'.floor($denied / $LOADMOREAMT);
-                if(floor($denied / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'user-8 hide';
                 $denied++;
             } else if($row['STATUS'] == 10) {
-                $response .= 'cancelled'.floor($cancelled / $LOADMOREAMT);
-                if(floor($cancelled / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'user-10 hide';
                 $cancelled++;
             }
             
             
-            $response .= '">';
+            $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
             
-            $response .= '<td>'.$row['SUBMISSIONID'].'</td><td><a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.$row['NAME'].'</a></td><td>'.$row['DATE_SUBMITTED'].'</td>';
+            //Display the results
+            $response .= '<td>'.$row['SUBMISSIONID'].'</td>
+                <td>'./*<a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.*/$row['NAME'].'</a></td>
+                <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
+                <td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
         }
-        $response .= '</table><div style="margin-bottom:50px;"></div>';
+        //Add section headers just in case they weren't created so the user knows which page they are on
+        if($saved == 0) {
+            $response .= '<tr class="user-2 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Saved Forms</div></td></tr>'.str_replace('%CLASS%', "user-2  hide", $tableHeader);
+        }
+        if($input == 0) {
+            $response .= '<tr class="user-3"><td colspan=4><div class="view-submissions-headers workflow-status-header">Forms Needing Input</div></td></tr>'.str_replace('%CLASS%', "user-3", $tableHeader);
+        }
+        if($pending == 0) {
+            $response .= '<tr class="user-4 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Currently Under Review</div></td></tr>'.str_replace('%CLASS%', "user-4  hide", $tableHeader);
+        }
+        if($approved == 0) {
+            $response .= '<tr class="user-7 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "user-7  hide", $tableHeader);
+        }
+        if($denied == 0) {
+            $response .= '<tr class="user-8 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "user-8  hide", $tableHeader);
+        } 
+        if($cancelled == 0) {
+            $response .= '<tr class="user-10 hide"><td colspan=4><div class="view-submissions-headers workflow-status-header">Cancelled</div></td></tr>'.str_replace('%CLASS%', "user-10  hide", $tableHeader);
+        }
+        
+        $response .= '</table>';
+        
+        $response .= '</div>';
+        
         
         $response = str_replace('%SAVED%', $saved, $response);
-        $response = str_replace('%INPUTREQUIRED%', $input, $response);
+        $response = str_replace('%INPUTREQUIRED%', (($input == 0) ? $input : '<b>'.$input.'</b>'), $response);
         $response = str_replace('%PENDING%', $pending, $response);
         $response = str_replace('%APPROVED%', $approved, $response);
         $response = str_replace('%DENIED%', $denied, $response);
@@ -1664,83 +1814,73 @@ class Workflow {
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
-        $response .= '<table id="view-submissions">';
-        $response .= '<tr><td colspan=4 class="center"><h2>Forms Requiring Approval</h2></td></tr>';
-        $response .= '<tr><td colspan=4>';
+        $response .= '<div id="approver-submissions" class="hide">';
+        $response .= '<table>';
         
-        $response .= '<table id="view-submissions" style="margin-left: auto; margin-right:auto;">';
-        $response .= '<tr><th>Status</th><th>Count</th></tr>';
-        $response .= '<tr><td>Approval Pending</td><td class="center">%PENDING%</td></tr>';
-        $response .= '<tr><td>Approved</td><td class="center">%APPROVED%</td></tr>';
-        $response .= '<tr><td>Not Approved</td><td class="center">%DENIED%</td></tr>';
-        $response .= '</table></td></tr>';
+        $response .= '<tr><td colspan="5"><h2>Forms Requiring Approval</h2><br></td></tr>';
         
-        
-        
-        $tableHeader = '<tr><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Last Date Modified</th></tr>';
+        $response .= '<tr><td colspan="5">
+                        <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
+                        <div id="approver-status-link7" class="workflow-status-link" onclick="switchTab(1, 7);">Approved (%APPROVED%)</div>
+                        <div id="approver-status-link8" class="workflow-status-link" onclick="switchTab(1, 8);">Not Approved (%DENIED%)</div>
+                    </td></tr>';
+
+       
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Last Modified By</th><th>Date Modified</th></tr>';
         
         $prevState = 1;
         $approved = $denied = $pending = 0;
         foreach($result as $row) {
             if($row['STATUS'] != $prevState) {
-                if($prevState == 4 && ceil($pending / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="pendingmore"><td colspan=4 class="center"><div><a onclick="extendResults(\'pending\', '.ceil($pending / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                } else if($prevState == 7 && ceil($approved / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="approvedmore"><td colspan=4 class="center"><div><a onclick="extendResults(\'approved\', '.ceil($approved / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                } else if($prevState == 8 && ceil($denied / $LOADMOREAMT) > 1) {
-                    $response .= '<tr id="deniedmore"><td colspan=4 class="center"><div><a onclick="extendResults(\'denied\', '.ceil($denied / $LOADMOREAMT).');">
-                        <b>Click here to load more...</b></a></div></td></tr>';
-                }
-                
-                if($row['STATUS'] == 2) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers approved">Saved Forms</div></td></tr>'.$tableHeader;
-                    $prevState = 2;
-                } else if($row['STATUS'] == 3) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Denied Forms</div></td></tr>'.$tableHeader;
-                    $prevState = 3;
-                } else if($row['STATUS'] == 4) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers reviewing">Submissions Requiring Approval</div></td></tr>'.$tableHeader;
+                if($row['STATUS'] == 4) {
+                    $response .= '<tr class="approver-4"><td colspan=5><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
                     $prevState = 4;
                 } else if($row['STATUS'] == 7) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers approved">Approved Forms</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="approver-7 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Forms Not Approved</div></td></tr>'.$tableHeader;
+                    $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
                     $prevState = 8;
-                } else if($row['STATUS'] == 10) {
-                    $response .= '<tr><td colspan=5><div class="view-submissions-headers denied">Cancelled</div></td></tr>'.$tableHeader;
-                    $prevState = 10;
                 }
                 
             }
             
-            $response .= '<tr class="';
+            $response .= '<tr class="selectedblackout ';
             if($row['STATUS'] == 4) {
-                $response .= 'pending'.floor($pending / $LOADMOREAMT);
-                if(floor($pending / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'approver-4';
                 $pending++;
             } else if($row['STATUS'] == 7) {
-                $response .= 'approved'.floor($approved / $LOADMOREAMT);
-                if(floor($approved / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'approver-7 hide';
                 $approved++;
             } else if($row['STATUS'] == 8) {
-                $response .= 'denied'.floor($denied / $LOADMOREAMT);
-                if(floor($denied / $LOADMOREAMT) > 0)
-                    $response .= '" style="display:none;';
+                $response .= 'approver-8 hide';
                 $denied++;
             }
             
-            $response .= '">';
-            $response .= '<td>'.$row['SUBMISSIONID'].'</td><td><a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.$row['NAME'].'</a></td><td>'.$row['USERNAME'].'</td><td>'.$row['DATE_SUBMITTED'].'</td>';
+            $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
+            $response .=  '<td>'.$row['SUBMISSIONID'].'</td>
+                            <td>'./*<a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.*/$row['NAME'].'</a></td>
+                            <td>'.$row['USERNAME'].'</td>
+                            <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
+                            <td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
         }
-        $response .= '</table><div style="margin-bottom:50px;"></div>';
+        //Add section headers just in case they weren't created so the user knows which page they are on
+        if($pending == 0) {
+            $response .= '<tr class="approver-4"><td colspan=5><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
+        }
+        if($approved == 0) {
+            $response .= '<tr class="approver-7 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+        }
+        if($denied == 0) {
+            $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
+        }
         
-        $response = str_replace('%PENDING%', $pending, $response);
+        
+        
+        $response .= '</table></div><div style="margin-bottom:50px;"></div>';
+        
+        $response = str_replace('%PENDING%', (($pending == 0) ? $pending : '<b>'.$pending.'</b>'), $response);
         $response = str_replace('%APPROVED%', $approved, $response);
         $response = str_replace('%DENIED%', $denied, $response);
         
@@ -1945,7 +2085,7 @@ class Workflow {
             
             if(count($result) == 1) {
                 $row = $result[0];
-                $_SESSION['impersonateusername'] = $row['user_login'];
+                $_SESSION['impersonateusername'] = Workflow::getUserName($num);//$row['user_login'];
             } else {
                 $_SESSION['impersonateusername'] = 'UserName not found';
             }
@@ -2001,10 +2141,12 @@ class Workflow {
     public static function loggedInUserName() {
 		// If we are impersonating someone, return the name stored in the session
         if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
-            return $_SESSION['impersonateusername'];
+            //return $_SESSION['impersonateusername'];
+            return Workflow::getUserName(Workflow::loggedInUser());
 		} else {
 			// Otherwise, just return the current user login
-			return wp_get_current_user()->user_login;
+			//return wp_get_current_user()->user_login;
+            return Workflow::getUserName(Workflow::loggedInUser());
 		}
     }
     
@@ -2161,6 +2303,26 @@ class Workflow {
         
         return $name;
     }
+    
+    public static function getLastEditedUserName($submissionID) {
+        global $wpdb;
+        $response = '';
+        
+        $sql = "SELECT USER, ACTION
+                FROM workflowformhistory
+                WHERE SUBMISSION_ID = '$submissionID'
+                ORDER BY DATE_SUBMITTED DESC
+                LIMIT 1";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $lastAction = '';
+        if(count($result) == 1) {
+            $lastAction = Workflow::getUserName($result[0]['USER']);
+        }
+        
+        return $lastAction;
+    }
+    
     
     public static function getDirectApprover($userid) {
         global $wpdb;

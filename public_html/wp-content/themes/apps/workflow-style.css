@@ -297,6 +297,13 @@ div.view-submissions-headers {
     background-color: #ff8989;
 }
 
+.workflow-status-header,
+#user-submissions .workflow-status-header,
+#approver-submissions .workflow-status-header {
+    background-color: #005E90;
+    color: white;
+}
+
 #workflowhistory {
     margin-top: 30px;
     margin-left: auto;
@@ -317,6 +324,10 @@ td.center {
     text-align: center;
 }
 
+td.left {
+    text-align: left;
+}
+
 .errormsg {
     color: red;
     font-size: 30px;
@@ -330,14 +341,19 @@ td.center {
 #submissionsearchbar {
     background-color: #EEEEEE;
     margin: 10px auto;
+    width: 750px;
 }
 
 #submissionsearchbar tr {
     padding: 0 100px;
 }
 
-div.hide {
+div.hide, tr.hide {
     display: none;
+    /*A possible future way to make it transition
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 3s, opacity 2s linear;*/
 }
 
 div.field1to25 {
@@ -489,6 +505,89 @@ span.red {
     color:red;
 }
 
+.search-expand {
+    position: relative;
+    float: right;
+    top: 5px;
+    right: 5px;
+}
+
+
+
+#content-workflow a.nav-option-link {
+    height: 260px;
+    width: 310px;
+    background-color: #eeeeee;
+    border: solid 1px #eaeae8;
+    text-decoration: none;
+    display: block;
+    position: inherit;
+    text-align: inherit;
+    margin: 0px 15px 5px 17px;
+}
+#content-workflow a.nav-option-link:hover {
+    background-color: #f7941d;
+    color: #FFFFFF;
+}
+
+#content-workflow div.nav-option-outside { 
+    height: 260px;
+    width: 310px;  
+    /*display: table;*//*Centers the text in the link box*/
+}
+
+#content-workflow div.nav-option-inside {
+    display: table-cell; 
+    vertical-align: middle; 
+    text-align: center;
+    width: 310px; 
+    color: #858585;
+}
+
+#content-workflow div.nav-option-inside:hover {
+    color: #ffffff;
+}
+
+#user-submissions {
+    /*border: 1px solid red;*/
+}
+
+#user-submissions table,
+#approver-submissions table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.workflow-status-link {
+    border: 1px solid black;
+    background-color: #dddddd;
+    width: 180px;
+    padding: 5px;
+    float: left;
+}
+
+#approver-submissions .workflow-status-link {
+    width: 305px;
+}
+
+.workflow-status-link:hover {
+    border: 1px solid white;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+        
+}
+
+.submissions-header {
+    background-color: #dddddd;
+}
+
+tr.selectedblackout:hover td {
+  background-color: #222222;
+  color: white;
+  cursor: pointer;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;
@@ -555,4 +654,7 @@ span.red {
         width: 96%;
     }
     
+    #submissionsearchbar {
+        width: 95%;
+    }
 }

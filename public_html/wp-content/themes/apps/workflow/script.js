@@ -21,6 +21,10 @@ function find(elem) {
     return document.getElementById(elem);
 }
 
+function findClass(elem) {
+    return document.getElementsByClassName(elem);
+}
+
 function changeDefaultVal(elem) {
     //alert(elem);
     //alert(find(elem).value);
@@ -1126,4 +1130,154 @@ function processWorkflow(status) {
     
     
     document.getElementById('formsubmitbutton').click();
+}
+
+function toggleSearch() {
+    if(find("submissionsearchbar1").classList.contains("hide")) {
+        find("submissionsearchbar1").classList.remove("hide");
+        find("submissionsearchbar2").classList.remove("hide");
+        find("submissionsearchbar3").classList.remove("hide");
+    } else {
+        find("submissionsearchbar1").classList.add("hide");
+        find("submissionsearchbar2").classList.add("hide");
+        find("submissionsearchbar3").classList.add("hide");
+    }
+}
+
+var savedMode = 0;
+var savedTag0 = 3;
+var savedTag1 = 4;
+/*
+ * mode 0 = user submissions
+ * mode 1 = approval submissions
+ */
+function switchTab(mode, tab) {
+    savedMode = mode;
+    if(mode == 0) {
+        find('user-status-link' + savedTag0).classList.remove("workflow-status-header");
+        find('user-status-link' + tab).classList.add("workflow-status-header");
+        savedTag0 = tab;
+        if(tab != 2) {
+            var tmp = findClass('user-2');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        }
+        else {
+            var tmp = findClass('user-2');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 3) {
+            var tmp = findClass('user-3');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('user-3');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 4) {
+            var tmp = findClass('user-4');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('user-4');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 7) {
+            var tmp = findClass('user-7');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('user-7');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 8) {
+            var tmp = findClass('user-8');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('user-8');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 10) {
+            var tmp = findClass('user-10');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('user-10');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+    } else if(mode == 1) {
+        find('approver-status-link' + savedTag1).classList.remove("workflow-status-header");
+        find('approver-status-link' + tab).classList.add("workflow-status-header");
+        savedTag1 = tab;
+        if(tab != 4) {
+            var tmp = findClass('approver-4');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('approver-4');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 7) {
+            var tmp = findClass('approver-7');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('approver-7');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 8) {
+            var tmp = findClass('approver-8');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('approver-8');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+    }
+}
+
+/*
+ * Toggles between user submissions and submissions requiring approval
+ */
+function switchRole(mode) {
+    savedMode = mode;
+    if(mode == 0) {
+        find('user-submissions').classList.remove('hide');
+        find('approver-submissions').classList.add('hide');
+    } else if(mode == 1) {
+        find('user-submissions').classList.add('hide');
+        find('approver-submissions').classList.remove('hide');
+    }
+}
+
+function formSearch() {
+    document.searchform.action += "&mode=" + savedMode + "&tag=" + (savedMode == 0 ? savedTag0 : savedTag1);
 }

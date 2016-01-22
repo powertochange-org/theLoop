@@ -68,22 +68,27 @@ if(Workflow::loggedInUser() != '0') {
     if(isset($_POST['datesearch']) && $_POST['datesearch'] != '') {
         $datesearch = $_POST['datesearch'];
     }
-
+    
+    $obj = new Workflow();
+    
+    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch);
+    
     ?>
-    <form action="?page=viewsubmissions" method="POST" autocomplete="off">
+    <hr>
+    <form name="searchform" action="?page=viewsubmissions" method="POST" autocomplete="off">
         <table id="submissionsearchbar">
-            <tr><td colspan=4 style="text-align: center;"><h2>Search</h2></td></tr>
-            <tr><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Date</th></tr>
-            <tr>
+            <tr><td colspan=4 style="text-align: center;"><h2 style="display:inline;margin-left:65px;color:inherit;">Filter</h2><button class="search-expand" type="button" onclick="toggleSearch();">Expand</button></td></tr>
+            <tr id="submissionsearchbar1" class="hide"><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Date</th></tr>
+            <tr id="submissionsearchbar2" class="hide">
                 <td><div class="style-1 inputfix workflowright" style="width: 100px;"><input type="text" name="idsearch" id="idsearch" value="<?php echo $idsearch;?>"></div></td>
                 <td><div class="style-1 inputfix"><input type="text" name="formsearch" id="formsearch" value="<?php echo $formsearch;?>"></div></td>
                 <td><div class="style-1 inputfix"><input type="text" name="submittedsearch" id="submittedsearch" value="<?php echo $submittedsearch;?>"></div></td>
                 <td><div class="style-1 inputfix"><input type="date" name="datesearch" id="datesearch" value="<?php echo $datesearch;?>"></div></td>
             </tr>
-            <tr>
+            <tr id="submissionsearchbar3" class="hide">
                 <td colspan=4 class="center">
-                    <input type="submit" value="Search" style="float:left; margin-right:20px;">
-                    <input type="reset" value="Clear" onclick="clearSearch();" style="float:left;">
+                    <input type="submit" value="Apply Filter" style="display:inherit; margin-right:20px;" onclick="formSearch();">
+                    <input type="reset" value="Clear" style="display:inherit;" onclick="clearSearch();" >
                 </td>
             </tr>
         </table>
@@ -92,12 +97,24 @@ if(Workflow::loggedInUser() != '0') {
     
     <?php
     
-    $obj = new Workflow();
-    echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
+    
     ?>
     
+    <div style="text-align:center;">
+    
     <?php
+    
+    echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
     echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch);
+    
+    //Display the forms that the user was in before hitting the search button
+    if(isset($_GET['mode']) && isset($_GET['tag'])) {
+        echo '<script>switchRole('.$_GET['mode'].');switchTab('.$_GET['mode'].', '.$_GET['tag'].');</script>';
+    }
+    
+    ?>
+    </div>
+    <?php
 } else {
     echo('<br>You need to log in!');
 }
@@ -108,3 +125,11 @@ echo $debugText;
     <div class="style-1 workflowright"><input type="text" name="newuser"></div>
     <input type="submit" value="Submit">
 </form>
+
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $(".selectedblackout").click(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+</script>
