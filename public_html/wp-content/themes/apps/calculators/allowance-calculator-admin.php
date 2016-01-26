@@ -199,7 +199,7 @@ function isPullData($quest){
 //handles the post from the admin interface
 function parseInput(){
 	// var_dump($_POST); // todo
-	if (isAdmin()){
+	if (isAppAdmin('support_calculator_admin', 0)){
 		global $wpdb;
 		$array_key = array_keys($_POST);
 		for ($i = 0; $i < count($_POST); $i ++){
@@ -582,7 +582,7 @@ function move_answer($quest_id, $answer_id, $after){
 
 function printAdmin(){
 	global $allowance_constant;
-	if (isAdmin()){	
+	if (isAppAdmin('support_calculator_admin', 0)) {
 		printAdminChangeInterface(array('Administrators' => 0, 'Calculate for anyone' => 1)); 
 		?>
 		<form class='border' action="" method="post">

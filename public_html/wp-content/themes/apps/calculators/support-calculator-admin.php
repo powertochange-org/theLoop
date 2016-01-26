@@ -20,7 +20,7 @@ parseConstantInput();
 
 function parseConstantInput(){
 	global $constants;
-	if (isAdmin()){
+	if (isAppAdmin('support_calculator_admin', 0)) {
 
 		//todo error handling
 		$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["constants"])));
@@ -36,7 +36,7 @@ function parseConstantInput(){
 
 printAdmin();
 function printAdmin(){
-	if (isAdmin()){	
+	if (isAppAdmin('support_calculator_admin', 0)) {
 		printAdminChangeInterface();
 		echo '
 	<table>
