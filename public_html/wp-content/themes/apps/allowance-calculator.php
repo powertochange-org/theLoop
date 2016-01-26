@@ -102,7 +102,7 @@ include('functions/js_functions.php');
 		</style>
 		<?php 	
 		
-		if (isAdmin()){
+		if (isAppAdmin('support_calculator_admin', 0)){
 			include('calculators/allowance-calculator-admin.php');
 		}		
 		
@@ -311,7 +311,7 @@ include('functions/js_functions.php');
 				}
 				
 				function calculatePoints(role){
-					<?php if(isAdmin()){ ?>
+					<?php if(isAppAdmin('support_calculator_admin', 0)) { ?>
 					document.getElementById('debug').innerHTML = "";
 					<?php } ?>
 					switch(role){
@@ -333,7 +333,7 @@ include('functions/js_functions.php');
 				
 				function printV(who, v){
 					console.log("%" + who + "%" + v);
-					<?php if(isAdmin()) { ?>
+					<?php if(isAppAdmin('support_calculator_admin', 0)) { ?>
 					document.getElementById('debug').innerHTML += who + " " + v + "<BR>";
 					<?php } ?>
 					return v;
@@ -666,7 +666,7 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
-				<?php if(isAdmin()){ ?>
+				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>
 					<input type='button' value='More Info' onclick='$("#t").toggle();'>
 					<div id='t' style='display:none;'>
 					The selection below will only show if user is an administer.<BR><BR>

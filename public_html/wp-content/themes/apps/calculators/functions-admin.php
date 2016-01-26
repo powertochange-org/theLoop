@@ -6,7 +6,7 @@ parseAdminRemove();
 
 function parseAdminInput(){
 	global $wpdb;
-	if (isAdmin()){
+	if (isAppAdmin('support_calculator_admin', 0)){
 		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_add_admin"]));
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
@@ -17,17 +17,19 @@ function parseAdminInput(){
 		}
 		else{
 			$ID = $user->ID;
-			$l = intval(get_user_meta($ID, 'support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"])));
-			update_user_meta( $ID, 'support_calculator_admin', $l);
+			$l = intval(get_user_meta($ID, 'loopadmin_support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"])));
+			update_user_meta( $ID, 'loopadmin_support_calculator_admin', $l);
 			echo '<BR>Granted special access to: '. $admin. '<BR>';
 		}
 		
+	} else {
+		echo '<br>You do not have access to add users.<br>';
 	}
 }
 
 function parseAdminRemove(){
 	global $wpdb;
-	if (isAdmin()){
+	if (isAppAdmin('support_calculator_admin', 0)){
 		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_remove_admin"]));
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
@@ -38,7 +40,7 @@ function parseAdminRemove(){
 		}
 		else{
 			$ID = $user->ID;
-			update_user_meta( $ID, 'support_calculator_admin', 0);
+			update_user_meta( $ID, 'loopadmin_support_calculator_admin', 0);
 			echo '<BR>Removed access for: '. $admin. '<BR>';
 		}
 		
@@ -47,9 +49,9 @@ function parseAdminRemove(){
 
 function getAdmins($level=0){
 	$string="";
-	$admins = get_users(array('meta_key' => 'support_calculator_admin'));
+	$admins = get_users(array('meta_key' => 'loopadmin_support_calculator_admin'));
 	foreach($admins as $user){
-		if(pow(2, $level) & intval(get_user_meta($user->id, 'support_calculator_admin', true))){		
+		if(pow(2, $level) & intval(get_user_meta($user->id, 'loopadmin_support_calculator_admin', true))){		
 			$string .= "<li>".$user->user_login."<input type='button' value='Remove' onclick='demoteUser(\"".$user->user_login."\");'></li>";
 		}
 	}
