@@ -180,7 +180,7 @@ include('functions/js_functions.php'); ?>
 			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
 			
 			$support_dataID = getDataID($ID);
-			if ($support_dataID == null){
+			if ($support_dataID == null || 0 == $support_dataID){
 				$spouse = getSpouse();
 				if($spouse != -1){
 					$support_dataID = getDataID($spouse);
