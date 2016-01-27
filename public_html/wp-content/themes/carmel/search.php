@@ -5,10 +5,7 @@
 			</div>
 			<div id="main-content" class="search-results">	
 				<?php if(isset($_GET['wiki'])) {
-					echo '<div id="wiki-nav-bar">
-                    <a href="/kb/" class="wiki-nav-links">Knowledge Base Home</a>
-                    <a href="/kb/articles/?action=edit&eaction=create" class="wiki-nav-links">Create New Knowledge Base Article</a>
-                </div>';
+					include('wikimenu.php');
 				}?>
 				<h1 class="replace">SEARCH RESULTS: <?php printf(__('\'%s\''), $s) ?></h1>
 				<?php if(isset($_GET['wiki']))echo '<hr>';?>
