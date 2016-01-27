@@ -31,7 +31,7 @@
 			if(@$_GET['comment']){
 				$message = "<html><body>";
 				foreach(array_keys($_GET) as $key){
-					$message .= "<strong>$key.</strong>";
+					$message .= "<strong>$key: </strong>";
 					switch($key) {
 						case 'ticket_id':
 							if ($_GET['ticket_id'] == 0){
@@ -50,7 +50,7 @@
 							}
 							break;
 						default:
-							$message .= $_GET[$head];
+							$message .= $_GET[$key];
 					}
 					$message .= "<br />\n";
 				}
@@ -58,6 +58,7 @@
 				
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				$headers .= 'From: <it.team@p2c.com>' . "\r\n";
 				mail('matthew.chell@p2c.com', 'Hurray! Survey response!', $message, $headers);
 			}
 		?>
