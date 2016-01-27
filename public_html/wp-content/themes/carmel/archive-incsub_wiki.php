@@ -1,7 +1,7 @@
 <!--Controlls the sub-archive page that will list every post available to be viewed.-->
 <?php get_header(); ?>
 	<div id="content">
-		<div id="content-left">
+		<div id="content-left" class="wiki-fix">
 			<div id="main-content" class="archive-page">
 			    <!--Navigation-->
                 <?php include('wikimenu.php'); ?>
@@ -12,13 +12,13 @@
                 <form role="search" method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>" >
                     <div>
                         <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
-                        <div style="width:80%; float:left;">
+                        <div class="wiki-search-input">
                             <input type="text" class="fieldform" placeholder="Search the Knowledge Base for an article here..." 
                                 value="<?php echo get_search_query(); ?>" name="s" id="s" />
                         </div>
                         <input type="hidden" value="incsub_wiki" name="post_type" id="post_type" />
                         <input type="hidden" value="1" name="wiki" id="wiki" />
-                        <div style="width:15%; float:left;">
+                        <div class="wiki-search-submit">
                             <input type="submit" class="fieldform" id="searchsubmit" value="<?php esc_attr_e('Search', 'wiki'); ?>" />
                         </div>
                     </div>
