@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 	<div id="content">
-		<div id="content-left">
+		<div id="content-left" <?php if(isset($_GET['wiki'])) echo 'class="wiki-fix"';?>>
 			<div id="header-img">
 			</div>
 			<div id="main-content" class="search-results">	

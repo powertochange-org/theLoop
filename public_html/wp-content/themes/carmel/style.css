@@ -950,6 +950,15 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
   /*display: none !important;*/
 }
 
+.wiki-search-input {
+	width: 80%; 
+	float: left;
+}
+
+.wiki-search-submit {
+	width: 15%; 
+	float: left;
+}
 
 /*
 	This is the media query for displaying content based on screen size.
@@ -1347,6 +1356,19 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 	}
 	#wiki-nav-bar {
 		width: 94%;
+		margin-top: -35px; /*To fix the large gap that appears on the mobile theme.*/
+	}
+	
+	.wiki-search-input {
+		width: 100%; 
+	}
+
+	.wiki-search-submit {
+		width: 100%; 
+	}
+	
+	#content-left.wiki-fix {
+		float: none;
 	}
 	
 }

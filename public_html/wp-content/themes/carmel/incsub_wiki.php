@@ -3,7 +3,7 @@ global $blog_id, $wp_query, $wiki, $post, $current_user;
 get_header( 'wiki' );
 ?>
 <div id="primary" class="wiki-primary-event">
-<div id="main-content">
+<div id="main-content" class="archive-page">
     <div id="content">
         <div class="padder">
             <div id="wiki-page-wrapper">
