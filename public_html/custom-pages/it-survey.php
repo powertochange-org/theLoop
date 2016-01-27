@@ -29,13 +29,9 @@
 			mysqli_close($con);
 			
 			if(@$_GET['comment']){
-				$message = "<table><tr>";
+				$message = "<html><body>";
 				foreach(array_keys($_GET) as $key){
-					$message = "<th>".$key."</th>\n";
-				}
-				$message .= "</tr><tr>";
-				foreach(array_keys($_GET) as $key){
-					$message .= "<td>";
+					$message .= "<strong>$key.</strong>";
 					switch($key) {
 						case 'ticket_id':
 							if ($_GET['ticket_id'] == 0){
@@ -56,11 +52,13 @@
 						default:
 							$message .= $_GET[$head];
 					}
-					$message .= "</td>\n";
+					$message .= "<br />\n";
 				}
-				$message .= "</tr></table>";
+				$message .= "</body></html>";
 				
-				mail('matthew.chell@p2c.com', 'Hurray! Survey response!', $message);
+				$headers = "MIME-Version: 1.0" . "\r\n";
+				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				mail('matthew.chell@p2c.com', 'Hurray! Survey response!', $message, $headers);
 			}
 		?>
 		<body>
