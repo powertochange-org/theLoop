@@ -240,7 +240,7 @@ include('functions/js_functions.php'); ?>
 			return $result[0]->$field;
 		}
 		
-		if (isAdmin()){
+		if (isAppAdmin('support_calculator_admin', 0)) {
 			include('calculators/support-calculator-admin.php');
 		}
 		

@@ -51,6 +51,22 @@ $reportsToMeResults = $wpdb->get_results(
 			full_name", /* Order by current user first, then direct reports, then everyone else */
 		$user_id, $user_id, $user_id, $user_id));
 
+//Admin for financial health report
+include('functions/functions.php');
+$admin = 0;
+if(isAppAdmin('staffhealth', 0)) {
+  $admin = 1;
+  $reportsToMeResults = $wpdb->get_results(
+  $wpdb->prepare( 
+    /* Get Everyone instead of the people that really report to the user*/
+    "SELECT e.employee_number, e.user_login, CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
+    FROM employee e
+    WHERE e.staff_account IS NOT NULL   
+    ORDER BY CASE WHEN user_login = %s THEN 1 ELSE 2 END, full_name", '$user_id'));
+}
+
+
+
 
 //Set proper output format for preview
 if(isset($_POST['previewBtn'])){
@@ -562,7 +578,7 @@ get_header(); ?>
 				}  else if($(this).val() == "StaffVacation"){
 					showHideFields(["#reportToMe_opt","#staffVaction_options","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if ($(this).val() == "StaffFinancialHealth"){
-					<?php if (count($reportsToMeResults) > 0) { ?>
+					<?php if ($admin || count($reportsToMeResults) > 0) { ?>
 						showHideFields(["#staffHealth_options","#monthyear","#buttonsPreview"]);
 					<?php } else { ?>
 						$("#message").html("You don't have access to run this report for any staff. If you believe you should have access, please email <a href='mailto:helpdesk@p2c.com'>helpdesk@p2c.com</a>");
