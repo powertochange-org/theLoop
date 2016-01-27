@@ -59,7 +59,7 @@
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 				$headers .= 'From: <it.team@p2c.com>' . "\r\n";
-				mail('matthew.chell@p2c.com', 'Hurray! Survey response!', $message, $headers);
+				mail('it@p2c.com', 'Hurray! Survey response!', $message, $headers);
 			}
 		?>
 		<body>
