@@ -31,7 +31,7 @@
 <?php
 				}
 				if(! empty($search)){ 
-					$names = preg_split("/[\s,]+/", $search);  // split the search string by any number of commas or space characters,
+					$names = preg_split("/[\s,]+/", $search, -1, PREG_SPLIT_NO_EMPTY);  // split the search string by any number of commas or space characters,
 					//this is where my intelligent search kicks in. here we try to identify some input
 					//check if ministry
 					$j=0;
