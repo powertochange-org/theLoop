@@ -6,8 +6,7 @@
             
             
                 <!--Navigation-->
-                <a href="/kb/">Knowledge Base Home</a>
-                <a href="/kb/articles/?action=edit&eaction=create" style="margin-left: 20px;">Create New Knowledge Base Article</a>
+                <?php include('wikimenu.php'); ?>
                 
                 <?php
                     //Display the category title and description

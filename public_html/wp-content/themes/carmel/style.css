@@ -312,6 +312,7 @@ hr{
 	line-height:normal;
 	font-size: 14pt;
 	letter-spacing: 1px;
+	cursor: pointer;
 }
 
 #sidebar{
@@ -881,6 +882,75 @@ h1.entry-title {
 	border: 2px solid black;
 }
 
+a.wiki-nav-links {
+	background-color:#f7941d;
+	color: #000000;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding:10px;
+	border-style: none;
+	border-radius:5px;
+}
+
+#wiki-nav-bar a.wiki-nav-links:hover{
+	color: white;
+}
+
+div #wiki-nav-bar {
+	margin-bottom: 30px;
+}
+
+#searchform  {
+	margin-bottom: 30px;
+}
+
+input[type="text"].fieldform {
+    display: block;
+    margin: 0;
+    width: 99%;
+    height: 89%;
+    font-family: sans-serif;
+    font-size: 18px;
+    /*appearance: none;*/
+    box-shadow: none;
+    border-radius: none;
+}
+
+input[type="text"].fieldform {
+    display: initial;
+    height: 40px;
+}
+
+input[type="text"]:focus.fieldform {
+    outline: none;
+}
+
+input[type="text"].fieldform {
+    padding: 0px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+input[type="text"]:focus.fieldform,
+input[type="text"].focus.fieldform {
+    border: solid 1px #707070;
+    box-shadow: 0 0 5px 1px #969696;
+}
+
+input[type="submit"].fieldform {
+    display: block;
+    /*margin: 5px 0 20px 0;*/
+    width: 99%;
+    height: 40px;
+    font-family: sans-serif;
+    font-size: 18px;
+    box-shadow: 0 0 5px 1px #969696;
+}
+
+div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
+  /*display: none !important;*/
+}
+
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
@@ -1270,6 +1340,14 @@ h1.entry-title {
 		margin-left: 1%;
 	}
 	
+	a.wiki-nav-links {
+		float: left;
+		width: 100%;
+		margin: 2px;
+	}
+	#wiki-nav-bar {
+		width: 94%;
+	}
 	
 }
 
