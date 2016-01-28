@@ -224,7 +224,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             <h3>Debug History</h3>
         </div>-->
         <div id ="fieldaddconfirmscroll" style="height: 40px;"></div>
-        <img id ="fieldaddconfirm" src="/wp-content/uploads/2015/11/check.png" width="30px" height="30px"/>
+        <img id ="fieldaddconfirm" src="/wp-content/images/workflowcheck.png" width="30px" height="30px"/>
         <div class="workflow workflowboth" style="margin-top: 20px;">
             <hr>
         </div>

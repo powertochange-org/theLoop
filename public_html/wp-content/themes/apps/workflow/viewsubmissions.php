@@ -116,7 +116,7 @@ if(Workflow::loggedInUser() != '0') {
     </div>
     <?php
 } else {
-    echo('<br>You need to log in!');
+    echo('<br>Your account may not have been set up to use this feature yet. Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>');
 }
 
 if(Workflow::debugMode()) {
