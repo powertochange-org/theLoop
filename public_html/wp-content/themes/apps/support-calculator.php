@@ -490,7 +490,11 @@ include('functions/js_functions.php'); ?>
 				return (salary + salary_s) * medical_QC;
 			}
 			if (province == BC){
-				return medical_BC[coverage];
+				if(coverage_int == 0) {
+					return medical_BC[coverage];
+				} else {
+					return 0;
+				}
 			}
 			return 0;
 		}
@@ -920,7 +924,7 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live.">
+					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live." onchange="calculate();">
 					<option value="0" <?php if (setProvince() == 0) echo "selected"; ?>>Alberta</option>
 					<option value="1" <?php if (setProvince() == 1) echo "selected"; ?>>British Columbia</option>
 					<option value="2" <?php if (setProvince() == 2) echo "selected"; ?>>Manitoba</option>
