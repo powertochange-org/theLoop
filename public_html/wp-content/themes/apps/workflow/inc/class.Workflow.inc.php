@@ -27,9 +27,9 @@ class Workflow {
     private $numFields;
     private $mode;
     private $previousID;
-	private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
-	
-	
+    private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
+    private $uniqueToken;
+    
     public function __construct() {
     }
     
@@ -203,7 +203,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup) {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -225,7 +225,7 @@ class Workflow {
         
         
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -238,6 +238,11 @@ class Workflow {
             $oldcomment = $row['COMMENT'];
             if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
+            }
+            if($uniqueToken != $row['UNIQUE_TOKEN']) {
+                $_SESSION['ERRMSG'] = 'This submission has recently changed. Reload the submission to make any required changes.';
+                header('location: ?page=viewsubmissions');
+                die();
             }
             //echo 'DEBUG: Old Status:'.$oldstatus.'<br>';
         }
@@ -478,7 +483,7 @@ class Workflow {
             $sbid = $_GET['sbid'];
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, BEHALFOF
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, BEHALFOF, UNIQUE_TOKEN
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -493,6 +498,7 @@ class Workflow {
                 $comments = $row['COMMENT'];
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
+                $this->uniqueToken = $row['UNIQUE_TOKEN'];
             } else {
                 echo 'That submission does not exist.';
                 return;
@@ -555,7 +561,7 @@ class Workflow {
                 //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
                 $configvalue = 9;
             } else if($submittedby != $loggedInUser) {
-                echo 'You do not have access to view this form.<br>';
+                echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
                 return;
             } else if($configvalue == 4) {
                 $configvalue = 0;
@@ -655,7 +661,7 @@ class Workflow {
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext) {
         global $wpdb;
-        $response = '';
+        $response = '%EMAILCLICK%';
         
         $sql = "SELECT NAME, BEHALFOF_SHOW
                 FROM workflowform
@@ -708,12 +714,13 @@ class Workflow {
             $response .= 'Status: Not Approved.';
         } else if($configuration == 10) {
             $response .= 'Status: Not Approved.';
-        }
+        } else if($emailMode && $configuration == 3)
+            $response .= 'Status: Input Required.';
         $response .= '</p>';
         $response .='<hr>';
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode)
-            $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();">';
+            $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
         
         //Display the misc content
         if($misc_content != '') {
@@ -1010,7 +1017,10 @@ class Workflow {
                 }
                 $response .= '</div>';
             } else if($row['TYPE'] == 9) { //Horizontal Line
-                $response .= '<div class="clear"></div>';
+                $response .= '<div class="clear" ';
+                if($emailMode)
+                    $response .= 'style="clear:both;"';
+                $response .= '></div>';
                 $response .= '<hr>';
             } else if($row['TYPE'] == 10 || $row['TYPE'] == 11 || $row['TYPE'] == 12) { //Heading 1,2,3
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1200,6 +1210,7 @@ class Workflow {
             //$response .= '<input type="submit" value="Submit" onclick="saveSubmission(3); onsubmit="">';
             $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
         } else if(0 <= $configuration && $configuration < 7 && $emailMode) {
+            $uniqueId = WorkFlow::workflowEmailToken($submissionID);
             $response .= '<div class="clear"></div>';
             if($configuration == 0 || $configuration == 2 || $configuration == 3) {
                 $submittingStatus = $approvalStatus - 1;
@@ -1210,34 +1221,38 @@ class Workflow {
             }
             $response .= '<h3>Submitting to: '.Workflow::getNextRoleName($submittingStatus, $submittingApproval, $id, ($configuration == 0), 
                 $submissionID).'</h3>';
-            
-            $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
+            if($configuration != 3)
+                $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
+                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="text-decoration:none;"><button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
+                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
+                    min-width: 200px;">View Form</button></a>';
+                //Uncomment if email for revisions should include quick buttons. But they really shouldn't
+                /*$response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Submit Form</button></a>';
                     
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'"><button type="button">Save Draft</button></a>';//http://local.theloop.com  https://devstaff.powertochange.org
+                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button">Save Draft</button></a>';//http://local.theloop.com  https://devstaff.powertochange.org
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
-                    min-width: 200px;">Delete Form</button></a>';
+                    min-width: 200px;">Delete Form</button></a>';*/
             } else if($configuration == 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'">
-                    <button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
+                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">
+                    <button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
                     display: block;font-family: sans-serif;font-size: 18px;margin: 20px 10px 0px 0;
                     min-width: 200px;">Approve</button></a>';
                 
-                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 0px 0;
                     min-width: 200px;">Request Change</button></a>';
                 
-                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 20px 0;
                     min-width: 200px;">Not Approved</button></a>';
             } else if($configuration == 0) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Retract Submission</button></a>';
             }
@@ -1295,8 +1310,10 @@ class Workflow {
                     ORDER BY DATE_SUBMITTED ASC";
         
             $result = $wpdb->get_results($sql, ARRAY_A);
-            
-            $response .= '<div class="clear"></div>';
+            if(!$emailMode)
+                $response .= '<div class="clear"></div>';
+            else
+                $response .= '<div style="clear:both;"></div>';
             $response .= '<table id="workflowhistory"><tr><td colspan=3><h3>Approval History</h3></td></tr>';
             $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
             foreach($result as $row) {
@@ -1339,14 +1356,17 @@ class Workflow {
         
         //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
-            if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus)
+            $tokenSuccess = (isset($_GET['tk']) && Workflow::workflowEmailTokenDecode($_GET['tk'], $submissionID));
+            if(!$tokenSuccess)
+                $emailclick = '<br><span style="color:red;font-weight:bold;">The email you tried using to review this form is out of date. Please review the below submission in detail.</span><br><br>';
+            else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus)
                 echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
             else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
                 echo '<script>window.onload = function() {document.getElementById("changelink").click();};</script>';
             else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus)
                 echo '<script>window.onload = function() {document.getElementById("denylink").click();};</script>';
         }
-        
+        $response = str_replace('%EMAILCLICK%', $emailclick, $response);
         return $response;
     }
     
@@ -1901,20 +1921,19 @@ class Workflow {
     }
     
     public function sendEmail($submissionID) {
-        require_once("phpmailer/vendor/autoload.php");
+        //require_once("phpmailer/vendor/autoload.php");
+        require_once("PHPMailer-master/PHPMailerAutoload.php");
         /*$headers = "From: hr@powertochange.org";
         $subject = "Test";
         $emailMessage = 
         "put the message in here";
 
         //mail('gerald.becker@p2c.com', $subject, $emailMessage, $headers);*/
-
         
+        
+        //$uniqueId = WorkFlow::workflowEmailToken($submissionID);//DEBUG
         
         $workflow = new Workflow();
-        
-        
-        
         
         global $wpdb;
         $response = '';
@@ -1942,14 +1961,21 @@ class Workflow {
         $formName = $row['NAME'];
         $approvers = array($row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4']);
         
-        if(!($status == 4 || $status == 7 || $status == 8))
+        if(!($status == 4 || $status == 7 || $status == 8 || $status == 3))
             return;
         
         //Find out if it is a direct supervisor submission or not
         $role = $approvers[$approvalStatus - 1];
         $supNext = $approvers[$approvalStatus];
         
-        if($role != 8 && $role != '') {
+        //check if this submission was rejected and needs further input
+        if($approvalStatus == 1 && $status == 3) { 
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+                    FROM employee  
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
+                    WHERE employee.employee_number = '$userid'";
+                    echo 'DENIED: denied approval test';
+        } else if($role != 8 && $role != '') {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
                     FROM workflowrolesmembers
                     INNER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
@@ -1973,6 +1999,7 @@ class Workflow {
             return;
         
         $emailRecepients = $wpdb->get_results($sql, ARRAY_A);
+        var_dump($emailRecepients);
         
         $recepients = array();
         $tempRec = '';
@@ -1996,6 +2023,17 @@ class Workflow {
             <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, ($supNext != ''), 0, 1, ($supNext == 8)).
             '<br></body>';
+        } else if($status == 3) {
+            $template = '
+            <body style="font-family: sans-serif; color:black;">
+                <h2>You have a submission requiring further input!</h2>
+                <p>'.Workflow::getUserName($userid).', you previously submitted the form: '.$formName.' and it has been reviewed and requires further action.</p>
+                <p><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
+                (click to view form online)</p>
+                <p></p>
+            <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 3, $submissionID, $misc_content, $commenttext, $userid, 
+                    $status, $approvalStatus, ($supNext != ''), 0, 1, ($supNext == 8)).
+            '<br></body>';
         } else {
             $templateFinished = '
             <body style="font-family: sans-serif; color:black;">
@@ -2014,6 +2052,8 @@ class Workflow {
             if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
                 if($status == 4)
                     $body = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
+                else if($status == 3)
+                    $body = $body = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
                 else 
                     $body = $templateFinished;
                 //$body .= '<div style="clear:both;"></div><br>DEBUG:Your email address is: '.$recepients[$i][1];
@@ -2023,25 +2063,24 @@ class Workflow {
                 
                 $mail = new PHPMailer;
                 $mail->isSMTP();          // Set mailer to use SMTP
-                $mail->Host = 'smtp.gmail.com'; // Specify main and backup SMTP servers
-                $mail->SMTPAuth = true;                            // Enable SMTP authentication
+                $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
+                //$mail->SMTPAuth = true;                            // Enable SMTP authentication
                 $mail->SMTPDebug = 2;
-                $mail->Username = 'gerald.becker@p2c.com';                 // SMTP username
-                // SMTP username
-                $mail->Password = 'Ever42green$';                           // SMTP password
-                $mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
-                $mail->Port = 465;//587
+                //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
+                $mail->Port = 25;
 
-                $mail->From = 'gerald.becker@p2c.com';
+                $mail->From = 'workflowloop-no-reply@p2c.com';
                 $mail->FromName = 'Workflow Email';
-                $mail->AddAddress('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                $mail->AddAddress('matthew.campbell@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
 
                 $mail->IsHTML(true);
-
-                $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid);
-                            
                 
-                                        
+                if($status != 3)
+                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid);
+                else
+                    $mail->Subject = 'Workflow email requiring further input';
+                                                            
                 $mail->Body = $body;
                 echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
                 $mail->Send();
@@ -2120,7 +2159,7 @@ class Workflow {
         global $currentUserEmployeeNum;
         
         // Check if we are impersonating someone else
-		if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
+        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
             return $_SESSION['impersonateuser'];
         }
         // Check if the current employee number has already been looked up and cached - this saves from having to look up in the db again
@@ -2128,39 +2167,39 @@ class Workflow {
             //echo '<script> alert("current emp successful");</script>'; //DEBUG
             return $currentUserEmployeeNum;
         }
-		// If none of those are true, we need to look up the employee number of the current person and for this page load
-		else {
+        // If none of those are true, we need to look up the employee number of the current person and for this page load
+        else {
             //echo '<script> alert("resorting to fallback");</script>'; //DEBUG
             //Give them no access unless they are found
             $currentUserEmployeeNum = 0;
             
-			global $wpdb;
-			$currentUserId = wp_get_current_user()->id;
-			
-			$sql = "SELECT employee.employee_number FROM employee 
-					INNER JOIN wp_users ON employee.user_login = wp_users.user_login
-					WHERE wp_users.ID = '$currentUserId'";
-			
-			$result = $wpdb->get_results($sql, ARRAY_A);
-			
-			if(count($result) == 1) {
-				$row = $result[0];
-				$currentUserEmployeeNum = $row['employee_number'];
-			} 
-			return $currentUserEmployeeNum;
-		}
+            global $wpdb;
+            $currentUserId = wp_get_current_user()->id;
+            
+            $sql = "SELECT employee.employee_number FROM employee 
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+                    WHERE wp_users.ID = '$currentUserId'";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            if(count($result) == 1) {
+                $row = $result[0];
+                $currentUserEmployeeNum = $row['employee_number'];
+            } 
+            return $currentUserEmployeeNum;
+        }
     }
     
     public static function loggedInUserName() {
-		// If we are impersonating someone, return the name stored in the session
+        // If we are impersonating someone, return the name stored in the session
         if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
             //return $_SESSION['impersonateusername'];
             return Workflow::getUserName(Workflow::loggedInUser());
-		} else {
-			// Otherwise, just return the current user login
-			//return wp_get_current_user()->user_login;
+        } else {
+            // Otherwise, just return the current user login
+            //return wp_get_current_user()->user_login;
             return Workflow::getUserName(Workflow::loggedInUser());
-		}
+        }
     }
     
     public static function hasRoleAccess($user, $roleSearch) {
@@ -2465,6 +2504,49 @@ class Workflow {
         return '';
     }
     
+    
+    private function base64_url_encode($input) {
+        return strtr(base64_encode($input), '+/=', '-_~');
+    }
+
+    private function base64_url_decode($input) {
+        return base64_decode(strtr($input, '-_~', '+/='));
+    }
+    
+    private function workflowEmailToken($submissionID) {
+        //Encode the current time with the id to make sure the email will only work with this submission state.
+        $now = new DateTime();
+        $uniqueId = Workflow::base64_url_encode($submissionID.':'.$now->getTimestamp());
+        
+        
+        global $wpdb;
+        
+        $sql = "UPDATE workflowformstatus 
+                SET UNIQUE_TOKEN = '$uniqueId' 
+                WHERE SUBMISSIONID = '$submissionID'";
+        
+        $result = $wpdb->query($sql);
+        
+        if($result)
+            return $uniqueId;
+        else 
+            return 0;
+    }
+    
+    private function workflowEmailTokenDecode($uniqueId, $submissionID) {
+        global $wpdb;
+        
+        $sql = "SELECT UNIQUE_TOKEN
+                FROM workflowformstatus 
+                WHERE SUBMISSIONID = '$submissionID'";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        if($result)
+            return ($result[0]['UNIQUE_TOKEN'] == $uniqueId);
+        else
+            return 0;
+    }
+
     /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
     public static function debugMode() {
         return 1;
