@@ -66,35 +66,37 @@
 				    getField(strip_tags($_POST['ministryAddress']['pc']))
                 );
 		}
+		if($_POST['phone'] != NULL) {
+            foreach($_POST['phone'] as $key => $value){
+                if ($key >= 0) {
+                    $id = $key;
+                    $phones = $wpdb-> get_results("SELECT * FROM phone_number WHERE phone_number_id = '" . $id . "'");
+                    $phone = $phones[0];
+                    $phoneshare = 0;
+                    $isMinistry = 0;
+                    if ($value['share'] == 'personalshare') {
+                        $phoneshare = 1;
+                    } elseif ($value['share'] == 'ministryshare' || $phone->is_ministry == 1) {
+                        continue; //Skip to the next personal address
+                    }
+                    
+                    if ($phoneshare != $phone->share_phone) {
+                        $wpdb->insert( 'sync',
+                                array(  'table_name'    => 'phone_number',
+                                        'record_id'     => $phone->phone_number_id,
+                                        'sync_action'   => 'update',
+                                        'changed_date'  =>  date('Y-m-d H-i-s'),
+                                        'user_login'    => $user->user_login
+                                ));
+                        $wpdb->update( 'phone_number', 
+                                array( 'share_phone' => $phoneshare),
+                                array(  'phone_number_id' => $id));
+                    }
+                     
+                }
+            } 
+        }
 		
-		foreach($_POST['phone'] as $key => $value){
-			if ($key >= 0) {
-				$id = $key;
-				$phones = $wpdb-> get_results("SELECT * FROM phone_number WHERE phone_number_id = '" . $id . "'");
-				$phone = $phones[0];
-				$phoneshare = 0;
-				$isMinistry = 0;
-				if ($value['share'] == 'personalshare') {
-					$phoneshare = 1;
-				} elseif ($value['share'] == 'ministryshare' || $phone->is_ministry == 1) {
-					continue; //Skip to the next personal address
-				}
-				
-				if ($phoneshare != $phone->share_phone) {
-					$wpdb->insert( 'sync',
-							array(  'table_name'    => 'phone_number',
-									'record_id'     => $phone->phone_number_id,
-									'sync_action'   => 'update',
-									'changed_date'	=>	date('Y-m-d H-i-s'),
-									'user_login'	=> $user->user_login
-							));
-					$wpdb->update( 'phone_number', 
-							array( 'share_phone' => $phoneshare),
-							array(	'phone_number_id' => $id));
-				}
-				 
-			}
-		}
 		//Spouse Employee Number
 		if (strip_tags($_POST['spouseEmployeeNumber']) != $user->spouse_employee_number ){
 
@@ -111,41 +113,43 @@
 		}
 		
 		//Email
-		foreach($_POST['email'] as $key => $value){
-		
-			//if add new
-			if ($key >= 0) {
-				$id = $key;
-				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
-				$email = $emails[0];
-				
-				if ($email->is_ministry == 1) {
-					continue;
-				} else {
-					//$ministry = '0';
-					$shared = $value['share'];
-				}
-				$wpdb->insert( 'sync',
-								array(  'table_name'    => 'email_address',
-										'record_id'     => $id,
-										'sync_action'   => 'update',
-										'field_changed' => '',
-										'changed_date'	=>	date('Y-m-d H-i-s'),
-										'user_login'	=> $user->user_login
-								));
-				if ($shared != $email->share_email) {
-                    // Let the user know if the type of email was automatically changed
-                    //echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
-							
-					$wpdb->update( 'email_address', 
-							array( 'share_email' => $shared),
-							array( 'email_address_id' => $id  ) 
-						);
-				
-				}
-				
-			}
-		}
+        if($_POST['email'] != NULL) {
+    		foreach($_POST['email'] as $key => $value){
+    		
+    			//if add new
+    			if ($key >= 0) {
+    				$id = $key;
+    				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
+    				$email = $emails[0];
+    				
+    				if ($email->is_ministry == 1) {
+    					continue;
+    				} else {
+    					//$ministry = '0';
+    					$shared = $value['share'];
+    				}
+    				$wpdb->insert( 'sync',
+    								array(  'table_name'    => 'email_address',
+    										'record_id'     => $id,
+    										'sync_action'   => 'update',
+    										'field_changed' => '',
+    										'changed_date'	=>	date('Y-m-d H-i-s'),
+    										'user_login'	=> $user->user_login
+    								));
+    				if ($shared != $email->share_email) {
+                        // Let the user know if the type of email was automatically changed
+                        //echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
+    							
+    					$wpdb->update( 'email_address', 
+    							array( 'share_email' => $shared),
+    							array( 'email_address_id' => $id  ) 
+    						);
+    				
+    				}
+    				
+    			}
+    		}
+        }
 		
 		//Ministry Social Media
 		
