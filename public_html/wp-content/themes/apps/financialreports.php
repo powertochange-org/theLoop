@@ -21,10 +21,24 @@ to an another report you need to:
 $current_user = wp_get_current_user();
 $user_id = $current_user->user_login;
 
-/* For the Staff List report, we need the current user's employee number, and also a list
- * of the staff who report to the current user */
-$reportsToMeResults = $wpdb->get_results(
-	$wpdb->prepare( 
+
+//Admin for financial health report
+include('functions/functions.php');
+$admin = 0;
+if(isAppAdmin('staffhealth', 0)) {
+	$admin = 1;
+	$reportsToMeResults = $wpdb->get_results(
+		$wpdb->prepare( 
+		/* Get Everyone instead of the people that really report to the user*/
+		"SELECT e.employee_number, e.user_login, CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
+		FROM employee e
+		WHERE e.staff_account IS NOT NULL   
+		ORDER BY CASE WHEN user_login = %s THEN 1 ELSE 2 END, full_name", $user_id));
+} else {
+	/* For the Staff List report, we need the current user's employee number, and also a list
+	 * of the staff who report to the current user */
+	$reportsToMeResults = $wpdb->get_results(
+		$wpdb->prepare( 
 		/* First select is for the current user; next is for everyone who reports to the current user */
 		"SELECT e.employee_number, e.user_login, '                           ' AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
 		FROM employee e
@@ -49,23 +63,8 @@ $reportsToMeResults = $wpdb->get_results(
 				      WHEN supervisor_login = %s THEN 2
 					  ELSE 3 END,
 			full_name", /* Order by current user first, then direct reports, then everyone else */
-		$user_id, $user_id, $user_id, $user_id));
-
-//Admin for financial health report
-include('functions/functions.php');
-$admin = 0;
-if(isAppAdmin('staffhealth', 0)) {
-  $admin = 1;
-  $reportsToMeResults = $wpdb->get_results(
-  $wpdb->prepare( 
-    /* Get Everyone instead of the people that really report to the user*/
-    "SELECT e.employee_number, e.user_login, CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
-    FROM employee e
-    WHERE e.staff_account IS NOT NULL   
-    ORDER BY CASE WHEN user_login = %s THEN 1 ELSE 2 END, full_name", '$user_id'));
+		$user_id, $user_id, $user_id, $user_id));	
 }
-
-
 
 
 //Set proper output format for preview
