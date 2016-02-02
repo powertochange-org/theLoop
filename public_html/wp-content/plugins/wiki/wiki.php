@@ -1264,13 +1264,14 @@ class Wiki {
 		if (comments_open()) {
 			$tabs .= '<li class="'.join(' ', $classes['discussion']).'" ><a href="' . add_query_arg('action', 'discussion', $permalink) . '">' . __('Discussion', 'wiki') . '</a></li>';
 		}
-		$tabs .= '<li class="'.join(' ', $classes['history']).'" ><a href="' . add_query_arg('action', 'history', $permalink) . '">' . __('History', 'wiki') . '</a></li>';
+		
 		$tabs .= '</ul>';
 
 		$post_type_object = get_post_type_object( get_query_var('post_type') );
 
 		if ($post && current_user_can($post_type_object->cap->edit_post, $post->ID)) {
 			$tabs .= '<ul class="right">';
+			$tabs .= '<li class="'.join(' ', $classes['history']).'" ><a href="' . add_query_arg('action', 'history', $permalink) . '">' . __('History', 'wiki') . '</a></li>';
 			$tabs .= '<li class="'.join(' ', $classes['edit']).'" ><a href="' . add_query_arg('action', 'edit', $permalink) . '">' . __('Edit', 'wiki') . '</a></li>';
 			if (is_user_logged_in()) {
 			$tabs .= '<li class="'.join(' ', $classes['advanced_edit']).'" ><a href="' . get_edit_post_link() . '" >' . __('Advanced', 'wiki') . '</a></li>';

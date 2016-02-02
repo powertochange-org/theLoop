@@ -1,19 +1,31 @@
 <!--Controlls the sub-archive page that will list every post available to be viewed.-->
 <?php get_header(); ?>
 	<div id="content">
-		<div id="content-left">
+		<div id="content-left" class="wiki-fix">
 			<div id="main-content" class="archive-page">
 			    <!--Navigation-->
-                <a href="/kb/">Knowledge Base Home</a>
-                <a href="/kb/articles/?action=edit&eaction=create" style="margin-left: 20px;">Create New Knowledge Base Article</a>
+                <?php include('wikimenu.php'); ?>
                     
-                    
-				<h1>Wiki Home Page</h1>
+				<h1>Knowledge Base Home Page</h1>
 				<hr>
 				
-				
-				
-				<div id="homepage-categories" class="clearfix">
+                <form role="search" method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>" >
+                    <div>
+                        <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
+                        <div class="wiki-search-input">
+                            <input type="text" class="fieldform" placeholder="Search the Knowledge Base for an article here..." 
+                                value="<?php echo get_search_query(); ?>" name="s" id="s" />
+                        </div>
+                        <input type="hidden" value="incsub_wiki" name="post_type" id="post_type" />
+                        <input type="hidden" value="1" name="wiki" id="wiki" />
+                        <div class="wiki-search-submit">
+                            <input type="submit" class="fieldform" id="searchsubmit" value="<?php esc_attr_e('Search', 'wiki'); ?>" />
+                        </div>
+                    </div>
+                </form>
+                <div style="clear:both;margin-bottom:30px;"></div>
+                <div id="homepage-categories" class="clearfix">
+                    <h3>Knowledge Base Categories</h3>
                 <?php
                 // Get homepage options
                 // Set category counter
@@ -69,47 +81,10 @@
                             <?php
                             }
                         }
-                        
                     }
                 }
 				?>
-					
 				</div>
-					
-					
-					
-					
-					
-<?php /*				
-					
-					<?php if (have_posts()) : ?>				
-					<?php if (is_category()) { ?>
-						<h1 class="replace">ARCHIVES</h1>
-						<?php } elseif (is_day()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('F jS, Y'); ?></h1>
-						<?php } elseif (is_month()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('F, Y'); ?></h1>
-						<?php } elseif (is_year()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('Y'); ?></h1>
-					<?php } ?>
-					
-					<hr>
-					<?php while (have_posts()) : the_post(); ?>		
-						<div class="post">
-							<h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
-							<?php the_excerpt(); ?>
-							<!--<p class="meta"><?php //the_time('F j, Y'); ?> in <?php the_category(', '); ?> by <?php the_author_posts_link() ?></p>-->
-							<!--<p class="meta"><?php //comments_popup_link('No comments yet', '1 comment', '% comments', '', 'Comments are disabled for this post'); ?></p>-->
-						</div>
-						<hr>
-						<!--/box-->    
-					 <?php endwhile; ?>
-					<div id="page-nav">
-					    <?php next_posts_link('&laquo; Previous Entries') ?>
-					    <?php previous_posts_link('Next Entries &raquo;') ?>
-					</div>
-				<?php endif; ?>	
-    */?>
 			</div>
 			</div>
         	</div><div style='clear:both;'></div>
