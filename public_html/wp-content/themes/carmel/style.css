@@ -871,6 +871,9 @@ ul.wpp-list li {
 	margin: 0;
 }
 
+#page-nav {
+	font-size: 25px;
+}
 
 /*Wiki Styling*/
 h1.entry-title {

@@ -185,7 +185,7 @@ function getMemberAppAccess() {
 			FROM wp_usermeta 
 			LEFT OUTER JOIN wp_users ON wp_users.ID = wp_usermeta.user_id
 			WHERE meta_key LIKE '%loopadmin_%' AND user_id != '0' AND meta_value != '0'
-			ORDER BY `umeta_id` ASC  ";
+			ORDER BY display_name, umeta_id ASC  ";
 	
 	$result = $wpdb->get_results($sql, ARRAY_A);
 	
