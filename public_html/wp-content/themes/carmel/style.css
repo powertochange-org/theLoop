@@ -963,6 +963,10 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 	float: left;
 }
 
+#wikicontent_ifr {
+	border: 2px solid black;
+}
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
