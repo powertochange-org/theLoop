@@ -9,6 +9,7 @@ Purposes, in order of importance
 
 @Author Jordan Shelvock, May 31, 2012
 */
+include('functions/functions.php');
 ?>
 <?php get_header(); ?>
 	<div id="content">
@@ -18,6 +19,7 @@ Purposes, in order of importance
 					<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>
 					<div class="entry">
 						<?php the_content(); ?>
+						<a href="../medical-allowance/">Return to the health plan page.</a>
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -31,8 +33,8 @@ Purposes, in order of importance
 			<?php
 					$isAdministrator = get_user_meta($current_user->ID, "wp_capabilities", true);
 					//anything above the if statement on the next line will be visible to any schmuck that stumbles upon this URL
-					if('true'==get_user_meta($current_user->ID, "healthplan_admin", true) //if user is flagged as as having access to healthplan
-					|| '1'==$isAdministrator[administrator] ){ //or if user is wp admin
+					if(isAppAdmin('healthplan', 0)) { //if user is flagged as as having access to healthplan
+					
 						
 						if (! isset($_POST['dates'])) { //if user hasn't yet tried to update dates show them the form
 							//grab the open and close dates from the database
@@ -330,54 +332,58 @@ Purposes, in order of importance
 						//this section allows all with access to this page to grant or revoke access to this page
 						//only administrators priviliges can't be removed--they won't show up in the list unless added. 
 						//adding and removing administrators affects nothing.
-						if (isset($_POST['report'])) { //if the form has a $_POST['report'] variable, they were just sent here from the health plan page. this is the typical case. we will show  them who can access the report 
-							echo '<form action="" method="post">';
-								echo '<p />All administrators have access to this report. Additionally, the following users have access to this report. <p />';
-								
-								$results = $wpdb-> get_results('SELECT user_login
-															FROM wp_users, wp_usermeta
-															WHERE wp_users.id = wp_usermeta.user_id
-															AND wp_usermeta.meta_key = "healthplan_admin"
-															AND wp_usermeta.meta_value = "true"');
-								echo '<table>';
-									echo '<tr>';
-										echo '<th>Username</th>';
-									echo '</tr>';
-									foreach ( $results as $result ) 
-									{
-										echo '<tr>';
-											echo '<td>' . $result->user_login . '</td>';
-										echo '</tr>';
-									}
-								echo '</table>';
-								echo 'To add or remove a user\'s access to this report, use the forms below. <p /> ';
-								echo '<input type="text" name="userAdd" />';
-								echo '<input type="submit" name="submitAdd" value="Add User" /> <p />';
-								echo '<input type="text" name="userRevoke" />';
-								echo '<input type="submit" name="submitRevoke" value="Remove User" />';
-							echo '</form>';	
 						
-						} //end if. anything above here is shown if the user hasn't used the form. 
+						//if the form has a $_POST['report'] variable, they were just sent here from the health plan page. this is the typical case. we will show  them who can access the report 
+						echo '<form action="" method="post">';
+							echo '<p />All administrators have access to this report. Additionally, the following users have access to this report. <p />';
+							
+							$results = $wpdb-> get_results('SELECT user_login
+														FROM wp_users, wp_usermeta
+														WHERE wp_users.id = wp_usermeta.user_id
+														AND wp_usermeta.meta_key = "loopadmin_healthplan"
+														AND wp_usermeta.meta_value = "1"');
+							echo '<table>';
+								echo '<tr>';
+									echo '<th>Username</th>';
+								echo '</tr>';
+								foreach ( $results as $result ) 
+								{
+									echo '<tr>';
+										echo '<td>' . $result->user_login . '</td>';
+									echo '</tr>';
+								}
+							echo '</table>';
+							echo 'To add or remove a user\'s access to this report, use the forms below. <p /> ';
+							echo '<input type="text" name="userAdd" />';
+							echo '<input type="submit" name="submitAdd" value="Add User" /> <p />';
+							echo '<input type="text" name="userRevoke" />';
+							echo '<input type="submit" name="submitRevoke" value="Remove User" />';
+						echo '</form>';	
+						
+						//end if. anything above here is shown if the user hasn't used the form. 
 						if (isset($_POST['submitAdd'])) { //else if the user added a user
 							$toAdd = $_POST['userAdd'];
 							$id = $wpdb-> get_var($wpdb->prepare("	SELECT id FROM wp_users WHERE user_login = %s ", $toAdd));
 							//$wpdb-> get_results("REPLACE INTO wp_usermeta (user_id, meta_key, meta_value) VALUES ($id, 'healthplan_admin', 'true'	)");						
-							$wpdb-> get_results("DELETE FROM wp_usermeta WHERE user_id=$id AND meta_key='healthplan_admin'"); 
-							$wpdb-> get_results("INSERT INTO wp_usermeta VALUES ('', $id, 'healthplan_admin', 'true')");
+							$wpdb-> get_results("DELETE FROM wp_usermeta WHERE user_id=$id AND meta_key='loopadmin_healthplan'"); 
+							$wpdb-> get_results("INSERT INTO wp_usermeta VALUES ('', $id, 'loopadmin_healthplan', '1')");
 							echo "Successfully added the user";
 							echo '<form action="" method="post"><input type="submit" name="report" value="Click here to see updated access list" /></form>';
 						} //else if
 						else if (isset($_POST['submitRevoke'])) { //else if the user removed a user
 							$toRevoke = $_POST['userRevoke'];
 							$id = $wpdb-> get_var($wpdb->prepare("	SELECT id FROM wp_users WHERE user_login = %s ", $toRevoke));
-							$wpdb-> get_results("DELETE FROM wp_usermeta WHERE user_id=$id AND meta_key='healthplan_admin'"); 
-							$wpdb-> get_results("INSERT INTO wp_usermeta VALUES ('', $id, 'healthplan_admin', 'false')");
+							$wpdb-> get_results("DELETE FROM wp_usermeta WHERE user_id=$id AND meta_key='loopadmin_healthplan'"); 
+							//$wpdb-> get_results("INSERT INTO wp_usermeta VALUES ('', $id, 'loopadmin_healthplan', 'false')");
 							echo "Successfully removed the user";
 							echo '<form action="" method="post"><input type="submit" name="report" value="Click here to see updated access list" /></form>';
 						} //else if
 						
 
-					} //end if. anything passed here will be visible to any schmuck that stumbles upon this URL					?>
+					} else {//end if. anything passed here will be visible to any schmuck that stumbles upon this URL
+						echo 'You do not have access to the Medical Allowance Admin Page. App Name: healthplan';
+					}
+					?>
 			</div>
 		</div>
 	<!--content end-->
