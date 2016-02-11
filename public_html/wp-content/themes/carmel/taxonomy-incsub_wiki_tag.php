@@ -39,6 +39,14 @@
                         <?php next_posts_link('&laquo; Previous Entries') ?>
                         <?php previous_posts_link('Next Entries &raquo;') ?>
                     </div>
+                    <div id="page-nav">
+                        <div style="float:left;">
+                            <?php previous_posts_link('&laquo; Previous Results'); ?>
+                        </div>
+                        <div style="float:right;">
+                            <?php next_posts_link('Next Results &raquo;');?>
+                        </div>
+                    </div>
                 <?php endif; ?> 
             </div>
         </div>

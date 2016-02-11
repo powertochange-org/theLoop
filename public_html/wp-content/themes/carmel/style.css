@@ -871,6 +871,9 @@ ul.wpp-list li {
 	margin: 0;
 }
 
+#page-nav {
+	font-size: 25px;
+}
 
 /*Wiki Styling*/
 h1.entry-title {
@@ -958,6 +961,10 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 .wiki-search-submit {
 	width: 15%; 
 	float: left;
+}
+
+#wikicontent_ifr {
+	border: 2px solid black;
 }
 
 /*
