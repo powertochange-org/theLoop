@@ -9,15 +9,14 @@
 				<?php if(!isset($_GET['wiki'])) { ?>
 				<h5 style="float:left;margin-right:20px;">Filter By: </h5>
 				<?php $s = str_replace(' ', '+', $s); ?>
-				<a href="/?s=<?php echo $s;?>&amp;post_type=incsub_wiki"><img src="/wp-content/images/Self-Help-Wiki-Icon.png"></a>
-				<a href="/?s=<?php echo $s;?>&amp;post_type=page"><img src="/wp-content/images/Pages-Icon.png"></a>
-				<a href="/?s=<?php echo $s;?>&amp;post_type=post"><img src="/wp-content/images/Posts-Icon.png"></a>
+				<!--<a href="/?s=<?php //echo $s;?>&amp;searchfilter=incsub_wiki"><img src="/wp-content/images/Self-Help-Wiki-Icon.png"></a>-->
+				<a href="/?s=<?php echo $s;?>&amp;searchfilter=page"><img src="/wp-content/images/Pages-Icon.png"></a>
+				<a href="/?s=<?php echo $s;?>&amp;searchfilter=post"><img src="/wp-content/images/News-Icon.png"></a>
 				<?php } ?>
 				<hr>
 				<?php if (have_posts()) : ?>
 				<?php while (have_posts()) : the_post(); ?>		
-				<?php $postType = get_post_type();
-				if(!isset($_GET['post_type']) || $_GET['post_type'] == $postType) { //Fix to prevent posts from populating with pages ?>
+				<?php $postType = get_post_type();?>
 				<div class="post">
 					<div style="width:90%;float:left;">
 						<h3 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
@@ -32,15 +31,13 @@
 							} else if($postType == 'page') {
 								echo '<img src="/wp-content/images/Pages-Icon.png">';
 							} else if($postType == 'post') {
-								echo '<img src="/wp-content/images/Posts-Icon.png">';
-							} else {
-								echo $postType;
+								echo '<img src="/wp-content/images/News-Icon.png">';
 							}?>
 						</p>
 					</div>
 				</div>
 				<hr style="clear:both;">
-				<?php } endwhile; ?>
+				<?php endwhile; ?>
 				<div id="page-nav">
 				    <div style="float:left;">
 				    	<?php previous_posts_link('&laquo; Previous Results'); ?>
