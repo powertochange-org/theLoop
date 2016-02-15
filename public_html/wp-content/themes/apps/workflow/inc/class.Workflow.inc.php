@@ -533,17 +533,18 @@ class Workflow {
                 }
             } else if($approvalStatus == 4) {
                 $currentApprovalRole = $row['APPROVER_ROLE4'];
-            } else if($approvalStatus == 100) {
-                //The approval status is incorrect for some reason
-                if($row['APPROVER_ROLE'] == 8 || $row['APPROVER_ROLE2'] == 8 || $row['APPROVER_ROLE3'] == 8 
-                    || $row['APPROVER_ROLE4'] == 8) {
-                    $currentApprovalRole = 8;
-                } else if(Workflow::hasRoleAccess($loggedInUser, $row['APPROVER_ROLE']) 
+            } else if($approvalStatus == 100) { //When the submission is complete
+                if(Workflow::hasRoleAccess($loggedInUser, $row['APPROVER_ROLE']) 
                     || Workflow::hasRoleAccess($loggedInUser, $row['APPROVER_ROLE2'])
                     || Workflow::hasRoleAccess($loggedInUser, $row['APPROVER_ROLE3'])
                     || Workflow::hasRoleAccess($loggedInUser, $row['APPROVER_ROLE4'])) {
                     $approver = 1;
                 }
+                //If they don't have normal access check if they are a supervisor
+                if(!$approver && ($row['APPROVER_ROLE'] == 8 || $row['APPROVER_ROLE2'] == 8 
+                    || $row['APPROVER_ROLE3'] == 8 || $row['APPROVER_ROLE4'] == 8)) {
+                    $currentApprovalRole = 8;
+                } 
             }
             
             
@@ -1963,6 +1964,20 @@ class Workflow {
         
         if(!($status == 4 || $status == 7 || $status == 8 || $status == 3))
             return;
+        //Check to make sure the user didn't just retract their own submission
+        if($status == 3) {
+            $sql = "SELECT USER
+                    FROM workflowformhistory
+                    WHERE SUBMISSION_ID = '$submissionID'
+                    ORDER BY DATE_SUBMITTED DESC
+                    LIMIT 1";
+            $retractCheck = $wpdb->get_results($sql, ARRAY_A);
+            if($retractCheck) {
+                //Don't send an email if the user retracted their submission
+                if($retractCheck[0]['USER'] == $userid) 
+                    return;
+            } 
+        }
         
         //Find out if it is a direct supervisor submission or not
         $role = $approvers[$approvalStatus - 1];
@@ -1974,7 +1989,6 @@ class Workflow {
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
-                    echo 'DENIED: denied approval test';
         } else if($role != 8 && $role != '') {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
                     FROM workflowrolesmembers
@@ -1999,7 +2013,7 @@ class Workflow {
             return;
         
         $emailRecepients = $wpdb->get_results($sql, ARRAY_A);
-        var_dump($emailRecepients);
+        //var_dump($emailRecepients);
         
         $recepients = array();
         $tempRec = '';
@@ -2082,7 +2096,7 @@ class Workflow {
                     $mail->Subject = 'Workflow email requiring further input';
                                                             
                 $mail->Body = $body;
-                echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
+                //echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
                 $mail->Send();
             }
         }
