@@ -441,6 +441,20 @@ function sanitize_date($string) {
     return $string;
 }
 
+/*Used for the loop search if the user clicks on one of the filter buttons.*/
+function wpshock_search_filter( $query ) {
+    if ( $query->is_search ) {
+        $searchfilter = "";
+        if(isset($_GET['searchfilter']))
+            $searchfilter = $_GET['searchfilter'];
+        $query->set( 'post_type', array($searchfilter) );
+    }
+    return $query;
+}
+if(isset($_GET['searchfilter']))
+    add_filter('pre_get_posts','wpshock_search_filter');
+
+
 /*
  * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
  *  deploy other changes in this file to production
