@@ -64,6 +64,53 @@ if(isAppAdmin('staffhealth', 0)) {
 					  ELSE 3 END,
 			full_name", /* Order by current user first, then direct reports, then everyone else */
 		$user_id, $user_id, $user_id, $user_id));	
+  
+  //Add on the extra entries from the employee manager table
+  for($z = 0; $z < 7; $z++) { //Up to 7 levels
+    if($z == 0) {
+      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare( 
+        "SELECT 
+        employee_manager.employee_number, 
+        employee.user_login,
+        s1.user_login AS 'supervisor_login',
+        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
+        FROM employee_manager
+        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
+        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
+        WHERE s1.user_login = %s AND employee.staff_account IS NOT NULL", $user_id));
+    } else {
+      $sql = "SELECT 
+        employee_manager.employee_number, 
+        employee.user_login,
+        s1.user_login AS 'supervisor_login',
+        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
+        FROM employee_manager
+        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
+        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
+        WHERE s1.employee_number IN( %s ) AND employee.staff_account IS NOT NULL";
+        
+        $params = '';
+        foreach($extrareportsToMeResults as $extra) {
+          if(!empty($params))
+            $params .= ', ';
+          $params .= $extra->employee_number;
+        }
+      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare($sql, $params));
+    }
+    //Check for duplicates
+    foreach($extrareportsToMeResults as $extra) {
+      $duplicate = 0;
+      foreach($reportsToMeResults as $duplicateCheck) {
+        if($duplicateCheck->employee_number == $extra->employee_number) {
+          $duplicate = 1;
+          break;
+        }
+      }
+      //Add the person if they are not a duplicate
+      if(!$duplicate)
+        array_push($reportsToMeResults, $extra);
+    }
+  }
 }
 
 
