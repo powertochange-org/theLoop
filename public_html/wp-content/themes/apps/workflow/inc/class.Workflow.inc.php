@@ -304,31 +304,36 @@ class Workflow {
         if($sup) {
             $direct = Workflow::getDirectApprover($user);
             $direct2 = Workflow::getDirectApprover($direct);
-            
-            $directSupervisors = Workflow::getMultipleDirectApprovers($user);
-            $foundSupervisor = 0;
-            //TODO: Check if we want to add the supervisors of supervisors
-            foreach($directSupervisors as $directSup) {
-                if($sup == $directSup['supervisor']) {
-                    $directApprover = $sup;
-                    $foundSupervisor = 1;
-                    break;
+            if($sup == 1) {
+                $directApprover = $direct;
+            } else if($sup == 2) {
+                $directApprover = $direct2;
+            } else {
+                $directSupervisors = Workflow::getMultipleDirectApprovers($user);
+                $foundSupervisor = 0;
+                //TODO: Check if we want to add the supervisors of supervisors
+                foreach($directSupervisors as $directSup) {
+                    if($sup == $directSup['supervisor']) {
+                        $directApprover = $sup;
+                        $foundSupervisor = 1;
+                        break;
+                    }
+                }
+                if(!$foundSupervisor) {
+                    if($sup == $direct2) {
+                        $directApprover = $sup;
+                        $foundSupervisor = 1;
+                    }
+                }
+                if(!$foundSupervisor) {
+                    $_SESSION['ERRMSG'] = 'The supervisor you have selected does not appear to be your supervisor. 
+                    Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if this is
+                    an error.';
+                    header('location: ?page=viewsubmissions');
+                    die();
                 }
             }
-            if(!$foundSupervisor) {
-                if($sup == $direct2) {
-                    $directApprover = $sup;
-                    $foundSupervisor = 1;
-                }
-            }
-            if(!$foundSupervisor) {
-                $_SESSION['ERRMSG'] = 'The supervisor you have selected does not appear to be your supervisor. 
-                Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if this is
-                an error.';
-                header('location: ?page=viewsubmissions');
-                die();
-            }
-            
+            $foundSupervisor = 1;
         }
         date_default_timezone_set('America/Los_Angeles');
         $newApprovalStatus = 1;
@@ -875,7 +880,7 @@ class Workflow {
             //<input type="text" id="onbehalf" name="onbehalf" placeholder="Emp Num"></div>';
             
             
-            $response .= '<select id="onbehalf" name="onbehalf" class="chosen-select" data-placeholder=" " onchange="updateSupervisorButton();"><option value="">Myself</option>';
+            $response .= '<select id="onbehalf" name="onbehalf" class="chosen-select" data-placeholder=" " onchange="updateSupervisorButton();"><option value="Myself">Myself</option>';
             $values = Workflow::getAllUsers();
             
             for($i = 0; $i < count($values); $i++) {
@@ -1057,14 +1062,14 @@ class Workflow {
                         $response .= '%EMAILNAME%';
                     else 
                         $response .= Workflow::loggedInUserName();
-                    $response .= '" disabled>';
+                    $response .= '" disabled class="autonamefill">';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" value="';
                     if($emailMode)
                         $response .= '%EMAILNAME%';
                     else 
                         $response .= Workflow::loggedInUserName();
-                    $response .= '">';
+                    $response .= '" class="autonamefill">';
                 } else {
                     $response .= $fieldvalue;
                 }
@@ -2188,7 +2193,7 @@ class Workflow {
         $response = '';
         
         $sql = "SELECT STATUS, APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
-                APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL
+                APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL, BEHALFOF
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                 WHERE SUBMISSIONID = '$submissionID'";
@@ -2209,6 +2214,8 @@ class Workflow {
         $misc_content = $row['MISC_CONTENT'];
         $formName = $row['NAME'];
         $approvers = array($row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4']);
+        
+        $behalfOf = ($row['BEHALFOF'] =! NULL ? $row['BEHALFOF'] : '');
         
         if(!($status == 4 || $status == 7 || $status == 8 || $status == 3))
             return;
@@ -2283,7 +2290,7 @@ class Workflow {
                 Some forms may result in a fundamental change in the employment relationship of a staff member, 
                 please review carefully before approving. </p>
             <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
-                    $status, $approvalStatus, ($supNext != ''), 0, 1, ($supNext == 8)).
+                    $status, $approvalStatus, ($supNext != ''), $behalfOf, 1, ($supNext == 8)).
             '<br></body>';
         } else if($status == 3) {
             $template = '
@@ -2294,7 +2301,7 @@ class Workflow {
                 (click to view form online)</p>
                 <p></p>
             <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 3, $submissionID, $misc_content, $commenttext, $userid, 
-                    $status, $approvalStatus, ($supNext != ''), 0, 1, ($supNext == 8)).
+                    $status, $approvalStatus, ($supNext != ''), $behalfOf, 1, ($supNext == 8)).
             '<br></body>';
         } else {
             $templateFinished = '
@@ -2304,7 +2311,7 @@ class Workflow {
                 <p>To view this form, visit this link: 
                 <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
             <h3>Email List</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
-                    $status, $approvalStatus, 0, 0, 1, 0).
+                    $status, $approvalStatus, 0, $behalfOf, 1, 0).
             '<br></body>';
         }
         

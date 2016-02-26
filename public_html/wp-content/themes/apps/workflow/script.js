@@ -990,18 +990,27 @@ function addExtraRadioField(id, x) {
 
 var savedSupervisor;
 var savedSup = 0;
+var userName = '';
 function updateSupervisorButton() {
-    
     if(savedSup == 0) {
         savedSupervisor = find('supervisor-radio').innerHTML;
         savedSup = 1;
+        userName = document.getElementsByClassName('autonamefill')[0].value;
     }
     
     if(find('onbehalf').value == 'Myself') {
         find('supervisor-radio').innerHTML = savedSupervisor;
+        behalfUser = userName;
     } else {
-        find('supervisor-radio').innerHTML = '<input type="radio" name="nextsupervisor" value="0" checked>Supervisor'+
-        '<input type="radio" name="nextsupervisor" value="1">2nd Supervisor';
+        find('supervisor-radio').innerHTML = '<input type="radio" name="nextsupervisor" value="1" checked>Supervisor'+
+        '<input type="radio" name="nextsupervisor" value="2">2nd Supervisor';
+        
+        var behalfUser = document.getElementById("onbehalf").options[document.getElementById("onbehalf").selectedIndex ].text;
+    }
+    /*Update all the auto fill name fields to the selected behalf of user.*/
+    var elements = document.getElementsByClassName('autonamefill');
+    for(var i=0; i<elements.length; i++) {
+        elements[i].value = behalfUser;
     }
 }
 

@@ -35,7 +35,7 @@ if($loggedInUser == '0') {
     die();
 }
 
-if(isset($_POST["onbehalf"]) && $_POST["onbehalf"] != '') {
+if(isset($_POST["onbehalf"]) && $_POST["onbehalf"] != '' && $_POST["onbehalf"] != 'Myself') {
     $behalfof = $loggedInUser;
     $loggedInUser = $_POST["onbehalf"];
     if(Workflow::getUserName($loggedInUser) == '') {
@@ -73,14 +73,14 @@ if(isset($_POST['commenttext']) && $_POST['commenttext'] != '') {
     $commenttext = stripslashes($_POST['commenttext']);
 } 
 
-/* Old method for the supervisor override.
-if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
-    //$sup = $_POST['nextsupervisor'];
-} */
-
 if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {
     $sup = $_POST['directsupervisor'];
 }
+
+/* Old method for the supervisor override. Used for behalf of submissions.*/
+if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
+    $sup = $_POST['nextsupervisor'];
+} 
 
 if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
     $uniqueToken = $_POST['uniquetoken'];
