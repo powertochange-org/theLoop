@@ -20,7 +20,7 @@ $sql = "SELECT CONCAT(
 		) as number
 			FROM phone_number 
 			WHERE 
-				`employee_id` = '$user->external_id' and
+				`employee_number` = '$user->external_id' and
 				`is_ministry` = 1 and 
 				`phone_type` = 'Business' 
 			LIMIT 0,1";
@@ -36,7 +36,7 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 		) as number
 			FROM phone_number 
 			WHERE 
-				`employee_id` = '$user->external_id' and
+				`employee_number` = '$user->external_id' and
 				`is_ministry` = 1 and 
 				`phone_type` = 'Business Mobile' 
 			LIMIT 0,1");
