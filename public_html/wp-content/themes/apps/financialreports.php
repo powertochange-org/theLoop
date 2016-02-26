@@ -90,7 +90,7 @@ if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorRepor
   $year = $_POST['RPTYEAR'];
 	
   $lastday=31;
-  while (!checkdate($month,$lastday,$year)) {
+  while (!checkdate(intval($month),$lastday,$year)) {
     $lastday = $lastday-1;
   }
 

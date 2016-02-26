@@ -11,26 +11,7 @@ $delimiter = '&#x2e;';
 $current_user = wp_get_current_user();
 $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
 $sql = "SELECT CONCAT(
-		`area_code`, '$delimiter', 
-		REPLACE(`contact_number`,'-', '$delimiter'),
-		CASE
-			WHEN `extension` is null THEN ''
-			WHEN `extension` = '' THEN ''
-			ELSE CONCAT('$delimiter', `extension`)
-		END
-		) as number
-			FROM phone_number 
-			WHERE 
-				`employee_id` = '$user->external_id' and 
-				`is_ministry` = 1 and 
-				`phone_type` = 'BUS' 
-			ORDER BY `is_primary` DESC
-			LIMIT 0,1";
-//echo $sql;
-$phone = $wpdb->get_row($sql);
-$cell = $wpdb->get_row("SELECT CONCAT(
-		`area_code`, '$delimiter', 
-		REPLACE(`contact_number`,'-', '$delimiter'),
+		REPLACE(REPLACE(REPLACE(REPLACE(`phone_number`,'-', '$delimiter'), ' ', '$delimiter'), '(', ''), ')', ''),
 		CASE
 			WHEN `extension` is null THEN ''
 			WHEN `extension` = '' THEN ''
@@ -41,8 +22,23 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 			WHERE 
 				`employee_id` = '$user->external_id' and
 				`is_ministry` = 1 and 
-				`phone_type` = 'CELL' 
-			ORDER BY `is_primary` DESC
+				`phone_type` = 'Business' 
+			LIMIT 0,1";
+//echo $sql;
+$phone = $wpdb->get_row($sql);
+$cell = $wpdb->get_row("SELECT CONCAT(
+		REPLACE(REPLACE(REPLACE(REPLACE(`phone_number`,'-', '$delimiter'), ' ', '$delimiter'), '(', ''), ')', ''),
+		CASE
+			WHEN `extension` is null THEN ''
+			WHEN `extension` = '' THEN ''
+			ELSE CONCAT('$delimiter', `extension`)
+		END
+		) as number
+			FROM phone_number 
+			WHERE 
+				`employee_id` = '$user->external_id' and
+				`is_ministry` = 1 and 
+				`phone_type` = 'Business Mobile' 
 			LIMIT 0,1");
 
 $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', 'http://athletesinaction.com/'),
