@@ -378,6 +378,14 @@ if(isset($_GET["reportlink"])) {
 
 
 get_header(); ?>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
+  <style>
+     .chosen-container {width: 220px !important}
+  </style>
 	<div id="content">
 		<div id="main-content">	
 			<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><!-- ?php the_title(); ? --></a></h1>
@@ -414,12 +422,21 @@ get_header(); ?>
 			</P>
 			<DIV ID="staffaccount" STYLE="display:none">
 				<P>Please enter your ministry/staff account number:<BR>  
-					<INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="10" VALUE="<?php echo $_POST["DESGCODE"];?>">
+          <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
+            <option> </option>
+            <?php $values = getAllEmployeesStaffAccounts();
+            for($i = 0; $i < count($values); $i++) {
+                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }?>
+          </select>
+          <button type="button" onclick="addProjectCode();">Add Staff Account ►</button>
+          <INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="15" VALUE="<?php echo $_POST["DESGCODE"];?>">
 				</P>
+        
 			</DIV>
 			<DIV id='staffHealth_options' style='display:none'>
 				For Staff member:
-				<SELECT NAME="employee_number">
+				<SELECT NAME="employee_number" class="chosen-select">
 				<?php
 				foreach($reportsToMeResults as $result) {
 					echo "<OPTION VALUE='" . $result->employee_number . "'>" . $result->full_name . "</OPTION>\r\n";
@@ -576,7 +593,31 @@ get_header(); ?>
 		<!--
 		// Set focus to the project code field
 		//document.getElementById('DESGCODE').focus();
+    
+    //Create filter for the list of names
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }//End of filter creation
 		
+    function addProjectCode() {
+      var projCode = document.getElementById('staffaccountadd').value;
+      if(projCode != null && projCode != '') {
+        var currentEntry = document.getElementById('DESGCODE').value;
+        if(currentEntry != '') {
+          document.getElementById('DESGCODE').value += ',' + projCode;
+        } else {
+          document.getElementById('DESGCODE').value += projCode;
+        }
+      }
+    }
+    
 		function CheckForm(form, subType){
 			if($("#repchoice").val() == "") {
 				alert("Please select a report from the drop-down list");
