@@ -240,7 +240,7 @@ class Workflow {
         
         
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -251,6 +251,7 @@ class Workflow {
             $oldstatus = $row['STATUS'];
             $oldApprovalStatus = $row['STATUS_APPROVAL'];
             $oldcomment = $row['COMMENT'];
+            $oldDirectApprover = $row['APPROVER_DIRECT'];
             if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
             }
@@ -301,12 +302,33 @@ class Workflow {
         $directApprover = Workflow::getDirectApprover($user);
         
         if($sup) {
-            //echo 'DEBUG: You are trying to get a supervisors supervisor for : '.$directApprover.'<br>';
-             $temp = Workflow::getDirectApprover($directApprover); //Gets the supervisors supervisor
-             if($temp != 0)
-                $directApprover = $temp;
-            //echo 'DEBUG: You got: '.$directApprover.'<br>';
-            //die();
+            $direct = Workflow::getDirectApprover($user);
+            $direct2 = Workflow::getDirectApprover($direct);
+            
+            $directSupervisors = Workflow::getMultipleDirectApprovers($user);
+            $foundSupervisor = 0;
+            //TODO: Check if we want to add the supervisors of supervisors
+            foreach($directSupervisors as $directSup) {
+                if($sup == $directSup['supervisor']) {
+                    $directApprover = $sup;
+                    $foundSupervisor = 1;
+                    break;
+                }
+            }
+            if(!$foundSupervisor) {
+                if($sup == $direct2) {
+                    $directApprover = $sup;
+                    $foundSupervisor = 1;
+                }
+            }
+            if(!$foundSupervisor) {
+                $_SESSION['ERRMSG'] = 'The supervisor you have selected does not appear to be your supervisor. 
+                Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if this is
+                an error.';
+                header('location: ?page=viewsubmissions');
+                die();
+            }
+            
         }
         date_default_timezone_set('America/Los_Angeles');
         $newApprovalStatus = 1;
@@ -350,6 +372,14 @@ class Workflow {
                     SET STATUS = '$newstatus',
                         STATUS_APPROVAL = '$newApprovalStatus',
                         DATE_SUBMITTED = '".date('Y-m-d')."' ";
+            if($foundSupervisor) {
+                $sql .= ", APPROVER_DIRECT = '$directApprover'";
+                
+                //Quickly add the direct supervisor to the history so they can see the form once completed
+                $sqlOldDirect = "INSERT INTO workflowsuphistory (USER_ID, SUBMISSIONID, DIRECT_LEVEL) 
+                                VALUES ('$oldDirectApprover', '$submissionID', '$oldApprovalStatus')";
+                $resultOldDirect = $wpdb->query($sqlOldDirect);
+            }
                     
             if($commenttext != '') {
                 $oldcomment = str_replace("\\", "\\\\", $oldcomment);
@@ -595,12 +625,33 @@ class Workflow {
                 if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
                     $processor = 1;
                 }
+                
+                //Give access if they were a direct approver at any time during the form process
+                if(!$approver)
+                    $approver = (Workflow::getDirectApprover($submittedby) == $loggedInUser); //Level 1 only
+                if(!$approver && $approvalStatus == 100) {
+                    $sqlDirect = "SELECT USER_ID
+                            FROM workflowsuphistory
+                            WHERE SUBMISSIONID = '$sbid'";
+                    
+                    $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
+                    foreach($resultDirect as $rowDirect) {
+                        if($rowDirect['USER_ID'] == $loggedInUser) {
+                            $approver = 1;
+                            break;
+                        }
+                    }
+                }
             }
             
-            
-            if($currentApprovalRole == 8) {
-                $approver = ($row['APPROVER_DIRECT'] == $loggedInUser || Workflow::getDirectApprover($submittedby) == $loggedInUser 
+            if($currentApprovalRole == 8 && !$approver) {
+                //Decided to still allow the direct supervisor to be able to edit the submission even though
+                //it wasn't directed to them. See ** below.
+                $approver = ($row['APPROVER_DIRECT'] == $loggedInUser 
+                    || (Workflow::getDirectApprover($submittedby) == $loggedInUser 
+                        && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
+                
             } else if(!$approver) {
                 $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
             }
@@ -612,7 +663,7 @@ class Workflow {
                 if($row['PROCESSED'] == 0)
                         $hasAnotherApproval = 1;
             } else if($configvalue == 4 && $approver) {
-                //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
+                //Do nothing keep going.
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
                 $configvalue = 9;
             } else if($submittedby != $loggedInUser) {
@@ -631,7 +682,6 @@ class Workflow {
                     
             
             if($row['MISC_CONTENT'] != '') {
-                //echo $row['MISC_CONTENT'];
                 $misc_content = $row['MISC_CONTENT'];
             }
             
@@ -667,7 +717,6 @@ class Workflow {
             else 
                 $supNext = 0;
         }
-        
         
         //TODO Authorize the person that is trying to access this function or page.
         //echo 'DEBUG: Workflow status: '.$configvalue.'<br>';
@@ -1235,22 +1284,26 @@ class Workflow {
             
             $response .= '<h3>Submitting to: '.Workflow::getNextRoleName($submittingStatus, $submittingApproval, $id, ($configuration == 0), 
                 $submissionID).'</h3>';
+            //If the next submission step is to a direct approver
             if($supNext && 0 < $configuration && $configuration <= 4) {
                 $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
                 $direct2 = Workflow::getDirectApprover($direct);
-                $response .= '<div id="supervisor-radio">';
+                /*$response .= '<div id="supervisor-radio">';
                 $response .= '<input type="radio" name="nextsupervisor" value="0" checked>'.Workflow::getUserName($direct);
                 if($direct2 != 0)
                     $response .= '<input type="radio" name="nextsupervisor" value="1">'.Workflow::getUserName($direct2);
-                $response .= '</div>';
+                $response .= '</div>';*/
                 
                 $response .= '<div id="supervisor-radio"><select name="directsupervisor">';
                 $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
                 //TODO: Check if we want to add the supervisors of supervisors
+                $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
                     $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
+                    if($directSup['supervisor'] == $direct2)
+                        $omitDirect2 = 1;
                 }
-                if($direct2 != 0)
+                if($direct2 != 0 && !$omitDirect2)
                     $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
                 $response .= '</select></div>';
             }
@@ -1634,7 +1687,7 @@ class Workflow {
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' OR employee.supervisor = '$userid') ) ";
+                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
                 
                 
                 //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
@@ -1655,8 +1708,16 @@ class Workflow {
         
         }
         
-        //$sql .= "OR STATUS_APPROVAL = '100' AND (";
+        //Check if they were a past direct supervisor approver
+        $sqlDirect = "SELECT SUBMISSIONID
+                FROM workflowsuphistory
+                WHERE USER_ID = '$userid'";
         
+        $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
+        foreach($resultDirect as $rowDirect) {
+            $sql .= " OR (STATUS_APPROVAL = '100' 
+                        AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
+        }
         
         $sql .= ") AND (workflowformstatus.STATUS != '2' 
                     AND workflowformstatus.STATUS != '3' 
@@ -1924,7 +1985,7 @@ class Workflow {
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' OR employee.supervisor = '$userid') ) ";
+                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
                 
                 
                 //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
@@ -1944,6 +2005,18 @@ class Workflow {
             $sql .= ") ";
         
         }
+        
+        //Check if they were a past direct supervisor approver
+        $sqlDirect = "SELECT SUBMISSIONID
+                FROM workflowsuphistory
+                WHERE USER_ID = '$userid'";
+        
+        $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
+        foreach($resultDirect as $rowDirect) {
+            $sql .= " OR (STATUS_APPROVAL = '100' 
+                        AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
+        }
+        
         
         //$sql .= "OR STATUS_APPROVAL = '100' AND (";
         

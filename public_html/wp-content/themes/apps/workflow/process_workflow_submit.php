@@ -73,12 +73,13 @@ if(isset($_POST['commenttext']) && $_POST['commenttext'] != '') {
     $commenttext = stripslashes($_POST['commenttext']);
 } 
 
+/* Old method for the supervisor override.
 if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
-    $sup = $_POST['nextsupervisor'];
-} 
+    //$sup = $_POST['nextsupervisor'];
+} */
 
 if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {
-    //$sup = $_POST['directsupervisor'];
+    $sup = $_POST['directsupervisor'];
 }
 
 if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
