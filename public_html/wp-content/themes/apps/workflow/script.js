@@ -416,7 +416,7 @@ function saveSubmission(status, approver) {
         return;
     }
     
-    if(status == 2 || status == 3 || status == 8 || status == 10) {
+    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20) {
         document.getElementById('workflowsubmission').submit();
     } else {
         document.getElementById('formsubmitbutton').click();
@@ -1262,6 +1262,28 @@ function switchTab(mode, tab) {
             }
         } else {
             var tmp = findClass('approver-8');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 9) {
+            var tmp = findClass('approver-9');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('approver-9');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.remove("hide");
+            }
+        }
+        if(tab != 10) {
+            var tmp = findClass('approver-10');
+            for(i = 0; i < tmp.length; i++) {
+                tmp[i].classList.add("hide");
+            }
+        } else {
+            var tmp = findClass('approver-10');
             for(i = 0; i < tmp.length; i++) {
                 tmp[i].classList.remove("hide");
             }

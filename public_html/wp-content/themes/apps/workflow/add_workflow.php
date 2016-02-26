@@ -31,6 +31,7 @@ if(!isset($_POST["submitmode"])) {
 $destination2 = -1;
 $destination3 = -1;
 $destination4 = -1;
+$processor = -1;
 $behalfof = $draft = 0;
 
 if(isset($_POST['destination2']) && $_POST['destination2'] != '') {
@@ -41,6 +42,9 @@ if(isset($_POST['destination3']) && $_POST['destination3'] != '') {
 }
 if(isset($_POST['destination4']) && $_POST['destination4'] != '') {
     $destination4 = $_POST['destination4'];
+}
+if(isset($_POST['processor']) && $_POST['processor'] != '') {
+    $processor = $_POST['processor'];
 }
 if(isset($_POST['behalfof'])) {
     $behalfof = 1;
@@ -65,7 +69,7 @@ if(isset($_POST['previousID']) && ($submitmode == 2 || $submitmode == 4))
 
 $myWorkflow = new Workflow();
 $myWorkflow->createWorkflow($_POST['workflowname'], $_POST['startaccess'], $_POST['destination1'], $destination2, 
-                            $destination3, $destination4, $behalfof, $draft, stripslashes($savedData), $numfields, $submitmode, $previousID);
+                            $destination3, $destination4, $processor, $behalfof, $draft, stripslashes($savedData), $numfields, $submitmode, $previousID);
 
 
 if($submitmode == 3 || $submitmode == 4) {

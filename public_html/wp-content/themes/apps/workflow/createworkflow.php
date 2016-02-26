@@ -67,6 +67,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             $approver2 = $result[0]['APPROVER_ROLE2'];
             $approver3 = $result[0]['APPROVER_ROLE3'];
             $approver4 = $result[0]['APPROVER_ROLE4'];
+            $processor = $result[0]['PROCESSOR'];
             $behalfof = $result[0]['BEHALFOF_SHOW'];
             $savedfields = $result[0]['SAVED_FIELDS'];
             if($result[0]['NUM_FIELDS'] != null)
@@ -144,7 +145,6 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 }
                 ?>
             </select>
-            <!--<input type="text" name="destination">-->
         </div>
         <div class="clear"></div>
         
@@ -164,7 +164,6 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 }
                 ?>
             </select>
-            <!--<input type="text" name="destination">-->
         </div>
         <div class="clear"></div>
         
@@ -184,7 +183,6 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 }
                 ?>
             </select>
-            <!--<input type="text" name="destination">-->
         </div>
         <div class="clear"></div>
         
@@ -204,7 +202,25 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 }
                 ?>
             </select>
-            <!--<input type="text" name="destination">-->
+        </div>
+        <div class="clear"></div>
+        
+        <div class="workflow workflowleft">
+            Processor:
+        </div>
+        <div class="workflow workflowright style-1">
+            <select name="processor">
+                <option></option>
+                <?php
+                $values = $workflow->getRoles();
+                for($i = 0; $i < count($values); $i++) {
+                    echo '<option value="'.$values[$i][0].'"';
+                    if($values[$i][0] == $processor)
+                        echo 'selected';
+                    echo '>'.$values[$i][1].'</option>';
+                }
+                ?>
+            </select>
         </div>
         <div class="clear"></div>
         

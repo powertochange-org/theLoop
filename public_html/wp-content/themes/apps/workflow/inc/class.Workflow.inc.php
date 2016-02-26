@@ -20,6 +20,7 @@ class Workflow {
     private $name;
     private $startAccess;
     private $approvers;
+    private $processor;
     private $behalfof;
     private $fields; 
     private $draft;
@@ -29,20 +30,22 @@ class Workflow {
     private $previousID;
     private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
     private $uniqueToken;
+    private $linkAddress;
     
     public function __construct() {
+        $this->linkAddress = get_home_url( '/');
     }
     
     public function __destruct() {
         
     }
     
-    public function createWorkflow($name, $startAccess, $approver, $approver2, $approver3, $approver4, $behalfof, 
-                                    $draft, $savedData, $numFields, $mode, $previousID) {
-        
+    public function createWorkflow($name, $startAccess, $approver, $approver2, $approver3, $approver4, $processor, 
+                                    $behalfof, $draft, $savedData, $numFields, $mode, $previousID) {
         $this->name = $name;
         $this->startAccess = $startAccess;
         $this->approvers = array($approver, $approver2, $approver3, $approver4);
+        $this->processor = $processor;
         $this->behalfof = $behalfof;
         $this->fields = array();
         
@@ -68,7 +71,8 @@ class Workflow {
         if($this->draft)
             echo '<br>DRAFT MODE ON<br>';
         if($this->mode == 1 || $this->mode == 3) {
-            $sql = "INSERT INTO workflowform (NAME, APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, BEHALFOF_SHOW,
+            $sql = "INSERT INTO workflowform (NAME, APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4,
+                                            PROCESSOR, BEHALFOF_SHOW,
                                                 DRAFT, SAVED_FIELDS, NUM_FIELDS, ENABLED)
                     VALUES ('$this->name', '".$this->approvers['0']."'";
             
@@ -78,6 +82,12 @@ class Workflow {
                 } else {
                     $sql .= ", NULL";
                 }
+            }
+            
+            if($this->processor != -1) {
+                $sql .= ", '".$this->processor."'";
+            } else {
+                $sql .= ", NULL";
             }
             
             $sql .= ", '".$this->behalfof."', ";
@@ -111,6 +121,11 @@ class Workflow {
                 } else {
                     $sql .= "NULL, ";
                 }
+            }
+            if($this->processor != -1) {
+                $sql .= " PROCESSOR = '".$this->processor."', ";
+            } else {
+                $sql .= " PROCESSOR = NULL, ";
             }
             $sql .= "   BEHALFOF_SHOW = '".$this->behalfof."',
                         DRAFT = '".$this->draft."', 
@@ -248,10 +263,39 @@ class Workflow {
         }
         if($oldstatus == 4) {
             
-        } else if($oldstatus >= 7) {
+        } else if($oldstatus >= 7 && !($oldstatus == 7 && $newstatus == 20)) {
             $_SESSION['ERRMSG'] = 'This form can no longer be edited.';
             header('location: ?page=viewsubmissions');
             die();
+        }
+        
+        if($newstatus == 20) {
+            //Mark as processed
+            $sql = "UPDATE workflowformstatus 
+                    SET ";
+                    
+            if($commenttext != '') {
+                $oldcomment = str_replace("\\", "\\\\", $oldcomment);
+                $commenttext = str_replace("\\", "\\\\", $commenttext);
+                $newtext = str_replace("'", "\'", $oldcomment).'<br><b>['.Workflow::loggedInUserName().' on: '.date('Y-m-d H:i').']</b><br>'.
+                    str_replace("'", "\'", $commenttext);
+                
+                $sql .= " COMMENT = '$newtext', ";
+                
+            }
+            $sql .= "PROCESSED = '1'";
+            
+            $sql .= "WHERE SUBMISSIONID = '$submissionID'";
+            $result = $wpdb->query($sql, ARRAY_A);
+            
+            //Update history
+            $sql = "INSERT INTO workflowformhistory (USER, SUBMISSION_ID, APPROVAL_LEVEL, ACTION, DATE_SUBMITTED)
+                    VALUES ('$user', '$submissionID', '20', '20', '".date('Y-m-d H:i:s')."')";
+            
+            $result = $wpdb->query($sql, ARRAY_A);
+            
+            //Prevents sending of an email.
+            return 0;
         }
         
         $directApprover = Workflow::getDirectApprover($user);
@@ -461,7 +505,7 @@ class Workflow {
     */
     public function configureWorkflow() {
         global $wpdb;
-        $configSuccess = $approver = $supNext = 0;
+        $configSuccess = $approver = $supNext = $processor = 0;
         $configMsg = '';
         
         if(Workflow::loggedInUser() == '0') {
@@ -483,7 +527,8 @@ class Workflow {
             $sbid = $_GET['sbid'];
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, BEHALFOF, UNIQUE_TOKEN
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -545,6 +590,11 @@ class Workflow {
                     || $row['APPROVER_ROLE3'] == 8 || $row['APPROVER_ROLE4'] == 8)) {
                     $currentApprovalRole = 8;
                 } 
+                
+                //Check if they just need to process the form
+                if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
+                    $processor = 1;
+                }
             }
             
             
@@ -556,10 +606,14 @@ class Workflow {
             }
             
             //$approver = 1;
-            if($configvalue == 4 && $approver) {
+            if($processor) {
+                $configvalue = 9;
+                
+                if($row['PROCESSED'] == 0)
+                        $hasAnotherApproval = 1;
+            } else if($configvalue == 4 && $approver) {
                 //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
-                //echo 'DEBUG: You are an approver '.$loggedInUser.'<br>';
                 $configvalue = 9;
             } else if($submittedby != $loggedInUser) {
                 echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
@@ -567,6 +621,14 @@ class Workflow {
             } else if($configvalue == 4) {
                 $configvalue = 0;
             }
+            
+            if($row['PROCESSOR'] != NULL && $row['PROCESSOR'] != '') {
+                if($row['PROCESSED'] == 0)
+                    $status = 9;
+                else
+                    $status = 10;
+            }
+                    
             
             if($row['MISC_CONTENT'] != '') {
                 //echo $row['MISC_CONTENT'];
@@ -707,9 +769,13 @@ class Workflow {
         else
             $response .= '<p style="font-size: 24px;text-align: center;margin: 0;">';
         
-        if($configuration == 0 || $configuration == 4) {
+        if($configuration == 0 || $configuration == 4) 
             $response .= 'Status: Pending Approval.';
-        } else if($configuration == 7 || ($configuration == 9 && $status == 7)) {
+        else if(($configuration == 7 || $configuration == 9) && $status == 9)
+            $response .= 'Status: Approved - Not Processed Yet';
+        else if(($configuration == 7 || $configuration == 9) && $status == 10)
+            $response .= 'Status: Approved - Processed';
+        else if($configuration == 7) {
             $response .= 'Status: Approved.';
         } else if($configuration == 8 || ($configuration == 9 && $status == 8)) {
             $response .= 'Status: Not Approved.';
@@ -717,10 +783,11 @@ class Workflow {
             $response .= 'Status: Not Approved.';
         } else if($emailMode && $configuration == 3)
             $response .= 'Status: Input Required.';
+        
         $response .= '</p>';
         $response .='<hr>';
         
-        if(0 <= $configuration && $configuration < 7 && !$emailMode)
+        if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
             $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
         
         //Display the misc content
@@ -1176,6 +1243,16 @@ class Workflow {
                 if($direct2 != 0)
                     $response .= '<input type="radio" name="nextsupervisor" value="1">'.Workflow::getUserName($direct2);
                 $response .= '</div>';
+                
+                $response .= '<div id="supervisor-radio"><select name="directsupervisor">';
+                $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
+                //TODO: Check if we want to add the supervisors of supervisors
+                foreach($directSupervisors as $directSup) {
+                    $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
+                }
+                if($direct2 != 0)
+                    $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
+                $response .= '</select></div>';
             }
             $response .= '<div class="clear"></div>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
@@ -1226,37 +1303,45 @@ class Workflow {
                 $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="text-decoration:none;"><button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="text-decoration:none;"><button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">View Form</button></a>';
                 //Uncomment if email for revisions should include quick buttons. But they really shouldn't
-                /*$response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
+                /*$response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Submit Form</button></a>';
                     
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button">Save Draft</button></a>';//http://local.theloop.com  https://devstaff.powertochange.org
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=save&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button">Save Draft</button></a>';//http://local.theloop.com  https://devstaff.powertochange.org
                 
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=cancel&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #ff8989;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Delete Form</button></a>';*/
             } else if($configuration == 4) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">
                     <button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
                     display: block;font-family: sans-serif;font-size: 18px;margin: 20px 10px 0px 0;
                     min-width: 200px;">Approve</button></a>';
                 
-                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<br><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 0px 0;
                     min-width: 200px;">Request Change</button></a>';
                 
-                $response .= '<br><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<br><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 20px 0;
                     min-width: 200px;">Not Approved</button></a>';
             } else if($configuration == 0) {
-                $response .= '<a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Retract Submission</button></a>';
             }
+        } else if($configuration == 9 && $hasAnotherApproval) {
+            $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
+            $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
+            $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
+            $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
+            $response .= '<input type="hidden" id="ns" name="ns" value="20">';
+            $response .= '<button type="button" id="approvelink" class="submitbutton" onclick="saveSubmission(20, 1);">Processed</button>';
+            $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
         } else if(!$emailMode) {
             //Display approval history //Uncomment the below code to have it only show up once the form is complete.
             
@@ -1338,6 +1423,8 @@ class Workflow {
                     $temp = 'Cancelled Submission';
                 } else if($row['ACTION'] == 8) {
                     $temp = 'Denied Lvl: '.$row['APPROVAL_LEVEL'];
+                } else if($row['ACTION'] == 20) {
+                    $temp = 'Processed';
                 } else {
                     continue;
                 }
@@ -1535,8 +1622,10 @@ class Workflow {
         }
         
         //Approver
-        $sql = "SELECT  workflowformstatus.STATUS,
-                        COUNT(workflowformstatus.STATUS) AS COUNT
+        $sql = "(SELECT  workflowformstatus.STATUS,
+                        COUNT(workflowformstatus.STATUS) AS COUNT,
+                        '0' AS 'PROCESS',
+                        '' AS 'PROCESSED'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -1585,18 +1674,44 @@ class Workflow {
             $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
         //        WHERE workflowformstatus.USER = '$userid'
-        $sql .= "GROUP BY workflowformstatus.STATUS";
         
+        $sql .= "GROUP BY workflowformstatus.STATUS) UNION ALL (SELECT  workflowformstatus.STATUS,
+                        COUNT(workflowformstatus.STATUS) AS COUNT,
+                        '1' AS 'PROCESS',
+                        workflowformstatus.PROCESSED AS 'PROCESSED'
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                WHERE (";
+        
+        
+        for($i = 0; $i < count($roles); $i++) {
+            if($i != 0)
+                $sql .= "OR ";
+            $sql .= "workflowform.PROCESSOR";
+            $sql .= " = '$roles[$i]' ";
+        }
+        $sql .= ") ";
+        
+        
+                
+        $sql .= "AND workflowformstatus.STATUS = '7' GROUP BY PROCESSED) ";
+        
+        //die($sql);
         $result = $wpdb->get_results($sql, ARRAY_A);
         
-        $approverPending = $approverApproved = $approverDenied = 0;
+        $approverPending = $approverApproved = $approverDenied = $notprocessed = $processed = 0;
         foreach($result as $row) {
             if($row['STATUS'] == 4) { //approval pending
                 $approverPending = $row['COUNT'];
-            } else if($row['STATUS'] == 7) { //approved
+            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 0) { //approved
                 $approverApproved = $row['COUNT'];
             } else if($row['STATUS'] == 8) { //denied
                 $approverDenied = $row['COUNT'];
+            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 0) { //not processed
+                $notprocessed = $row['COUNT'];
+            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 1) { //processed
+                $processed = $row['COUNT'];
             }
         }
         
@@ -1629,6 +1744,8 @@ class Workflow {
         $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$approverPending.'</td></tr>';
         $response .= '<tr><td class="left">Approved</td><td class="center">'.$approverApproved.'</td></tr>';
         $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$approverDenied.'</td></tr>';
+        $response .= '<tr><td class="left">Not Processed</td><td class="center">'.$notprocessed.'</td></tr>';
+        $response .= '<tr><td class="left">Processed</td><td class="center">'.$processed.'</td></tr>';
         $response .= '</table>';
         $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
         
@@ -1786,16 +1903,19 @@ class Workflow {
             return 'You need to be logged in to view submissions.';
         }
         
-        $sql = "SELECT  workflowform.NAME, 
+        $sql = "("."SELECT  workflowform.NAME, 
                         workflowform.APPROVER_ROLE, 
                         workflowform.APPROVER_ROLE2, 
                         workflowform.APPROVER_ROLE3, 
                         workflowform.APPROVER_ROLE4, 
+                        workflowform.PROCESSOR, 
+                        '' AS PROCESSED, 
                         workflowformstatus.SUBMISSIONID, 
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME
+                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME,
+                        '0' AS 'PROCESS'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -1844,8 +1964,40 @@ class Workflow {
             $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
         //        WHERE workflowformstatus.USER = '$userid'
-        $sql .= "ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED DESC, workflowform.NAME ASC";
+        $sql .= ")";
         
+        $sql .= " UNION ALL (SELECT  workflowform.NAME, 
+                        '' AS APPROVER_ROLE, 
+                        '' AS APPROVER_ROLE2, 
+                        '' AS APPROVER_ROLE3, 
+                        '' AS APPROVER_ROLE4, 
+                        workflowform.PROCESSOR, 
+                        workflowformstatus.PROCESSED, 
+                        workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.STATUS,
+                        workflowformstatus.STATUS_APPROVAL,
+                        workflowformstatus.DATE_SUBMITTED,
+                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME,
+                        '1' AS 'PROCESS'
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                WHERE (";
+        
+        
+        for($i = 0; $i < count($roles); $i++) {
+            if($i != 0)
+                $sql .= "OR ";
+            $sql .= "workflowform.PROCESSOR";
+            $sql .= " = '$roles[$i]' ";
+        }
+        $sql .= ") ";
+        
+        
+                
+        $sql .= "AND workflowformstatus.STATUS = '7') 
+                ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";
+        //die($sql);
         $result = $wpdb->get_results($sql, ARRAY_A);
         
         $response .= '<div id="approver-submissions" class="hide">';
@@ -1857,38 +2009,54 @@ class Workflow {
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
                         <div id="approver-status-link7" class="workflow-status-link" onclick="switchTab(1, 7);">Approved (%APPROVED%)</div>
                         <div id="approver-status-link8" class="workflow-status-link" onclick="switchTab(1, 8);">Not Approved (%DENIED%)</div>
+                        <div id="approver-status-link9" class="workflow-status-link" onclick="switchTab(1, 9);">To Be Processed (%NOTPROCESSED%)</div>
+                        <div id="approver-status-link10" class="workflow-status-link" onclick="switchTab(1, 10);">Processed (%PROCESSED%)</div>
                     </td></tr>';
 
        
         $tableHeader = '<tr class="%CLASS% submissions-header"><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Last Modified By</th><th>Date Modified</th></tr>';
         
         $prevState = 1;
-        $approved = $denied = $pending = 0;
+        $processorState = -1;
+        $approved = $denied = $pending = $notprocessed = $processed = 0;
         foreach($result as $row) {
-            if($row['STATUS'] != $prevState) {
+            if($row['STATUS'] != $prevState && !$row['PROCESS']) {
                 if($row['STATUS'] == 4) {
                     $response .= '<tr class="approver-4"><td colspan=5><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
                     $prevState = 4;
-                } else if($row['STATUS'] == 7) {
+                } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
                     $response .= '<tr class="approver-7 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
                     $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
                     $prevState = 8;
                 }
-                
+            } else if($processorState < 1 && $row['PROCESS'] && $row['STATUS'] == 7) {
+                if($processorState == -1 && !$row['PROCESSED']) {
+                    $response .= '<tr class="approver-9 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
+                    $processorState = 0;
+                } else if(($processorState == 0 || $processorState == -1) && $row['PROCESSED']) {
+                    $response .= '<tr class="approver-10 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
+                    $processorState = 1;
+                }
             }
             
             $response .= '<tr class="selectedblackout ';
             if($row['STATUS'] == 4) {
                 $response .= 'approver-4';
                 $pending++;
-            } else if($row['STATUS'] == 7) {
+            } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
                 $response .= 'approver-7 hide';
                 $approved++;
             } else if($row['STATUS'] == 8) {
                 $response .= 'approver-8 hide';
                 $denied++;
+            } else if($row['STATUS'] == 7 && $row['PROCESS'] && !$row['PROCESSED']) {
+                $response .= 'approver-9 hide';
+                $notprocessed++;
+            } else if($row['STATUS'] == 7 && $row['PROCESS'] && $row['PROCESSED']) {
+                $response .= 'approver-10 hide';
+                $processed++;
             }
             
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
@@ -1909,7 +2077,12 @@ class Workflow {
         if($denied == 0) {
             $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
         }
-        
+        if($notprocessed == 0) {
+            $response .= '<tr class="approver-9 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
+        }
+        if($processed == 0) {
+            $response .= '<tr class="approver-10 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
+        }
         
         
         $response .= '</table></div><div style="margin-bottom:50px;"></div>';
@@ -1917,6 +2090,8 @@ class Workflow {
         $response = str_replace('%PENDING%', (($pending == 0) ? $pending : '<b>'.$pending.'</b>'), $response);
         $response = str_replace('%APPROVED%', $approved, $response);
         $response = str_replace('%DENIED%', $denied, $response);
+        $response = str_replace('%NOTPROCESSED%', $notprocessed, $response);
+        $response = str_replace('%PROCESSED%', $processed, $response);
         
         return $response;
     }
@@ -2029,7 +2204,7 @@ class Workflow {
             <body style="font-family: sans-serif; color:black;">
                 <h2>You have an approval waiting for a response!</h2>
                 <p>'.Workflow::getUserName($userid).' has submitted the form: '.$formName.'</p>
-                <p><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
+                <p><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
                 (click to view form online)</p>
                 <p>If you require clarification on any items, please contact the submitter directly or use the request changes button.   
                 Some forms may result in a fundamental change in the employment relationship of a staff member, 
@@ -2042,7 +2217,7 @@ class Workflow {
             <body style="font-family: sans-serif; color:black;">
                 <h2>You have a submission requiring further input!</h2>
                 <p>'.Workflow::getUserName($userid).', you previously submitted the form: '.$formName.' and it has been reviewed and requires further action.</p>
-                <p><a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
+                <p><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
                 (click to view form online)</p>
                 <p></p>
             <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 3, $submissionID, $misc_content, $commenttext, $userid, 
@@ -2054,7 +2229,7 @@ class Workflow {
                 <h2>You have a form that has been reviewed!</h2>
                 <p><b>Form: <b>'.$formName.'</b></p>
                 <p>To view this form, visit this link: 
-                <a href="http://local.theloop.com/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
+                <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
             <h3>Email List</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, 0, 0, 1, 0).
             '<br></body>';
@@ -2405,6 +2580,25 @@ class Workflow {
         }
         
         return $approver;
+    }
+    
+    public static function getMultipleDirectApprovers($userid) {
+        global $wpdb;
+        $approver = 0;
+        
+        $sql = "SELECT supervisor
+                FROM employee
+                WHERE employee_number = '$userid'
+                
+                UNION 
+                
+                SELECT manager_employee_number as supervisor
+                FROM employee_manager
+                WHERE employee_number = '$userid'";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        return $result;
     }
     
     

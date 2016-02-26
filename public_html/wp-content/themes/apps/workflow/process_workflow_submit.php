@@ -77,6 +77,10 @@ if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
     $sup = $_POST['nextsupervisor'];
 } 
 
+if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {
+    //$sup = $_POST['directsupervisor'];
+}
+
 if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
     $uniqueToken = $_POST['uniquetoken'];
 } 
@@ -103,7 +107,8 @@ $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
 $sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken);
 
-$obj->sendEmail($sbid); //TODO : Enable this to send emails
+if($sbid != 0)
+    $obj->sendEmail($sbid); //TODO : Enable this to send emails
 
 
 
