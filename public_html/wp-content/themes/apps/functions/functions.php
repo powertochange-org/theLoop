@@ -175,6 +175,27 @@ function getAllUsers() {
 }
 
 /*
+Gets the employees and their staff account #.
+*/
+function getAllEmployeesStaffAccounts() {
+	global $wpdb;
+	$values = array();
+	
+	$sql = "SELECT staff_account, CONCAT(first_name, ' ', last_name) AS fullname
+			FROM employee
+			WHERE staff_account != ''
+			ORDER BY FULLNAME ASC";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	foreach($result as $row) {
+		$values[] = array($row['staff_account'], $row['fullname']);
+	}
+	
+	return $values;
+}
+
+/*
 *Gets a list of all the apps that users have access to.
 */
 function getMemberAppAccess() {
