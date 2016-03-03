@@ -65,6 +65,14 @@ if($newstatus == 0) {
     die();
 }
 
+if(isset($_SESSION['ERRMSG']) && $_SESSION['ERRMSG'] == 'deny' && $newstatus == 8) {
+    $_SESSION['ERRMSG'] = 'You have denied submission #'.$sbid;
+} else if(isset($_SESSION['ERRMSG']) && $_SESSION['ERRMSG'] == 'approve') {
+    $_SESSION['ERRMSG'] = 'You have approved submission #'.$sbid;
+} else {
+    $_SESSION['ERRMSG'] = '';
+}
+
 if(isset($_POST['misc_content']) && $_POST['misc_content'] != '') {
     $misc_content = stripslashes($_POST['misc_content']);
 } 

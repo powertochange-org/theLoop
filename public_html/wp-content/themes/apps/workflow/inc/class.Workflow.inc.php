@@ -31,6 +31,7 @@ class Workflow {
     private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
     private $uniqueToken;
     private $linkAddress;
+    private $allowanceCalculatorID = 43; //This needs to match the form ID in the database for the allowance calculator
     
     public function __construct() {
         $this->linkAddress = get_home_url( '/');
@@ -395,6 +396,12 @@ class Workflow {
                 $sql .= ", COMMENT = '$newtext' ";
                 
             }
+            if($formID == $this->allowanceCalculatorID) {
+                $misc_content = str_replace("\\", "\\\\", $misc_content);
+                $misc_content = str_replace("'", "\'", $misc_content);
+                $sql .= ", MISC_CONTENT = '$misc_content' ";
+            }
+            
             $sql .= "WHERE SUBMISSIONID = '$submissionID'";
         }
         
@@ -685,8 +692,9 @@ class Workflow {
                     $status = 10;
             }
                     
-            
-            if($row['MISC_CONTENT'] != '') {
+            if(isset($_POST['export']) && $_POST['export'] == 1 && ($status == 2 || $status == 3)) {
+                $misc_content = stripslashes($_POST['misc_content']);
+            } else if($row['MISC_CONTENT'] != '') {
                 $misc_content = $row['MISC_CONTENT'];
             }
             
@@ -1270,12 +1278,15 @@ class Workflow {
         }
         
         //Display the comments history
-        $response .= '<h3>Comments</h3>';
+        $response .= '<h3 id="add-comments">Comments</h3>';
         $response .= '<p class="comments-section">'.$comments.'</p>';
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode) {
             if($configuration != 0) {
-                $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
+                $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;';
+                if(isset($_GET['response']) && $_GET['response'] == 'change')
+                    $response .= 'border:2px solid red;';
+                $response .= '"></textarea>';
             }
             
             $response .= '<div class="clear"></div>';
@@ -1331,6 +1342,11 @@ class Workflow {
                 else
                     $response .= '10, 0';
                 $response .= ');">Delete Form</button>';
+                
+                if($id == $this->allowanceCalculatorID && $submissionID != 0) {
+                    $response .= '<button type="button" onclick="location.href=\'/mpd/allowance-goal-calculations/allowance-calculator/?sbid='.$submissionID.'\'" 
+                        class="savebutton">Re-calculate Allowance</button>';
+                }
             } else if($configuration == 4) {
                 if($hasAnotherApproval) {
                     $response .= '<button type="button" id="approvelink" class="submitbutton" onclick="saveSubmission(4, 1);">Approve</button>';
@@ -1505,12 +1521,32 @@ class Workflow {
             $tokenSuccess = (isset($_GET['tk']) && Workflow::workflowEmailTokenDecode($_GET['tk'], $submissionID));
             if(!$tokenSuccess)
                 $emailclick = '<br><span style="color:red;font-weight:bold;">The email you tried using to review this form is out of date. Please review the below submission in detail.</span><br><br>';
-            else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus)
+            else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus) {
+                $_SESSION['ERRMSG'] = 'approve';
                 echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
-            else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
-                echo '<script>window.onload = function() {document.getElementById("changelink").click();};</script>';
-            else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus)
+            } else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
+                echo '<script>window.onload = function() {
+                    /*document.getElementById("changelink").click();*/
+                    document.getElementById("add-comments").scrollIntoView();};</script>';
+            else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus) {
+                $_SESSION['ERRMSG'] = 'deny';
                 echo '<script>window.onload = function() {document.getElementById("denylink").click();};</script>';
+            }
+            
+            //Draw a background to prevent someone from clicking while it auto clicks.
+            if($_GET['response'] == 'approve' || $_GET['response'] == 'deny') {
+                $response .= '<div id="screen-blackout" onclick="closePreview();" style="display:initial;">
+                    <div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
+                    border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
+                    font-size:25px;">';
+                if($_GET['response'] == 'approve')
+                    $response .= 'Approving submission # '.$submissionID;
+                else if($_GET['response'] == 'deny')
+                    $response .= 'Denying submission # '.$submissionID;
+                /*else if($_GET['response'] == 'change')
+                    $response .= 'Changing submission # '.$submissionID;*/
+                $response .= '</div></div>';
+            }
         }
         $response = str_replace('%EMAILCLICK%', $emailclick, $response);
         return $response;

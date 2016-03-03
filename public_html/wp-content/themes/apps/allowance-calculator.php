@@ -476,7 +476,8 @@ include('functions/js_functions.php');
 						alert("Please enter an effective date.")
 					} else {
 						document.getElementById('print').value = true;
-						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export';///forms-information/workflow/?page=allowance-calculator-export'; ///mpd/allowance-goal-calculations/allowance-calculator/allowance-calculator-export/
+						var sbid = document.getElementById('sbid').value;
+						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export&sbid='+sbid;///forms-information/workflow/?page=allowance-calculator-export'; ///mpd/allowance-goal-calculations/allowance-calculator/allowance-calculator-export/
 						switch(chooseWay){
 						case YOU:
 							document.getElementById('userIs').value = 'you';
@@ -579,6 +580,7 @@ include('functions/js_functions.php');
 							<div id='name_project_code'>
 								Name: <input type='text' name='person_name' id='person_name'><BR>
 								Project Code: <input type='text' name='projectCode' id='projectCode' maxlength='6'><BR><BR>
+								<input type="hidden" name="sbid" id="sbid" value="<?php if(isset($_GET['sbid'])){echo $_GET['sbid'];}else echo '0';?>">
 							</div>
 							<div id='hours'>
 							    <h2><?php echo getStringConstant("first_header") ?></h2>
