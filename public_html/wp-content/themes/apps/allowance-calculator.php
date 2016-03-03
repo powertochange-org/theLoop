@@ -477,7 +477,11 @@ include('functions/js_functions.php');
 					} else {
 						document.getElementById('print').value = true;
 						var sbid = document.getElementById('sbid').value;
-						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export&sbid='+sbid;///forms-information/workflow/?page=allowance-calculator-export'; ///mpd/allowance-goal-calculations/allowance-calculator/allowance-calculator-export/
+						var sbidtxt = '';
+						if(sbid != 0) {
+							sbidtxt = '&sbid=' + sbid;
+						}
+						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export' + sbidtxt;
 						switch(chooseWay){
 						case YOU:
 							document.getElementById('userIs').value = 'you';
