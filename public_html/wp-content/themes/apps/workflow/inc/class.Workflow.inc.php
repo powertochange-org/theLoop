@@ -814,22 +814,23 @@ class Workflow {
             $lastAction = Workflow::getUserName($result[0]['USER']);
         }
         
-        $response .= '<h2>'.$workflowName.'</h2><hr>';
+        if(!$emailMode) {
+            $response .= '<h2>'.$workflowName.'</h2><hr>';
+            $response .= '<h2><span style="font-size:16px;">Submitted by: ';
         
-        
-        $response .= '<h2><span style="font-size:16px;">Submitted by: ';
-        
-        if($behalfof != '') {
-            $response .= Workflow::getUserName($behalfof).' on behalf of ';
+            if($behalfof != '') {
+                $response .= Workflow::getUserName($behalfof).' on behalf of ';
+            }
+            
+            $response .= Workflow::getUserName($submittedby).
+                    '&nbsp;&nbsp;&nbsp;Last Change by: '.$lastAction.'</span></h2>';
         }
         
-        $response .= Workflow::getUserName($submittedby).
-                    '&nbsp;&nbsp;&nbsp;Last Change by: '.$lastAction.'</span></h2>';
         
         if(!$emailMode)
             $response .= '<p class="status">';
         else
-            $response .= '<p style="font-size: 24px;text-align: center;margin: 0;">';
+            $response .= '<p style="font-size: 24px;margin: 0;">';
         
         if($configuration == 0 || $configuration == 4) 
             $response .= 'Status: Pending Approval.';
@@ -847,7 +848,33 @@ class Workflow {
             $response .= 'Status: Input Required.';
         
         $response .= '</p>';
-        $response .='<hr>';
+        
+        if(0 <= $configuration && $configuration < 7 && $emailMode) {
+            $uniqueId = WorkFlow::workflowEmailToken($submissionID);
+        }
+        if($emailMode) {
+            if($configuration == 4) {
+                $response .= '<p style="margin-bottom:30px;">Quick Reply: ';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Approve</a>';
+                
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Request Change</a>';
+                
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Not Approved</a>';
+                $response .= '</p>';
+            } else {
+                $response .= '<p style="margin-bottom:30px;"></p>';
+            }
+            $response .= '<a style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+            text-decoration: none;" 
+                    href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">
+                    Click to view the form online</a>';
+        }
+        else
+            $response .='<hr>';
+        
+        if($emailMode)
+            $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">'.$workflowName.'</div>';
+        
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
             $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
@@ -1278,7 +1305,11 @@ class Workflow {
         }
         
         //Display the comments history
-        $response .= '<h3 id="add-comments">Comments</h3>';
+        if(!$emailMode) {
+            $response .= '<h3 id="add-comments">Comments</h3>';
+        } else {
+            $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Comments</div>';
+        }
         $response .= '<p class="comments-section">'.$comments.'</p>';
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode) {
@@ -1362,8 +1393,16 @@ class Workflow {
             //$response .= '<input type="submit" value="Submit" onclick="saveSubmission(3); onsubmit="">';
             $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
         } else if(0 <= $configuration && $configuration < 7 && $emailMode) {
-            $uniqueId = WorkFlow::workflowEmailToken($submissionID);
+            // ==== The following section is for the email that is sent out to the user ====
+            //$uniqueId = WorkFlow::workflowEmailToken($submissionID); //This is now being set at the top of this function
             $response .= '<div class="clear"></div>';
+            if($configuration == 4) {
+                $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Instructions</div>
+        
+            <p>If you require clarification on any items, please contact the submitter directly or use the request changes button.   
+                Some forms may result in a fundamental change in the employment relationship of a staff member, 
+                please review carefully before approving. </p>';
+            }
             if($configuration == 0 || $configuration == 2 || $configuration == 3) {
                 $submittingStatus = $approvalStatus - 1;
                 $submittingApproval = 1;
@@ -1377,9 +1416,8 @@ class Workflow {
                 $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="text-decoration:none;"><button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
-                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
-                    min-width: 200px;">View Form</button></a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+            text-decoration: none; float:left;">View Form</a>';
                 //Uncomment if email for revisions should include quick buttons. But they really shouldn't
                 /*$response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
@@ -1391,22 +1429,20 @@ class Workflow {
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Delete Form</button></a>';*/
             } else if($configuration == 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">
-                    <button type="button" style="background-color: #0079C1;box-shadow: 0 0 5px 1px #969696; 
-                    display: block;font-family: sans-serif;font-size: 18px;margin: 20px 10px 0px 0;
-                    min-width: 200px;">Approve</button></a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                    style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                    text-decoration: none;float:left;margin-right:30px;">Approve</a>';
                 
-                $response .= '<br><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
-                    display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 0px 0;
-                    min-width: 200px;">Request Change</button></a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                    text-decoration: none;float:left;margin-right:30px;">Request Change</a>';
                 
-                $response .= '<br><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
-                    display: block;font-family: sans-serif;font-size: 18px;margin: 10px 10px 20px 0;
-                    min-width: 200px;">Not Approved</button></a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'"
+                    style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                    text-decoration: none;float:left;margin-right:30px;">Not Approved</a>';
             } else if($configuration == 0) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;"><button type="button" style="background-color: #F58220;box-shadow: 0 0 5px 1px #969696;
-                    display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
-                    min-width: 200px;">Retract Submission</button></a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                    style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                    text-decoration: none;float:left;margin-right:30px;">Retract Submission</a>';
             }
         } else if($configuration == 9 && $hasAnotherApproval) {
             $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
@@ -1474,7 +1510,14 @@ class Workflow {
                 $response .= '<div class="clear"></div>';
             else
                 $response .= '<div style="clear:both;"></div>';
-            $response .= '<table id="workflowhistory"><tr><td colspan=3><h3>Approval History</h3></td></tr>';
+            if($emailMode)
+                $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Approval history</div>';
+            
+            $response .= '<table id="workflowhistory"><tr><td colspan=3>';
+            if(!$emailMode) 
+                $response .= '<h3>Approval History</h3></td></tr>';
+            
+            $response .= '</td></tr>';
             $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
             foreach($result as $row) {
                 
@@ -1502,8 +1545,10 @@ class Workflow {
                 } else {
                     continue;
                 }
-                $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td>';
-                $response .= $temp;
+                $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td';
+                if($emailMode) 
+                    $response .= ' style="text-align:center;padding:0 10px;"';
+                $response .= '>'.$temp;
                 $response .= '</td>';
                 $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
                 
@@ -2315,52 +2360,75 @@ class Workflow {
             }
         }
         
+        $mainTemplate = 
+        '<table style="width:1000px;font-family: Verdana,Geneva,sans-serif;" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+        <td>
+        <!-- Header -->
+        <img src="http://geraldbecker.com/images/workflow-header.png" width="100%"  alt="Staff Financial Health Report" border="0" />
+        <!--http://staff.powertochange.org/wp-content/images/health-report-header.png-->
+        <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />
+        </td>
+        </tr>
+        <tr style="margin-top:40px;"><td>
+        %EMAILDESIGN%
+        </td></tr>
+        <tr>
+        <td>
+        <!-- Footer -->
+        <img src="http://staff.powertochange.org/wp-content/images/health-report-footer.png" width="100%" style="margin-top: 20px" alt="Report Footer"/>
+        </td>
+        </tr>
+        </table>';
+        
+        
+        
+        
+        
         if($status == 4) {
             $template = '
-            <body style="font-family: sans-serif; color:black;">
-                <h2>You have an approval waiting for a response!</h2>
-                <p>'.Workflow::getUserName($userid).' has submitted the form: '.$formName.'</p>
-                <p><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
-                (click to view form online)</p>
-                <p>If you require clarification on any items, please contact the submitter directly or use the request changes button.   
-                Some forms may result in a fundamental change in the employment relationship of a staff member, 
-                please review carefully before approving. </p>
-            <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
+                <p style="margin-top:30px;">'.Workflow::getUserName($userid).' has submitted a form for your approval. The submission ID # is '.$submissionID.'.</p>
+                
+                
+                
+            '.$workflow->loadWorkflowEntry($formID, 4, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, ($supNext != ''), $behalfOf, 1, ($supNext == 8)).
-            '<br></body>';
+            '<br>
+            
+            <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" /><br>';
+            //<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>';
         } else if($status == 3) {
             $template = '
-            <body style="font-family: sans-serif; color:black;">
-                <h2>You have a submission requiring further input!</h2>
-                <p>'.Workflow::getUserName($userid).', you previously submitted the form: '.$formName.' and it has been reviewed and requires further action.</p>
-                <p><a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a>
-                (click to view form online)</p>
-                <p></p>
-            <h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, 3, $submissionID, $misc_content, $commenttext, $userid, 
+                <h2 style="margin-top:30px;">You have a submission requiring further input!</h2>
+                <p>'.Workflow::getUserName($userid).', you previously submitted the form: '.$formName.' and it has been reviewed and requires further action. The submission ID # is '.$submissionID.'.</p>
+                
+            '.$workflow->loadWorkflowEntry($formID, 3, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, ($supNext != ''), $behalfOf, 1, ($supNext == 8)).
-            '<br></body>';
+            '<br>
+            <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
+            //<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec;
         } else {
             $templateFinished = '
-            <body style="font-family: sans-serif; color:black;">
-                <h2>You have a form that has been reviewed!</h2>
-                <p><b>Form: <b>'.$formName.'</b></p>
-                <p>To view this form, visit this link: 
-                <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">Submission '.$submissionID.'</a></p>
-            <h3>Email List</h3> '.$tempRec.'<br>'.$workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
-                    $status, $approvalStatus, 0, $behalfOf, 1, 0).
-            '<br></body>';
+                <h2 style="margin-top:30px;"">You have a form that has been reviewed!</h2>
+                <p><b>Form: </b>'.$formName.'  <b>Submission ID #</b> '.$submissionID.'.</p>'.
+                $workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
+                    $status, $approvalStatus, 0, $behalfOf, 1, 0).'<br><img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
+                //<h3>Email List</h3> '.$tempRec.'<br>
         }
         
         
         
         for($i = 0; $i < count($recepients); $i++) {
             if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
-                if($status == 4)
-                    $body = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                else if($status == 3)
-                    $body = $body = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                else 
-                    $body = $templateFinished;
+                if($status == 4) {
+                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
+                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                } else if($status == 3) {
+                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
+                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                } else {
+                    $body = str_replace('%EMAILDESIGN%', $templateFinished, $mainTemplate);
+                }
                 //$body .= '<div style="clear:both;"></div><br>DEBUG:Your email address is: '.$recepients[$i][1];
             
                 //$body .= '<br>'.htmlspecialchars($sql1).'<br>'.htmlspecialchars($sql).'<br>';
