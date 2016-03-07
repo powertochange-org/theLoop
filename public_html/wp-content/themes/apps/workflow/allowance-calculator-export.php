@@ -9,6 +9,12 @@
 
 
 //include('functions/functions.php');
+
+echo '<div id="screen-blackout" style="display:initial;">
+	<div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
+    border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
+    font-size:25px;">Creating a submission. Please wait. </div></div>';
+
 function getStringConstant($field, $e=null){
 	global $wpdb;
 	$sql = "SELECT `value` FROM `string_store` WHERE `key` = '". $field. "'";

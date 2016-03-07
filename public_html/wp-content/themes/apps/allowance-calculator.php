@@ -557,6 +557,7 @@ include('functions/js_functions.php');
 			<div id='blurb'><?php echo changeNL(getStringConstant("blurb_0")) ?></div>
 			<BR>
 			<div id='section_whichWay'>
+				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				Please select an option:<BR>
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_you'>Calculate for yourself</label>
@@ -665,6 +666,7 @@ include('functions/js_functions.php');
 				</tr></table>
 				Effective Date: <input type='text' id='input_effective'>
 				<hr>
+				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
