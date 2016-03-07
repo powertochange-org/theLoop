@@ -271,6 +271,8 @@ class Workflow {
             die();
         }
         
+        date_default_timezone_set('America/Los_Angeles');
+        
         if($newstatus == 20) {
             //Mark as processed
             $sql = "UPDATE workflowformstatus 
@@ -336,7 +338,7 @@ class Workflow {
             }
             $foundSupervisor = 1;
         }
-        date_default_timezone_set('America/Los_Angeles');
+        
         $newApprovalStatus = 1;
         
         if($submissionID == 0) {
@@ -372,6 +374,8 @@ class Workflow {
                 $newApprovalStatus = $oldApprovalStatus + 1;
             } else if($newstatus == 7 || $newstatus == 8) {
                 $newApprovalStatus = 100;
+            } else if($newstatus == 2 || $newstatus == 3) {
+                $newApprovalStatus = 0;
             }
             
             $sql = "UPDATE workflowformstatus 
@@ -597,7 +601,13 @@ class Workflow {
             
             $currentApprovalRole = -1;
             $hasAnotherApproval = 0;
-            if($approvalStatus == 1) {
+            if($approvalStatus == 0) {
+                if($row['APPROVER_ROLE'] != '') {
+                    $hasAnotherApproval = 1;
+                    if($row['APPROVER_ROLE'] == 8)
+                        $supNext = 1;
+                }
+            } else if($approvalStatus == 1) {
                 $currentApprovalRole = $row['APPROVER_ROLE'];
                 if($row['APPROVER_ROLE2'] != '') {
                     $hasAnotherApproval = 1;
@@ -1529,17 +1539,17 @@ class Workflow {
                     //$temp = 'Retracted - Saved';
                     continue;
                 } else if($row['ACTION'] == 3) {
-                    $temp = 'Review Required Lvl: '.$row['APPROVAL_LEVEL'];
+                    $temp = 'Review Required';// Lvl: '.$row['APPROVAL_LEVEL'];
                 } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
                     $temp = 'Submitted';
                 } else if($row['ACTION'] == 4) {
-                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
+                    $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
                 } else if($row['ACTION'] == 7) {
-                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
+                    $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
                 } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
                     $temp = 'Cancelled Submission';
                 } else if($row['ACTION'] == 8) {
-                    $temp = 'Denied Lvl: '.$row['APPROVAL_LEVEL'];
+                    $temp = 'Denied';// Lvl: '.$row['APPROVAL_LEVEL'];
                 } else if($row['ACTION'] == 20) {
                     $temp = 'Processed';
                 } else {
@@ -2444,7 +2454,7 @@ class Workflow {
 
                 $mail->From = 'workflowloop-no-reply@p2c.com';
                 $mail->FromName = 'Workflow Email';
-                $mail->AddAddress('matthew.campbell@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                //$mail->AddAddress('matthew.campbell@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
                 $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
 
                 $mail->IsHTML(true);
