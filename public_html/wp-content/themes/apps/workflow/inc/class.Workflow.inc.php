@@ -281,8 +281,8 @@ class Workflow {
             if($commenttext != '') {
                 $oldcomment = str_replace("\\", "\\\\", $oldcomment);
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
-                $newtext = str_replace("'", "\'", $oldcomment).'<br><b>['.Workflow::loggedInUserName().' on: '.date('Y-m-d H:i').']</b><br>'.
-                    str_replace("'", "\'", $commenttext);
+                $newtext = str_replace("'", "\'", $oldcomment).'<b>['.Workflow::loggedInUserName().' on: '.date('Y-m-d H:i').']</b><br>'.
+                    str_replace("'", "\'", $commenttext).'<br>';
                 
                 $sql .= " COMMENT = '$newtext', ";
                 
@@ -352,7 +352,7 @@ class Workflow {
             
             if($commenttext != '') {
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
-                $sql .= "'<b>[".Workflow::loggedInUserName()." on: ".date("Y-m-d H:i")."]</b><br>".str_replace("'", "\'", $commenttext)."', ";
+                $sql .= "'<b>[".Workflow::loggedInUserName()." on: ".date("Y-m-d H:i")."]</b><br>".str_replace("'", "\'", $commenttext)."<br>', ";
             } else {
                 $sql .= "NULL, ";
             }
@@ -394,8 +394,8 @@ class Workflow {
             if($commenttext != '') {
                 $oldcomment = str_replace("\\", "\\\\", $oldcomment);
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
-                $newtext = str_replace("'", "\'", $oldcomment).'<br><b>['.Workflow::loggedInUserName().' on: '.date('Y-m-d H:i').']</b><br>'.
-                    str_replace("'", "\'", $commenttext);
+                $newtext = str_replace("'", "\'", $oldcomment).'<b>['.Workflow::loggedInUserName().' on: '.date('Y-m-d H:i').']</b><br>'.
+                    str_replace("'", "\'", $commenttext).'<br>';
                 
                 $sql .= ", COMMENT = '$newtext' ";
                 
@@ -1332,7 +1332,10 @@ class Workflow {
             
             $response .= '<div class="clear"></div>';
             if($configuration == 0 || $configuration == 2 || $configuration == 3) {
-                $submittingStatus = $approvalStatus - 1;
+                if($approvalStatus == 0) //Handle a denied form
+                    $submittingStatus = $approvalStatus;
+                else
+                    $submittingStatus = $approvalStatus - 1;
                 $submittingApproval = 1;
             } else {
                 $submittingStatus = $approvalStatus;
@@ -1414,7 +1417,10 @@ class Workflow {
                 please review carefully before approving. </p>';
             }
             if($configuration == 0 || $configuration == 2 || $configuration == 3) {
-                $submittingStatus = $approvalStatus - 1;
+                if($approvalStatus == 0) //Handle a denied form
+                    $submittingStatus = $approvalStatus;
+                else
+                    $submittingStatus = $approvalStatus - 1;
                 $submittingApproval = 1;
             } else {
                 $submittingStatus = $approvalStatus;
@@ -1955,7 +1961,7 @@ class Workflow {
                     </td></tr>';
         
         
-        $tableHeader = '<tr class="%CLASS% submissions-header"><th>ID</th><th>Form Name</th><th>Last Modified By</th><th>Date Modified</th></tr>';
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:550px;">Form Name</th><th style="width:175px;">Last Modified By</th><th style="width:125px;">Date Modified</th></tr>';
         
         
         $prevState = 1;
@@ -2012,7 +2018,7 @@ class Workflow {
             
             //Display the results
             $response .= '<td>'.$row['SUBMISSIONID'].'</td>
-                <td>'./*<a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.*/$row['NAME'].'</a></td>
+                <td>'.$row['NAME'].'</a></td>
                 <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                 <td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
@@ -2183,7 +2189,7 @@ class Workflow {
                     </td></tr>';
 
        
-        $tableHeader = '<tr class="%CLASS% submissions-header"><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Last Modified By</th><th>Date Modified</th></tr>';
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:450px;">Form Name</th><th style="width:150px;">Submitted By</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th></tr>';
         
         $prevState = 1;
         $processorState = -1;
@@ -2229,11 +2235,11 @@ class Workflow {
             }
             
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
-            $response .=  '<td>'.$row['SUBMISSIONID'].'</td>
-                            <td>'./*<a style="display:block;" href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.*/$row['NAME'].'</a></td>
-                            <td>'.$row['USERNAME'].'</td>
-                            <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
-                            <td>'.$row['DATE_SUBMITTED'].'</td>';
+            $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
+                            <td style="width:450px;">'.$row['NAME'].'</a></td>
+                            <td style="width:150px;">'.$row['USERNAME'].'</td>
+                            <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
+                            <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
         }
         //Add section headers just in case they weren't created so the user knows which page they are on
@@ -2330,7 +2336,7 @@ class Workflow {
         $supNext = $approvers[$approvalStatus];
         
         //check if this submission was rejected and needs further input
-        if($approvalStatus == 1 && $status == 3) { 
+        if($approvalStatus == 0 && $status == 3) { 
             $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
@@ -2406,7 +2412,6 @@ class Workflow {
             '<br>
             
             <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" /><br>';
-            //<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>';
         } else if($status == 3) {
             $template = '
                 <h2 style="margin-top:30px;">You have a submission requiring further input!</h2>
@@ -2416,16 +2421,18 @@ class Workflow {
                     $status, $approvalStatus, ($supNext != ''), $behalfOf, 1, ($supNext == 8)).
             '<br>
             <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
-            //<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec;
         } else {
             $templateFinished = '
                 <h2 style="margin-top:30px;"">You have a form that has been reviewed!</h2>
                 <p><b>Form: </b>'.$formName.'  <b>Submission ID #</b> '.$submissionID.'.</p>'.
                 $workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
-                    $status, $approvalStatus, 0, $behalfOf, 1, 0).'<br><img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
-                //<h3>Email List</h3> '.$tempRec.'<br>
+                    $status, $approvalStatus, 0, $behalfOf, 1, 0).'<br>
+                <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
         }
-        
+        if(Workflow::debugMode()) {
+            $template .= '<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>';
+            $templateFinished .= '<h3>Email List</h3> '.$tempRec.'<br>';
+        }
         
         
         for($i = 0; $i < count($recepients); $i++) {
@@ -2439,9 +2446,6 @@ class Workflow {
                 } else {
                     $body = str_replace('%EMAILDESIGN%', $templateFinished, $mainTemplate);
                 }
-                //$body .= '<div style="clear:both;"></div><br>DEBUG:Your email address is: '.$recepients[$i][1];
-            
-                //$body .= '<br>'.htmlspecialchars($sql1).'<br>'.htmlspecialchars($sql).'<br>';
                 
                 
                 $mail = new PHPMailer;
@@ -2454,8 +2458,14 @@ class Workflow {
 
                 $mail->From = 'workflowloop-no-reply@p2c.com';
                 $mail->FromName = 'Workflow Email';
-                //$mail->AddAddress('matthew.campbell@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
-                $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                
+                if(Workflow::debugMode()) {
+                    $mail->AddAddress('matthew.campbell@p2c.com'); 
+                    $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                } else {
+                    $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
+                }
+                
 
                 $mail->IsHTML(true);
                 
@@ -2951,7 +2961,7 @@ class Workflow {
 
     /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
     public static function debugMode() {
-        return 1;
+        return get_option( 'workflowdebug' , 0 );
     }
 }
     
