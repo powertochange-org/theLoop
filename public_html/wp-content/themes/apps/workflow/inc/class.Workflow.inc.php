@@ -937,7 +937,7 @@ class Workflow {
         
         //For each field that is part of the form
         $count = 0;
-        $anotherOption = 0;
+        $anotherOption = $skipOptions = 0;
         $prevId = -1;
         foreach($result as $row) {
             //Set flags if the current field is part of an option list
@@ -945,9 +945,11 @@ class Workflow {
                 $anotherOption = 1;
             } else {
                 //Close the option list
-                if($anotherOption)
+                if($anotherOption && !$skipOptions)
                     $response .='</select></div>';
-                $anotherOption = 0;
+                else if($anotherOption && $skipOptions)
+                    $response .='</div>';
+                $anotherOption = $skipOptions = 0;
                 $prevId = $row['FIELDID']; //Set prevId for next time
             }
             
@@ -1262,20 +1264,38 @@ class Workflow {
                 $response .='>'.$row['LABEL'].'</div>';
                 
             } else if($row['TYPE'] == 2) { //Option List
-                if(!$anotherOption) {
+                if($row['APPROVAL_ONLY'] == 1) 
+                    if(!($configuration == 4 && $appLvlAccess || $approval_show)) 
+                        continue;
+                
+                //Display just the value if it is not editable
+                if(!$editableField || $emailMode) {
+                    if($fieldvalue == $row['LABEL'])
+                        $skipOptions = 1;
+                    else
+                        continue;
+                }
+                
+                if(!$anotherOption || $skipOptions) {
                     if($row['APPROVAL_ONLY'] == 1) {
                         if($configuration == 4 && $appLvlAccess || $approval_show) {
-                            $response .= '<div class="workflow workflowlabel approval mobile ';
-                                
-                        } else 
-                            continue;
+                            $response .= '<div class="workflow approval mobile ';
+                        } 
                     } else {
-                        $response .= '<div class="workflow workflowlabel mobile ';
+                        $response .= '<div class="workflow mobile ';
                     }
+                    
+                    if(!$skipOptions)  
+                        $response .= 'workflowlabel ';
+                    else 
+                        $response .= 'workflowright ';
                     
                     if($row['FIELD_WIDTH'] != NULL) {
                         $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                     }
+                    
+                    if($skipOptions)
+                        $response .= ' style-1';
                     
                     $response .= '" style="';
                     
@@ -1284,21 +1304,29 @@ class Workflow {
                     }
                     
                     $response .= '">';
-                    $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
-                        $row['FIELDID'].'" ';
                     
-                    if(!$editableField || $emailMode) {
-                        $response .= 'disabled ';
+                    if(!$skipOptions) {
+                        $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
+                            $row['FIELDID'].'" ';
+                        
+                        if(!$editableField || $emailMode) {
+                            $response .= 'disabled ';
+                        }
+                        
+                        $response .= '>';
                     }
                     
-                    $response .= '>';
                 }
                 
+                if(!$skipOptions) {
+                    $response .= '<option value="'.$row['LABEL'].'" ';
+                    if($fieldvalue == $row['LABEL'])
+                        $response .= 'selected';
+                    $response .= '>'.$row['LABEL'].'</option>';
+                } else {
+                    $response .= $fieldvalue;
+                }
                 
-                $response .= '<option value="'.$row['LABEL'].'" ';
-                if($fieldvalue == $row['LABEL'])
-                    $response .= 'selected';
-                $response .= '>'.$row['LABEL'].'</option>';
                 
                 /*if($editableField && $row['REQUIRED'])
                     $response .= 'required ';*/
@@ -1306,8 +1334,10 @@ class Workflow {
             } 
         }
         //In case the loop ended and the last id was an option list, close the field and div
-        if($anotherOption)
+        if($anotherOption && !$skipOptions)
             $response .='</select></div>';
+        else if($anotherOption && $skipOptions)
+            $response .='</div>';
          
         $response .= '<div class="clear"></div>';
         if($emailMode) {

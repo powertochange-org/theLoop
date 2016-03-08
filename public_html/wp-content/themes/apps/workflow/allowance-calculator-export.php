@@ -8,7 +8,7 @@
 */
 
 
-//include('functions/functions.php');
+//require('/wp-content/themes/apps/functions/functions.php');
 
 echo '<div id="screen-blackout" style="display:initial;">
 	<div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
@@ -29,6 +29,17 @@ function getStringConstant($field, $e=null){
 	return str_replace ($e , "\\$e" ,$result);
 	
 }	
+
+//get a field from the employee table of the current user
+function getFieldEmployee($field, $id=null){
+	global $current_user_id, $wpdb;
+	if ($id == null){
+		$id = $current_user_id;
+	}
+	$sql = "SELECT `".$field."` FROM `employee` JOIN wp_users ON employee.user_login = wp_users.user_login WHERE wp_users.id = ". $id;
+	$result = $wpdb->get_row($sql)->$field;
+	return $result;
+}
 
 $allowance_constant = array(
 	'noAccess' => 0,
