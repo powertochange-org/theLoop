@@ -337,7 +337,7 @@ function getAccess($id){
 	global $allowance_constant, $current_user_id;
 	$involvment_type = getFieldEmployee("involvement_type", $id);
 	if (in_array($involvment_type, $allowance_constant['noAccess_involvementType'])){
-		if ($id == $current_user_id  && (isAdmin() || AdminLevel(1))){
+		if ($id == $current_user_id  && (isAppAdmin('support_calculator_admin', 0) || isAppAdmin('support_calculator_admin', 1))){
 			return $allowance_constant['partAccess'];
 		}
 		return $allowance_constant['noAccess'];
