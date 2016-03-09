@@ -968,9 +968,68 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 	border: 2px solid black;
 }
 
+.cat-count {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+}
 
+.wiki-section {
+    float: left;
+    margin-right: 30px;
+    width: 300px;
+}
 
+#content-left.wiki-fix {
+    float: none;
+    width: 100%;
+}
 
+.wiki-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.sub-categories a {
+    color: #4a4d4e;
+}
+
+ul.sub-categories {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.wiki-section-link {
+    color: #4a4d4e;
+}
+
+.wiki-section-link:hover {
+    color: #0079C1;
+}
+
+.wiki-section ul.wiki-list li::before {
+    
+    background-image: url("/wp-content/images/Self-Help-Wiki-Icon-no-text.png" );
+    
+    background-size: 15px 15px;
+    display: inline-block;
+    width: 15px; 
+    height: 15px;
+    content:"";
+}
+
+.wiki-section li::after {
+    
+}
+
+.wiki-section li {
+    padding-top: 5px;
+}
+
+.wiki-section-group-gap {
+    margin-bottom: 50px;
+}
 
 #main-nav-full-screen {
     height: 49px; /* set to the height you want your menu to be */
@@ -1546,6 +1605,13 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 		float: none;
 	}
 	
+	.wiki-section {
+        margin-bottom: 40px;
+    }
+    
+    .wiki-section-group-gap {
+        margin-bottom: 0;
+    }
 }
 
 
