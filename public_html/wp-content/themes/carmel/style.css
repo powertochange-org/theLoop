@@ -192,6 +192,7 @@ li.menu-item.current-menu-item  a{
 	position:relative;
 	top:22px;
 	border-top:thin solid #218ac9;
+	display: none;/*Only used for mobile now*/
 }
 
 .menu{
@@ -967,6 +968,229 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 	border: 2px solid black;
 }
 
+.cat-count {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+}
+
+.wiki-section {
+    float: left;
+    margin-right: 30px;
+    width: 300px;
+}
+
+#content-left.wiki-fix {
+    float: none;
+    width: 100%;
+}
+
+.wiki-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.sub-categories a {
+    color: #4a4d4e;
+}
+
+ul.sub-categories {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.wiki-section-link {
+    color: #4a4d4e;
+}
+
+.wiki-section-link:hover {
+    color: #0079C1;
+}
+
+.wiki-section ul.wiki-list li::before {
+    
+    background-image: url("/wp-content/images/Self-Help-Wiki-Icon-no-text.png" );
+    
+    background-size: 15px 15px;
+    display: inline-block;
+    width: 15px; 
+    height: 15px;
+    content:"";
+}
+
+.wiki-section li::after {
+    
+}
+
+.wiki-section li {
+    padding-top: 5px;
+}
+
+.wiki-section-group-gap {
+    margin-bottom: 50px;
+}
+
+#main-nav-full-screen {
+    height: 49px; /* set to the height you want your menu to be */
+    margin: 0 0 10px; /* just to give some spacing */
+    
+    background:#005e90;
+	position:relative;
+	top:22px;
+	border-top:thin solid #218ac9;
+	z-index: 10;
+}
+#main-nav-full-screen .menu{
+	padding: 0;
+	width:1000px;
+	margin:0 auto;
+    position: relative; /*Sets the position so that the submenus will be placed correctly*/
+}
+
+#main-nav-full-screen .current-menu-item a,
+#main-nav-full-screen .current-page-parent a {
+	background:#0079c1;
+	border-bottom:thin solid #218ac9;
+}
+
+#main-nav-full-screen ul li a:hover,
+#main-nav-full-screen .sub-menu li a:hover { /*This is grabbing sub menus on direct*/
+	background:#0079c1;
+}
+
+/*Should grab and make a box out of each section*/
+#main-nav-full-screen  ul.sub-menu {
+	position: absolute;
+	top: 50px;
+	left: 0px;
+	width: 1000px;
+	height: initial;
+}
+#main-nav-full-screen  ul.sub-menu li {
+	float: left;
+	height: 200px;
+	margin-left: 35px;
+	margin-top: 10px;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu {
+	height: initial;
+	width: 200px; 
+	position: relative; /*prevents the sub sub menus from shifting away*/
+	top: 0px;
+	display: block;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu li {
+	top: 0px;
+	height: initial;
+    min-height: 20px;
+    max-height: 50px;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu li a {
+	text-decoration: none;
+	border: none;
+	font-weight: normal;
+	padding-top: 2px;
+	padding-bottom: 3px;
+}
+
+#main-nav-full-screen  ul.sub-menu li.menu-item a {
+	background-color: initial;
+	height: initial;
+	color: white;
+	width: 100%;
+	display: block;
+	text-decoration: underline;
+	line-height: initial;
+	margin-top: 1px; /*Fix to prevent a tag from reaching onto other links*/
+	padding: 0px;
+	font-weight: bold;
+}
+
+#main-nav-full-screen  ul.sub-menu li.menu-item a:hover {
+	background-color: #0079c1;
+	color: white;
+}
+
+#main-nav-full-screen ul    {
+    margin: 0; padding: 0; /* only needed if you have not done a CSS reset */
+}
+#main-nav-full-screen li    {
+    display: block;
+    float: left;
+    line-height: 51px; /* this should be the same as your #main-nav height */
+    height: 51px; /* this should be the same as your #main-nav height */
+    margin: 0; padding: 0; /* only needed if you don't have a reset */
+}
+
+#main-nav-full-screen ul.menu {
+	position: relative;
+	top: -1px; 
+}
+
+#main-nav-full-screen li a  {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    transition: all 0.15s linear;
+}
+#main-nav-full-screen .menu-item a {
+	overflow: hidden;
+}
+
+#main-nav-full-screen .sub-menu .menu-item a {
+	background:#005e90;
+    border-bottom: thin solid #218ac9;
+}
+
+#main-nav-full-screen ul ul { /* this targets all sub menus */
+    display: none; /* hide all sub menus from view */
+    position: absolute;
+    top: 52px; /* this should be the same height as the top level menu -- height + padding + borders */
+    left: -100px;
+    width: 400px;
+    background-color: #005e90;
+}
+#main-nav-full-screen ul ul ul { 
+	background-color: none;
+}
+
+#main-nav-full-screen ul ul li { /* this targets all submenu items */
+    float: none; /* overwriting our float up above */
+    width: 200px; /* set to the width you want your sub menus to be. This needs to match the value we set below */
+}
+#main-nav-full-screen ul ul li a { /* target all sub menu item links */
+    width:200px;
+}
+
+#main-nav-full-screen ul.sub-menu:hover {
+	display: block;
+}
+
+#main-nav-full-screen ul li .display-sub-menu {
+	display: block;
+}
+
+#main-nav-full-screen ul ul li ul {
+    /* target all second, third, and deeper level sub menus */
+    left: 230px; /* this needs to match the sub menu width set above -- width + padding + borders */
+    top: 0; /* this ensures the sub menu starts in line with its parent item */
+}
+
+/*Fixes the main nav links on the nav bar.*/
+#main-nav-full-screen ul.menu li a {
+    padding-left: 23px;
+    padding-right: 23px;
+}
+
+
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
@@ -1131,6 +1355,9 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 	.menu_bg_show {
 		display: block;
 	}
+	#main-nav-full-screen {
+        display: none;
+    }
 	footer .privacy {
 		text-align: center;
 		margin-left: 10px;
@@ -1378,6 +1605,13 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
 		float: none;
 	}
 	
+	.wiki-section {
+        margin-bottom: 40px;
+    }
+    
+    .wiki-section-group-gap {
+        margin-bottom: 0;
+    }
 }
 
 
