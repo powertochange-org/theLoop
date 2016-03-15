@@ -379,6 +379,9 @@ hr{
 	cursor:pointer;
 }
 
+#wp-admin-bar-search {
+	display: none;
+}
 
 .search-box{
 	border: 1px solid #0079c1;
