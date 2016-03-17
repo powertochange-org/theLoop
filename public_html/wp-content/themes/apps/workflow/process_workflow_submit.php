@@ -75,10 +75,14 @@ if(isset($_SESSION['ERRMSG']) && $_SESSION['ERRMSG'] == 'deny' && $newstatus == 
 
 if(isset($_POST['misc_content']) && $_POST['misc_content'] != '') {
     $misc_content = stripslashes($_POST['misc_content']);
+    $misc_content = str_replace("<script", htmlentities("<script"), $misc_content);
+    $misc_content = str_replace("</script", htmlentities("</script"), $misc_content);
 } 
 
 if(isset($_POST['commenttext']) && $_POST['commenttext'] != '') {
     $commenttext = stripslashes($_POST['commenttext']);
+    $commenttext = str_replace("<script", htmlentities("<script"), $commenttext);
+    $commenttext = str_replace("</script", htmlentities("</script"), $commenttext);
 } 
 
 if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {

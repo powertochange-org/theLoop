@@ -1647,7 +1647,10 @@ class Workflow {
     private function findValue($resultset, $valuetofind) {
         for($i = 0; $i < count($resultset); $i++) {
             if($valuetofind == $resultset[$i][0]) {
-                return $resultset[$i][1];
+                $value = str_replace('"', htmlentities('"'), $resultset[$i][1]);
+                $value = str_replace("<script", htmlentities("<script"), $value);
+                $value = str_replace("</script", htmlentities("</script"), $value);
+                return $value;
             }
         }
         
