@@ -43,7 +43,7 @@ class Workflow {
     
     public function createWorkflow($name, $startAccess, $approver, $approver2, $approver3, $approver4, $processor, 
                                     $behalfof, $draft, $savedData, $numFields, $mode, $previousID) {
-        $this->name = $name;
+        $this->name = Workflow::escapeScriptTags($name);
         $this->startAccess = $startAccess;
         $this->approvers = array($approver, $approver2, $approver3, $approver4);
         $this->processor = $processor;
@@ -59,6 +59,7 @@ class Workflow {
     }
     
     public function addField($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield, $newgroup) {
+        $label = Workflow::escapeScriptTags($label);
         if($size == '')
             $size = 0;
         $this->fields[] = array($type, $label, $editable, $approvalonly, $approvalshow, $size, $level, $requiredfield, $newgroup);
@@ -937,19 +938,26 @@ class Workflow {
         
         //For each field that is part of the form
         $count = 0;
-        $anotherOption = $skipOptions = 0;
+        $anotherOption = $skipOptions = $foundOptionMatch = 0;
         $prevId = -1;
         foreach($result as $row) {
             //Set flags if the current field is part of an option list
             if($row['TYPE'] == 2 && $prevId == $row['FIELDID']) {
                 $anotherOption = 1;
+                if($skipOptions && !$foundOptionMatch) {
+                    $response .='</div>';
+                    $foundOptionMatch = 1;
+                    continue;
+                } else if($foundOptionMatch) {
+                    continue;
+                }
             } else {
                 //Close the option list
                 if($anotherOption && !$skipOptions)
                     $response .='</select></div>';
-                else if($anotherOption && $skipOptions)
+                else if($anotherOption && $skipOptions && !$foundOptionMatch)
                     $response .='</div>';
-                $anotherOption = $skipOptions = 0;
+                $anotherOption = $skipOptions = $foundOptionMatch = 0;
                 $prevId = $row['FIELDID']; //Set prevId for next time
             }
             
@@ -1270,7 +1278,7 @@ class Workflow {
                 
                 //Display just the value if it is not editable
                 if(!$editableField || $emailMode) {
-                    if($fieldvalue == $row['LABEL'])
+                    if($fieldvalue == $row['LABEL']) 
                         $skipOptions = 1;
                     else
                         continue;
@@ -1648,8 +1656,7 @@ class Workflow {
         for($i = 0; $i < count($resultset); $i++) {
             if($valuetofind == $resultset[$i][0]) {
                 $value = str_replace('"', htmlentities('"'), $resultset[$i][1]);
-                $value = str_replace("<script", htmlentities("<script"), $value);
-                $value = str_replace("</script", htmlentities("</script"), $value);
+                $value = Workflow::escapeScriptTags($value);
                 return $value;
             }
         }
@@ -2995,6 +3002,12 @@ class Workflow {
     /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
     public static function debugMode() {
         return get_option( 'workflowdebug' , 0 );
+    }
+    
+    public function escapeScriptTags($string) {
+        $string = str_replace("<script", htmlentities("<script"), $string);
+        $string = str_replace("</script", htmlentities("</script"), $string);
+        return $string;
     }
 }
     
