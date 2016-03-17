@@ -953,8 +953,8 @@ input[type="submit"].fieldform {
     box-shadow: 0 0 5px 1px #969696;
 }
 
-div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_history {
-  /*display: none !important;*/
+div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_advanced_edit {
+    display: none !important;
 }
 
 .wiki-search-input {
