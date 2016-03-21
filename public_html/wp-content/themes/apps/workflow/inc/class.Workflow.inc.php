@@ -2342,7 +2342,7 @@ class Workflow {
         $response = '';
         
         $sql = "SELECT STATUS, APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
-                APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL, BEHALFOF
+                APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL, BEHALFOF, PROCESSOR
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                 WHERE SUBMISSIONID = '$submissionID'";
@@ -2363,6 +2363,7 @@ class Workflow {
         $misc_content = $row['MISC_CONTENT'];
         $formName = $row['NAME'];
         $approvers = array($row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4']);
+        $processor = $row['PROCESSOR'];
         
         $behalfOf = ($row['BEHALFOF'] =! NULL ? $row['BEHALFOF'] : '');
         
@@ -2424,7 +2425,23 @@ class Workflow {
         foreach($emailRecepients as $row) {
             if($row['user_email'] != '') {
                 $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].'<br>';
-                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON']);
+                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0);
+            }
+        }
+        
+        if($status == 7 && $processor != NULL) {
+            $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
+                    FROM workflowrolesmembers
+                    INNER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+                    WHERE ROLEID = '$processor'
+                    ORDER BY MEMBER";
+            $emailRecepients = $wpdb->get_results($sql, ARRAY_A);
+            foreach($emailRecepients as $row) {
+                if($row['user_email'] != '') {
+                    $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].' PROCESSOR: ON<br>';
+                    $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 1);
+                }
             }
         }
         
@@ -2475,15 +2492,24 @@ class Workflow {
             <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
         } else {
             $templateFinished = '
-                <h2 style="margin-top:30px;"">You have a form that has been reviewed!</h2>
+                <h2 style="margin-top:30px;">You have a form that has been reviewed!</h2>
                 <p><b>Form: </b>'.$formName.'  <b>Submission ID #</b> '.$submissionID.'.</p>'.
                 $workflow->loadWorkflowEntry($formID, $status, $submissionID, $misc_content, $commenttext, $userid, 
                     $status, $approvalStatus, 0, $behalfOf, 1, 0).'<br>
+                <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
+            $processedTemplate = '
+                <h2 style="margin-top:30px;">You have a submission that requires processing.</h2>
+                
+                <p><b>Form: </b>'.$formName.'  <b>Submission ID #</b> '.$submissionID.'  <b>Submitted By:</b> '.
+                Workflow::getUserName($userid).'.</p>'.
+                $workflow->loadWorkflowEntry($formID, 9, $submissionID, $misc_content, $commenttext, $userid, 
+                    9, $approvalStatus, 0, $behalfOf, 1, 0).'<br>
                 <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />';
         }
         if(Workflow::debugMode()) {
             $template .= '<h3>DEBUG: Email List (Members in this role)</h3> '.$tempRec.'<br>';
             $templateFinished .= '<h3>Email List</h3> '.$tempRec.'<br>';
+            $processedTemplate .= '<h3>Email List</h3> '.$tempRec.'<br>';
         }
         
         
@@ -2495,6 +2521,8 @@ class Workflow {
                 } else if($status == 3) {
                     $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
                     $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                } else if($recepients[$i][3] == 1) {
+                    $body = str_replace('%EMAILDESIGN%', $processedTemplate, $mainTemplate);
                 } else {
                     $body = str_replace('%EMAILDESIGN%', $templateFinished, $mainTemplate);
                 }
@@ -2522,10 +2550,15 @@ class Workflow {
 
                 $mail->IsHTML(true);
                 
-                if($status != 3)
-                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid);
+                if($status == 3)
+                    $mail->Subject = 'Workflow submission requiring further input - Submission ID # '.$submissionID;
+                else if($status == 4)
+                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                else if($status == 7 && $recepients[$i][3] == 1)
+                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else
-                    $mail->Subject = 'Workflow email requiring further input';
+                    $mail->Subject = 'Your workflow submission has been reviewed - Submission ID # '.$submissionID;
+                 
                                                             
                 $mail->Body = $body;
                 //echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
