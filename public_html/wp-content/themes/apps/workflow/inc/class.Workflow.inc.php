@@ -652,7 +652,7 @@ class Workflow {
                 //Give access if they were a direct approver at any time during the form process
                 if(!$approver)
                     $approver = (Workflow::getDirectApprover($submittedby) == $loggedInUser); //Level 1 only
-                if(!$approver && $approvalStatus == 100) {
+                if(!$approver) {
                     $sqlDirect = "SELECT USER_ID
                             FROM workflowsuphistory
                             WHERE SUBMISSIONID = '$sbid'";
@@ -679,8 +679,9 @@ class Workflow {
                 $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
             }
             
-            //$approver = 1;
+            
             if($processor) {
+                //Give viewing access to the processor. If form was denied, you can prevent the processor from seeing it here
                 $configvalue = 9;
                 
                 if($row['PROCESSED'] == 0)
@@ -690,13 +691,22 @@ class Workflow {
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
                 $configvalue = 9;
             } else if($submittedby != $loggedInUser) {
-                echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
-                return;
+                //Check to see if an approver will eventually have access to this submission again
+                if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
+                    $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
+                    $hasAnotherApproval = 0;
+                    $configvalue = 9; 
+                    echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
+                        history below.<br></span>';
+                } else {
+                    echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
+                    return;
+                }
             } else if($configvalue == 4) {
                 $configvalue = 0;
             }
             
-            if($row['PROCESSOR'] != NULL && $row['PROCESSOR'] != '') {
+            if($status == 7 && $row['PROCESSOR'] != NULL && $row['PROCESSOR'] != '') {
                 if($row['PROCESSED'] == 0)
                     $status = 9;
                 else
@@ -742,8 +752,6 @@ class Workflow {
                 $supNext = 0;
         }
         
-        //TODO Authorize the person that is trying to access this function or page.
-        //echo 'DEBUG: Workflow status: '.$configvalue.'<br>';
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
             $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext);
     }
@@ -849,7 +857,7 @@ class Workflow {
             $response .= 'Status: Approved - Not Processed Yet';
         else if(($configuration == 7 || $configuration == 9) && $status == 10)
             $response .= 'Status: Approved - Processed';
-        else if($configuration == 7) {
+        else if($configuration == 7 || ($configuration == 9 && $status == 7)) {
             $response .= 'Status: Approved.';
         } else if($configuration == 8 || ($configuration == 9 && $status == 8)) {
             $response .= 'Status: Not Approved.';
@@ -857,6 +865,10 @@ class Workflow {
             $response .= 'Status: Not Approved.';
         } else if($emailMode && $configuration == 3)
             $response .= 'Status: Input Required.';
+        else if($configuration == 9 && $status == 3)
+            $response .= 'Status: Pending Resubmission by Submitter';
+        else if($configuration == 9 && $status == 4)
+            $response .= 'Status: Under Review by another approval group';
         
         $response .= '</p>';
         
@@ -2500,7 +2512,8 @@ class Workflow {
                 $mail->FromName = 'Workflow Email';
                 
                 if(Workflow::debugMode()) {
-                    $mail->AddAddress('matthew.campbell@p2c.com'); 
+                    if(Workflow::debugMode() == 2)
+                        $mail->AddAddress('matthew.campbell@p2c.com'); 
                     $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
                 } else {
                     $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
@@ -3008,6 +3021,34 @@ class Workflow {
         $string = str_replace("<script", htmlentities("<script"), $string);
         $string = str_replace("</script", htmlentities("</script"), $string);
         return $string;
+    }
+    
+    private function submissionApprover($sbid, $loggedInUser, $role1, $role2, $role3, $role4, $aprDirect) {
+        global $wpdb;
+        if(Workflow::hasRoleAccess($loggedInUser, $role1) 
+            || Workflow::hasRoleAccess($loggedInUser, $role2)
+            || Workflow::hasRoleAccess($loggedInUser, $role3)
+            || Workflow::hasRoleAccess($loggedInUser, $role4)) 
+                return 1;
+        
+        //If they don't have normal access check if they are a supervisor
+        if($role1 == 8 || $role2 == 8 || $role3 == 8 || $role4 == 8) 
+            if($aprDirect == $loggedInUser)
+                return 1;
+        
+        //Give access if they were a direct approver at any time during the form process
+        $sqlDirect = "SELECT USER_ID
+                FROM workflowsuphistory
+                WHERE SUBMISSIONID = '$sbid'";
+        
+        $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
+        foreach($resultDirect as $rowDirect) {
+            if($rowDirect['USER_ID'] == $loggedInUser) {
+                return 1;
+            }
+        }
+        
+        return 0;
     }
 }
     
