@@ -422,14 +422,15 @@ get_header(); ?>
 			</P>
 			<DIV ID="staffaccount" STYLE="display:none">
 				<P>Please enter your ministry/staff account number:<BR>  
-          <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
+          <!-- JasonB: look at adding ministry accounts before we make this live
+		  <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
             <option> </option>
             <?php $values = getAllEmployeesStaffAccounts();
             for($i = 0; $i < count($values); $i++) {
                 echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
             }?>
           </select>
-          <button type="button" onclick="addProjectCode();">Add Staff Account ►</button>
+          <button type="button" onclick="addProjectCode();">Add Staff Account ►</button>-->
           <INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="15" VALUE="<?php echo $_POST["DESGCODE"];?>">
 				</P>
         
