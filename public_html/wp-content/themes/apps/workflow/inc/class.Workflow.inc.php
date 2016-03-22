@@ -1936,7 +1936,7 @@ class Workflow {
         $response .= '<table style="margin-left: auto; margin-right:auto;">';
         $response .= '<tr><td style="border-right: 1px solid black;padding:10px;">';
         
-        $response .= '<a href="#user-submissions" class="nav-option-link" onclick="switchRole(0);"><div class="nav-option-outside">
+        $response .= '<a href="#workflow-summary" class="nav-option-link selected-submissions" id="user-submissions-summary" onclick="switchRole(0);"><div class="nav-option-outside">
         <div class="nav-option-inside"><h2 style="color:inherit;">'.Workflow::loggedInUserName().'\'s <br>Submissions</h2>';
         
         $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
@@ -1951,7 +1951,7 @@ class Workflow {
         
         $response .= '</td><td style="padding:10px;vertical-align: top;">';
         
-        $response .= '<a href="#approver-submissions" class="nav-option-link" onclick="switchRole(1);"><div class="nav-option-outside">
+        $response .= '<a href="#workflow-summary" class="nav-option-link" id="approver-submissions-summary" onclick="switchRole(1);"><div class="nav-option-outside">
         <div class="nav-option-inside"><h2 style="color:inherit;">Forms Requiring Approval</h2>';
         
         $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';

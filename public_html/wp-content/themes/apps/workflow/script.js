@@ -1308,9 +1308,13 @@ function switchRole(mode) {
     if(mode == 0) {
         find('user-submissions').classList.remove('hide');
         find('approver-submissions').classList.add('hide');
+        find('user-submissions-summary').classList.add('selected-submissions');
+        find('approver-submissions-summary').classList.remove('selected-submissions');
     } else if(mode == 1) {
         find('user-submissions').classList.add('hide');
         find('approver-submissions').classList.remove('hide');
+        find('user-submissions-summary').classList.remove('selected-submissions');
+        find('approver-submissions-summary').classList.add('selected-submissions');
     }
 }
 

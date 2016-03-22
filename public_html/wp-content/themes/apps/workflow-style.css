@@ -552,14 +552,15 @@ span.red {
     color: #ffffff;
 }
 
-#user-submissions {
-    /*border: 1px solid red;*/
+#user-submissions, #approver-submissions {
+    width: 960px;
 }
 
 #user-submissions table,
 #approver-submissions table {
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
 }
 
 .workflow-status-link {
@@ -571,7 +572,22 @@ span.red {
 }
 
 #approver-submissions .workflow-status-link {
-    width: 183px;
+    width: 180px;
+}
+
+#content-workflow .selected-submissions {
+    background-color: #005E90 !important;
+}
+
+.selected-submissions h2 {
+    color: white !important;
+}
+
+.selected-submissions h2,
+.selected-submissions th,
+.selected-submissions td,
+.selected-submissions p {
+    color: white !important;
 }
 
 .workflow-status-link:hover {
@@ -660,5 +676,33 @@ tr.selectedblackout:hover td {
     
     #submissionsearchbar {
         width: 95%;
+    }
+    
+    #workflow-summary td {
+        float: left;
+        border-right: 0px !important; 
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    
+    #workflow-navbar a {
+        float: left;
+        width: 93%;
+        margin-top: 0;
+    }
+    
+    #user-submissions, #approver-submissions {
+        width: 100%;
+    }
+    
+    #view-submissions td {
+        float: none;
+    }
+    
+    .workflow-status-link {
+        width: 96% !important;
+        margin-left: auto;
+        margin-right: auto;
+        float: none;
     }
 }
