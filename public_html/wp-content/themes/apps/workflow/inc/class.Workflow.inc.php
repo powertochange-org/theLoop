@@ -2530,7 +2530,8 @@ class Workflow {
                 
                 $mail = new PHPMailer;
                 $mail->isSMTP();          // Set mailer to use SMTP
-                $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
+                $mail->Host = 'localhost'; // Specify main and backup SMTP servers
+                //$mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
                 //$mail->SMTPAuth = true;                            // Enable SMTP authentication
                 $mail->SMTPDebug = 2;
                 //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
