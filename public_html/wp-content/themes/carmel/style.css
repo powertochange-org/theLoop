@@ -1052,7 +1052,7 @@ ul.sub-categories {
 }
 
 #main-nav-full-screen .current-menu-item a,
-#main-nav-full-screen .current-page-parent a {
+#main-nav-full-screen .current-page-ancestor a {
 	background:#0079c1;
 	border-bottom:thin solid #218ac9;
 }
