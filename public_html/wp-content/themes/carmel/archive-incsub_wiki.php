@@ -45,6 +45,7 @@
                 // If there are catgegories
                 if ($st_categories) {
                     $wikiSectionCount = 0;
+                    $parentwiki = get_option( 'parentwiki' , 0 );
                     foreach ($st_categories as $st_category) {
                         if($wikiSectionCount % 3 == 0) {
                             if($wikiSectionCount != 0) 
@@ -91,8 +92,10 @@
                                                         INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
                                                         WHERE 1=1 
                                                             AND wp_term_relationships.term_taxonomy_id IN (".$st_sub_category->cat_ID.")
-                                                            AND $wpdb->posts.post_type = 'incsub_wiki'
-                                                        ORDER BY pageviews DESC
+                                                            AND $wpdb->posts.post_type = 'incsub_wiki' ";
+                                            if($parentwiki != 0)
+                                                $querystr .= "AND post_parent = '$parentwiki' ";
+                                            $querystr .= "ORDER BY pageviews DESC
                                                         LIMIT 2";
 
                                                      $childcats = $wpdb->get_results($querystr, OBJECT);
@@ -118,10 +121,12 @@
                             INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
                             WHERE 1=1 
                                 AND wp_term_relationships.term_taxonomy_id IN (".$st_category->cat_ID.")
-                                AND $wpdb->posts.post_type = 'incsub_wiki'
-                            ORDER BY pageviews DESC
+                                AND $wpdb->posts.post_type = 'incsub_wiki' ";
+                        if($parentwiki != 0)
+                            $querystr .= "AND post_parent = '$parentwiki' ";
+                        $querystr .= "ORDER BY pageviews DESC
                             LIMIT $numPosts";
-
+                        
                          $childcats = $wpdb->get_results($querystr, OBJECT);
 
 
