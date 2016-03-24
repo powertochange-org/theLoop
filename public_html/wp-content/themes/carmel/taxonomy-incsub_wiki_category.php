@@ -30,7 +30,18 @@
                     
                     <?php while (have_posts()) : the_post(); ?>     
                         <div class="post">
-                            <h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
+                            <h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
+                            <?php the_title(); 
+                            global $wpdb;
+                            $querystr = "
+                                SELECT pageviews
+                                FROM $wpdb->posts
+                                LEFT OUTER JOIN wp_popularpostsdata ON wp_popularpostsdata.postid = $wpdb->posts.ID
+                                INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
+                                WHERE $wpdb->posts.ID = '".$post->ID."' 
+                                LIMIT 1";
+                            $viewcount = $wpdb->get_results($querystr, OBJECT);
+                            echo ' <span class="cat-count"> ('.$viewcount[0]->pageviews.' views)</span>';?></a></h2>
                             <?php the_excerpt(); ?>
                             <p class="meta"><?php the_time('F j, Y'); ?></p>
                         </div>
