@@ -27,8 +27,8 @@ require_once('HTTP/Request.php');  // PEAR Library for making HTTP Requests
  *       you should set $reportParams['ProjectCode'] = '<value>'
  ******************************************************************/
  
-$SERVER_FIRST_CHRONICLES = "https://1Chronicles/CallRptServices/CallRpt.aspx";
-$SERVER_SQL2012 = "https://1chronicles/CallRptServices2012/CallRpt.aspx";
+$SERVER_FIRST_CHRONICLES = "http://1Chronicles/CallRptServices/CallRpt.aspx";
+$SERVER_SQL2012 = "http://1chronicles/CallRptServices2012/CallRpt.aspx";
  
 function produceRSReport($reportPath, $renderFormat, $reportParams, $sendData = true, $server = null)
 {
