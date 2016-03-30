@@ -437,7 +437,7 @@ function parseUserValuesInput(){
 		$pdf = new FPDF();
 		$pdf->AddPage();
 		
-		$pdf->Image(get_stylesheet_directory_uri(). '/res/footer-logo.png'); //todo change fix!!
+		$pdf->Image(get_stylesheet_directory(). '/res/footer-logo.png'); //todo change fix!!
 		$pdf->SETXY(60, 15);
 		$pdf->SetFont('Arial','b',14);
 		$pdf->Write(5,'Allowance Calculator');
