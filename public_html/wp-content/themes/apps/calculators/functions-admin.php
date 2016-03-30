@@ -7,7 +7,7 @@ parseAdminRemove();
 function parseAdminInput(){
 	global $wpdb;
 	if (isAppAdmin('support_calculator_admin', 0)){
-		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_add_admin"]));
+		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_add_admin"]), $wpdb);
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
 			return;
@@ -17,7 +17,7 @@ function parseAdminInput(){
 		}
 		else{
 			$ID = $user->ID;
-			$l = intval(get_user_meta($ID, 'loopadmin_support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"])));
+			$l = intval(get_user_meta($ID, 'loopadmin_support_calculator_admin', true) | pow(2, mysql_real_escape_string($_GET["input_admin_level"], $wpdb)));
 			update_user_meta( $ID, 'loopadmin_support_calculator_admin', $l);
 			echo '<BR>Granted special access to: '. $admin. '<BR>';
 		}
@@ -30,7 +30,7 @@ function parseAdminInput(){
 function parseAdminRemove(){
 	global $wpdb;
 	if (isAppAdmin('support_calculator_admin', 0)){
-		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_remove_admin"]));
+		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_remove_admin"]), $wpdb);
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
 			return;
