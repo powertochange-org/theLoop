@@ -177,7 +177,7 @@ include('functions/js_functions.php'); ?>
 			global $wpdb,$current_user_id, $support_dataID;
 			$ID = $current_user_id;
 			//todo error handling
-			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"]), $wpdb));	
+			$data = explode('+',  mysqli_real_escape_string($wpdb->dbh, htmlspecialchars($_GET["data"])));	
 			
 			$support_dataID = getDataID($ID);
 			if ($support_dataID == null || 0 == $support_dataID){
