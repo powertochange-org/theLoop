@@ -177,10 +177,10 @@ include('functions/js_functions.php'); ?>
 			global $wpdb,$current_user_id, $support_dataID;
 			$ID = $current_user_id;
 			//todo error handling
-			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
+			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"]), $wpdb));	
 			
 			$support_dataID = getDataID($ID);
-			if ($support_dataID == null){
+			if ($support_dataID == null || 0 == $support_dataID){
 				$spouse = getSpouse();
 				if($spouse != -1){
 					$support_dataID = getDataID($spouse);
@@ -240,7 +240,7 @@ include('functions/js_functions.php'); ?>
 			return $result[0]->$field;
 		}
 		
-		if (isAdmin()){
+		if (isAppAdmin('support_calculator_admin', 0)) {
 			include('calculators/support-calculator-admin.php');
 		}
 		
@@ -490,7 +490,11 @@ include('functions/js_functions.php'); ?>
 				return (salary + salary_s) * medical_QC;
 			}
 			if (province == BC){
-				return medical_BC[coverage];
+				if(coverage_int == 0) {
+					return medical_BC[coverage];
+				} else {
+					return 0;
+				}
 			}
 			return 0;
 		}
@@ -920,7 +924,7 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live.">
+					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live." onchange="calculate();">
 					<option value="0" <?php if (setProvince() == 0) echo "selected"; ?>>Alberta</option>
 					<option value="1" <?php if (setProvince() == 1) echo "selected"; ?>>British Columbia</option>
 					<option value="2" <?php if (setProvince() == 2) echo "selected"; ?>>Manitoba</option>

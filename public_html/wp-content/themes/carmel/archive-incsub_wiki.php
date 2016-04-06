@@ -1,19 +1,30 @@
 <!--Controlls the sub-archive page that will list every post available to be viewed.-->
 <?php get_header(); ?>
 	<div id="content">
-		<div id="content-left">
+		<div id="content-left" class="wiki-fix">
 			<div id="main-content" class="archive-page">
 			    <!--Navigation-->
-                <a href="/kb/">Knowledge Base Home</a>
-                <a href="/kb/articles/?action=edit&eaction=create" style="margin-left: 20px;">Create New Knowledge Base Article</a>
+                <?php include('wikimenu.php'); ?>
                     
-                    
-				<h1>Wiki Home Page</h1>
+				<h1>Knowledge Base Home Page</h1>
 				<hr>
 				
-				
-				
-				<div id="homepage-categories" class="clearfix">
+                <form role="search" method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>" >
+                    <div>
+                        <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
+                        <div class="wiki-search-input">
+                            <input type="text" class="fieldform" placeholder="Search the Knowledge Base for an article here..." 
+                                value="<?php echo get_search_query(); ?>" name="s" id="s" />
+                        </div>
+                        <input type="hidden" value="incsub_wiki" name="post_type" id="post_type" />
+                        <input type="hidden" value="1" name="wiki" id="wiki" />
+                        <div class="wiki-search-submit">
+                            <input type="submit" class="fieldform" id="searchsubmit" value="<?php esc_attr_e('Search', 'wiki'); ?>" />
+                        </div>
+                    </div>
+                </form>
+                <div style="clear:both;margin-bottom:30px;"></div>
+                <div id="homepage-categories" class="clearfix">
                 <?php
                 // Get homepage options
                 // Set category counter
@@ -28,17 +39,24 @@
                     'taxonomy' => 'incsub_wiki_category',
                     'pad_counts' => 1
                 );
-
+                
                 $st_categories = get_categories($st_hp_cat_args);
                 $st_categories = wp_list_filter($st_categories, array('parent' => 0));
                 // If there are catgegories
                 if ($st_categories) {
+                    $wikiSectionCount = 0;
+                    $parentwiki = get_option( 'parentwiki' , 0 );
                     foreach ($st_categories as $st_category) {
-                        echo '<h3> <a href="' . get_category_link($st_category->term_id) . '" title="' . sprintf(__('View all posts in %s', 'framework'), $st_category->name) . '" ' . '>' . $st_category->name . '</a>';
-                        //if (of_get_option('st_hp_cat_counts') == '1') {
-                            echo '<span class="cat-count">(' . $st_category->count . ')</span>';
-                        //}
+                        if($wikiSectionCount % 3 == 0) {
+                            if($wikiSectionCount != 0) 
+                                echo '</div><div class="wiki-section-group-gap" style="clear: both;"></div>';
+                            echo '<div class="wiki-section-group">';
+                        }
+                        echo '<div class="wiki-section">';
+                        echo '<h3> <a href="' . get_category_link($st_category->term_id) . '" title="' . sprintf(__('View all wikis in %s', 'framework'), $st_category->name) . '" ' . '>' . $st_category->name . '</a>';
+                        echo '<span class="cat-count"> (' . $st_category->count . ' Articles)</span>';
                         echo '</h3>';
+                        //$st_category->description //gets the description
 
                         // Sub category
                         $st_sub_category = get_category($st_category);
@@ -53,63 +71,80 @@
                         $st_sub_categories = wp_list_filter($st_sub_categories, array('parent' => $st_sub_category->cat_ID));
 
                         // If there are sub categories show them
-                        if ($st_sub_categories /*&& (of_get_option('st_hp_subcat') == 1)*/) {
+                        $subCatsFound = 0;
+                        if ($st_sub_categories) {
+                            $subCatsFound = 1;
                             foreach ($st_sub_categories as $st_sub_category) {
                                 ?>
                                 <ul class="sub-categories">
                                     <li>
                                         <h4><?php
                                             echo '<a href="' . get_category_link($st_sub_category->term_id) . '" title="' . sprintf(__('View all posts in %s', 'framework'), $st_sub_category->name) . '" ' . '>' . $st_sub_category->name . '</a>';
-                                            if (/*of_get_option('st_hp_subcat_counts') == '1'*/true) {
-                                                echo '<span class="cat-count">(' . $st_sub_category->count . ')</span>';
+                                            echo '<span class="cat-count"> (' . $st_sub_category->count . ' Articles)</span>';
+                                            ?>
+                                        </h4>
+                                        
+                                        <?php //Get child wikis for the sub category
+                                            $querystr = "
+                                                        SELECT $wpdb->posts.* , pageviews
+                                                        FROM $wpdb->posts
+                                                        LEFT OUTER JOIN wp_popularpostsdata ON wp_popularpostsdata.postid = $wpdb->posts.ID
+                                                        INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
+                                                        WHERE 1=1 
+                                                            AND wp_term_relationships.term_taxonomy_id IN (".$st_sub_category->cat_ID.")
+                                                            AND $wpdb->posts.post_type = 'incsub_wiki' ";
+                                            if($parentwiki != 0)
+                                                $querystr .= "AND post_parent = '$parentwiki' ";
+                                            $querystr .= "ORDER BY pageviews DESC
+                                                        LIMIT 2";
+
+                                                     $childcats = $wpdb->get_results($querystr, OBJECT);
+                                            echo '<ul class="wiki-list">';
+                                            foreach($childcats as $childwiki) {
+                                                echo '<li> <a class="wiki-section-link" href="'.get_permalink($childwiki->ID).'">'.$childwiki->post_title.'<span class="cat-count"> (' . $childwiki->pageviews . ' views)</span></a></li>';
                                             }
-                                            ?></h4>
+                                            echo '</ul>';?>
                                     </li>
                                 </ul>
                             <?php
                             }
                         }
                         
-                    }
+                        $numPosts = 5;
+                        if($subCatsFound)
+                            $numPosts = 3;
+                        //Display the wikis under the main category
+                        $querystr = "
+                            SELECT $wpdb->posts.* , pageviews
+                            FROM $wpdb->posts
+                            LEFT OUTER JOIN wp_popularpostsdata ON wp_popularpostsdata.postid = $wpdb->posts.ID
+                            INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
+                            WHERE 1=1 
+                                AND wp_term_relationships.term_taxonomy_id IN (".$st_category->cat_ID.")
+                                AND $wpdb->posts.post_type = 'incsub_wiki' ";
+                        if($parentwiki != 0)
+                            $querystr .= "AND post_parent = '$parentwiki' ";
+                        $querystr .= "ORDER BY pageviews DESC
+                            LIMIT $numPosts";
+                        
+                         $childcats = $wpdb->get_results($querystr, OBJECT);
+
+
+                        echo '<ul class="wiki-list">';
+                        foreach($childcats as $childwiki) {
+                            //Make sure it is not a sub category
+                            $catCheck = get_the_terms($childwiki->ID, 'incsub_wiki_category');
+                            if($catCheck[0]->term_id == $st_category->cat_ID)
+                                echo '<li> <a class="wiki-section-link" href="'.get_permalink($childwiki->ID).'">'.$childwiki->post_title.'<span class="cat-count"> (' . $childwiki->pageviews . ' views)</span></a>
+                                        </li>';
+                        }
+                        echo '</ul></div>';
+                        $wikiSectionCount++;
+                    } //End of the loop
+                    echo '</div><div style="clear: both; margin-bottom:200px;"></div>';
                 }
 				?>
-					
 				</div>
-					
-					
-					
-					
-					
-<?php /*				
-					
-					<?php if (have_posts()) : ?>				
-					<?php if (is_category()) { ?>
-						<h1 class="replace">ARCHIVES</h1>
-						<?php } elseif (is_day()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('F jS, Y'); ?></h1>
-						<?php } elseif (is_month()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('F, Y'); ?></h1>
-						<?php } elseif (is_year()) { ?>
-						<h1 class="replace">ARCHIVE <?php the_time('Y'); ?></h1>
-					<?php } ?>
-					
-					<hr>
-					<?php while (have_posts()) : the_post(); ?>		
-						<div class="post">
-							<h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
-							<?php the_excerpt(); ?>
-							<!--<p class="meta"><?php //the_time('F j, Y'); ?> in <?php the_category(', '); ?> by <?php the_author_posts_link() ?></p>-->
-							<!--<p class="meta"><?php //comments_popup_link('No comments yet', '1 comment', '% comments', '', 'Comments are disabled for this post'); ?></p>-->
-						</div>
-						<hr>
-						<!--/box-->    
-					 <?php endwhile; ?>
-					<div id="page-nav">
-					    <?php next_posts_link('&laquo; Previous Entries') ?>
-					    <?php previous_posts_link('Next Entries &raquo;') ?>
-					</div>
-				<?php endif; ?>	
-    */?>
 			</div>
 			</div>
         	</div><div style='clear:both;'></div>

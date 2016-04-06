@@ -21,10 +21,24 @@ to an another report you need to:
 $current_user = wp_get_current_user();
 $user_id = $current_user->user_login;
 
-/* For the Staff List report, we need the current user's employee number, and also a list
- * of the staff who report to the current user */
-$reportsToMeResults = $wpdb->get_results(
-	$wpdb->prepare( 
+
+//Admin for financial health report
+include('functions/functions.php');
+$admin = 0;
+if(isAppAdmin('staffhealth', 0)) {
+	$admin = 1;
+	$reportsToMeResults = $wpdb->get_results(
+		$wpdb->prepare( 
+		/* Get Everyone instead of the people that really report to the user*/
+		"SELECT e.employee_number, e.user_login, CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
+		FROM employee e
+		WHERE e.staff_account IS NOT NULL   
+		ORDER BY CASE WHEN user_login = %s THEN 1 ELSE 2 END, full_name", $user_id));
+} else {
+	/* For the Staff List report, we need the current user's employee number, and also a list
+	 * of the staff who report to the current user */
+	$reportsToMeResults = $wpdb->get_results(
+		$wpdb->prepare( 
 		/* First select is for the current user; next is for everyone who reports to the current user */
 		"SELECT e.employee_number, e.user_login, '                           ' AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
 		FROM employee e
@@ -49,7 +63,55 @@ $reportsToMeResults = $wpdb->get_results(
 				      WHEN supervisor_login = %s THEN 2
 					  ELSE 3 END,
 			full_name", /* Order by current user first, then direct reports, then everyone else */
-		$user_id, $user_id, $user_id, $user_id));
+		$user_id, $user_id, $user_id, $user_id));	
+  
+  //Add on the extra entries from the employee manager table
+  for($z = 0; $z < 7; $z++) { //Up to 7 levels
+    if($z == 0) {
+      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare( 
+        "SELECT 
+        employee_manager.employee_number, 
+        employee.user_login,
+        s1.user_login AS 'supervisor_login',
+        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
+        FROM employee_manager
+        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
+        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
+        WHERE s1.user_login = %s AND employee.staff_account IS NOT NULL", $user_id));
+    } else {
+      $sql = "SELECT 
+        employee_manager.employee_number, 
+        employee.user_login,
+        s1.user_login AS 'supervisor_login',
+        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
+        FROM employee_manager
+        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
+        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
+        WHERE s1.employee_number IN( %s ) AND employee.staff_account IS NOT NULL";
+        
+        $params = '';
+        foreach($extrareportsToMeResults as $extra) {
+          if(!empty($params))
+            $params .= ', ';
+          $params .= $extra->employee_number;
+        }
+      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare($sql, $params));
+    }
+    //Check for duplicates
+    foreach($extrareportsToMeResults as $extra) {
+      $duplicate = 0;
+      foreach($reportsToMeResults as $duplicateCheck) {
+        if($duplicateCheck->employee_number == $extra->employee_number) {
+          $duplicate = 1;
+          break;
+        }
+      }
+      //Add the person if they are not a duplicate
+      if(!$duplicate)
+        array_push($reportsToMeResults, $extra);
+    }
+  }
+}
 
 
 //Set proper output format for preview
@@ -75,7 +137,7 @@ if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorRepor
   $year = $_POST['RPTYEAR'];
 	
   $lastday=31;
-  while (!checkdate($month,$lastday,$year)) {
+  while (!checkdate(intval($month),$lastday,$year)) {
     $lastday = $lastday-1;
   }
 
@@ -316,6 +378,14 @@ if(isset($_GET["reportlink"])) {
 
 
 get_header(); ?>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
+  <style>
+     .chosen-container {width: 220px !important}
+  </style>
 	<div id="content">
 		<div id="main-content">	
 			<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><!-- ?php the_title(); ? --></a></h1>
@@ -352,12 +422,22 @@ get_header(); ?>
 			</P>
 			<DIV ID="staffaccount" STYLE="display:none">
 				<P>Please enter your ministry/staff account number:<BR>  
-					<INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="10" VALUE="<?php echo $_POST["DESGCODE"];?>">
+          <!-- JasonB: look at adding ministry accounts before we make this live
+		  <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
+            <option> </option>
+            <?php $values = getAllEmployeesStaffAccounts();
+            for($i = 0; $i < count($values); $i++) {
+                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }?>
+          </select>
+          <button type="button" onclick="addProjectCode();">Add Staff Account ►</button>-->
+          <INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="15" VALUE="<?php echo $_POST["DESGCODE"];?>">
 				</P>
+        
 			</DIV>
 			<DIV id='staffHealth_options' style='display:none'>
 				For Staff member:
-				<SELECT NAME="employee_number">
+				<SELECT NAME="employee_number" class="chosen-select">
 				<?php
 				foreach($reportsToMeResults as $result) {
 					echo "<OPTION VALUE='" . $result->employee_number . "'>" . $result->full_name . "</OPTION>\r\n";
@@ -514,7 +594,31 @@ get_header(); ?>
 		<!--
 		// Set focus to the project code field
 		//document.getElementById('DESGCODE').focus();
+    
+    //Create filter for the list of names
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }//End of filter creation
 		
+    function addProjectCode() {
+      var projCode = document.getElementById('staffaccountadd').value;
+      if(projCode != null && projCode != '') {
+        var currentEntry = document.getElementById('DESGCODE').value;
+        if(currentEntry != '') {
+          document.getElementById('DESGCODE').value += ',' + projCode;
+        } else {
+          document.getElementById('DESGCODE').value += projCode;
+        }
+      }
+    }
+    
 		function CheckForm(form, subType){
 			if($("#repchoice").val() == "") {
 				alert("Please select a report from the drop-down list");
@@ -562,7 +666,7 @@ get_header(); ?>
 				}  else if($(this).val() == "StaffVacation"){
 					showHideFields(["#reportToMe_opt","#staffVaction_options","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if ($(this).val() == "StaffFinancialHealth"){
-					<?php if (count($reportsToMeResults) > 0) { ?>
+					<?php if ($admin || count($reportsToMeResults) > 0) { ?>
 						showHideFields(["#staffHealth_options","#monthyear","#buttonsPreview"]);
 					<?php } else { ?>
 						$("#message").html("You don't have access to run this report for any staff. If you believe you should have access, please email <a href='mailto:helpdesk@p2c.com'>helpdesk@p2c.com</a>");

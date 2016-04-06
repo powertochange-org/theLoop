@@ -21,12 +21,46 @@
 			$array_key = array_keys($_GET);
 			for ($i = 0; $i < count($_GET); $i ++){
 				$key = $array_key[$i];
-				$sql_part1 .= ', `'.$key.'`';
+				$sql_part1 .= ', `'.mysql_real_escape_string($key).'`';
 				$sql_part2 .= ', "'.mysql_real_escape_string($_GET[$key]).'"';
 			}
 			$sql= $sql_part1.$sql_part2.')';
 			mysqli_query($con, $sql);
 			mysqli_close($con);
+			
+			if(@$_GET['comment']){
+				$message = "<html><body>";
+				foreach(array_keys($_GET) as $key){
+					$message .= "<strong>$key: </strong>";
+					switch($key) {
+						case 'ticket_id':
+							if ($_GET['ticket_id'] == 0){
+								$message .= 'invalid ticket';
+							}
+							else{
+								$message .= "<a href='http://helpdesk:9876/tickets/list/single_ticket/".$_GET['ticket_id']."' target='_blank'>Ticket: ".$_GET['ticket_id']."</a>";
+							}
+							break;
+						case 'how_well':
+							if ($_GET['how_well'] == 0){
+								$message .= 'NULL';
+							}
+							else {
+								$message .= $_GET['how_well'];
+							}
+							break;
+						default:
+							$message .= $_GET[$key];
+					}
+					$message .= "<br />\n";
+				}
+				$message .= "</body></html>";
+				
+				$headers = "MIME-Version: 1.0" . "\r\n";
+				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				$headers .= 'From: <it.team@p2c.com>' . "\r\n";
+				mail('it@p2c.com', 'Hurray! Survey response!', $message, $headers);
+			}
 		?>
 		<body>
 			<div style='top: 300px; position: relative;'>

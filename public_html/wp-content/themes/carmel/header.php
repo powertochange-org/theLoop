@@ -38,6 +38,7 @@ if (get_theme_mod('survey_active')) {
         <?php $siteURL = get_bloginfo('url'); ?>
         <link href="<?php bloginfo('template_url'); ?>/style.css" rel="stylesheet" type="text/css" />
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+        <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.ico" />
         <?php wp_head(); ?> 
          <script type='text/javascript'>
            
@@ -112,10 +113,34 @@ if (get_theme_mod('survey_active')) {
           });
         
         });
-        
       </script>
       <button id="mobile-menu"><img src="/wp-content/themes/carmel/img/menu_icon.png" alt="" /></button>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>
 			</div>
+      <div id='main-nav-full-screen'>
+        <?php wp_nav_menu( array( 'theme_location'=>'main', 'container' => '', 'menu_class' => 'menu', 'depth' => 3)); ?>
+      </div>
+      <script>
+        var timeout = null;
+        var selectedElement = null;
+        $('#main-nav-full-screen ul.menu > li').mouseenter(function() {
+          if(selectedElement != null) {
+            selectedElement.removeClass("display-sub-menu");
+            clearTimeout(timeout);
+          }
+          selectedElement = $(this).find('ul');
+          timeout = setTimeout(function () {
+              selectedElement.addClass("display-sub-menu");
+              console.log('display');
+          }, 500);
+        }).mouseleave(function() {
+          if(selectedElement != null) {
+            selectedElement.removeClass("display-sub-menu");
+          }
+          selectedElement = null;
+          clearTimeout(timeout);
+          timeout = null;
+        });
+      </script>
 		</header>

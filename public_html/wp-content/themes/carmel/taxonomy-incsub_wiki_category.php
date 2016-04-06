@@ -1,13 +1,12 @@
 <!--Controlls the sub-archive page that will list every post available to be viewed.-->
 <?php get_header(); ?>
     <div id="content">
-        <div id="content-left">
+        <div id="content-left" class="wiki-fix">
             <div id="main-content" class="archive-page">
             
             
                 <!--Navigation-->
-                <a href="/kb/">Knowledge Base Home</a>
-                <a href="/kb/articles/?action=edit&eaction=create" style="margin-left: 20px;">Create New Knowledge Base Article</a>
+                <?php include('wikimenu.php'); ?>
                 
                 <?php
                     //Display the category title and description
@@ -31,7 +30,18 @@
                     
                     <?php while (have_posts()) : the_post(); ?>     
                         <div class="post">
-                            <h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
+                            <h2 class="line"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
+                            <?php the_title(); 
+                            global $wpdb;
+                            $querystr = "
+                                SELECT pageviews
+                                FROM $wpdb->posts
+                                LEFT OUTER JOIN wp_popularpostsdata ON wp_popularpostsdata.postid = $wpdb->posts.ID
+                                INNER JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)  
+                                WHERE $wpdb->posts.ID = '".$post->ID."' 
+                                LIMIT 1";
+                            $viewcount = $wpdb->get_results($querystr, OBJECT);
+                            echo ' <span class="cat-count"> ('.$viewcount[0]->pageviews.' views)</span>';?></a></h2>
                             <?php the_excerpt(); ?>
                             <p class="meta"><?php the_time('F j, Y'); ?></p>
                         </div>
@@ -39,8 +49,12 @@
                         <!--/box-->    
                      <?php endwhile; ?>
                     <div id="page-nav">
-                        <?php next_posts_link('&laquo; Previous Entries') ?>
-                        <?php previous_posts_link('Next Entries &raquo;') ?>
+                        <div style="float:left;">
+                            <?php previous_posts_link('&laquo; Previous Results'); ?>
+                        </div>
+                        <div style="float:right;">
+                            <?php next_posts_link('Next Results &raquo;');?>
+                        </div>
                     </div>
                 <?php endif; ?> 
             </div>
