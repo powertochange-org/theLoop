@@ -2442,7 +2442,7 @@ class Workflow {
         <tr>
         <td>
         <!-- Header -->
-        <img src="http://geraldbecker.com/images/WorkflowFormHeader.png" width="100%"  alt="Workflow Submission" border="0" />
+        <img src="http://staff.powertochange.org/wp-content/images/WorkflowFormHeader.png" width="100%"  alt="Workflow Submission" border="0" />
         <!--<img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />-->
         </td>
         </tr>
@@ -2452,7 +2452,7 @@ class Workflow {
         <tr>
         <td>
         <!-- Footer -->
-        <img src="http://geraldbecker.com/images/WorkflowFormFooter.png" width="100%" style="margin-top: 20px" alt="Report Footer"/>
+        <img src="http://staff.powertochange.org/wp-content/images/WorkflowFormFooter.png" width="100%" style="margin-top: 20px" alt="Report Footer"/>
         </td>
         </tr>
         </table>';
