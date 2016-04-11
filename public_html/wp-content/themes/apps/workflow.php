@@ -33,6 +33,10 @@ require_once('workflow/inc/class.Workflow.inc.php');
 <?php get_header(); ?>
     <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css" rel="stylesheet" type="text/css" />
     <script language="javascript" type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/script.js"></script>
+    <?php 
+        if(isset($_GET['page']) && $_GET['page'] == 'createworkflow') {
+            echo '<script language="javascript" type="text/javascript" src="'.get_stylesheet_directory_uri().'/workflow/createworkflowscript.js"></script>';
+        } ?>
     <div id="content" class='staff-d'>
         <?php if (have_posts()) : while (have_posts()) : the_post();  ?>
             <!--<h1 style="float:left;"><a style="font-size:35pt;font-family:Roboto Slab;font-weight:100;" href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h1>-->
