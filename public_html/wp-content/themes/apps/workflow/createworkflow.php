@@ -130,11 +130,11 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>-->
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="destination1-1">
             Approver Level 1:<span class="red">*</span>
         </div>
-        <div class="workflow workflowright style-1">
-            <select name="destination1">
+        <div class="workflow workflowright style-1" id="destination1-2">
+            <select name="destination1" id="destination1" onchange="toggleApproverLevelFields(this.id);">
                 <?php
                 $values = $workflow->getRoles();
                 for($i = 0; $i < count($values); $i++) {
@@ -148,11 +148,11 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="destination2-1">
             Approver Level 2:
         </div>
-        <div class="workflow workflowright style-1">
-            <select name="destination2">
+        <div class="workflow workflowright style-1" id="destination2-2">
+            <select name="destination2" id="destination2" onchange="toggleApproverLevelFields(this.id);">
                 <option></option>
                 <?php
                 $values = $workflow->getRoles();
@@ -167,11 +167,11 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="destination3-1" <?php if(empty($approver2)) echo 'hidden';?>>
             Approver Level 3:
         </div>
-        <div class="workflow workflowright style-1">
-            <select name="destination3">
+        <div class="workflow workflowright style-1" id="destination3-2" <?php if(empty($approver2)) echo 'hidden';?>>
+            <select name="destination3" id="destination3" onchange="toggleApproverLevelFields(this.id);">
                 <option></option>
                 <?php
                 $values = $workflow->getRoles();
@@ -186,11 +186,11 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="destination4-1" <?php if(empty($approver3)) echo 'hidden';?>>
             Approver Level 4:
         </div>
-        <div class="workflow workflowright style-1">
-            <select name="destination4">
+        <div class="workflow workflowright style-1" id="destination4-2" <?php if(empty($approver3)) echo 'hidden';?>>
+            <select name="destination4" id="destination4" onchange="toggleApproverLevelFields(this.id);">
                 <option></option>
                 <?php
                 $values = $workflow->getRoles();
@@ -253,20 +253,20 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="workflow workflowright style-1">
             <select id="fieldtype" name="fieldtype" form="addnewworkflow" onchange="updateWorkflowCreation(this.id);">
-                <option value="10">Heading</option>
                 <option value="11">Heading 1</option>
+                <option value="10">Heading 2</option>
                 <option value="12">Heading 3</option>
                 <option value="1">Instruction Text</option>
                 <option value="0">Entry Box Input</option>
-                <option value="4">Checkbox Input</option>
-                <option value="7">Date Input</option>
+                <option value="4">Checkbox</option>
+                <option value="2">Drop-down List</option>
+                <option value="13">Radio Button</option>
+                <option value="7">Date Picker</option>
                 <option value="8">Ask a Question</option>
-                <option value="3">Create a Newline</option>
+                <option value="3">Start a New Line</option>
                 <option value="9">Horizontal Line</option>
                 <option value="5">Autofill Name</option>
                 <option value="6">Autofill Date</option>
-                <option value="2">Option</option>
-                <option value="13">Radio</option>
             </select>
         </div>
         <div class="clear"></div>
@@ -289,29 +289,30 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
             <div class="clear"></div>
         </div>
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="fieldsettings1" hidden="true">
             Field Settings:
         </div>
-        <div class="workflow workflowright style-1">
+        <div class="workflow workflowright style-1" id="fieldsettings2" hidden="true">
             <input type="checkbox" id="requiredfield" name="requiredfield" title="Does the field have to be filled out by the user?">Required Field<br>
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft" id="approvalrights1"  hidden="true">
             Approval Rights:
         </div>
-        <div class="workflow workflowright style-1">
+        <div class="workflow workflowright style-1"  id="approvalrights2"  hidden="true">
             <input type="checkbox" id="editable" name="editable">Can this field be modified during approval steps?<br>
             <!--<input type="checkbox" id="approvalonly" name="approvalonly">Approval screen field?-->
             
         </div>
         <div class="clear"></div>
         <!--<br>-->
-        <div class="workflow workflowleft">
+        <div class="workflow workflowleft"  id="approvallevels1">
             Approval Level:
         </div>
-        <div class="workflow workflowright style-1">
-            <select id="approvallevel" name="approvallevel" form="addnewworkflow">
+        <div class="workflow workflowright style-1" id="approvallevels2">
+            <select id="approvallevel" name="approvallevel" form="addnewworkflow" 
+                onchange="toggleExtraApprovalFields(this.id);">
                 <option value="0"></option>
                 <option value="1">Level 1</option>
                 <option value="2">Level 2</option>
@@ -321,11 +322,11 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         </div>
         <div class="clear"></div>
         
-        <div class="workflow workflowleft">
+        <div id="displayfinishmain1" class="workflow workflowleft" hidden="true">
             Display Settings:
         </div>
-        <div class="workflow workflowright style-1">
-            <input type="checkbox" id="approvalshow" name="approvalshow" title="Can the user who submitted the form see this field once completed?">Displayed on Finished Forms (Approval fields only)?<br>
+        <div id="displayfinishmain2" class="workflow workflowright style-1" hidden="true">
+            <input type="checkbox" id="approvalshow" name="approvalshow" title="Can the user who submitted the form see this field once completed?">Displayed on Finished Forms?<br>
         </div>
         <div class="clear"></div>
         
@@ -342,8 +343,8 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         <input type="hidden" id="previousID" name="previousID" value="<?php echo $wfid?>">
         <div class="clear" style="height:40px;"></div>
         <input type="submit" id="formsubmitbutton" value="Create Form" onclick="clearPageExit();" style="display: none;">
-        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '4'; else echo '3';?>);">Create Form</button>
-        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '2'; else echo '1';?>);">Save Form</button>
+        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '4'; else echo '3';?>);">Create and Publish Form</button>
+        <button type="button" style="width: 200px;height:35px;" onclick="processWorkflow(<?php if($draft)echo '2'; else echo '1';?>);">Save Form as Draft</button>
         <br><br>
     </form>
 <?php

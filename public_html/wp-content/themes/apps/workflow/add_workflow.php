@@ -53,7 +53,14 @@ $numfields = $_POST['count'];
 
 $submitmode = $_POST['submitmode'];
 
-//echo "<br>SUBMIT MODE : ".$submitmode.'<br>';
+/*
+$submitmode is used to determine whether the form is in the draft state or a brand new form.
+Also it determines whether it will be published or just saved as a draft again. 
+1 - Brand new draft
+2 - Draft saving as a draft again
+3 - Brand new publishing 
+4 - Draft now being published
+*/
 if($submitmode == 1 || $submitmode == 2) {
     $draft = 1;
     $savedData = $_POST['savedData'];
@@ -71,7 +78,7 @@ $myWorkflow = new Workflow();
 $myWorkflow->createWorkflow($_POST['workflowname'], $_POST['startaccess'], $_POST['destination1'], $destination2, 
                             $destination3, $destination4, $processor, $behalfof, $draft, stripslashes($savedData), $numfields, $submitmode, $previousID);
 
-
+//If the form is being published, create and store the fields in the correct table
 if($submitmode == 3 || $submitmode == 4) {
     //When adding POST fields, make sure to change the javascript file function called addField. The reason for this
     //is that the javascript is configuring the numbering so this page can add it to the database. 
@@ -121,6 +128,8 @@ if($submitmode == 3 || $submitmode == 4) {
 
 $myWorkflow->storeToDatabase();
 
-
-header('location: ?page=view');
+if($draft)
+    header('location: ?page=view&draft');
+else
+    header('location: ?page=view');
 ?>

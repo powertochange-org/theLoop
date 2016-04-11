@@ -67,6 +67,12 @@ class Workflow {
     
     /*
         Stores the new workflow layout.
+        $this->mode is used to determine whether the form is in the draft state or a brand new form.
+        Also it determines whether it will be published or just saved as a draft again. 
+        1 - Brand new draft
+        2 - Draft saving as a draft again
+        3 - Brand new publishing 
+        4 - Draft now being published
     */
     public function storeToDatabase() {
         global $wpdb;
@@ -148,14 +154,7 @@ class Workflow {
             $sql .= "ENABLED = '".(!$this->draft)."' ";
             
             $sql .= "WHERE FORMID = '".$this->previousID."'";
-            
-            
-            
-            
         }
-        
-        
-        //die(htmlspecialchars($sql));
         
         
         $result = $wpdb->query($sql, ARRAY_A);
@@ -167,17 +166,16 @@ class Workflow {
         }
         
         if(!$result) {
-            //die('failed to update<br>'.htmlspecialchars($sql));
-            die('failed to update');
+            if($wpdb->result == true && $this->mode == 2) //When nothing was updated
+                return;
+            else 
+                die('Failed to update the form. Please contact helpdesk.');
         }
         
         //If the workflow is being saved, there is no more work needed to be done. 
         if($this->mode == 1 || $this->mode == 2) {
-            header("location: ?page=view");
-            die();
+            return;
         } 
-        //die('SUCCESS!!!<br>'.htmlspecialchars($sql));
-        //echo '<br>Inserted the ID: '.$inserted_id.'<br>';
         
         //Store fields into WorkflowDetails
         $formCount = -1;
@@ -957,7 +955,7 @@ class Workflow {
             if($row['TYPE'] == 2 && $prevId == $row['FIELDID']) {
                 $anotherOption = 1;
                 if($skipOptions && !$foundOptionMatch) {
-                    $response .='</div>';
+                    $response .='</div></div>';
                     $foundOptionMatch = 1;
                     continue;
                 } else if($foundOptionMatch) {
@@ -966,9 +964,9 @@ class Workflow {
             } else {
                 //Close the option list
                 if($anotherOption && !$skipOptions)
-                    $response .='</select></div>';
+                    $response .='</select></div></div>';
                 else if($anotherOption && $skipOptions && !$foundOptionMatch)
-                    $response .='</div>';
+                    $response .='</div></div>';
                 $anotherOption = $skipOptions = $foundOptionMatch = 0;
                 $prevId = $row['FIELDID']; //Set prevId for next time
             }
@@ -1012,13 +1010,13 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;font-weight:bold;';
                 }
                 
-                $response .= '">'.$row['LABEL'].'</div>';
+                $response .= '"><div class="inside-text-center">'.$row['LABEL'].'</div></div>';
                 
             } else if($row['TYPE'] == 0) { //Textbox
                 if($row['APPROVAL_ONLY'] == 1)
@@ -1030,17 +1028,16 @@ class Workflow {
                     $response .= '<div class="workflow workflowright style-1 mobile ';
                 
                 if($row['FIELD_WIDTH'] != NULL) {
-                    //$response .= ' style="width:'.$row['FIELD_WIDTH'].'px;';
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                     
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 if($editableField) {
                     $response .= '<input type="text" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
@@ -1051,9 +1048,9 @@ class Workflow {
                         $response .= ' disabled';
                     $response .= '>';
                 } else {
-                    $response .= $fieldvalue;
+                    $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
                 }
-                $response .= '</div>';
+                $response .= '</div></div>';
             } else if($row['TYPE'] == 3) { //Newline
                 $response .= '<div class="clear" ';
                 if($row['FIELD_WIDTH'] != NULL) {
@@ -1080,13 +1077,13 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 if($editableField) {
                     $response .= '<input type="hidden" name="workflowfieldid'.$row['FIELDID'].'" value="0">';
@@ -1100,7 +1097,7 @@ class Workflow {
                 }
                 if($fieldvalue)
                     $response .= 'checked';
-                $response .='>'.$row['LABEL'].'</div>';
+                $response .='>'.$row['LABEL'].'</div></div>';
                 
             } else if($row['TYPE'] == 5) { //Autofill Name
                 if($row['APPROVAL_ONLY'] == 1)
@@ -1115,13 +1112,13 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 if($editableField) { //TODO: check approval level
                     $response .= '<input type="text" placeholder="'.$row['LABEL'].'" value="';
@@ -1138,9 +1135,9 @@ class Workflow {
                         $response .= Workflow::loggedInUserName();
                     $response .= '" class="autonamefill">';
                 } else {
-                    $response .= $fieldvalue;
+                    $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
                 }
-                $response .= '</div>';
+                $response .= '</div></div>';
             } else if($row['TYPE'] == 6) { //Autofill Date
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
@@ -1154,22 +1151,22 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 if($editableField) { //TODO: check approval level
                     $response .= '<input type="date" value="'.date('Y-m-d').'" disabled>';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" value="'.date('Y-m-d').'">';
                 } else {
-                    $response .= date("m/d/Y", strtotime($fieldvalue));
+                    $response .= '<input type="date" disabled value="'.date("Y-m-d", strtotime($fieldvalue)).'">';
                 }
-                $response .= '</div>';
+                $response .= '</div></div>';
             } else if($row['TYPE'] == 7) { //Date
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
@@ -1183,13 +1180,13 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 if($editableField) {
                     $response .= '<input type="date" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
@@ -1202,9 +1199,9 @@ class Workflow {
                     }
                     $response .= '>';
                 } else {
-                    $response .= date("m/d/Y", strtotime($fieldvalue));
+                    $response .= '<input type="date" disabled value="'.date("Y-m-d", strtotime($fieldvalue)).'">';
                 }
-                $response .= '</div>';
+                $response .= '</div></div>';
             } else if($row['TYPE'] == 9) { //Horizontal Line
                 $response .= '<div class="clear" ';
                 if($emailMode)
@@ -1261,13 +1258,13 @@ class Workflow {
                     $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
                 }
                 
-                $response .= '" style="';
+                $response .= ' outside-text-center" style="';
                 
                 if($emailMode) {
                     $response .= 'float: left; margin-right:10px;';
                 }
                 
-                $response .= '">';
+                $response .= '"><div class="inside-text-center">';
                 
                 $response .= '<input type="radio" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
                     $row['FIELDID'].'" value="'.$row['LABEL'].'" ';
@@ -1281,7 +1278,7 @@ class Workflow {
                 }
                 if($fieldvalue == $row['LABEL'])
                     $response .= 'checked';
-                $response .='>'.$row['LABEL'].'</div>';
+                $response .='>'.$row['LABEL'].'</div></div>';
                 
             } else if($row['TYPE'] == 2) { //Option List
                 if($row['APPROVAL_ONLY'] == 1) 
@@ -1317,13 +1314,13 @@ class Workflow {
                     if($skipOptions)
                         $response .= ' style-1';
                     
-                    $response .= '" style="';
+                    $response .= ' outside-text-center" style="';
                     
                     if($emailMode) {
                         $response .= 'float: left; margin-right:10px;';
                     }
                     
-                    $response .= '">';
+                    $response .= '"><div class="inside-text-center">';
                     
                     if(!$skipOptions) {
                         $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
@@ -1344,20 +1341,15 @@ class Workflow {
                         $response .= 'selected';
                     $response .= '>'.$row['LABEL'].'</option>';
                 } else {
-                    $response .= $fieldvalue;
+                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
-                
-                
-                /*if($editableField && $row['REQUIRED'])
-                    $response .= 'required ';*/
-                
             } 
         }
         //In case the loop ended and the last id was an option list, close the field and div
         if($anotherOption && !$skipOptions)
-            $response .='</select></div>';
+            $response .='</select></div></div>';
         else if($anotherOption && $skipOptions)
-            $response .='</div>';
+            $response .='</div></div>';
          
         $response .= '<div class="clear"></div>';
         if($emailMode) {
@@ -2446,13 +2438,12 @@ class Workflow {
         }
         
         $mainTemplate = 
-        '<table style="width:1000px;font-family: Verdana,Geneva,sans-serif;" border="0" cellpadding="0" cellspacing="0">
+        '<table style="width:100%;font-family: Verdana,Geneva,sans-serif;" border="0" cellpadding="0" cellspacing="0">
         <tr>
         <td>
         <!-- Header -->
-        <img src="http://geraldbecker.com/images/workflow-header.png" width="100%"  alt="Staff Financial Health Report" border="0" />
-        <!--http://staff.powertochange.org/wp-content/images/health-report-header.png-->
-        <img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />
+        <img src="http://geraldbecker.com/images/WorkflowFormHeader.png" width="100%"  alt="Workflow Submission" border="0" />
+        <!--<img src="http://staff.powertochange.org/wp-content/images/health-report-dots.png" width="100%"  alt="Workflow Form dots" border="0" />-->
         </td>
         </tr>
         <tr style="margin-top:40px;"><td>
@@ -2461,7 +2452,7 @@ class Workflow {
         <tr>
         <td>
         <!-- Footer -->
-        <img src="http://staff.powertochange.org/wp-content/images/health-report-footer.png" width="100%" style="margin-top: 20px" alt="Report Footer"/>
+        <img src="http://geraldbecker.com/images/WorkflowFormFooter.png" width="100%" style="margin-top: 20px" alt="Report Footer"/>
         </td>
         </tr>
         </table>';
