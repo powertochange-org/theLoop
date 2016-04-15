@@ -138,7 +138,7 @@
                         echo '</ul></div>';
                         $wikiSectionCount++;
                     } //End of the loop
-                    echo '</div><div style="clear: both; margin-bottom:200px;"></div>';
+                    echo '</div><div style="clear: both; margin-bottom:50px;"></div>';
                 }
 				?>
 				</div>
