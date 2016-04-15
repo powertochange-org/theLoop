@@ -883,6 +883,7 @@ ul.wpp-list li {
 h1.entry-title {
     font-family: 'Open Sans', sans-serif;
     color: #0079C1;
+    margin-top: 20px;
 }
 
 #wikicontent {
@@ -893,7 +894,6 @@ a.wiki-nav-links {
 	background-color:#f7941d;
 	color: #000000;
 	margin-top: 10px;
-	margin-bottom: 10px;
 	padding:10px;
 	border-style: none;
 	border-radius:5px;
@@ -903,10 +903,18 @@ a.wiki-nav-links {
 	color: white;
 }
 
-div #wiki-nav-bar {
-	margin-bottom: 30px;
+#wiki-nav-bar a {
+	display: inline-block;
 }
 
+div #wiki-nav-bar {
+	margin-top: 20px;
+}
+img.wiki-header-img {
+	border-radius: 10px;
+	box-shadow: 0px 0px 50px -5px #888888;
+	margin-top: -20px;
+}
 #searchform  {
 	margin-bottom: 30px;
 }
@@ -1587,13 +1595,14 @@ ul.sub-categories {
 	}
 	
 	a.wiki-nav-links {
-		float: left;
-		width: 100%;
-		margin: 2px;
+		width: 90%;
+		padding: 10px 5%;
 	}
-	#wiki-nav-bar {
-		width: 94%;
-		margin-top: -35px; /*To fix the large gap that appears on the mobile theme.*/
+	div #wiki-nav-bar {
+		width: 100%;
+		margin-top: 10px; 
+		display: inline-block;
+		text-align: center;
 	}
 	
 	.wiki-search-input {
@@ -1615,6 +1624,10 @@ ul.sub-categories {
     .wiki-section-group-gap {
         margin-bottom: 0;
     }
+    
+    img.wiki-header-img {
+		margin-top: -30px;
+	}
 }
 
 

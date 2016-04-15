@@ -1,5 +1,5 @@
 <div id="wiki-nav-bar">
-    <a href="/kb/" class="wiki-nav-links">Knowledge Base Home</a>
+    <a href="/kb/"><img src="/wp-content/images/kb_banner_narrow.png" class="wiki-header-img"/></a>
     <?php 
     //Find out the ID of the articles page and check if the user has access to create brand new wiki posts
     global $wpdb;
@@ -14,6 +14,6 @@
         <a href="/kb/articles/?action=edit&eaction=create" class="wiki-nav-links">Create New Knowledge Base Article</a>
     <?php 
         } 
-     }?>
-    
+    }?>
+    <hr>
 </div>

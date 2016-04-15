@@ -5,10 +5,7 @@
 			<div id="main-content" class="archive-page">
 			    <!--Navigation-->
                 <?php include('wikimenu.php'); ?>
-                    
-				<h1>Knowledge Base Home Page</h1>
-				<hr>
-				
+                
                 <form role="search" method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>" >
                     <div>
                         <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
