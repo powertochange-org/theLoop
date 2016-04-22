@@ -1929,7 +1929,7 @@ class Workflow {
         $response .= '<tr><td style="border-right: 1px solid black;padding:10px;">';
         
         $response .= '<a href="#workflow-summary" class="nav-option-link selected-submissions" id="user-submissions-summary" onclick="switchRole(0);"><div class="nav-option-outside">
-        <div class="nav-option-inside"><h2 style="color:inherit;">'.Workflow::loggedInUserName().'\'s <br>Submissions</h2>';
+        <div class="nav-option-inside"><h2 style="color:inherit;">My Forms</h2>';
         
         $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
         $response .= '<tr><th>Status</th><th>Count</th></tr>';
@@ -1944,7 +1944,7 @@ class Workflow {
         $response .= '</td><td style="padding:10px;vertical-align: top;">';
         
         $response .= '<a href="#workflow-summary" class="nav-option-link" id="approver-submissions-summary" onclick="switchRole(1);"><div class="nav-option-outside">
-        <div class="nav-option-inside"><h2 style="color:inherit;">Forms Requiring Approval</h2>';
+        <div class="nav-option-inside"><h2 style="color:inherit;">My Staff</h2>';
         
         $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
         $response .= '<tr><th>Status</th><th>Count</th></tr>';
@@ -1994,7 +1994,7 @@ class Workflow {
         $response .= '<div id="user-submissions">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="4"><h2>'.Workflow::loggedInUserName().'\'s Submissions</h2><br></td></tr>';
+        $response .= '<tr><td colspan="4"><h2>My Forms</h2><br></td></tr>';
         
         $response .= '<tr><td colspan="4">
                         <div id="user-status-link2" class="workflow-status-link" onclick="switchTab(0, 2);">Saved (%SAVED%)</div>
@@ -2222,7 +2222,7 @@ class Workflow {
         $response .= '<div id="approver-submissions" class="hide">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="5"><h2>Forms Requiring Approval</h2><br></td></tr>';
+        $response .= '<tr><td colspan="5"><h2>My Staff</h2><br></td></tr>';
         
         $response .= '<tr><td colspan="5">
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>

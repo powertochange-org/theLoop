@@ -293,10 +293,14 @@ div.view-submissions-headers {
 }
 
 .workflow-status-header,
-#user-submissions .workflow-status-header,
-#approver-submissions .workflow-status-header {
+#user-submissions .workflow-status-header {
     background-color: #005E90;
     color: white;
+}
+
+#approver-submissions .workflow-status-header {
+    background-color: #f7941d;
+    color: black;
 }
 
 #workflowhistory {
