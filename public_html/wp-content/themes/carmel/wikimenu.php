@@ -1,6 +1,10 @@
 <div id="wiki-nav-bar">
-    <a href="/kb/"><img src="/wp-content/images/kb_banner_narrow.png" class="wiki-header-img"/></a>
     <?php 
+    echo '<a href="/kb/"><img src="/wp-content/images/kb/kb';
+    $ranNum = rand(1,4); 
+    echo $ranNum;
+    echo '.png" class="wiki-header-img"/></a>';
+    
     //Find out the ID of the articles page and check if the user has access to create brand new wiki posts
     global $wpdb;
     $values = array();
