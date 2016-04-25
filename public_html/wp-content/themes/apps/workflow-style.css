@@ -232,6 +232,22 @@ button.submitbutton {
     float: left;
 }
 
+button.processbutton {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    width: 200px;
+    background-color: #f7941d;
+    color: #000000;
+    margin: 20px 10px 20px 0;
+    padding: 10px;
+    border-style: none;
+    border-radius: 5px;
+    float: left;
+}
+button.processbutton:hover {
+    color: white;
+    cursor: pointer;
+}
 p.approved {
     font-size: 24px;
     background-color: #8fff89;

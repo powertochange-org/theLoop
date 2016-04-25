@@ -1415,14 +1415,14 @@ class Workflow {
             $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
             $response .= '<input type="hidden" id="ns" name="ns" value="0">';
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<button type="button" class="submitbutton" onclick="saveSubmission(4, 0);">Submit Form</button>';
-                $response .= '<button type="button" class="savebutton" onclick="saveSubmission(';
+                $response .= '<button type="button" class="processbutton" onclick="saveSubmission(4, 0);">Submit Form</button>';
+                $response .= '<button type="button" class="processbutton" onclick="saveSubmission(';
                 if($configuration == 3)
                     $response .= '3, 0';
                 else
                     $response .= '2, 0';
                 $response .= ');">Save Draft</button>';
-                $response .= '<button type="button" class="deletebutton" onclick="saveSubmission(';
+                $response .= '<button type="button" class="processbutton" onclick="saveSubmission(';
                 if($configuration == 3) 
                     $response .= '8, 0';
                 else
@@ -1431,18 +1431,18 @@ class Workflow {
                 
                 if($id == $this->allowanceCalculatorID && $submissionID != 0) {
                     $response .= '<button type="button" onclick="location.href=\'/mpd/allowance-goal-calculations/allowance-calculator/?sbid='.$submissionID.'\'" 
-                        class="savebutton">Re-calculate Allowance</button>';
+                        class="processbutton">Re-calculate Allowance</button>';
                 }
             } else if($configuration == 4) {
                 if($hasAnotherApproval) {
-                    $response .= '<button type="button" id="approvelink" class="submitbutton" onclick="saveSubmission(4, 1);">Approve</button>';
+                    $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(4, 1);">Approve</button>';
                 } else {
-                    $response .= '<button type="button" id="approvelink" class="submitbutton" onclick="saveSubmission(7, 1);">Approve</button>';
+                    $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(7, 1);">Approve</button>';
                 }
-                $response .= '<button type="button" id="changelink" class="deletebutton" onclick="saveSubmission(3, 1);">Request Change</button>';
-                $response .= '<button type="button" id="denylink" class="deletebutton" onclick="saveSubmission(8, 1);">Not Approved</button>';
+                $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                $response .= '<button type="button" id="denylink" class="processbutton" onclick="saveSubmission(8, 1);">Not Approved</button>';
             } else if($configuration == 0) {
-                $response .= '<button type="button" id="retractlink" class="deletebutton" onclick="saveSubmission(3, 0);">Retract Submission</button>';
+                $response .= '<button type="button" id="retractlink" class="processbutton" onclick="saveSubmission(3, 0);">Retract Submission</button>';
             }
             
             //$response .= '<input type="submit" value="Submit" onclick="saveSubmission(3); onsubmit="">';
@@ -1508,7 +1508,7 @@ class Workflow {
             $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
             $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
             $response .= '<input type="hidden" id="ns" name="ns" value="20">';
-            $response .= '<button type="button" id="approvelink" class="submitbutton" onclick="saveSubmission(20, 1);">Processed</button>';
+            $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(20, 1);">Processed</button>';
             $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
         } else if(!$emailMode) {
             //Display approval history //Uncomment the below code to have it only show up once the form is complete.
