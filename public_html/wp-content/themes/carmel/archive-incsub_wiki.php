@@ -5,10 +5,7 @@
 			<div id="main-content" class="archive-page">
 			    <!--Navigation-->
                 <?php include('wikimenu.php'); ?>
-                    
-				<h1>Knowledge Base Home Page</h1>
-				<hr>
-				
+                
                 <form role="search" method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>" >
                     <div>
                         <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
@@ -141,7 +138,7 @@
                         echo '</ul></div>';
                         $wikiSectionCount++;
                     } //End of the loop
-                    echo '</div><div style="clear: both; margin-bottom:200px;"></div>';
+                    echo '</div><div style="clear: both; margin-bottom:50px;"></div>';
                 }
 				?>
 				</div>
