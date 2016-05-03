@@ -459,9 +459,18 @@ if(isset($_GET['searchfilter']))
  * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
  *  deploy other changes in this file to production
  *
+ * Gerald B: Adding code to check if there is a publish button first. Then display the confirmation alert. 
+ */
 function add_publish_confirmation(){ 
-    echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    //echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    $confirmation_message = get_option( 'publishconfirmationmessage' , 'Are you sure you want to publish this post?' ); 
+ 
+    echo '<script type="text/javascript">';
+    echo 'var publish = document.getElementById("publish");'; 
+    echo 'if(publish !== null){';
+    echo 'publish.onclick = function(){ return confirm("'.$confirmation_message.'"); };'; 
+    echo '}'; 
+    echo '</script>'; 
 } 
 add_action('admin_footer', 'add_publish_confirmation');
-*/
 ?>
