@@ -99,7 +99,9 @@ if (get_theme_mod('survey_active')) {
           <div class="search-position">
             <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
               <div class='search-box'>
-                <input name="s" id="s" class='search-input' placeholder='Search' type='text' />
+                <input name="s" id="s" class='search-input' placeholder='Search' type='text' 
+                <?php if(isset($_GET['s']) && !isset($_GET['wiki'])) {echo 'value="'.$s.'"';} ?>
+                />
                 <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
               </div>
             </form>
