@@ -1,6 +1,6 @@
 <footer>
 	<div class='bottom'>
-		<div class='copy'>&copy; 2015 Power to Change Ministries. All rights reserved.</span><a class='privacy' href=''>Privacy Policy</a></div>
+		<div class='copy'>&copy; 2016 Power to Change Ministries. All rights reserved.</span><a class='privacy' href=''>Privacy Policy</a></div>
 	</div>
 </footer>
 <?php wp_footer(); ?>
