@@ -50,10 +50,6 @@ class SearchWP_Live_Search_Client extends SearchWP_Live_Search {
 				);
 			} else {
 				// native WordPress search
-				echo '<script>console.log("plugin: '.$_SESSION['wiki'].'")</script>';
-				$url = $_SERVER['REQUEST_URI'];
-				echo '<script>console.log("'.$url.'")</script>';
-				
 				if($_SESSION['wiki']) {
 					$args = array(
 						's'             => $query,
