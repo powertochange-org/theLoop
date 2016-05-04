@@ -21,8 +21,8 @@
 			$array_key = array_keys($_GET);
 			for ($i = 0; $i < count($_GET); $i ++){
 				$key = $array_key[$i];
-				$sql_part1 .= ', `'.mysql_real_escape_string($key).'`';
-				$sql_part2 .= ', "'.mysql_real_escape_string($_GET[$key]).'"';
+				$sql_part1 .= ', `'.mysqli_real_escape_string($con, $key).'`';
+				$sql_part2 .= ', "'.mysqli_real_escape_string($con, $_GET[$key]).'"';
 			}
 			$sql= $sql_part1.$sql_part2.')';
 			mysqli_query($con, $sql);
