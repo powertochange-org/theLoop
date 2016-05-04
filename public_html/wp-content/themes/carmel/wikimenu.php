@@ -18,6 +18,8 @@
         <a href="/kb/articles/?action=edit&eaction=create" class="wiki-nav-links">Create New Knowledge Base Article</a>
     <?php 
         } 
-    }?>
+    }
+    $_SESSION['wiki'] = 1; //Setting the flag to use a wiki search only 
+    ?>
     <hr>
 </div>

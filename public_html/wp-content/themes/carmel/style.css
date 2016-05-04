@@ -1200,7 +1200,9 @@ ul.sub-categories {
     padding-right: 23px;
 }
 
-
+.searchwp-live-search-results {
+	width: 450px !important;
+}
 
 /*
 	This is the media query for displaying content based on screen size.
@@ -1627,6 +1629,11 @@ ul.sub-categories {
     
     img.wiki-header-img {
 		margin-top: -30px;
+	}
+	
+	.searchwp-live-search-results {
+		width: 100% !important;
+		left: 0 !important;
 	}
 }
 
