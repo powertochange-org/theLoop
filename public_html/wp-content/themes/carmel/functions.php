@@ -454,6 +454,24 @@ function wpshock_search_filter( $query ) {
 if(isset($_GET['searchfilter']))
     add_filter('pre_get_posts','wpshock_search_filter');
 
+/*Searches for posts and pages that are newer than 3 years and searches for all kb articles.*/
+function wpsearch_date_filter( $where ) {
+    global $wp_query;
+    
+    //gets the front page id set in options
+    $front_page_id = get_option('page_on_front');
+
+    $where .= " AND (post_date >= '".date('Y-m-d', strtotime('-3 years'))."' 
+        AND wp_posts.post_type IN ('post', 'page') 
+        OR wp_posts.post_type = 'incsub_wiki') ";
+    
+    return $where;
+}
+
+//Applies the date filter only when using the search bar
+if(isset($_GET['s']))
+    add_filter( 'posts_where' , 'wpsearch_date_filter' );
+ 
 
 /*
  * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
