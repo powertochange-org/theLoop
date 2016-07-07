@@ -705,10 +705,10 @@ a.crumbstest {
 }
 
 div.search-position {
-	position:static;
+	position:relative;
 	float:right;
 	top:0px;
-	margin-right: -175px;
+	margin-right: 0;
 	margin-top: 11px;
 }
 
