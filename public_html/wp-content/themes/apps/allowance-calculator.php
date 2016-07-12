@@ -179,16 +179,16 @@ include('functions/js_functions.php');
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 				var you = {role:<?php echo getRole($current_user_id) ?>,
 							name:"<?php echo getName() ?>", 
-							min: '<?php echo getFieldEmployee('ministry') ?>', 
-							title: '<?php echo getFieldEmployee('role_title') ?>', 
+							min: '<?php echo addcslashes(getFieldEmployee('ministry'), "'") ?>', 
+							title: '<?php echo addcslashes(getFieldEmployee('role_title'), "'") ?>', 
 							projectCode: '<?php echo getFieldEmployee('staff_account') ?>', 
 							setValues: <?php setUserValues($current_user_id) ?>};
 				<?php }
 				if (getSpouse() != -1 and getAccess(getSpouse()) == $allowance_constant['fullAccess']) { ?>
 				var spouse = {role:<?php echo getRole(getSpouse());?>, 
 								name:"<?php echo getName(getSpouse()) ?>", 
-								min: '<?php echo getFieldEmployee('ministry', getSpouse()) ?>', 
-								title: '<?php echo getFieldEmployee('role_title', getSpouse()) ?>', 
+								min: '<?php echo addcslashes(getFieldEmployee('ministry', getSpouse()), "'") ?>', 
+								title: '<?php echo addcslashes(getFieldEmployee('role_title', getSpouse()), "'") ?>', 
 								projectCode: '<?php echo getFieldEmployee('staff_account', getSpouse()) ?>', 
 								setValues: <?php setUserValues(getSpouse()) ?> };
 				<?php } ?>

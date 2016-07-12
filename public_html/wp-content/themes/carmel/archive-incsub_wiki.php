@@ -11,7 +11,7 @@
                         <!--<label class="screen-reader-text" for="s">< ?php _e('Search for:'); ?></label>-->
                         <div class="wiki-search-input">
                             <input type="text" class="fieldform" placeholder="Search the Knowledge Base for an article here..." 
-                                value="<?php echo get_search_query(); ?>" name="s" id="s" />
+                                value="<?php echo get_search_query(); ?>" name="s" id="s" data-swplive="true"/>
                         </div>
                         <input type="hidden" value="incsub_wiki" name="post_type" id="post_type" />
                         <input type="hidden" value="1" name="wiki" id="wiki" />

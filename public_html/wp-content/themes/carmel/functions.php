@@ -459,9 +459,44 @@ if(isset($_GET['searchfilter']))
  * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
  *  deploy other changes in this file to production
  *
+ * Gerald B: Adding code to check if there is a publish button first. Then display the confirmation alert. 
+ */
 function add_publish_confirmation(){ 
-    echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    //echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    $confirmation_message = get_option( 'publishconfirmationmessage' , 'Are you sure you want to publish this post?' ); 
+    
+    //Get all categories including ones that have no posts yet. 
+    $cats = get_categories(array('hide_empty' => false));
+    
+    echo '<script type="text/javascript">';
+    echo 'var publish = document.getElementById("publish");'; 
+    echo 'if(publish !== null){';
+    echo 'publish.onclick = function(){ ';
+    echo 'var cats = document.getElementsByName("post_category[]");';
+    echo 'var wpcats = [];';
+    $i = 0;
+    foreach($cats as $cat) {
+        echo 'wpcats['.$i++.']'.' = ['.$cat->cat_ID.', "'.$cat->name.'"];';
+    }
+    //Matches all the checked categories with their names and creates a confirmation message displaying those categories.
+    echo '
+        var categoryMessage = "";
+        var i;
+        for (i = 0; i < cats.length; i++) {
+            if (cats[i].type == "checkbox" && cats[i].checked) {
+                var selectedCat = cats[i].id.split("in-category-")[1];
+                var i;
+                for (x = 0; x < wpcats.length; x++) {
+                    if(selectedCat == wpcats[x][0]) {
+                        categoryMessage += ("\n" + wpcats[x][1]);
+                    }
+                }
+            }
+        }';
+    echo 'var fullMessage = "'.$confirmation_message.'" + categoryMessage;';
+    echo 'return confirm(fullMessage); };'; 
+    echo '}'; 
+    echo '</script>'; 
 } 
 add_action('admin_footer', 'add_publish_confirmation');
-*/
 ?>
