@@ -6,7 +6,7 @@
 *
 *
 */?>
-<p/><h4 class="profile"><a style="color:#adafb2;font-weight:bold;" href= "?page=profile" >MY PROFILE</a></h4>
+<p/><h4 class="profile"><a class="profile-link" href= "?page=profile" >MY PROFILE</a></h4>
 <BR><BR><BR><BR>
 <hr style='margin-top:0'>
 <div style="clear:both"></div>
@@ -20,14 +20,28 @@
 					} elseif (isset($_GET['search'])) {
 						$search = $_GET['search'];
 					}
-					echo "<p class='orange-box'  style='padding: 9px;'>SEARCH RESULTS FOR: \"".strtoupper($search)."\"</p> <p /><p/>";
+				}
+				
+				?>
+				<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1>
+				<form id='s_s_s' method="GET" action="">
+					<div class='staff-search-box' 
+						<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>  style="margin-top:40px;margin-bottom:40px;" <?php } ?> >
+						<input id='staff-search-main' class='search-input staff-search-input' type='textbox' name='search' placeholder='name, job title, ministry, city, postal code' value='<?php echo $search;?>' autocomplete="off"/>
+						<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
+					</div>
+					<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>
+					<p>You can search using any relevant keywords, like name, job title, ministry, city, postal code, etc.</p> <?php } ?>
+				</form>
+				
+				<?php
+				if (isset($_POST['search']) || isset($_GET['search'])) {
+					echo "<p class='orange-box' style='padding: 9px; margin-top:40px;'>SEARCH RESULTS FOR: \"".strtoupper($search)."\"</p> <br>";
 				}
 				else { //display welcome message if nothing being search for
-					?><p class='orange-box' style='padding: 9px;'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
-
-		This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.<p/> 
-
-		Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.<p/>
+					?>
+					
+					
 <?php
 				}
 				if(! empty($search)){ 
@@ -176,6 +190,20 @@
 	document.getElementById("staff-search").focus();
 	</script>
 </div><div style='clear:both;'></div>
+<script>
+	/*Create shadow effect on the search box. CSS alone won't work.*/
+	var textareas = document.getElementsByClassName('staff-search-input');
+	for (i = 0; i < textareas.length; i++){
+	    if (textareas[i].parentNode.tagName.toString().toLowerCase() == 'div') {
+	        textareas[i].onfocus = function(){
+	            this.parentNode.style.boxShadow = '0px 0px 5px 1px #000000';
+	        }
+	        textareas[i].onblur = function(){
+	            this.parentNode.style.boxShadow = '0px 0px 5px 1px #888888';
+	        }
+	    }
+	}
+</script>
 <?php
 	function objectToArray($d) {
 		if (is_object($d)) {

@@ -79,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a href='?page=profile'   style="color:#adafb2;font-weight:bold;">VIEW PROFILE</a></h4><br /><br /><br /><br />
+		<p/><h4 style="float:right;position:relative;top:30px;"><a href='?page=profile' class="profile-link">VIEW PROFILE</a></h4><br /><br /><br /><br />
     
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
@@ -350,7 +350,7 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 		</div>
 	</div>
-	<div id="content-right">
+	<div id="content-right" class="staff-directory download">
 		<?php include('pro_sidebar.php') ?>
 	</div>
 <div style='clear:both;'></div>
