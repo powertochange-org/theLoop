@@ -2,8 +2,8 @@
 Contributors: sudar  
 Tags: email, log, multisite  
 Requires at least: 3.3  
-Tested up to: 4.5  
-Stable tag: 1.8.2  
+Tested up to: 4.5.2  
+Stable tag: 1.9.1  
 
 Logs every email sent through WordPress. Works with WordPress Multisite as well
 
@@ -58,7 +58,8 @@ If you are looking for ideas, then you can start with one of the following TODO 
 The following are the features that I am thinking of adding to the Plugin, when I get some free time. If you have any feature request or want to increase the priority of a particular feature, then let me know.
 
 - Add option to automatically delete the logs periodically
-- Add the ability to resend the emails
+- Add an option to export logs as csv file
+- <strike>Add the ability to resend the emails</strike>. Done in Resend Email Add-on
 - <strike>Make it MU compatible</strike>. Done in v1.7
 
 ### Support
@@ -121,6 +122,16 @@ wpmandrill plugin has a bug that prevents this plugin from logging the content o
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
 
+= v1.9.1 - (2016-07-02) - (Dev time: 0.5 hour) =
+- Fix: Only allow users with `manage_option` capability to view email content.
+
+= v1.9 - (2016-06-19) - (Dev time: 6 hours) =
+- Fix: Improve the performance of count query (issue #33)
+- Docs: Added access modifiers to class methods
+- Docs: Removed unused array_get() method
+- Docs: Inline documentation added
+- Tests: Added Unit tests
+
 = v1.8.2 (2016-04-20) - (Dev time: 1 hour) =
 - Tweak: Log all emails from the TO field. Earlier the plugin was logging only the first email
 - Fix: Fixed issues in parsing reply-to and content-type headers
@@ -128,7 +139,7 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 = v1.8.1 (2015-12-27) - (Dev time: 0.5 hour) =
 - Fix: Fixed the "Delete All Logs" issue that was introduced in v1.8
 
-= v1.8 (2015-12-26) - (Dev time: 5 hour) =
+= v1.8 (2015-12-26) - (Dev time: 5 hours) =
 - New: Added filters and actions for addons
 - New: Added Resend Email Addon
 - Tweak: Optimize for large number of logs
@@ -243,6 +254,12 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+- Fixed a minor security issue that allowed unprevilleged users to view content of logged emails
+
+= 1.9 =
+- Fixed issues with pagination.
 
 = 1.8.2 =
 Added the ability to log all emails in the TO field instead of just the first one
