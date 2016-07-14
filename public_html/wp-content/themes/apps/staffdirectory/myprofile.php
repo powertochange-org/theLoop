@@ -354,3 +354,8 @@ $max_file_size = 30000000; // size in bytes
 		<?php include('pro_sidebar.php') ?>
 	</div>
 <div style='clear:both;'></div>
+<?php 
+//Records that the user updated their profile so they are not warned for another year
+$user_id = get_current_user_id();
+update_user_meta($user_id, 'update_profile', array('1', date('Y-m-d', strtotime("+1 year"))));
+?>

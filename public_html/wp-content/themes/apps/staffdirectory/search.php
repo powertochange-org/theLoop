@@ -185,12 +185,9 @@
 <div id="content-right" class='download staff-directory staff-directory-sidebar' >   
 	<?php the_content();
 	include('pro_sidebar.php') ?>
-	<script type="text/javascript">
-	/* On this search page, set the focus to the search box */
-	document.getElementById("staff-search").focus();
-	</script>
+	
 </div><div style='clear:both;'></div>
-<script>
+<script type="text/javascript">
 	/*Create shadow effect on the search box. CSS alone won't work.*/
 	var textareas = document.getElementsByClassName('staff-search-input');
 	for (i = 0; i < textareas.length; i++){
@@ -203,6 +200,10 @@
 	        }
 	    }
 	}
+</script>
+<script type="text/javascript">
+	/* On this search page, set the focus to the search box */
+	document.getElementById("staff-search-main").focus();
 </script>
 <?php
 	function objectToArray($d) {
