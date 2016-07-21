@@ -224,7 +224,7 @@
                                         jQuery(document).ready(function(){
                                             $.ajax({
                                               type: "POST",
-                                              url: "http://localhost/StaffAppsButton/index.php",
+                                              url: "https://staffappsbutton.powertochange.org/index.php",
                                               success: function (data) {
                                                   data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
                                                   console.log(data);
