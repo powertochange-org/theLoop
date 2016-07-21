@@ -1204,6 +1204,10 @@ ul.sub-categories {
 	width: 450px !important;
 }
 
+#staff-apps-quadrant div.staff-app-button-styling {
+	padding: 5px 20px;
+}
+
 /*
 	This is the media query for displaying content based on screen size.
 	The main browser width css is first loaded and then this mobile
@@ -1634,6 +1638,10 @@ ul.sub-categories {
 	.searchwp-live-search-results {
 		width: 100% !important;
 		left: 0 !important;
+	}
+	
+	#staff-apps-quadrant div.staff-app-button-styling {
+		padding: 5px 5px;
 	}
 }
 
