@@ -235,7 +235,7 @@
                                           type: "POST",
                                           url: "https://staffappsbutton.powertochange.org/index.php",
                                           success: function (data) {
-                                              data = data.replace('trackStaffAppsMenuClick', 'trackHomePageAppsClick');
+                                              data = data.replace('trackClick', 'trackHomePageAppsClick');
                                               $('#staff-apps-quadrant').empty().append(data);
                                               var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
                                               $('#staff-apps-quadrant').empty().append(ul);
