@@ -15,7 +15,7 @@ $repos = array(
 		'/home/development/domains/dev.agencyreporting.powertochange.org/public_html',
 		'/home/powertochange/domains/agencyreporting.powertochange.org/public_html'),
         'staffappsbutton' => array (
-                '/home/powertochange/domains/staffappsbutton.powertochange.org')
+                '/home/powertochange/domains/staffappsbutton.powertochange.org/public_html')
     );
 
 if (array_key_exists("project", $_GET)){
