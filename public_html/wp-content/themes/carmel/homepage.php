@@ -227,7 +227,6 @@
                                               url: "https://staffappsbutton.powertochange.org/index.php",
                                               success: function (data) {
                                                   data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
-                                                  console.log(data);
                                                   $('#staff-apps-quadrant').empty().append(data);
                                                   var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
                                                   $('#staff-apps-quadrant').empty().append(ul);
