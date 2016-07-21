@@ -67,7 +67,7 @@ if (get_theme_mod('survey_active')) {
             type: "POST",
             // use apps.powertochange.org for master,
             // use ptcstaff.powertochange.local for dev 
-            url: "https://apps.powertochange.org/DesktopModules/AgapeConnect/StaffRmb/WebService.asmx/getStaffAppsButtonResponsive",
+            url: "https://staffappsbutton.powertochange.org",
             success: function (data) {
                 $('#staffAppButtonPlaceholder').replaceWith(data);
             }
