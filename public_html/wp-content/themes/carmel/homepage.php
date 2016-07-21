@@ -219,7 +219,23 @@
 			<div  class="homepage-tiles">
 				<hr>
                                 <span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30> Staff Apps</span></a><BR>
-                        <div id='staff-apps-quadrant'><br/>Loading...</div>
+                                <div id='staff-apps-quadrant'><br/>Loading...
+                                    <script type="text/javascript">
+                                        jQuery(document).ready(function(){
+                                            $.ajax({
+                                              type: "POST",
+                                              url: "http://localhost/StaffAppsButton/index.php",
+                                              success: function (data) {
+                                                  data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
+                                                  console.log(data);
+                                                  $('#staff-apps-quadrant').empty().append(data);
+                                                  var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
+                                                  $('#staff-apps-quadrant').empty().append(ul);
+                                              }
+                                            });           
+                                        });
+                                    </script>
+                                </div>
                                 <script type="text/javascript">
                                     function trackHomePageAppsClick(Label) {
                                         'use strict'; 
@@ -230,21 +246,9 @@
                                             ga('send', 'event', 'Staff Apps on Homepage', 'click', Label);
                                         }
                                     }
-                                    jQuery(document).ready(function(){
-                                        $.ajax({
-                                          type: "POST",
-                                          url: "https://staffappsbutton.powertochange.org/index.php",
-                                          success: function (data) {
-                                              data = data.replace('trackClick', 'trackHomePageAppsClick');
-                                              $('#staff-apps-quadrant').empty().append(data);
-                                              var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
-                                              $('#staff-apps-quadrant').empty().append(ul);
-                                          }
-                                        });           
-                                      });
-                                </script>
-                        </div>
-			<div class="homepage-tiles">
+                                   </script>
+                                </div>
+                                <div class="homepage-tiles">
 				<hr>
 				<?php 
 					$idObj = get_category_by_slug('prayer-requests'); 
