@@ -422,15 +422,10 @@ get_header(); ?>
 			</P>
 			<DIV ID="staffaccount" STYLE="display:none">
 				<P>Please enter your ministry/staff account number:<BR>  
-          <!-- JasonB: look at adding ministry accounts before we make this live
-		  <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
+          <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
             <option> </option>
-            <?php $values = getAllEmployeesStaffAccounts();
-            for($i = 0; $i < count($values); $i++) {
-                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
-            }?>
           </select>
-          <button type="button" onclick="addProjectCode();">Add Staff Account ►</button>-->
+          <button type="button" onclick="addProjectCode();">Add Account ►</button>
           <INPUT TYPE="text" ID="DESGCODE" NAME="DESGCODE" MAXLENGTH="1000" SIZE="15" VALUE="<?php echo $_POST["DESGCODE"];?>">
 				</P>
         
@@ -591,33 +586,22 @@ get_header(); ?>
 				
 			</div>
 		<script type="text/javascript">
-		<!--
+		
 		// Set focus to the project code field
 		//document.getElementById('DESGCODE').focus();
     
-    //Create filter for the list of names
-    var config = {
-      '.chosen-select'           : {},
-      '.chosen-select-deselect'  : {allow_single_deselect:true},
-      '.chosen-select-no-single' : {disable_search_threshold:10},
-      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-      '.chosen-select-width'     : {width:"95%"}
-    }
-    for (var selector in config) {
-      $(selector).chosen(config[selector]);
-    }//End of filter creation
 		
-    function addProjectCode() {
-      var projCode = document.getElementById('staffaccountadd').value;
-      if(projCode != null && projCode != '') {
-        var currentEntry = document.getElementById('DESGCODE').value;
-        if(currentEntry != '') {
-          document.getElementById('DESGCODE').value += ',' + projCode;
-        } else {
-          document.getElementById('DESGCODE').value += projCode;
-        }
-      }
-    }
+                function addProjectCode() {
+                  var projCode = document.getElementById('staffaccountadd').value;
+                  if(projCode != null && projCode != '') {
+                    var currentEntry = document.getElementById('DESGCODE').value;
+                    if(currentEntry != '') {
+                      document.getElementById('DESGCODE').value += ',' + projCode;
+                    } else {
+                      document.getElementById('DESGCODE').value += projCode;
+                    }
+                  }
+                }
     
 		function CheckForm(form, subType){
 			if($("#repchoice").val() == "") {
@@ -697,7 +681,42 @@ get_header(); ?>
 			 * we don't want it. So, always remove it and let that one report option re-add it */
 			$("#DESGCODE").removeAttr("title");
 		}
-		//-->
+		
+                    $(document).ready(function() {
+                        $.ajax({
+                            url: "/wp-content/themes/apps/financialreports/getAllAccounts.php",
+                            dataType: "json",
+                            type: "GET",
+                            success: function (data) {
+                                //$('select#staffaccountadd').empty();
+                                //$('select#staffacccountadd').append('<option> </option>');
+                                for (var i=0; i<data.length; i++) {
+                                    try {
+                                        var text = data[i].Text.substr(data[i].Text.indexOf(':')+1).replace('Ministry of ','');
+                                        var value = data[i].Value;
+                                        var option = '<option value="'+value+'">'+text+'</option>';
+                                        $('select#staffaccountadd').append(option);
+                                    } catch(e) {}
+                                }
+                                //Create filter for the list of names
+                                var config = {
+                                  '.chosen-select'           : {},
+                                  '.chosen-select-deselect'  : {allow_single_deselect:true},
+                                  '.chosen-select-no-single' : {disable_search_threshold:10},
+                                  '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+                                  '.chosen-select-width'     : {width:"95%"}
+                                }
+                                for (var selector in config) {
+                                  $(selector).chosen(config[selector]);
+                                }//End of filter creation
+                            },
+                            error: function(a,b,c) {
+                                console.error(a);
+                                console.error(b);
+                                console.error(c);
+                            }
+                        });
+                    });
 		</SCRIPT>
 		</div>
 	</div>
