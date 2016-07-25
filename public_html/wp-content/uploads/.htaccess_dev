@@ -9,6 +9,7 @@ RewriteRule . https://staff.powertochange.org%{REQUEST_URI} [L]
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC]
 RewriteRule . /wp-content/uploads/index.php?file=%{REQUEST_URI} [L]
 
 #RewriteCond %{HTTP_REFERER} !^(https://)?staff.powertochange.org/ [NC]
