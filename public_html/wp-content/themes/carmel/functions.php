@@ -514,4 +514,10 @@ function add_publish_confirmation(){
     echo '</script>'; 
 } 
 add_action('admin_footer', 'add_publish_confirmation');
+
+// Remove social links from subscribe2 email messages
+function s2_social_links_off() {
+    return array();
+}
+add_filter('s2_social_links', 's2_social_links_off');
 ?>

@@ -1236,6 +1236,10 @@ div.update-profile a.orange_button {
 div.update-profile h3 {
 	text-align: center;
 	margin-bottom: 10px;
+} 
+
+#staff-apps-quadrant div.staff-app-button-styling {
+	padding: 5px 20px;
 }
 
 /*
@@ -1668,6 +1672,10 @@ div.update-profile h3 {
 	.searchwp-live-search-results {
 		width: 100% !important;
 		left: 0 !important;
+	}
+	
+	#staff-apps-quadrant div.staff-app-button-styling {
+		padding: 5px 5px;
 	}
 }
 
