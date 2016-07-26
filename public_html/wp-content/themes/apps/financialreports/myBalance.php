@@ -7,11 +7,13 @@ if (is_user_logged_in()) {
     include('rs_functions.php');
     global $current_user;
     get_currentUserInfo();
-    $result = "No Staff Account";
+    $result = "";
+    $status = 204;
     $user_id = $current_user->user_login;
-    if (sizeof($user_id)>0 ) {
+    if (sizeof($user_id) > 0 ) {
         if (isset($_SESSION[KEY])) {
             $result = $_SESSION[KEY];
+            $status = 200;
         } else {
             $query = $wpdb->get_results($wpdb->prepare( 
                     "SELECT staff_account
@@ -26,10 +28,10 @@ if (is_user_logged_in()) {
                 $balance = explode(":", $response)[2];
                 $result = $account.": ".$balance;
                 $_SESSION[KEY] = $result;
+                $status = 200;
             }
         }
     }
-    header('Content-type: application/json');
-    http_response_code(200);
-    echo(json_encode($result));
+    http_response_code($status);
+    wp_send_json(array($result));
 }

@@ -139,27 +139,34 @@
 				    	limit=3&range="daily"&stats_views=0');
 				?>
 				<hr>
-				<h1 style="margin-bottom:5px">Recent Comments</h1>
-				<?php 
-				foreach(get_comments( array( 'number' => 3)) as $c){
-					echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
-					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
-				
-				} ?> 
-                                <hr/>
-                                <div>
-                                    <p id='staff-account-balance' style='position:static;'>Just a sec...</p>
-                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' style='width:100%; font-family: Roboto Slab; position:static; margin-top:-27px'/>
+                                <div class='recent-comments'>
+                                    <h1 style="margin-bottom:5px">Recent Comments</h1>
+                                    <?php 
+                                    foreach(get_comments( array( 'number' => 3)) as $c){
+                                            echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
+                                            echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
+
+                                    } ?> 
+                                </div>
+                                <div id='staff-account-balance'>
+                                    <hr/>
+                                    <p>Just a sec...</p>
+                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' />
                                     <script type='text/javascript'>
                                         $.ajax({
                                             type: "POST",
                                             url: "/wp-content/themes/apps/financialreports/myBalance.php",
                                             dataType: "json",
-                                            success: function(data) {
-                                                $('#staff-account-balance').html('&nbsp;&nbsp;Balance of '+data);
+                                            success: function(data, textStatus) {
+                                                if (textStatus=='nocontent') {
+                                                    $('#staff-account-balance').remove();
+                                                } else {
+                                                    $('#staff-account-balance').show();
+                                                    $('#staff-account-balance>p').html('Balance of '+data);
+                                                }
                                             },
                                             error: function(a,b,c) {
-                                                $('#staff-account-balance').html('Error fetching balance');
+                                                $('#staff-account-balance>p').html('Error fetching balance');
                                             }
                                         })
                                     </script>
