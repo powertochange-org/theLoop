@@ -146,10 +146,9 @@
 					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
 				
 				} ?> 
-                                <hr>
                                 <div style='width:50%'>
                                     <p id='staff-account-balance' style='position:static; text-align:center';>Just a sec...</p>
-                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' style='font-family: Roboto Slab; position:static; margin-top:-25px'/>
+                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' style='font-family: Roboto Slab; position:static; margin-top:-27px'/>
                                     <script type='text/javascript'>
                                         $.ajax({
                                             type: "POST",
