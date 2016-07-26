@@ -163,22 +163,13 @@
 						$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 						$result = $results[0];
 						
-						$idObj = get_category_by_slug('staff-stories'); 
-						$id_staffStories = $idObj->term_id;
 						$idObj = get_category_by_slug('p2cstudents'); 
 						$id_students = $idObj->term_id;
 						
-						$categories = get_categories(array('orderby' => 'id', 'exclude' => "$id_staffStories,$id_students")); 
 						// Build a comma-separated list that we can pass to the query_posts function
-						$category_list = "";
-						foreach ($categories as $category) {	
-							if ($category_list != "") {
-								$category_list .= ",";
-							}
-							$category_list .= $category->term_id;
-						}
-
-						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
+						$category_list = get_user_meta($current_user->ID, 's2_subscribed')[0];
+						
+						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page unless they are subscribed
 						if ($result->ministry == "Power to Change - Students") {
 							// Show any posts
 							$latest_cat_post = new WP_Query( "showposts=$post_number&cat=$category_list,$id_students");
