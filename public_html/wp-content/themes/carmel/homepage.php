@@ -146,20 +146,20 @@
 					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
 				
 				} ?> 
-                                <div style='width:50%'>
-                                    <p id='staff-account-balance' style='position:static; text-align:center';>Just a sec...</p>
-                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' style='font-family: Roboto Slab; position:static; margin-top:-27px'/>
+                                <hr/>
+                                <div>
+                                    <p id='staff-account-balance' style='position:static;'>Just a sec...</p>
+                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' style='width:100%; font-family: Roboto Slab; position:static; margin-top:-27px'/>
                                     <script type='text/javascript'>
                                         $.ajax({
                                             type: "POST",
                                             url: "/wp-content/themes/apps/financialreports/myBalance.php",
                                             dataType: "json",
                                             success: function(data) {
-                                                $('#staff-account-balance').html(data);
+                                                $('#staff-account-balance').html('&nbsp;&nbsp;Balance of '+data);
                                             },
                                             error: function(a,b,c) {
-                                                console.log("ERROR");
-                                                console.log(a);
+                                                $('#staff-account-balance').html('Error fetching balance');
                                             }
                                         })
                                     </script>

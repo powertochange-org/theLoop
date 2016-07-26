@@ -367,6 +367,12 @@ hr{
 	color: #4a4d4e;
 }
 
+#sidebar .recent-comment p{
+        text-overflow:ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
+}
+
 .search-img{
 	width:29px;
 	height:29px;
