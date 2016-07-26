@@ -218,6 +218,25 @@
 			<div class="homepage-tiles-new-line"></div>
 			<div  class="homepage-tiles">
 				<hr>
+                                <div style='width:50%'>
+                                    <div id='staff-account-balance' style='position:static; margin-top:30px; text-align:center';>Just a sec...</div>
+                                    <input type="button" class="orange_button" value="Account Balance" onclick='$(this).css("visibility","hidden");' style='position:static; opacity:1; -webkit-filter:opacity(1); margin-top:-40px'/>
+                                    <script type='text/javascript'>
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/wp-content/themes/apps/financialreports/myBalance.php",
+                                            dataType: "json",
+                                            success: function(data) {
+                                                $('#staff-account-balance').html(data);
+                                            },
+                                            error: function(a,b,c) {
+                                                console.log("ERROR");
+                                                console.log(a);
+                                            }
+                                        })
+                                    </script>
+                                </div>
+                                <hr>
                                 <span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30> Staff Apps</span></a><BR>
                                 <div id='staff-apps-quadrant'><br/>Loading...
                                     <script type="text/javascript">
