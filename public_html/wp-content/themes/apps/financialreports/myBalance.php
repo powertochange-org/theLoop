@@ -24,7 +24,7 @@ if (is_user_logged_in()) {
                 syslog(LOG_INFO, "Account balance response: ".$response);
                 $account = explode("-",explode(":", $response)[1])[0];
                 $balance = explode(":", $response)[2];
-                $result = "<b>".$account.":</b> ".$balance;
+                $result = $account.": ".$balance;
                 $_SESSION[KEY] = $result;
             }
         }
