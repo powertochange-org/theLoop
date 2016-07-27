@@ -319,10 +319,13 @@ hr{
 #sidebar{
 	width:240px;
 	min-height:384px;
-	max-height: 386px;
 	background-color:#eaeae8;
 	padding:20px;
 	float:right;
+}
+
+div.home-page #sidebar {
+    max-height: 386px;
 }
 
 #sidebar.homesidebar {
