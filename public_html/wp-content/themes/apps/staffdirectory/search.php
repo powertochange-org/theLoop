@@ -26,9 +26,33 @@
 				<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1>
 				<form id='s_s_s' method="GET" action="">
 					<div class='staff-search-box' 
-						<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>  style="margin-top:40px;margin-bottom:40px;" <?php } ?> >
+						<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>  style="margin-top:40px;margin-bottom:20px;" <?php } else { ?> 
+							style="margin-bottom:20px;" <?php } ?>
+							>
 						<input id='staff-search-main' class='search-input staff-search-input' type='textbox' name='search' placeholder='name, job title, ministry, city, postal code' value='<?php echo $search;?>' autocomplete="off"/>
 						<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
+					</div>
+					<div class="staff-directory-ministry-select" 
+						<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>  
+							style="margin-bottom:40px;" <?php } ?>>
+						Filter by Ministry : 
+						<select name="ministryname">
+							<option value="All">All Ministries</option>
+							<?php 
+							$minQuery = "SELECT ministry 
+										FROM employee 
+										WHERE ministry IS NOT NULL 
+										GROUP BY ministry
+										ORDER BY ministry";
+							$results = $wpdb->get_results($minQuery);
+							foreach($results as $result) {
+								echo '<option value="'.$result->ministry.'"' ;
+								if(isset($_GET['ministryname']) && $_GET['ministryname'] == $result->ministry)
+									echo 'selected';
+								echo '>'.$result->ministry.'</option>';
+							}
+							?>
+						</select>
 					</div>
 					<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>
 					<p>You can search using any relevant keywords, like name, job title, ministry, city, postal code, etc.</p> <?php } ?>
@@ -38,12 +62,8 @@
 				if (isset($_POST['search']) || isset($_GET['search'])) {
 					echo "<p class='orange-box' style='padding: 9px; margin-top:40px;'>SEARCH RESULTS FOR: \"".strtoupper($search)."\"</p> <br>";
 				}
-				else { //display welcome message if nothing being search for
-					?>
-					
-					
-<?php
-				}
+				
+				
 				if(! empty($search)){ 
 					$names = preg_split("/[\s,]+/", $search, -1, PREG_SPLIT_NO_EMPTY);  // split the search string by any number of commas or space characters,
 					//this is where my intelligent search kicks in. here we try to identify some input
@@ -111,6 +131,13 @@
 					$queryPart3 = " AS relevance FROM employee ";
 					$queryPart5 = " ORDER BY relevance DESC, first_name, last_name ";
 					//echo $queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5 ;
+					
+					//If they specified a ministry to search within
+					if(isset($_GET['ministryname']) && $_GET['ministryname'] != 'All') {
+						$ministryname = $_GET['ministryname'];
+						$queryPart4 .= " AND ministry = '$ministryname'";
+					}
+					
 					
 					$results = $wpdb-> get_results($wpdb->prepare($queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5  , Search::twice($names)));
 
