@@ -142,11 +142,15 @@
                 <div class='recent-comments'>
                     <h1 style="margin-bottom:5px">Recent Comments</h1>
                     <?php 
-                    foreach(get_comments( array( 'number' => 3)) as $c){
+                    echo '<ul id="vertical-ticker">';
+                    foreach(get_comments( array( 'number' => 10)) as $c){
+                        echo '<li>';
                         echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
-                        echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
-
-                    } ?> 
+                        echo  "<p>".get_the_title($c->comment_post_ID)."</p></a><span class='commentcontent'>".$c->comment_content."</span></div>\n";
+                        echo '</li>';
+                    } 
+                    echo '</ul>';
+                    ?> 
                 </div>
                 <div id='staff-account-balance'>
                     <hr/>
@@ -281,6 +285,21 @@
 					endwhile; endif; ?>
 				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 			</div>
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+            <script type="text/javascript" src="<?php bloginfo('template_url');?>/js/jquery.totemticker.js"></script>
+            <script type="text/javascript">
+                $(function(){
+                    $('#vertical-ticker').totemticker({
+                        row_height  :   '59px',
+                        next        :   '#ticker-next',
+                        previous    :   '#ticker-previous',
+                        stop        :   '#stop',
+                        start       :   '#start',
+                        mousestop   :   true,
+                        speed       :   500,
+                    });
+                });
+            </script>
 		</div>
 	</div>
 </div>

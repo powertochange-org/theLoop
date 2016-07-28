@@ -400,6 +400,27 @@ div.home-page #sidebar {
         white-space:nowrap;
 }
 
+#sidebar div.recent-comment p {
+    margin-bottom: 0;
+}
+
+#sidebar span.commentcontent {
+    font-size: 12px;
+}
+
+#sidebar div.recent-comment {
+    margin-bottom: 5px;
+}
+
+#vertical-ticker {
+    overflow:hidden;
+}
+
+#vertical-ticker li {
+    display:block;
+    border-bottom:1px solid #ddd;
+}
+
 .search-img{
 	width:29px;
 	height:29px;
