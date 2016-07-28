@@ -421,7 +421,7 @@ get_header(); ?>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
 			<DIV ID="staffaccount" STYLE="display:none">
-				<P>Please enter your ministry/staff account number:<BR>  
+				<P>Ministry/staff account (Use the search box and click add account or type your account number directly in the box below)<BR>  
           <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
             <option> </option>
           </select>
