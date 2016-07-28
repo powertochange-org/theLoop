@@ -152,7 +152,7 @@
                     echo '</ul>';
                     ?> 
                 </div>
-                <div id='staff-account-balance'>
+                <?php /*<div id='staff-account-balance'>
                     <hr/>
                     <p>Just a sec...</p>
                     <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' />
@@ -174,7 +174,7 @@
                             }
                         })
                     </script>
-                </div>
+                </div>*/?>
                                
 			</div>                        
 		</div>
