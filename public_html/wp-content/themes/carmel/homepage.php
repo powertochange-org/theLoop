@@ -139,38 +139,38 @@
 				    	limit=3&range="daily"&stats_views=0');
 				?>
 				<hr>
-                                <div class='recent-comments'>
-                                    <h1 style="margin-bottom:5px">Recent Comments</h1>
-                                    <?php 
-                                    foreach(get_comments( array( 'number' => 3)) as $c){
-                                            echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
-                                            echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
+                <div class='recent-comments'>
+                    <h1 style="margin-bottom:5px">Recent Comments</h1>
+                    <?php 
+                    foreach(get_comments( array( 'number' => 3)) as $c){
+                        echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
+                        echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
 
-                                    } ?> 
-                                </div>
-                                <div id='staff-account-balance'>
-                                    <hr/>
-                                    <p>Just a sec...</p>
-                                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' />
-                                    <script type='text/javascript'>
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "/wp-content/themes/apps/financialreports/myBalance.php",
-                                            dataType: "json",
-                                            success: function(data, textStatus) {
-                                                if (textStatus=='nocontent') {
-                                                    $('#staff-account-balance').remove();
-                                                } else {
-                                                    $('#staff-account-balance').show();
-                                                    $('#staff-account-balance>p').html('Balance of '+data);
-                                                }
-                                            },
-                                            error: function(a,b,c) {
-                                                $('#staff-account-balance>p').html('Error fetching balance');
-                                            }
-                                        })
-                                    </script>
-                                </div>
+                    } ?> 
+                </div>
+                <div id='staff-account-balance'>
+                    <hr/>
+                    <p>Just a sec...</p>
+                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' />
+                    <script type='text/javascript'>
+                        $.ajax({
+                            type: "POST",
+                            url: "/wp-content/themes/apps/financialreports/myBalance.php",
+                            dataType: "json",
+                            success: function(data, textStatus) {
+                                if (textStatus=='nocontent') {
+                                    $('#staff-account-balance').remove();
+                                } else {
+                                    $('#staff-account-balance').show();
+                                    $('#staff-account-balance>p').html('Balance of '+data);
+                                }
+                            },
+                            error: function(a,b,c) {
+                                $('#staff-account-balance>p').html('Error fetching balance');
+                            }
+                        })
+                    </script>
+                </div>
                                
 			</div>                        
 		</div>
@@ -234,51 +234,51 @@
 			<div class="homepage-tiles-new-line"></div>
 			<div  class="homepage-tiles">
 				<hr>
-                                <span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30> Staff Apps</span></a><BR>
-                                <div id='staff-apps-quadrant'><br/>Loading...
-                                    <script type="text/javascript">
-                                        jQuery(document).ready(function(){
-                                            $.ajax({
-                                              type: "POST",
-                                              url: "https://staffappsbutton.powertochange.org/index.php",
-                                              success: function (data) {
-                                                  data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
-                                                  $('#staff-apps-quadrant').empty().append(data);
-                                                  var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
-                                                  $('#staff-apps-quadrant').empty().append(ul);
-                                              }
-                                            });           
-                                        });
-                                    </script>
-                                </div>
-                                <script type="text/javascript">
-                                    function trackHomePageAppsClick(Label) {
-                                        'use strict'; 
-                                        console.debug('tracking label: '+Label); 
-                                        if (typeof (_gaq) !== 'undefined') { 
-                                            _gaq.push(['_trackEvent', 'Staff Apps on Homepage', 'click', Label]); 
-                                        } else if (typeof (ga) !== 'undefined') { 
-                                            ga('send', 'event', 'Staff Apps on Homepage', 'click', Label);
-                                        }
-                                    }
-                                   </script>
-                                </div>
-                                <div class="homepage-tiles">
-				<hr>
-				<?php 
-					$idObj = get_category_by_slug('prayer-requests'); 
-					$id = $idObj->term_id;
-					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					?>
-					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Prayer Requests</span></a><BR>
-						<BR>
-						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-						<BR>
-						<span class="homepage"><?php the_excerpt(); ?></span>
-						<?php
-						endwhile; endif; ?>
+                <span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30> Staff Apps</span></a><BR>
+                <div id='staff-apps-quadrant'><br/>Loading...
+                    <script type="text/javascript">
+                        jQuery(document).ready(function(){
+                            $.ajax({
+                              type: "POST",
+                              url: "https://staffappsbutton.powertochange.org/index.php",
+                              success: function (data) {
+                                  data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
+                                  $('#staff-apps-quadrant').empty().append(data);
+                                  var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
+                                  $('#staff-apps-quadrant').empty().append(ul);
+                              }
+                            });           
+                        });
+                    </script>
+                </div>
+                <script type="text/javascript">
+                    function trackHomePageAppsClick(Label) {
+                        'use strict'; 
+                        console.debug('tracking label: '+Label); 
+                        if (typeof (_gaq) !== 'undefined') { 
+                            _gaq.push(['_trackEvent', 'Staff Apps on Homepage', 'click', Label]); 
+                        } else if (typeof (ga) !== 'undefined') { 
+                            ga('send', 'event', 'Staff Apps on Homepage', 'click', Label);
+                        }
+                    }
+                </script>
+            </div>
+            <div class="homepage-tiles">
+    			<hr>
+    			<?php 
+				$idObj = get_category_by_slug('prayer-requests'); 
+				$id = $idObj->term_id;
+				$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+				if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+				?>
+				<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+					Prayer Requests</span></a><BR>
+				<BR>
+				<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+				<BR>
+				<span class="homepage"><?php the_excerpt(); ?></span>
+					<?php
+					endwhile; endif; ?>
 				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 			</div>
 		</div>

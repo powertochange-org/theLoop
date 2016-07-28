@@ -591,17 +591,17 @@ get_header(); ?>
 		//document.getElementById('DESGCODE').focus();
     
 		
-                function addProjectCode() {
-                  var projCode = document.getElementById('staffaccountadd').value;
-                  if(projCode != null && projCode != '') {
-                    var currentEntry = document.getElementById('DESGCODE').value;
-                    if(currentEntry != '') {
-                      document.getElementById('DESGCODE').value += ',' + projCode;
-                    } else {
-                      document.getElementById('DESGCODE').value += projCode;
-                    }
-                  }
-                }
+    function addProjectCode() {
+      var projCode = document.getElementById('staffaccountadd').value;
+      if(projCode != null && projCode != '') {
+        var currentEntry = document.getElementById('DESGCODE').value;
+        if(currentEntry != '') {
+          document.getElementById('DESGCODE').value += ',' + projCode;
+        } else {
+          document.getElementById('DESGCODE').value += projCode;
+        }
+      }
+    }
     
 		function CheckForm(form, subType){
 			if($("#repchoice").val() == "") {
@@ -682,41 +682,41 @@ get_header(); ?>
 			$("#DESGCODE").removeAttr("title");
 		}
 		
-                    $(document).ready(function() {
-                        $.ajax({
-                            url: "/wp-content/themes/apps/financialreports/getAllAccounts.php",
-                            dataType: "json",
-                            type: "GET",
-                            success: function (data) {
-                                //$('select#staffaccountadd').empty();
-                                //$('select#staffacccountadd').append('<option> </option>');
-                                for (var i=0; i<data.length; i++) {
-                                    try {
-                                        var text = data[i].Text.substr(data[i].Text.indexOf(':')+1).replace('Ministry of ','');
-                                        var value = data[i].Value;
-                                        var option = '<option value="'+value+'">'+text+'</option>';
-                                        $('select#staffaccountadd').append(option);
-                                    } catch(e) {}
-                                }
-                                //Create filter for the list of names
-                                var config = {
-                                  '.chosen-select'           : {},
-                                  '.chosen-select-deselect'  : {allow_single_deselect:true},
-                                  '.chosen-select-no-single' : {disable_search_threshold:10},
-                                  '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-                                  '.chosen-select-width'     : {width:"95%"}
-                                }
-                                for (var selector in config) {
-                                  $(selector).chosen(config[selector]);
-                                }//End of filter creation
-                            },
-                            error: function(a,b,c) {
-                                console.error(a);
-                                console.error(b);
-                                console.error(c);
-                            }
-                        });
-                    });
+    $(document).ready(function() {
+        $.ajax({
+            url: "/wp-content/themes/apps/financialreports/getAllAccounts.php",
+            dataType: "json",
+            type: "GET",
+            success: function (data) {
+                //$('select#staffaccountadd').empty();
+                //$('select#staffacccountadd').append('<option> </option>');
+                for (var i=0; i<data.length; i++) {
+                    try {
+                        var text = data[i].Text.substr(data[i].Text.indexOf(':')+1).replace('Ministry of ','');
+                        var value = data[i].Value;
+                        var option = '<option value="'+value+'">'+text+'</option>';
+                        $('select#staffaccountadd').append(option);
+                    } catch(e) {}
+                }
+                //Create filter for the list of names
+                var config = {
+                  '.chosen-select'           : {},
+                  '.chosen-select-deselect'  : {allow_single_deselect:true},
+                  '.chosen-select-no-single' : {disable_search_threshold:10},
+                  '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+                  '.chosen-select-width'     : {width:"95%"}
+                }
+                for (var selector in config) {
+                  $(selector).chosen(config[selector]);
+                }//End of filter creation
+            },
+            error: function(a,b,c) {
+                console.error(a);
+                console.error(b);
+                console.error(c);
+            }
+        });
+    });
 		</SCRIPT>
 		</div>
 	</div>
