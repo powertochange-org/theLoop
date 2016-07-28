@@ -253,10 +253,4 @@ function removeMember($appname, $member) {
 	return delete_user_meta($member, 'loopadmin_'.$appname); 
 }
 
-// Remove social links from subscribe2 email messages
-function s2_social_links_off() {
-    return array();
-}
-add_filter('s2_social_links', 's2_social_links_off');
-
 ?>
