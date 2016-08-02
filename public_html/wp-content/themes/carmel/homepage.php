@@ -360,8 +360,8 @@ if($update_profile_status == 1 || $update_profile_status == 2) {
 if($update_profile_status == '0') { ?>
 	<div class="update-profile">
 		<div>
-			<h3>Please help keep the P2C staff directory up-to-date. </h3>
-			<p>The staff directory is a way for staff to search for other staff members. Here they will be able to put a face to the name as well as find out various contact information. By updating your profile, you will be able to update any privacy settings or additional information. Just click <i>Update Profile Now</i> and you will be taken to your profile.
+			<h3>Please help keep the P2C staff directory up-to-date</h3>
+			<p>The staff directory is a tool that allows you to find contact information, job titles, and location for all staff in Power to Change. By updating your profile, you will help make this tool even more useful for other staff looking to connect with you.  Please take a few seconds to update your privacy settings and add any additional information.
 			</p>
 			<a href="/staff-directory/?page=myprofile" class="orange_button">Update Profile Now</a>
 			<a href="/?rem=later" class="orange_button">Remind Me Later</a>
