@@ -9,7 +9,7 @@
 				<?php if(!isset($_GET['wiki'])) { ?>
 				<h5 style="float:left;margin-right:20px;">Filter By: </h5>
 				<?php $s = str_replace(' ', '+', $s); ?>
-				<!--<a href="/?s=< ?php //echo $s;?>&amp;searchfilter=incsub_wiki"><img src="/wp-content/images/Self-Help-Wiki-Icon.png"></a>-->
+				<a href="/?s=<?php echo $s;?>&amp;searchfilter=incsub_wiki"><img src="/wp-content/images/Self-Help-Wiki-Icon.png"></a>
 				<a href="/?s=<?php echo $s;?>&amp;searchfilter=page"><img src="/wp-content/images/Pages-Icon.png"></a>
 				<a href="/?s=<?php echo $s;?>&amp;searchfilter=post"><img src="/wp-content/images/News-Icon.png"></a>
 				<br>
