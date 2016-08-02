@@ -20,6 +20,7 @@ parseConstantInput();
 
 function parseConstantInput(){
 	global $constants;
+	global $wpdb;
 	if (isAppAdmin('support_calculator_admin', 0)) {
 
 		//todo error handling
