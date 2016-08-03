@@ -238,7 +238,8 @@ $max_file_size = 30000000; // size in bytes
 					<input type="text" placeholder='Website' name="ministryWebsite" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Twitter' name="ministryTwitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Skype' name="ministrySkype" value="<?php echo $user->ministry_skype ?>" style="width:446px"><BR>
-					<input type="text" placeholder='Facebook' name="ministryFacebook" value="<?php echo $user->ministry_facebook ?>" style="width:446px">
+					<input type="text" placeholder='Facebook' name="ministryFacebook" value="<?php echo $user->ministry_facebook ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Instagram' name="ministryInstagram" value="<?php echo $user->ministry_instagram ?>" style="width:446px">
 				</div>
 
 				<h4 style='font-size:16pt'>PERSONAL INFORMATION</h4>
@@ -334,7 +335,8 @@ $max_file_size = 30000000; // size in bytes
 					<input type="text" placeholder='Website' name="personalWebsite" value="<?php echo $user->website ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Twitter' name="personalTwitter" value="<?php echo $user->twitter_handle ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Skype' name="personalSkype" value="<?php echo $user->skype ?>" style="width:446px"><BR>
-					<input type="text" placeholder='Facebook' name="personalFacebook" value="<?php echo $user->facebook ?>" style="width:446px">
+					<input type="text" placeholder='Facebook' name="personalFacebook" value="<?php echo $user->facebook ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Instagram' name="personalInstagram" value="<?php echo $user->instagram ?>" style="width:446px">
 				</div>
 			
 				<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">

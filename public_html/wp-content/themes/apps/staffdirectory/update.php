@@ -157,7 +157,8 @@
 		if (strip_tags($_POST['ministryWebsite']) != $user->ministry_website 
 				|| strip_tags($_POST['ministryTwitter']) != $user->ministry_twitter_handle
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
-				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook){
+				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook
+                || strip_tags($_POST['ministryInstagram']) != $user->ministry_instagram){
 			//$wpdb->insert( 'sync',
 			//				array(  'table_name'    => 'employee',
 			//						'record_id'     => $user->external_id,
@@ -169,7 +170,8 @@
 			$employeeChanges['ministry_website'] = strip_tags($_POST['ministryWebsite']);
 			$employeeChanges['ministry_twitter_handle'] = strip_tags($_POST['ministryTwitter']);
 			$employeeChanges['ministry_skype'] = strip_tags($_POST['ministrySkype']);
-			$employeeChanges['ministry_facebook'] = strip_tags($_POST['ministryFacebook']);
+            $employeeChanges['ministry_facebook'] = strip_tags($_POST['ministryFacebook']);
+			$employeeChanges['ministry_instagram'] = strip_tags($_POST['ministryInstagram']);
 		}
 		
 		
@@ -204,11 +206,13 @@
 		if (strip_tags($_POST['personalWebsite']) != $user->website 
 				|| strip_tags($_POST['personalTwitter']) != $user->twitter_handle
 				|| strip_tags($_POST['personalSkype']) != $user->skype
-				|| strip_tags($_POST['personalFacebook']) != $user->facebook){
+				|| strip_tags($_POST['personalFacebook']) != $user->facebook
+                || strip_tags($_POST['personalInstagram']) != $user->instagram){
 			$employeeChanges['website'] = strip_tags($_POST['personalWebsite']);
 			$employeeChanges['twitter_handle'] = strip_tags($_POST['personalTwitter']);
 			$employeeChanges['skype'] = strip_tags($_POST['personalSkype']);
-			$employeeChanges['facebook'] = strip_tags($_POST['personalFacebook']);
+            $employeeChanges['facebook'] = strip_tags($_POST['personalFacebook']);
+			$employeeChanges['instagram'] = strip_tags($_POST['personalInstagram']);
 			//$wpdb->insert( 'sync',
 			//				array(  'table_name'    => 'employee',
 			//						'record_id'     => $user->external_id,

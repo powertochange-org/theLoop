@@ -115,7 +115,12 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo '<strong>Skype:</strong> ' . $user->ministry_skype. '<BR>';
 				}
 				if(!empty($user->ministry_facebook)){
-					echo '<strong>Facebook:</strong> ' . $user->ministry_facebook. '<BR>';
+					echo '<strong>Facebook:</strong> <a href="http://www.facebook.com/' . $user->ministry_facebook . 
+					'" target=_blank>' . $user->ministry_facebook . '</a><BR>';
+				}
+				if(!empty($user->ministry_instagram)){
+					echo '<strong>Instagram:</strong> <a href="http://www.instagram.com/' . $user->ministry_instagram . 
+					'" target=_blank>' . $user->ministry_instagram . '</a><BR>';
 				}
 			}
 			if(isset($user->spouse_employee_number)){ //if you're married to someone on staff we link your profiles.
@@ -204,7 +209,12 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo '<strong>Skype:</strong> ' . $user->skype . '<BR>';
 				}
 				if(!empty($user->facebook)){
-					echo '<strong>Facebook:</strong> ' . $user->facebook . '<BR>';
+					echo '<strong>Facebook:</strong> <a href="http://www.facebook.com/' . $user->facebook . 
+					'" target=_blank>' . $user->facebook . '</a><BR>';
+				}
+				if(!empty($user->instagram)){
+					echo '<strong>Instagram:</strong> <a href="http://www.instagram.com/' . $user->instagram . 
+					'" target=_blank>' . $user->instagram . '</a><BR>';
 				}
 			}
 			?>
