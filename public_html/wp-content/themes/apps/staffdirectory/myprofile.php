@@ -358,6 +358,13 @@ $max_file_size = 30000000; // size in bytes
 <div style='clear:both;'></div>
 <?php 
 //Records that the user updated their profile so they are not warned for another year
+$update_profile_status = 0;
 $user_id = get_current_user_id();
-update_user_meta($user_id, 'update_profile', array('1', date('Y-m-d', strtotime("+1 year"))));
+$user_profile_settings =  get_user_meta($user_id, 'update_profile'); 
+if(!empty($user_profile_settings)) {
+	$update_profile_status = $user_profile_settings[0][0];
+}
+//Only update the reminder setting if the user has not selected "Never remind me again"
+if($update_profile_status != 3)
+	update_user_meta($user_id, 'update_profile', array('1', date('Y-m-d', strtotime("+1 year"))));
 ?>
