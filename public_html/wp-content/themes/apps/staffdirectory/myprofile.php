@@ -130,7 +130,7 @@ $max_file_size = 30000000; // size in bytes
 
 
 			<div style='float:left;padding-left:23px;width:457px'>
-			<form onsubmit="preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
+			<form onsubmit="return preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
 				<!-- These are fields for the photo upload stuff -->
 				<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
 				<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
