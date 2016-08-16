@@ -65,3 +65,39 @@ div#Upload * {
     padding-left: 23px;
     width: 407px
 }
+
+#staff-search-main {
+    width: 615px;
+    font-size: 16px;
+    padding-left: 5px;
+}
+
+div.staff-search-box {
+    width: 650px;
+    margin-top: 10px;
+    box-shadow: 0px 0px 5px 1px #888888;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#s_s_s p {
+    width: 650px;
+}
+
+a.profile-link {
+    color: #6a6c6d;
+    font-weight:bold;
+}
+
+a.profile-link:hover {
+    border-bottom: 1px solid #6a6c6d;
+}
+
+div.staff-directory-ministry-select {
+    margin-left: 30px;
+}
+
+div.staff-directory-ministry-select select {
+    background-color: #f4f4f4;
+    font-size: 18px;
+}

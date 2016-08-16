@@ -139,14 +139,43 @@
 				    	limit=3&range="daily"&stats_views=0');
 				?>
 				<hr>
-				<h1 style="margin-bottom:5px">Recent Comments</h1>
-				<?php 
-				foreach(get_comments( array( 'number' => 3)) as $c){
-					echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
-					echo  "<p>".get_the_title($c->comment_post_ID)."</p></a></div>\n";
-				
-				} ?> 
-				
+                <div class='recent-comments'>
+                    <h1 style="margin-bottom:5px">Recent Comments</h1>
+                    <?php 
+                    echo '<ul id="vertical-ticker">';
+                    foreach(get_comments( array( 'number' => 10)) as $c){
+                        echo '<li>';
+                        echo "<div class='recent-comment'><a href='".get_permalink($c->comment_post_ID)."/#comment-".$c->comment_ID."'><h2>$c->comment_author</h2>\n";
+                        echo  "<p>".get_the_title($c->comment_post_ID)."</p></a><span class='commentcontent'>".$c->comment_content."</span></div>\n";
+                        echo '</li>';
+                    } 
+                    echo '</ul>';
+                    ?> 
+                </div>
+                <?php /*<div id='staff-account-balance'>
+                    <hr/>
+                    <p>Just a sec...</p>
+                    <input type="button" value="Quick Account Balance" onclick='$(this).css("visibility","hidden");' />
+                    <script type='text/javascript'>
+                        $.ajax({
+                            type: "POST",
+                            url: "/wp-content/themes/apps/financialreports/myBalance.php",
+                            dataType: "json",
+                            success: function(data, textStatus) {
+                                if (textStatus=='nocontent') {
+                                    $('#staff-account-balance').remove();
+                                } else {
+                                    $('#staff-account-balance').show();
+                                    $('#staff-account-balance>p').html('Balance of '+data);
+                                }
+                            },
+                            error: function(a,b,c) {
+                                $('#staff-account-balance>p').html('Error fetching balance');
+                            }
+                        })
+                    </script>
+                </div>*/?>
+                               
 			</div>                        
 		</div>
 	</div><div style='clear:both;'></div>
@@ -163,22 +192,13 @@
 						$results = $wpdb->get_results($wpdb->prepare("SELECT ministry FROM employee WHERE user_login = %s", $current_user->user_login));
 						$result = $results[0];
 						
-						$idObj = get_category_by_slug('staff-stories'); 
-						$id_staffStories = $idObj->term_id;
 						$idObj = get_category_by_slug('p2cstudents'); 
 						$id_students = $idObj->term_id;
 						
-						$categories = get_categories(array('orderby' => 'id', 'exclude' => "$id_staffStories,$id_students")); 
 						// Build a comma-separated list that we can pass to the query_posts function
-						$category_list = "";
-						foreach ($categories as $category) {	
-							if ($category_list != "") {
-								$category_list .= ",";
-							}
-							$category_list .= $category->term_id;
-						}
-
-						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page
+						$category_list = get_user_meta($current_user->ID, 's2_subscribed')[0];
+						
+						// If the ministry is not "Power to Change - Students", hide posts from that ministry on the home page unless they are subscribed
 						if ($result->ministry == "Power to Change - Students") {
 							// Show any posts
 							$latest_cat_post = new WP_Query( "showposts=$post_number&cat=$category_list,$id_students");
@@ -218,41 +238,68 @@
 			<div class="homepage-tiles-new-line"></div>
 			<div  class="homepage-tiles">
 				<hr>
-				<?php 
-					$idObj = get_category_by_slug('staff-stories'); 
-					$id = $idObj->term_id;
-					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					?>
-					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Staff Stories</span></a><BR>
-						<BR>
-						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-						<BR>
-						<span class="homepage"><?php the_excerpt(); ?></span>
-						<?php
-						endwhile; endif; ?>
-				<br>
-				<a class='orange_button' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
-			</div>
-			<div class="homepage-tiles">
-				<hr>
-				<?php 
-					$idObj = get_category_by_slug('prayer-requests'); 
-					$id = $idObj->term_id;
-					$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
-					if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
-					?>
-					<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
-						Prayer Requests</span></a><BR>
-						<BR>
-						<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
-						<BR>
-						<span class="homepage"><?php the_excerpt(); ?></span>
-						<?php
-						endwhile; endif; ?>
+                <span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30> Staff Apps</span></a><BR>
+                <div id='staff-apps-quadrant'><br/>Loading...
+                    <script type="text/javascript">
+                        jQuery(document).ready(function(){
+                            $.ajax({
+                              type: "POST",
+                              url: "https://staffappsbutton.powertochange.org/index.php",
+                              success: function (data) {
+                                  data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
+                                  $('#staff-apps-quadrant').empty().append(data);
+                                  var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
+                                  $('#staff-apps-quadrant').empty().append(ul);
+                              }
+                            });           
+                        });
+                    </script>
+                </div>
+                <script type="text/javascript">
+                    function trackHomePageAppsClick(Label) {
+                        'use strict'; 
+                        console.debug('tracking label: '+Label); 
+                        if (typeof (_gaq) !== 'undefined') { 
+                            _gaq.push(['_trackEvent', 'Staff Apps on Homepage', 'click', Label]); 
+                        } else if (typeof (ga) !== 'undefined') { 
+                            ga('send', 'event', 'Staff Apps on Homepage', 'click', Label);
+                        }
+                    }
+                </script>
+            </div>
+            <div class="homepage-tiles">
+    			<hr>
+    			<?php 
+				$idObj = get_category_by_slug('prayer-requests'); 
+				$id = $idObj->term_id;
+				$latest_cat_post = new WP_Query( array('posts_per_page' => 1, 'category__in' => array($id)));
+				if( $latest_cat_post->have_posts() ) : while( $latest_cat_post->have_posts() ) : $latest_cat_post->the_post();
+				?>
+				<a href='<?php echo get_permalink() ?>'><span class='heading'><img class="arrow" src='<?php bloginfo('template_url'); ?>/img/right-arrow.png' width=30  height=30>
+					Prayer Requests</span></a><BR>
+				<BR>
+				<h2 class="homepage"><?php  echo strtoupper(the_title('', '', false)); ?></h2>
+				<BR>
+				<span class="homepage"><?php the_excerpt(); ?></span>
+					<?php
+					endwhile; endif; ?>
 				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 			</div>
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+            <script type="text/javascript" src="<?php bloginfo('template_url');?>/js/jquery.totemticker.js"></script>
+            <script type="text/javascript">
+                $(function(){
+                    $('#vertical-ticker').totemticker({
+                        row_height  :   '59px',
+                        next        :   '#ticker-next',
+                        previous    :   '#ticker-previous',
+                        stop        :   '#stop',
+                        start       :   '#start',
+                        mousestop   :   true,
+                        speed       :   500,
+                    });
+                });
+            </script>
 		</div>
 	</div>
 </div>
@@ -282,3 +329,43 @@
 	</div>
 </div>	
 <?php get_footer(); ?>
+
+<?php 
+$user_id = get_current_user_id();
+/*	
+	0 = Prompt User to Update
+	1 = Updated (1 year until next warning)
+	2 = Remind Later (7 days until next warning)
+	3 = Never
+*/
+if(isset($_GET['rem'])) {
+	if($_GET['rem'] == 'later') {
+		update_user_meta($user_id, 'update_profile', array('2', date('Y-m-d', strtotime("+7 days"))));
+	} else if($_GET['rem'] == 'never') {
+		update_user_meta($user_id, 'update_profile', array('3', date('Y-m-d')));
+	}
+}
+
+$update_profile_status = 0;
+$user_profile_settings =  get_user_meta($user_id, 'update_profile'); 
+if(!empty($user_profile_settings)) {
+	$update_profile_status = $user_profile_settings[0][0];
+}
+//Last Update was a year ago or 1 Week has passed. Remind them again
+if($update_profile_status == 1 || $update_profile_status == 2) { 
+	if($user_profile_settings[0][1] <= date('Y-m-d'))
+		$update_profile_status = 0;
+}
+
+if($update_profile_status == '0') { ?>
+	<div class="update-profile">
+		<div>
+			<h3>Please help keep the P2C staff directory up-to-date</h3>
+			<p>The staff directory is a tool that allows you to find contact information, job titles, and location for all staff in Power to Change. By updating your profile, you will help make this tool even more useful for other staff looking to connect with you.  Please take a few seconds to update your privacy settings and add any additional information.
+			</p>
+			<a href="/staff-directory/?page=myprofile" class="orange_button">Update Profile Now</a>
+			<a href="/?rem=later" class="orange_button">Remind Me Later</a>
+			<a href="/?rem=never" class="orange_button">Do Not Remind Me Again</a>
+		</div>
+	</div>
+<?php } ?> 

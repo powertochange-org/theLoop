@@ -176,6 +176,13 @@ function removePlaceholderValues() {
 
 // A function for processing before submission
 function preSubmit() {
+    //Check to make sure the photo cropped will be a usable aspect ratio. 
+    var jcrops = document.getElementsByClassName('jcrop-tracker');
+    if((jcrops[0].clientHeight / jcrops[0].clientWidth) >= 2) {
+        alert("The photo you have cropped is too narrow. Try cropping a slightly wider region.");
+        return false;
+    }
+    
     // If we have the jcrop api
     if (jcrop_api) { 
         // Update coordinates
@@ -186,4 +193,5 @@ function preSubmit() {
         // Need to remove values
         removePlaceholderValues();
     }
+    return true;
 }

@@ -36,9 +36,7 @@
 }
 
 div.workflow {
-    /*background-color: #b2c8ff;*/
     float: left;
-    /*height: 40px;*/
 }
 
 div.workflowleft {
@@ -46,16 +44,12 @@ div.workflowleft {
     width: 200px;
     vertical-align: middle;
     font-size: 18px;
-    /*border: 1px solid red;*/
 }
 
 div.workflowright {
     width: 400px;
     height: 40px;
     margin-right: 2px;
-    /*font-size: 18px; TODO
-    font-family: sans-serif; TODO*/ 
-    /*border: 1px solid orange;*/
 }
 
 div.workflowboth {
@@ -70,7 +64,15 @@ div.workflowlabel {
     font-family: sans-serif;
     margin-left: 10px;
     margin-right: 5px;
-    /*border: 1px solid red;*/
+}
+
+.outside-text-center {
+    display: table;
+}
+
+.inside-text-center {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 #workflowfields {
@@ -91,7 +93,7 @@ div.workflowlabel {
 }
 
 .approval {
-    background-color: #fff3ea; /*#ffbe89*/
+    background-color: #fff3ea; 
     
 }
 
@@ -104,10 +106,9 @@ div.clear {
     display: block;
     margin: 0;
     width: 99%;
-    height: 89%;
+    height: 93%;
     font-family: sans-serif;
     font-size: 18px;
-    /*appearance: none;*/
     box-shadow: none;
     border-radius: none;
 }
@@ -139,7 +140,6 @@ div.clear {
     height: 89%;
     font-family: sans-serif;
     font-size: 18px;
-    /*appearance: none;*/
     box-shadow: none;
     border-radius: none;
 }
@@ -176,7 +176,6 @@ select {
 input[type="submit"] {
     display: block;
     margin: 20px 0;
-    /*width: 99%;*/
     font-family: sans-serif;
     font-size: 18px;
     box-shadow: 0 0 5px 1px #969696;
@@ -185,7 +184,6 @@ input[type="submit"] {
 input[type="reset"] {
     display: block;
     margin: 20px 0;
-    /*width: 99%;*/
     font-family: sans-serif;
     font-size: 18px;
     box-shadow: 0 0 5px 1px #969696;
@@ -194,7 +192,6 @@ input[type="reset"] {
 button.buttoncustom {
     display: block;
     background-color: #8fff89;
-    /*margin: 20px 0;*/
     width: 99%;
     height: 95%;
     font-family: sans-serif;
@@ -217,7 +214,6 @@ button.deletebutton {
     display: block;
     background-color: #F58220;
     margin: 20px 10px 20px 0;
-    /*width: 200px;*/
     min-width: 200px;
     font-family: sans-serif;
     font-size: 18px;
@@ -236,6 +232,22 @@ button.submitbutton {
     float: left;
 }
 
+button.processbutton {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    width: 200px;
+    background-color: #f7941d;
+    color: #000000;
+    margin: 20px 10px 20px 0;
+    padding: 10px;
+    border-style: none;
+    border-radius: 5px;
+    float: left;
+}
+button.processbutton:hover {
+    color: white;
+    cursor: pointer;
+}
 p.approved {
     font-size: 24px;
     background-color: #8fff89;
@@ -269,7 +281,6 @@ p.comments-section {
 }
 
 div.view-submissions-headers {
-    /*background-color: #f2f2f2;*/
     font-size: 26px;
     text-align: center;
 }
@@ -298,10 +309,14 @@ div.view-submissions-headers {
 }
 
 .workflow-status-header,
-#user-submissions .workflow-status-header,
-#approver-submissions .workflow-status-header {
+#user-submissions .workflow-status-header {
     background-color: #005E90;
     color: white;
+}
+
+#approver-submissions .workflow-status-header {
+    background-color: #f7941d;
+    color: black;
 }
 
 #workflowhistory {
@@ -500,7 +515,6 @@ div.field576to600 {
 }
 
 #fieldaddconfirm {
-    /*display: none;*/
     opacity: 0;
     transition: opacity 1500ms;
 }
@@ -552,14 +566,15 @@ span.red {
     color: #ffffff;
 }
 
-#user-submissions {
-    /*border: 1px solid red;*/
+#user-submissions, #approver-submissions {
+    width: 960px;
 }
 
 #user-submissions table,
 #approver-submissions table {
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
 }
 
 .workflow-status-link {
@@ -571,7 +586,22 @@ span.red {
 }
 
 #approver-submissions .workflow-status-link {
-    width: 305px;
+    width: 180px;
+}
+
+#content-workflow .selected-submissions {
+    background-color: #005E90 !important;
+}
+
+.selected-submissions h2 {
+    color: white !important;
+}
+
+.selected-submissions h2,
+.selected-submissions th,
+.selected-submissions td,
+.selected-submissions p {
+    color: white !important;
 }
 
 .workflow-status-link:hover {
@@ -596,10 +626,6 @@ tr.selectedblackout:hover td {
     #content-workflow {
         margin: 0;
         
-    }
-    div.workflow {
-        /*background-color: #b2c8ff;*/
-        /*height: 40px;*/
     }
 
     div.workflowleft {
@@ -660,5 +686,33 @@ tr.selectedblackout:hover td {
     
     #submissionsearchbar {
         width: 95%;
+    }
+    
+    #workflow-summary td {
+        float: left;
+        border-right: 0px !important; 
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    
+    #workflow-navbar a {
+        float: left;
+        width: 93%;
+        margin-top: 0;
+    }
+    
+    #user-submissions, #approver-submissions {
+        width: 100%;
+    }
+    
+    #view-submissions td {
+        float: none;
+    }
+    
+    .workflow-status-link {
+        width: 96% !important;
+        margin-left: auto;
+        margin-right: auto;
+        float: none;
     }
 }

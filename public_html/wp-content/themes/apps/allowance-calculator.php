@@ -476,7 +476,12 @@ include('functions/js_functions.php');
 						alert("Please enter an effective date.")
 					} else {
 						document.getElementById('print').value = true;
-						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export';///forms-information/workflow/?page=allowance-calculator-export'; ///mpd/allowance-goal-calculations/allowance-calculator/allowance-calculator-export/
+						var sbid = document.getElementById('sbid').value;
+						var sbidtxt = '';
+						if(sbid != 0) {
+							sbidtxt = '&sbid=' + sbid;
+						}
+						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export' + sbidtxt;
 						switch(chooseWay){
 						case YOU:
 							document.getElementById('userIs').value = 'you';
@@ -552,6 +557,7 @@ include('functions/js_functions.php');
 			<div id='blurb'><?php echo changeNL(getStringConstant("blurb_0")) ?></div>
 			<BR>
 			<div id='section_whichWay'>
+				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				Please select an option:<BR>
 				<?php if(getAccess($current_user_id) == $allowance_constant['fullAccess']) { ?>
 				<input type='radio' name='whichWay' id='show_you' value='0'><label for='show_you'>Calculate for yourself</label>
@@ -579,6 +585,7 @@ include('functions/js_functions.php');
 							<div id='name_project_code'>
 								Name: <input type='text' name='person_name' id='person_name'><BR>
 								Project Code: <input type='text' name='projectCode' id='projectCode' maxlength='6'><BR><BR>
+								<input type="hidden" name="sbid" id="sbid" value="<?php if(isset($_GET['sbid'])){echo $_GET['sbid'];}else echo '0';?>">
 							</div>
 							<div id='hours'>
 							    <h2><?php echo getStringConstant("first_header") ?></h2>
@@ -659,11 +666,12 @@ include('functions/js_functions.php');
 				</tr></table>
 				Effective Date: <input type='text' id='input_effective'>
 				<hr>
+				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Download/Print' onclick='download();'></td>
-					<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>
+					<!--<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>-->
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>

@@ -79,7 +79,7 @@ $max_file_size = 30000000; // size in bytes
 		</style>
 		<!-- MAIN DISPLAY -->
 
-		<p/><h4 style="float:right;position:relative;top:30px;"><a href='?page=profile'   style="color:#adafb2;font-weight:bold;">VIEW PROFILE</a></h4><br /><br /><br /><br />
+		<p/><h4 style="float:right;position:relative;top:30px;"><a href='?page=profile' class="profile-link">VIEW PROFILE</a></h4><br /><br /><br /><br />
     
 	<hr style='margin-top:0'>
 	<div style="clear:both"></div>
@@ -130,7 +130,7 @@ $max_file_size = 30000000; // size in bytes
 
 
 			<div style='float:left;padding-left:23px;width:457px'>
-			<form onsubmit="preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
+			<form onsubmit="return preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
 				<!-- These are fields for the photo upload stuff -->
 				<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
 				<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
@@ -238,7 +238,8 @@ $max_file_size = 30000000; // size in bytes
 					<input type="text" placeholder='Website' name="ministryWebsite" value="<?php echo $user->ministry_website ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Twitter' name="ministryTwitter" value="<?php echo $user->ministry_twitter_handle ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Skype' name="ministrySkype" value="<?php echo $user->ministry_skype ?>" style="width:446px"><BR>
-					<input type="text" placeholder='Facebook' name="ministryFacebook" value="<?php echo $user->ministry_facebook ?>" style="width:446px">
+					<input type="text" placeholder='Facebook' name="ministryFacebook" value="<?php echo $user->ministry_facebook ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Instagram' name="ministryInstagram" value="<?php echo $user->ministry_instagram ?>" style="width:446px">
 				</div>
 
 				<h4 style='font-size:16pt'>PERSONAL INFORMATION</h4>
@@ -334,7 +335,8 @@ $max_file_size = 30000000; // size in bytes
 					<input type="text" placeholder='Website' name="personalWebsite" value="<?php echo $user->website ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Twitter' name="personalTwitter" value="<?php echo $user->twitter_handle ?>" style="width:446px"><BR>
 					<input type="text" placeholder='Skype' name="personalSkype" value="<?php echo $user->skype ?>" style="width:446px"><BR>
-					<input type="text" placeholder='Facebook' name="personalFacebook" value="<?php echo $user->facebook ?>" style="width:446px">
+					<input type="text" placeholder='Facebook' name="personalFacebook" value="<?php echo $user->facebook ?>" style="width:446px"><BR>
+					<input type="text" placeholder='Instagram' name="personalInstagram" value="<?php echo $user->instagram ?>" style="width:446px">
 				</div>
 			
 				<div class="form" id="updateNotes" style="padding-right:10px;padding-left:5px;">
@@ -350,7 +352,19 @@ $max_file_size = 30000000; // size in bytes
 			</div>
 		</div>
 	</div>
-	<div id="content-right">
+	<div id="content-right" class="staff-directory download">
 		<?php include('pro_sidebar.php') ?>
 	</div>
 <div style='clear:both;'></div>
+<?php 
+//Records that the user updated their profile so they are not warned for another year
+$update_profile_status = 0;
+$user_id = get_current_user_id();
+$user_profile_settings =  get_user_meta($user_id, 'update_profile'); 
+if(!empty($user_profile_settings)) {
+	$update_profile_status = $user_profile_settings[0][0];
+}
+//Only update the reminder setting if the user has not selected "Never remind me again"
+if($update_profile_status != 3)
+	update_user_meta($user_id, 'update_profile', array('1', date('Y-m-d', strtotime("+1 year"))));
+?>
