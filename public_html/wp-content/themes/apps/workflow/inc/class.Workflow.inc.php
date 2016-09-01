@@ -1744,7 +1744,7 @@ class Workflow {
         $response .= '<table id="view-submissions"><tr><th style="width: 250px;">Form Name</th><th style="width: 450px;">Link</th><th>Date</th><th>Enabled</th><th>Copy</th></tr>';
         
         foreach($result as $row) {
-            $response .= '<tr><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
+            $response .= '<tr class="form-links"><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
             
             if($row['DRAFT'])
                 $response .= 'createworkflow';
