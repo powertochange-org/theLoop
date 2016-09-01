@@ -671,7 +671,7 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Download/Print' onclick='download();'></td>
-					<!--<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>-->
+					<td class='button'><input type='button' value='WorkFlow Submit' onclick='download1();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>
