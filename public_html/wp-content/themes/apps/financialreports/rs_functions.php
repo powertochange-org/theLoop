@@ -193,7 +193,10 @@ function accountBalance($ProjCode, $user_id) {
 		$data = CsvSplit(trim($rows[$i]), $headers);
 			//$returnStr .= "$data[AccountCode] - $data[AccountDescription]: $data[Balance]<br />";
 		if ($data['AccountCode']) {
-			$returnStr .= "$data[AccountCode] - $data[AccountDescription]: \$ $data[Balance]<br />";
+      $returnStr .= "$data[AccountCode] - $data[AccountDescription]";
+      if(!($data['AccountDescription'] == 'NOT VALID' || $data['AccountDescription'] == "YOU DON'T HAVE ACCESS TO THIS ACCOUNT"))
+			  $returnStr .= ": \$ $data[Balance]";
+      $returnStr .= "<br />";
 		}
 	}
 
