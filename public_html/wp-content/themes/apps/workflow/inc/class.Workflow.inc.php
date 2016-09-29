@@ -1366,7 +1366,7 @@ class Workflow {
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode) {
             if($configuration != 0) {
-                $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;';
+                $response .= '<textarea class="commenttext" name="commenttext" rows="5" cols="40" style="width: 100%;';
                 if(isset($_GET['response']) && $_GET['response'] == 'change')
                     $response .= 'border:2px solid red;';
                 $response .= '"></textarea>';
@@ -1503,7 +1503,7 @@ class Workflow {
                     text-decoration: none;float:left;margin-right:30px;">Retract Submission</a>';
             }
         } else if($configuration == 9 && $hasAnotherApproval) {
-            $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
+            $response .= '<textarea class="commenttext" name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
             $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
             $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
