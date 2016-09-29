@@ -2534,6 +2534,7 @@ class Workflow {
                     if(Workflow::debugMode() == 2)
                         $mail->AddAddress('matthew.campbell@p2c.com'); 
                     $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                    $mail->AddBCC('jordan.tarr@p2c.com');
                 } else {
                     $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
                 }
