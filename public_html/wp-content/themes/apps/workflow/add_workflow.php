@@ -83,9 +83,12 @@ if($submitmode == 3 || $submitmode == 4) {
     //When adding POST fields, make sure to change the javascript file function called addField. The reason for this
     //is that the javascript is configuring the numbering so this page can add it to the database. 
     for($i = 0; $i < $numfields; $i++) {
-        if(isset($_POST['editable'.$i]) && $_POST['editable'.$i] == 'on')
+        if(isset($_POST['editable'.$i]) && $_POST['editable'.$i] == 'on') {
             $editable = 1;
-        else
+            //Fix for autofill fields
+            if($_POST['fieldtype'.$i] == 5 || $_POST['fieldtype'.$i] == 6)
+                $editable = 0;
+        } else
             $editable = 0;
         
         if($_POST['approvallevel'.$i] != 0)//if(isset($_POST['approvalonly'.$i]) && $_POST['approvalonly'.$i] == 'on')
