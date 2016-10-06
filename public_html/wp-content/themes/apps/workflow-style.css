@@ -568,6 +568,7 @@ span.red {
 
 #user-submissions, #approver-submissions {
     width: 960px;
+    margin-bottom: 50px;
 }
 
 #user-submissions table,

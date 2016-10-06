@@ -1434,6 +1434,7 @@ class Workflow {
                         class="processbutton">Re-calculate Allowance</button>';
                 }
             } else if($configuration == 4) {
+                $response .= '<input type="hidden" name="approverredirect" value="1"/>';
                 if($hasAnotherApproval) {
                     $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(4, 1);">Approve</button>';
                 } else {
@@ -1503,6 +1504,7 @@ class Workflow {
                     text-decoration: none;float:left;margin-right:30px;">Retract Submission</a>';
             }
         } else if($configuration == 9 && $hasAnotherApproval) {
+            $response .= '<input type="hidden" name="approverredirect" value="1"/>';
             $response .= '<textarea class="commenttext" name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
             $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
@@ -2321,7 +2323,7 @@ class Workflow {
         }
         
         
-        $response .= '</table></div><div style="margin-bottom:50px;"></div>';
+        $response .= '</table></div>';
         
         $response = str_replace('%PENDING%', (($pending == 0) ? $pending : '<b>'.$pending.'</b>'), $response);
         $response = str_replace('%APPROVED%', $approved, $response);
