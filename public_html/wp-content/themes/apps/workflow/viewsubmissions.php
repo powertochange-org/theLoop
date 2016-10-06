@@ -71,7 +71,12 @@ if(Workflow::loggedInUser() != '0') {
     
     $obj = new Workflow();
     
-    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch);
+    if(isset($_GET['forms']))
+        $formType = $_GET['forms'];
+    else
+        $formType = 'my';
+    
+    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType);
     
     ?>
     <hr>
@@ -103,9 +108,10 @@ if(Workflow::loggedInUser() != '0') {
     <div style="text-align:center;">
     
     <?php
-    
-    echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
-    echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch);
+    if($formType == 'my' || $formType == 'both')
+        echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
+    if($formType == 'staff' || $formType == 'both')
+        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch);
     
     //Display the forms that the user was in before hitting the search button
     if(isset($_GET['mode']) && isset($_GET['tag'])) {
