@@ -1041,8 +1041,20 @@ div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_advanced_edit {
 
 .wiki-section {
     float: left;
-    margin-right: 30px;
+    margin-right: 20px;
     width: 300px;
+    background-color: #dbe9fd;
+    border-radius: 5px;
+    padding: 5px;
+    min-height: 300px;
+    box-shadow: 0 0 9px 2px #969696;
+}
+
+.wiki-section h3 {
+    background-color: #dddddd;
+    border-radius: 5px;
+    padding: 5px 15px;
+    border: 1px solid #97979a;
 }
 
 #content-left.wiki-fix {
