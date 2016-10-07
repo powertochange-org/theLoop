@@ -16,6 +16,7 @@
     if($result[0]['ID'] != NULL) {
         if (current_user_can('edit_wiki', $result[0]['ID'])) { ?>
         <a href="/kb/articles/?action=edit&eaction=create" class="wiki-nav-links">Create New Knowledge Base Article</a>
+        <a href="/kb-request" class="wiki-nav-links">Request a Knowledge Base Article</a>
     <?php 
         } 
     }
