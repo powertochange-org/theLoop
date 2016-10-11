@@ -876,18 +876,18 @@ class Workflow {
         if($emailMode) {
             if($configuration == 4) {
                 $response .= '<p style="margin-bottom:30px;">Quick Reply: ';
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Approve</a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Approve</a>';
                 
-                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Request Change</a>';
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Request Change</a>';
                 
-                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Not Approved</a>';
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Not Approved</a>';
                 $response .= '</p>';
             } else {
                 $response .= '<p style="margin-bottom:30px;"></p>';
             }
             $response .= '<a style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
             text-decoration: none;" 
-                    href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">
+                    href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'">
                     Click to view the form online</a>';
         }
         else
@@ -1475,7 +1475,7 @@ class Workflow {
                 $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
             text-decoration: none; float:left;">View Form</a>';
                 //Uncomment if email for revisions should include quick buttons. But they really shouldn't
                 /*$response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
@@ -1488,18 +1488,18 @@ class Workflow {
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Delete Form</button></a>';*/
             } else if($configuration == 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Approve</a>';
                 
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Request Change</a>';
                 
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'"
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'"
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Not Approved</a>';
             } else if($configuration == 0) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Retract Submission</a>';
             }
@@ -1756,7 +1756,7 @@ class Workflow {
             $response .= '&wfid='.$row['FORMID'].'">';
             
             if(!$row['DRAFT'])
-                $response .= '/forms-information/workflow/?page=workflowentry&wfid='.$row['FORMID'];
+                $response .= '/forms-information/p2c-forms/?page=workflowentry&wfid='.$row['FORMID'];
             else
                 $response .= 'EDIT FORM '.$row['NAME'];
             $response .= '</a></td>';
@@ -2562,13 +2562,13 @@ class Workflow {
                 $mail->IsHTML(true);
                 
                 if($status == 3)
-                    $mail->Subject = 'Workflow submission requiring further input - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' submission requiring further input - Submission ID # '.$submissionID;
                 else if($status == 4)
-                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else if($status == 7 && $recepients[$i][3] == 1)
-                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else
-                    $mail->Subject = 'Your workflow submission has been reviewed - Submission ID # '.$submissionID;
+                    $mail->Subject = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
                  
                                                             
                 $mail->Body = $body;
