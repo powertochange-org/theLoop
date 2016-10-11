@@ -481,7 +481,7 @@ include('functions/js_functions.php');
 						if(sbid != 0) {
 							sbidtxt = '&sbid=' + sbid;
 						}
-						document.getElementById('saveUserValues_form').action = '/forms-information/workflow/?page=allowance-calculator-export' + sbidtxt;
+						document.getElementById('saveUserValues_form').action = '/forms-information/p2c-forms/?page=allowance-calculator-export' + sbidtxt;
 						switch(chooseWay){
 						case YOU:
 							document.getElementById('userIs').value = 'you';
@@ -671,7 +671,7 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Download/Print' onclick='download();'></td>
-					<!--<td class='button'><input type='button' value='WorkFlowTest' onclick='download1();'></td>-->
+					<td class='button'><input type='button' value='Submit Allowance Calculator' onclick='download1();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>

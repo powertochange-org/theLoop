@@ -568,6 +568,7 @@ span.red {
 
 #user-submissions, #approver-submissions {
     width: 960px;
+    margin-bottom: 50px;
 }
 
 #user-submissions table,
@@ -620,6 +621,16 @@ tr.selectedblackout:hover td {
   background-color: #222222;
   color: white;
   cursor: pointer;
+}
+
+.form-links {
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+
+.commenttext {
+    font-size: 17px;
+    font-family: 'Open Sans', sans-serif;
 }
 
 @media (max-width: 767px) {

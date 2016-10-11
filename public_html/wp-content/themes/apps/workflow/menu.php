@@ -18,7 +18,8 @@
     <!--<a href="?page=debugstartworkflow&wfid=">Debug Start Workflow</a>-->
     <!--<a href="?page=startworkflow&wfid=">Edit Workflow</a>-->
     <!--<a href="?page=workflowentry&wfid=13">Workflow Entry</a>-->
-    <a href="?page=viewsubmissions">View Forms</a>
+    <a href="?page=viewsubmissions&forms=my">My Forms</a>
+    <a href="?page=viewsubmissions&forms=staff">My Staff's Forms</a>
     
     <?php 
         if($admin) {

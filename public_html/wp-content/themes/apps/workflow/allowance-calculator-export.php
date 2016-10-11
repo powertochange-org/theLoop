@@ -84,18 +84,11 @@ parseUserValuesInput();
 
 
 
-	
-	
-function dump($d){
-	global $wpdb;
-	$sql = "INSERT INTO  `var_dump` (`id` ,`dump` ,`time`) VALUES (NULL ,'".mysql_real_escape_string(var_export($d, true))."', NULL)";
-	//echo $sql;
-	//$wpdb->get_results($sql);
-}
+
 
 function parseUserValuesInput(){
 	global $current_user_id, $wpdb, $allowance_constant;
-	dump($_POST);
+	
 	if (isset($_POST['print']) and $_POST['print'] == 'true'){
 		$prevSub = '';
 		if(isset($_GET['sbid'])) {
