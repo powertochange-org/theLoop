@@ -472,51 +472,51 @@ include('functions/js_functions.php');
 				}
 				
 				function download1(){
-					if (document.getElementById('input_effective').value == ""){
-						alert("Please enter an effective date.")
-					} else {
-						document.getElementById('print').value = true;
-						var sbid = document.getElementById('sbid').value;
-						var sbidtxt = '';
-						if(sbid != 0) {
-							sbidtxt = '&sbid=' + sbid;
-						}
-						document.getElementById('saveUserValues_form').action = '/forms-information/p2c-forms/?page=allowance-calculator-export' + sbidtxt;
-						switch(chooseWay){
-						case YOU:
-							document.getElementById('userIs').value = 'you';
-							document.getElementById('role').value = you.role;
-							document.getElementById('person_name').value = you.name;
-							document.getElementById('projectCode').value = you.projectCode;
-							break;
-						case SPOUSE:
-							document.getElementById('userIs').value = 'spouse';
-							document.getElementById('role').value = spouse.role;
-							document.getElementById('person_name').value = spouse.name;
-							document.getElementById('projectCode').value = spouse.projectCode;
-							break;
-						case FREE:
-							document.getElementById('userIs').value = 'free';
-							document.getElementById('role').value = document.getElementById('choose_role').value;
-							break;
-						}
-						document.getElementById('minimum').value = document.getElementById('output_minimum').innerHTML;
-						document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
-						document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
-						document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
-						document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
-						document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
-						document.getElementById('preHours').value = document.getElementById('input_preHours').value;
-						document.getElementById('newHours').value = document.getElementById('input_newHours').value;
-						document.getElementById('mon').value = document.getElementById('input_mon').value;
-						document.getElementById('tues').value = document.getElementById('input_tues').value;
-						document.getElementById('wed').value = document.getElementById('input_wed').value;
-						document.getElementById('thurs').value = document.getElementById('input_thurs').value;
-						document.getElementById('fri').value = document.getElementById('input_fri').value;
-						document.getElementById('effective').value = document.getElementById('input_effective').value;
-						document.getElementById('saveUserValues_form').target = "_blank";
-						saveUserValues_form.submit();
+					document.getElementById('print').value = true;
+					var sbid = document.getElementById('sbid').value;
+					var sbidtxt = '';
+					if(sbid != 0) {
+						sbidtxt = '&sbid=' + sbid;
 					}
+					document.getElementById('saveUserValues_form').action = '/forms-information/p2c-forms/?page=allowance-calculator-export' + sbidtxt;
+					switch(chooseWay){
+					case YOU:
+						document.getElementById('userIs').value = 'you';
+						document.getElementById('role').value = you.role;
+						document.getElementById('person_name').value = you.name;
+						document.getElementById('projectCode').value = you.projectCode;
+						break;
+					case SPOUSE:
+						document.getElementById('userIs').value = 'spouse';
+						document.getElementById('role').value = spouse.role;
+						document.getElementById('person_name').value = spouse.name;
+						document.getElementById('projectCode').value = spouse.projectCode;
+						break;
+					case FREE:
+						document.getElementById('userIs').value = 'free';
+						document.getElementById('role').value = document.getElementById('choose_role').value;
+						break;
+					}
+					document.getElementById('minimum').value = document.getElementById('output_minimum').innerHTML;
+					document.getElementById('maximum').value = document.getElementById('output_maximum').innerHTML;
+					document.getElementById('minimum_month').value = document.getElementById('output_minimum_month').innerHTML;
+					document.getElementById('maximum_month').value = document.getElementById('output_maximum_month').innerHTML;
+					document.getElementById('preAllowance').value = document.getElementById('input_preAllowance').value;
+					document.getElementById('newAllowance').value = document.getElementById('input_newAllowance').value;
+					document.getElementById('preHours').value = document.getElementById('input_preHours').value;
+					document.getElementById('newHours').value = document.getElementById('input_newHours').value;
+					document.getElementById('mon').value = document.getElementById('input_mon').value;
+					document.getElementById('tues').value = document.getElementById('input_tues').value;
+					document.getElementById('wed').value = document.getElementById('input_wed').value;
+					document.getElementById('thurs').value = document.getElementById('input_thurs').value;
+					document.getElementById('fri').value = document.getElementById('input_fri').value;
+					document.getElementById('effective').value = document.getElementById('input_effective').value;
+					document.getElementById('saveUserValues_form').target = "_blank";
+					saveUserValues_form.submit();
+				}
+				
+				function displayAllowanceChange() {
+					document.getElementById('allowance-change').style.display = 'inherit';
 				}
 				
 				function backTo(section){ //could be more
@@ -647,32 +647,37 @@ include('functions/js_functions.php');
 					</tr>
 				</table>
 				<hr>
-				<strong>Change in Allowance or Hours</strong>
-				<table><tr>
-				<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
-				<td>New Allowance: <input type='text' id='input_newAllowance'></td>
-				</tr><tr>
-				<td>Previous number of hours: <input type='text' style="width:40px" id='input_preHours'></td>
-				<td>New Number of Hours: <input type='text' style="width:40px" id='input_newHours'></td>
-				</tr><tr>
-				<td colspan='2'><strong>** If schedule is less than 40 hours per week enter normal days/ hours worked</strong></td>
-				</tr></table>
-				<table><tr>
-				<td>Monday: <input type='text' style="width:40px" id='input_mon'></td>
-				<td>Tuesday: <input type='text' style="width:40px" id='input_tues'></td>
-				<td>Wednesday: <input type='text' style="width:40px" id='input_wed'></td>
-				<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
-				<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
-				</tr></table>
-				Effective Date: <input type='text' id='input_effective'>
+				<button onclick="displayAllowanceChange();">Click here if you wish to print or download only</button>
+				<div id="allowance-change" style="display:none;">
+					<strong>Change in Allowance or Hours</strong>
+					<p>Fill out the below information if you plan to only download or print the results. If you are submitting this form to your supervisor, click on the Next button below instead.</p>
+					<table><tr>
+					<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
+					<td>New Allowance: <input type='text' id='input_newAllowance'></td>
+					</tr><tr>
+					<td>Previous number of hours: <input type='text' style="width:40px" id='input_preHours'></td>
+					<td>New Number of Hours: <input type='text' style="width:40px" id='input_newHours'></td>
+					</tr><tr>
+					<td colspan='2'><strong>** If schedule is less than 40 hours per week enter normal days/ hours worked</strong></td>
+					</tr></table>
+					<table><tr>
+					<td>Monday: <input type='text' style="width:40px" id='input_mon'></td>
+					<td>Tuesday: <input type='text' style="width:40px" id='input_tues'></td>
+					<td>Wednesday: <input type='text' style="width:40px" id='input_wed'></td>
+					<td>Thursday: <input type='text' style="width:40px" id='input_thurs'></td>
+					<td>Friday: <input type='text' style="width:40px" id='input_fri'></td>
+					</tr></table>
+					Effective Date: <input type='text' id='input_effective'>
+					<br><br>
+					<input type='button' value='Download/Print' onclick='download();'>
+				</div>
 				<hr>
 				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
-					<td class='button'><input type='button' value='Download/Print' onclick='download();'></td>
-					<td class='button'><input type='button' value='Submit Allowance Calculator' onclick='download1();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
+					<td class='button'><input type='button' value='Next' onclick='download1();'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>
 					<input type='button' value='More Info' onclick='$("#t").toggle();'>
