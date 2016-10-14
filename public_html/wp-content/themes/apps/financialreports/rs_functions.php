@@ -166,8 +166,6 @@ global $SERVER_SQL2012;
 
 function accountBalance($ProjCode, $user_id) {
   $reportParams['ProjectCodeSearch'] = $ProjCode;
-  $reportParams['ReportYear'] = date("Y"); 
-  $reportParams['ReportMonth'] = date("n");
   $reportParams['ExecuteAsUser'] = $user_id;
 
   $result = produceRSReport('/General/Account Balance', 'CSV', $reportParams, false);
