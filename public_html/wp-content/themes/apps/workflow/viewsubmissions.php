@@ -80,7 +80,7 @@ if(Workflow::loggedInUser() != '0') {
     
     ?>
     <hr>
-    <form name="searchform" action="?page=viewsubmissions" method="POST" autocomplete="off">
+    <form name="searchform" action="?page=viewsubmissions&forms=<?php echo $formType;?>" method="POST" autocomplete="off">
         <table id="submissionsearchbar">
             <tr><td colspan=4 style="text-align: center;"><h2 style="display:inline;margin-left:65px;color:inherit;">Filter</h2><button class="search-expand" type="button" onclick="toggleSearch();">Expand</button></td></tr>
             <tr id="submissionsearchbar1" class="hide"><th>ID</th><th>Form Name</th><th>Submitted By</th><th>Date</th></tr>
@@ -111,7 +111,9 @@ if(Workflow::loggedInUser() != '0') {
     if($formType == 'my' || $formType == 'both')
         echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
     if($formType == 'staff' || $formType == 'both')
-        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch);
+        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 0);
+    if($formType == 'all' && Workflow::isAdmin(Workflow::loggedInUser()))
+        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 1);
     
     //Display the forms that the user was in before hitting the search button
     if(isset($_GET['mode']) && isset($_GET['tag'])) {

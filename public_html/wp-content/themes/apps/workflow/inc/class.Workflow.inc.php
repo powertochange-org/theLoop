@@ -696,6 +696,21 @@ class Workflow {
                     $configvalue = 9; 
                     echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
                         history below.<br></span>';
+                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    if($status == '2' || $status == '3') {
+                        echo '<span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
+                        return;
+                    } else if($status == '10') {
+                        echo '<span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        return;
+                    }
+                    
+                    echo '<span style="color:red;">This submission is currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.<br>It is being submitted to: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid).'</b></span><br><br>';
+                    
+                    //Set the flags to only view the submission
+                    $hasAnotherApproval = 0;
+                    $configvalue = 9; 
                 } else {
                     echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
                     return;
@@ -2120,13 +2135,27 @@ class Workflow {
         return $response;
     }
     
-    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id) {
+    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll) {
         global $wpdb;
         $LOADMOREAMT = 7; //Changes the number of submissions displayed under each section
         $response = '';
         
         if($userid == '' || $userid == '0') {
             return 'You need to be logged in to view submissions.';
+        }
+        
+        $searchFilter = "";
+        if($formName != '') {
+            $searchFilter .= " AND (workflowform.NAME LIKE '%$formName%') ";
+        }
+        if($submittedby != '') {
+            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+        }
+        if($date != '') {
+            $searchFilter .= " AND (workflowformstatus.DATE_SUBMITTED = '$date') ";
+        }
+        if($id != '') {
+            $searchFilter .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
         
         $sql = "("."SELECT  workflowform.NAME, 
@@ -2182,25 +2211,17 @@ class Workflow {
                         AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
         }
         
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
         
         //$sql .= "OR STATUS_APPROVAL = '100' AND (";
-        
         
         $sql .= ") AND (workflowformstatus.STATUS != '2' 
                     AND workflowformstatus.STATUS != '3' 
                     AND workflowformstatus.STATUS != '10') ";
-        if($formName != '') {
-            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
-        }
-        if($submittedby != '') {
-            $sql .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
-        }
-        if($date != '') {
-            $sql .= " AND (workflowformstatus.DATE_SUBMITTED = '$date' OR workflowformstatus.DATE_SUBMITTED = '$date') ";
-        }
-        if($id != '') {
-            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
-        }
+        $sql .= $searchFilter;
         //        WHERE workflowformstatus.USER = '$userid'
         $sql .= ")";
         
@@ -2220,7 +2241,7 @@ class Workflow {
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
-                WHERE (";
+                WHERE ((";
         
         
         for($i = 0; $i < count($roles); $i++) {
@@ -2231,17 +2252,24 @@ class Workflow {
         }
         $sql .= ") ";
         
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
         
+        $sql .= ") ";
+        
+        $sql .= $searchFilter;
                 
         $sql .= "AND workflowformstatus.STATUS = '7') 
                 ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";
-        //die($sql);
+        
         $result = $wpdb->get_results($sql, ARRAY_A);
         
         $response .= '<div id="approver-submissions">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="5"><h2>My Staff\'s Forms</h2><br></td></tr>';
+        $response .= '<tr><td colspan="5"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
         
         $response .= '<tr><td colspan="5">
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
@@ -2903,9 +2931,8 @@ class Workflow {
     }
     
     
-    public function getNextRoleName($currentLevel, $hasAnotherApproval, $formID, $resolveName, $sbid) {
-        //echo 'DEBUG: has approval: '.$hasAnotherApproval.' level:'.$currentLevel. ' form:'.$formID;
-        if(!$hasAnotherApproval)
+    public function getNextRoleName($currentLevel, $hasAnotherApproval, $formID, $resolveName, $sbid, $current = 0) {
+        if(!$hasAnotherApproval && $current == 0 || $currentLevel == 100)
             return 'Form Complete';
         global $wpdb;
         $response = '';
@@ -2913,13 +2940,13 @@ class Workflow {
         $sql = "SELECT workflowroles.NAME, ROLEID
                 FROM workflowform ";
         
-        if($currentLevel == 0) {
+        if($currentLevel == 0 || $current == 1 && $currentLevel == 1) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE = workflowroles.ROLEID ";
-        } else if($currentLevel == 1) {
+        } else if($currentLevel == 1 || $current == 1 && $currentLevel == 2) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE2 = workflowroles.ROLEID ";
-        } else if($currentLevel == 2) {
+        } else if($currentLevel == 2 || $current == 1 && $currentLevel == 3) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE3 = workflowroles.ROLEID ";
-        } else if($currentLevel == 3) {
+        } else if($currentLevel == 3 || $current == 1 && $currentLevel == 4) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE4 = workflowroles.ROLEID ";
         } 
         $sql .= "WHERE FORMID = '$formID'";
