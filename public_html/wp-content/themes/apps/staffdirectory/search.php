@@ -5,7 +5,8 @@
 * This is the search engine for finding staff in the Staff Directory. Builds a query, and returns results. 
 *
 *
-*/?>
+*/
+?>
 <p/><h4 class="profile"><a class="profile-link" href= "?page=profile" >MY PROFILE</a></h4>
 <BR><BR><BR><BR>
 <hr style='margin-top:0'>
@@ -161,21 +162,14 @@
 							// If they have a staff account, attempt to use their public giving site 
 							// photo; use the smaller "icon" image for search results
 							if ($alldata[$i]['staff_account'] > '800000') {
-								$url = "http://secure.powertochange.org/images/Product/icon/" . $alldata[$i]['staff_account'] . ".jpg";
-								// Check to see if that url is valid
-								// Use curl to test validity of URL; init the handle
-								$handle = curl_init($url);
-								// Set the option so that it returns the response to a variable
-								// (which we don't actually use), as opposed to printing out the
-								// response to the page
-								curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-								// Actually try to get the response from the url
-								curl_exec($handle);
-								// Check the response code
-								if (curl_getinfo($handle, CURLINFO_HTTP_CODE) == 200) {
-									// It's VALID! So, use it instead of the anonymous image
+								// Attempt to use their public giving site photo
+				                $url = "https://secure.powertochange.org/images/Product/medium/" . $alldata[$i]['staff_account'] . ".jpg";
+				                // Check to see if that url is valid
+				                $code = getHttpResponseCode_using_curl($url);
+				                // If it's INVALID (ie, user doesn't have a giving site image)
+				                // Use the standard image
+				                if($code == 200) // It's VALID! So, use it instead of the anonymous image
 									$useAnonymous = false;
-								}
 							}
 							
 							if ($useAnonymous) {
