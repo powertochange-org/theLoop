@@ -2096,7 +2096,7 @@ class Workflow {
             
             //Display the results
             $response .= '<td>'.$row['SUBMISSIONID'].'</td>
-                <td>'.$row['NAME'].'</a></td>
+                <td>'.$row['NAME'].'</td>
                 <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                 <td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
@@ -2327,7 +2327,7 @@ class Workflow {
             
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
             $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
-                            <td style="width:450px;">'.$row['NAME'].'</a></td>
+                            <td style="width:450px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                             <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>';
@@ -2606,7 +2606,205 @@ class Workflow {
         }
     }
     
+    /*Returns submissions for a given form that a user is an approver for.
+     *Only submissions in progress or that have been completed will appear.
+     */
+    public function viewAllSubmissionsGrid($userid, $form, $viewAll) {
+        global $wpdb;
+        $response = '';
+        
+        if($userid == '' || $userid == '0') {
+            return 'You need to be logged in to view submissions.';
+        }
+        
+        $sql = "SELECT  workflowform.NAME, 
+                        workflowform.APPROVER_ROLE, 
+                        workflowform.APPROVER_ROLE2, 
+                        workflowform.APPROVER_ROLE3, 
+                        workflowform.APPROVER_ROLE4, 
+                        workflowform.PROCESSOR, 
+                        workflowformstatus.PROCESSED, 
+                        workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.STATUS,
+                        workflowformstatus.STATUS_APPROVAL,
+                        workflowformstatus.DATE_SUBMITTED,
+                        workflowformstatus.COMMENT,
+                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                WHERE workflowform.FORMID = '$form' AND ( ";
+        
+        $roles = Workflow::getRole($userid);
+        
+        for($x = 1; $x <= 4; $x++) {
+            if($x != 1)
+                $sql .= " OR ";
+            $sql .= " (STATUS_APPROVAL = '".$x."' OR STATUS_APPROVAL = '100') AND (";
+            for($i = 0; $i < count($roles); $i++) {
+                if($i != 0)
+                    $sql .= "OR ";
+                $sql .= "workflowform.APPROVER_ROLE";
+                if($x != 1)
+                    $sql .= $x;
+                $sql .= " = '$roles[$i]' ";
+            }
+            $sql .= ") ";
+        }
+        
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
+        
+        $sql .= ") AND (workflowformstatus.STATUS != '2' 
+                    AND workflowformstatus.STATUS != '3' 
+                    AND workflowformstatus.STATUS != '10') ";
+        $sql .= "ORDER BY STATUS, PROCESSED, DATE_SUBMITTED DESC, NAME ASC";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        //If there are no results the user has access to
+        if(!$result) {
+            return 'There are no submissions to view.';
+        }
+        
+        $response .= '<div id="approver-submissions">';
+        $response .= '<table id="grid-submissions">';
+        
+        $completeResults;
+        //Figure out which fields contain user input data. Create the array to hold that data
+        $formFields;
+        $sql = "SELECT  wdet.TYPE,
+                        wdet.POSITION,
+                        wdet.FIELDID
+                FROM workflowformdetails wdet
+                WHERE wdet.FORMID = '$form'
+                    AND wdet.TYPE IN ('0', '4', '5', '6', '7', '13', '2')
+                GROUP BY wdet.FIELDID
+                ORDER BY wdet.POSITION";
+        $resultFields = $wpdb->get_results($sql, ARRAY_A);
+        
+        $tableHeader = '<tr class="submissions-header"><th>ID</th><th>Date</th><th>Employee</th><th>Status</th>';
+        foreach($resultFields as $row) {
+            $formFields[$row['FIELDID']] = '';
+            $tableHeader .= '<th>'.$row['FIELDID'].'</th>';
+        }
+        $tableHeader .= '<th style="min-width:150px;">Comments</th>';
+        $tableHeader .= '</tr>';
+        
+        //Assemble all the data in an array so we can display it how we want later
+        foreach($result as $k=>$row) {
+            $completeResults[] = $row;
+            $completeResults[$k]['data'] = $formFields;
+            
+            $sql = "SELECT  wsub.VALUE,
+                            wstat.SUBMISSIONID, 
+                            wstat.STATUS,
+                            wstat.STATUS_APPROVAL,
+                            wstat.DATE_SUBMITTED,
+                            wdet.TYPE,
+                            wdet.POSITION,
+                            wdet.FIELDID
+                    FROM workflowformsubmissions wsub
+                    INNER JOIN workflowformstatus wstat ON wsub.SUBMISSIONID = wstat.SUBMISSIONID
+                    INNER JOIN workflowformdetails wdet ON wsub.FIELDID = wdet.FIELDID AND wstat.FORMID = wdet.FORMID
+                    WHERE wstat.FORMID = '$form' AND wsub.SUBMISSIONID = '$row[SUBMISSIONID]'";
+              
+            $subresult = $wpdb->get_results($sql, ARRAY_A);
+            
+            foreach($subresult as $subrow) {
+                $completeResults[$k]['data'][$subrow['FIELDID']] = $subrow['VALUE'];
+            }
+        }
+        
+        //Display the results
+        $response .= $tableHeader;
+        foreach($completeResults as $row) {
+            $response .= '<tr>';
+            $response .= '<td>'.$row['SUBMISSIONID'].'</td>';
+            $response .= '<td>'.$row['DATE_SUBMITTED'].'</td>';
+            $response .= '<td>'.$row['USERNAME'].'</td>';
+            $response .= '<td>';
+            if($row['STATUS'] == '4')
+                $response .= 'In Progress - Level '.$row['STATUS_APPROVAL'];
+            else if($row['STATUS'] == '7')
+                $response .= 'Approved';
+            $response .= '</td>';
+            
+            foreach($resultFields as $cell) {
+                $response .= '<td>'.$row['data'][$cell['FIELDID']].'</td>';
+            }
+            $response .= '<td style="font-size:10px;">'.$row['COMMENT'].'</td>';
+            $response .= '</tr>';
+        }
+        $response .= '</table></div>';
+        
+        return $response;
+    }
     
+    /*Returns a list of forms that the user is an approver for.*/
+    public function viewAllFormsWithAccess($userid, $viewAll) {
+        global $wpdb;
+        $sql = "SELECT  workflowform.FORMID,
+                        workflowform.NAME, 
+                        workflowform.APPROVER_ROLE, 
+                        workflowform.APPROVER_ROLE2, 
+                        workflowform.APPROVER_ROLE3, 
+                        workflowform.APPROVER_ROLE4, 
+                        workflowform.PROCESSOR,
+                        workflowform.ENABLED
+                FROM workflowform
+                WHERE ( ";
+                
+        $roles = Workflow::getRole($userid);
+        
+        for($x = 1; $x <= 4; $x++) {
+            if($x != 1)
+                $sql .= "OR (";
+            else
+                $sql .= " (";
+            for($i = 0; $i < count($roles); $i++) {
+                if($i != 0)
+                    $sql .= "OR ";
+                $sql .= "workflowform.APPROVER_ROLE";
+                if($x != 1)
+                    $sql .= $x;
+                $sql .= " = '$roles[$i]' ";
+            }
+            $sql .= ") ";
+        
+        }
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
+        $sql .= ") ORDER BY ENABLED DESC, NAME";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $response .= '<div id="approver-submissions">';
+        $response .= '<table id="grid-submissions">';
+        $response .= '<tr class="submissions-header"><th>Form Name</th><th>Form ID</th><th>Approval 1</th>
+            <th>Approval 2</th><th>Approval 3</th><th>Approval 4</th><th>Processor</th><th>Enabled</th></tr>';
+        
+        foreach($result as $row) {
+            $response .= '<tr class="selectedblackout ';
+            $response .= 'approver-4';
+            $response .= '" data-href="?page=viewsubmissionsbyform&form='.$row['FORMID'].'">';
+            $response .=  '<td>'.$row['NAME'].'</td>
+                            <td>'.$row['FORMID'].'</td>
+                            <td>'.$row['APPROVER_ROLE'].'</td>
+                            <td>'.$row['APPROVER_ROLE2'].'</td>
+                            <td>'.$row['APPROVER_ROLE3'].'</td>
+                            <td>'.$row['APPROVER_ROLE4'].'</td>
+                            <td>'.$row['PROCESSOR'].'</td>
+                            <td>'.$row['ENABLED'].'</td>';
+            $response .= '</tr>';
+        }
+        $response .= '</table></div>';
+        return $response;
+    }
     
     public function __toString() {
         return $this->$name;
