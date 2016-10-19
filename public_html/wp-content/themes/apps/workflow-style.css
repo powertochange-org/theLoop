@@ -578,6 +578,11 @@ span.red {
     width: 100%;
 }
 
+#grid-submissions td, #grid-submissions th {
+    border: 1px solid black;
+    padding: 2px;
+}
+
 .workflow-status-link {
     border: 1px solid black;
     background-color: #dddddd;

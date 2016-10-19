@@ -88,6 +88,9 @@ require_once('workflow/inc/class.Workflow.inc.php');
                         case "viewsubmissions":
                             include 'workflow/viewsubmissions.php';
                             break;
+                        case "viewsubmissionsbyform":
+                            include 'workflow/viewsubmissionsbyform.php';
+                            break;
                         case "roles":
                             include 'workflow/roles.php';
                             break;
