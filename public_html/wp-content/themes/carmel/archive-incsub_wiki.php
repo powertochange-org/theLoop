@@ -90,8 +90,8 @@
                                                         WHERE 1=1 
                                                             AND wp_term_relationships.term_taxonomy_id IN (".$st_sub_category->cat_ID.")
                                                             AND $wpdb->posts.post_type = 'incsub_wiki' ";
-                                            if($parentwiki != 0)
-                                                $querystr .= "AND post_parent = '$parentwiki' ";
+                                            // if($parentwiki != 0) //Ignore sub-articles in the main home page
+                                            //    $querystr .= "AND post_parent = '$parentwiki' ";
                                             $querystr .= "ORDER BY pageviews DESC
                                                         LIMIT 2";
 
@@ -119,12 +119,12 @@
                             WHERE 1=1 
                                 AND wp_term_relationships.term_taxonomy_id IN (".$st_category->cat_ID.")
                                 AND $wpdb->posts.post_type = 'incsub_wiki' ";
-                        if($parentwiki != 0)
-                            $querystr .= "AND post_parent = '$parentwiki' ";
+                        // if($parentwiki != 0) //Ignore sub-articles in the main home page
+                        //     $querystr .= "AND post_parent = '$parentwiki' ";
                         $querystr .= "ORDER BY pageviews DESC
                             LIMIT $numPosts";
                         
-                         $childcats = $wpdb->get_results($querystr, OBJECT);
+                        $childcats = $wpdb->get_results($querystr, OBJECT);
 
 
                         echo '<ul class="wiki-list">';
