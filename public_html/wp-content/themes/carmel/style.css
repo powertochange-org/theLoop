@@ -1079,6 +1079,8 @@ ul.sub-categories {
 
 .wiki-section-link {
     color: #4a4d4e;
+    display: inline-block;
+    width: 90%;
 }
 
 .wiki-section-link:hover {
@@ -1086,14 +1088,14 @@ ul.sub-categories {
 }
 
 .wiki-section ul.wiki-list li::before {
-    
     background-image: url("/wp-content/images/Self-Help-Wiki-Icon-no-text.png" );
-    
     background-size: 15px 15px;
     display: inline-block;
     width: 15px; 
     height: 15px;
     content:"";
+    vertical-align: top;
+    margin-top: 4px;
 }
 
 .wiki-section li::after {
