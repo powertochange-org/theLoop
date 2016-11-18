@@ -469,7 +469,77 @@ get_header(); ?>
 			</P>
       <div id="ministrydept" style="display:none;">
         <p>Ministry/Department
-          <input type="text" name="ORGMINCODE" value="<?php echo $_POST["ORGMINCODE"];?>" placeholder="Ex: 40-402" title="Enter the Org Area Code and Ministry Code"/>
+          <select name="ORGMINCODE">
+            <option value="">--Select a Ministry--</option>
+            <option value="01-001">Capital - Capital</option>
+            <option value="01-002">Capital - Capital - GAiN</option>
+            <option value="10-106">President &amp; EDM - EDM Office</option>
+            <option value="10-100">President &amp; EDM - General and Administrative</option>
+            <option value="10-102">President &amp; EDM - President's Office</option>
+            <option value="10-104">President &amp; EDM - Projects</option>
+            <option value="20-200">Ministry Services - EDMS Office</option>
+            <option value="20-204">Ministry Services - Finance</option>
+            <option value="20-202">Ministry Services - Headquarters</option>
+            <option value="20-206">Ministry Services - HR</option>
+            <option value="20-208">Ministry Services - IT</option>
+            <option value="20-212">Ministry Services - Project Services</option>
+            <option value="20-210">Ministry Services - Resource Centre</option>
+            <option value="30-304">Advancement - Communications</option>
+            <option value="30-300">Advancement - EDA Office</option>
+            <option value="30-302">Advancement - Major Gifts</option>
+            <option value="30-308">Advancement - Marketing</option>
+            <option value="30-310">Advancement - Partner Care Centre</option>
+            <option value="30-312">Advancement - Zone Teams</option>
+            <option value="40-402">Ministry - Athletes in Action</option>
+            <option value="40-406">Ministry - Christian Embassy</option>
+            <option value="40-412">Ministry - Connecting Streams</option>
+            <option value="40-414">Ministry - DRIME</option>
+            <option value="40-416">Ministry - FamilyLife</option>
+            <option value="40-469">Ministry - GAiN</option>
+            <option value="40-426">Ministry - Jesus Film Project</option>
+            <option value="40-428">Ministry - Kidz Alive</option>
+            <option value="40-430">Ministry - LeaderImpact</option>
+            <option value="40-460">Ministry - Other Ministry</option>
+            <option value="40-436">Ministry - Students Division</option>
+            <option value="40-438">Ministry - The Life Project</option>
+            <option value="40-424">Ministry - WHEN</option>
+            <option value="80-402">Staff - Athletes in Action</option>
+            <option value="80-404">Staff - Breakthrough Prayer</option>
+            <option value="80-406">Staff - Christian Embassy</option>
+            <option value="80-408">Staff - Church Relations</option>
+            <option value="80-304">Staff - Communications</option>
+            <option value="80-412">Staff - Connecting Streams</option>
+            <option value="80-414">Staff - DRIME</option>
+            <option value="80-106">Staff - EDM Office</option>
+            <option value="80-200">Staff - EDMS Office</option>
+            <option value="80-416">Staff - FamilyLife</option>
+            <option value="80-204">Staff - Finance</option>
+            <option value="80-418">Staff - Fund Development</option>
+            <option value="80-469">Staff - GAiN</option>
+            <option value="80-100">Staff - General and Administrative</option>
+            <option value="80-202">Staff - Headquarters</option>
+            <option value="80-206">Staff - HR</option>
+            <option value="80-802">Staff - International</option>
+            <option value="80-208">Staff - IT</option>
+            <option value="80-426">Staff - Jesus Film Project</option>
+            <option value="80-428">Staff - Kidz Alive</option>
+            <option value="80-430">Staff - LeaderImpact</option>
+            <option value="80-302">Staff - Major Gifts</option>
+            <option value="80-308">Staff - Marketing</option>
+            <option value="80-432">Staff - Oasis</option>
+            <option value="80-460">Staff - Other Ministry</option>
+            <option value="80-310">Staff - Partner Care Centre</option>
+            <option value="80-102">Staff - President's Office</option>
+            <option value="80-212">Staff - Project Services</option>
+            <option value="80-210">Staff - Resource Centre</option>
+            <option value="80-436">Staff - Students Division</option>
+            <option value="80-438">Staff - The Life Project</option>
+            <option value="80-440">Staff - Vision 360</option>
+            <option value="80-424">Staff - WHEN</option>
+            <option value="80-312">Staff - Zone Teams</option>
+            <option value="90-902">International - International Ministry</option>
+            <option value="90-900">International - International Staff</option>
+          </select>
         </p>
       </div>
 			<DIV ID="staffaccount" STYLE="display:none">
