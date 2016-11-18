@@ -124,10 +124,16 @@ unset($error);
 if (isset($_POST['REPORT']) 
 	&& (($_POST['REPORT'] == "AccountBalance" && strlen($_POST['DESGCODE']) < 6)
 	||  ($_POST['REPORT'] != "AccountBalance" && strlen($_POST['DESGCODE']) != 6))
-	&& !in_array($_POST['REPORT'] , array ("StaffList", "StaffVacation", "StaffFinancialHealth"))) //%list  (just a label)
+	&& (!in_array($_POST['REPORT'] , 
+        array ("StaffList", "StaffVacation", "StaffFinancialHealth", "Graph12MonthActualBudget", '12MonthActuals'))
+    || in_array($_POST['REPORT'], array('Graph12MonthActualBudget', '12MonthActuals')) && strlen($_POST['DESGCODE']) != 0)) //%list  (just a label)
 	{
 	$error = "Your account number must be 6 digits in length\n";
 } 
+if (isset($_POST['REPORT']) && ($_POST['REPORT'] == 'Graph12MonthActualBudget' || $_POST['REPORT'] == '12MonthActuals') 
+  && $_POST['ORGMINCODE'] == '' && $_POST['DESGCODE'] == '') {
+  $error = 'You must enter a valid Org Area and Ministry Code in the Ministry/Department field.';
+}
 
 //Code for Monthly Donation Report
 if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorReport") {
@@ -296,6 +302,45 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffF
   }
   exit;
 }
+//Code for Graph 12 Month Actual vs Budget Report
+elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Graph12MonthActualBudget") {
+  require('financialreports/rs_functions.php');
+
+  $reportParams['ProjectCode'] = $_POST['DESGCODE'];
+  $reportParams['ReportYear'] = $_POST['RPTYEAR'];
+  $reportParams['ReportMonth'] = $_POST['RPTMONTH'];
+  if($_POST['DESGCODE'] == '')
+    $reportParams['OrgAndMinistry'] = $_POST['ORGMINCODE'];
+  else
+    $reportParams['OrgAndMinistry'] = '01-001'; //Need to use a code because SSRS complains that it is missing
+  $reportParams['Cumulative'] = 'Yes';
+  $reportParams['ExecuteAsUser'] = $user_id;
+
+  //Check for returned error message  
+  $errorMsg = produceRSReport('/Financial/Graph 12 Month Actual vs Budget', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
+  if(!isset($errorMsg)){
+  exit;
+  }
+  $error = $errorMsg;
+}
+//Code for 12 Month (by Month) Actuals by Ministry
+elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12MonthActuals") {
+  require('financialreports/rs_functions.php');
+
+  $reportParams['ProjectCode'] = $_POST['DESGCODE'];
+  $reportParams['EndMonth'] = $_POST['RPTMONTH'].'/'.'1/'.$_POST['RPTYEAR'];
+  $parts = explode('-', $_POST['ORGMINCODE']);
+  $reportParams['OrgArea'] = $parts[0];
+  $reportParams['Ministry'] = $parts[1];
+  $reportParams['ExecuteAsUser'] = $user_id;
+
+  //Check for returned error message  
+  $errorMsg = produceRSReport('/Financial/Organization/12 Month (by Month) Actuals by Ministry', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
+  if(!isset($errorMsg)){
+  exit;
+  }
+  $error = $errorMsg;
+}
 
 //%elif-block (just a label - see instructions for adding a new report at top of file)
 
@@ -391,7 +436,7 @@ get_header(); ?>
 			<h1 class="replace"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><!-- ?php the_title(); ? --></a></h1>
 			<?php
 			if (isset($error)) {
-                 echo "<span style=\"color: red\">$error</span><p>";
+                 echo "<span style=\"color: red;word-break: break-word;\">$error</span><p>";
 				}
              ?>
 			<FORM NAME="report" METHOD="post" ACTION="<?php 
@@ -413,6 +458,8 @@ get_header(); ?>
                   <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected='selected'");}?>>Detailed Income and Expense</OPTION>
                   <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected='selected'");}?>>Summary Income and Expense</OPTION>
                   <OPTION VALUE="AccountBalance" <?php if($REPORT == 'AccountBalance'){echo("selected='selected'");}?>>Account Balance</OPTION>
+                  <option value="Graph12MonthActualBudget" <?php if($REPORT == 'Graph12MonthActualBudget'){echo("selected='selected'");}?>>Graph 12 Month Actual vs Budget</option>
+                  <option value="12MonthActuals" <?php if($REPORT == '12MonthActuals'){echo("selected='selected'");}?>>12 Month (by Month) Actuals by Ministry</option>
                   <OPTION VALUE="">--STAFF REPORTS--</OPTION>
 				  <OPTION VALUE="StaffList" <?php if($REPORT == 'StaffList'){echo("selected='selected'");}?>>Staff List</OPTION>
 				  <!--<OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation</OPTION>-->
@@ -420,6 +467,11 @@ get_header(); ?>
             </SELECT>
 			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
 			</P>
+      <div id="ministrydept" style="display:none;">
+        <p>Ministry/Department
+          <input type="text" name="ORGMINCODE" value="<?php echo $_POST["ORGMINCODE"];?>" placeholder="Ex: 40-402" title="Enter the Org Area Code and Ministry Code"/>
+        </p>
+      </div>
 			<DIV ID="staffaccount" STYLE="display:none">
 				<P>Ministry/staff account (Use the search box and click add account or type your account number directly in the box below)<BR>  
           <select id="staffaccountadd" name="staffaccountadd" class="chosen-select chosen-select-width" data-placeholder=" ">
@@ -538,7 +590,36 @@ get_header(); ?>
 				</SELECT>
 				</P>
 			</DIV>
-			<div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
+			<div id="datesingle" style="display:none;">
+        <p>
+          Month / Year:
+          <select name="RPTMONTH">
+              <option value="">--Month--</option>
+              <?php
+              for($i = 1; $i <= 12; $i++) {
+                $dateObj   = DateTime::createFromFormat('!m', $i);
+                $monthName = $dateObj->format('F'); 
+                echo '<option value="'.$i.'" '.($RPTSTARTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
+              }
+              ?>
+          </select>
+          <select name="RPTYEAR">
+              <option value="">--Year--</option>
+              <?php $CurrYear = date("Y");
+                 $x = -1;
+                 while ($CurrYear-$x >= 1989) {
+                 ?>
+                 <option value='<?php echo $CurrYear-$x;?>' 
+                         <?php if($RPTSTARTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
+                       <?php echo $CurrYear-$x;?></option>
+                 <?php
+                 $x++;
+               }
+               ?>
+          </select>
+        </p>
+      </div>
+      <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
 			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
 			<div id='staffVaction_options'  style='display:none'>
 				YEAR:
@@ -608,7 +689,7 @@ get_header(); ?>
 				alert("Please select a report from the drop-down list");
 				return false;
 			}
-			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation" && $("#repchoice").val() != "StaffFinancialHealth"){
+			if(!form.DESGCODE.value && $("#repchoice").val() != "StaffList"  && $("#repchoice").val() != "StaffVacation" && $("#repchoice").val() != "StaffFinancialHealth" && $("#repchoice").val() != "Graph12MonthActualBudget" && $("#repchoice").val() != "12MonthActuals"){
 				alert("Please enter your ministry/staff account number before running the report");
 				return false;
 			}
@@ -656,7 +737,11 @@ get_header(); ?>
 						$("#message").html("You don't have access to run this report for any staff. If you believe you should have access, please email <a href='mailto:helpdesk@p2c.com'>helpdesk@p2c.com</a>");
 						showHideFields(["#message"]);
 					<?php } ?>
-				}			
+				} else if ($(this).val() == "Graph12MonthActualBudget") {
+          showHideFields(["#staffaccount","#output","#buttonsDownload", "#datesingle", "#ministrydept"]);
+        } else if ($(this).val() == "12MonthActuals") {
+          showHideFields(["#staffaccount","#output", "#buttonsPreview", "#buttonsDownload", "#datesingle", "#ministrydept"]);
+        }
 			});			
 		}).change();
 		
@@ -664,7 +749,7 @@ get_header(); ?>
 			/* The list of field groupings that can be shown or hidden for different reports */
 			var fields = ["#staffaccount", "#monthyear", "#output", "#daterange", "#financials_opt", 
 						"#reportToMe_opt", "#staffVaction_options", "#staffHealth_options", "#message",
-						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck"];
+						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck", "#datesingle", "#ministrydept"];
 			
 			/* Iterate through the list of field groupings */
 			for (var i = 0; i < fields.length; i++) {
