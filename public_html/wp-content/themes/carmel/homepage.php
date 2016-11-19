@@ -8,7 +8,7 @@
 	
     <div id="content-left">
 		<div class='image-slider'>
-			<?php 
+			<?php /*
 				$folder = '/wp-content/uploads/slides/';
 				
 				// Add as many images as have been set in the theme customizer
@@ -110,7 +110,10 @@
 				}
 					
 				
-			</script>
+			</script>*/
+			include 'snow/snow.php';
+			?>
+			
 		</div>
     </div>
     <div id="content-right" class="home-page">
@@ -286,9 +289,10 @@
 				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 			</div>
             <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+            <script>var jQuery_min = $.noConflict(true);</script>
             <script type="text/javascript" src="<?php bloginfo('template_url');?>/js/jquery.totemticker.js"></script>
             <script type="text/javascript">
-                $(function(){
+                jQuery_min(function(){
                     $('#vertical-ticker').totemticker({
                         row_height  :   '59px',
                         next        :   '#ticker-next',
