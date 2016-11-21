@@ -565,24 +565,19 @@ get_header(); ?>
 			<DIV ID="monthyear" STYLE="display:none">
 				<P>Choose the month and year to report on.<BR>
 				<SELECT NAME="RPTMONTH">
-                  <OPTION VALUE="">--Month--</OPTION>
-                  <OPTION VALUE="01" <?php if($RPTMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
-                  <OPTION VALUE="02" <?php if($RPTMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
-                  <OPTION VALUE="03" <?php if($RPTMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
-                  <OPTION VALUE="04" <?php if($RPTMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
-                  <OPTION VALUE="05" <?php if($RPTMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
-                  <OPTION VALUE="06" <?php if($RPTMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
-                  <OPTION VALUE="07" <?php if($RPTMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
-                  <OPTION VALUE="08" <?php if($RPTMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
-                  <OPTION VALUE="09" <?php if($RPTMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
-                  <OPTION VALUE="10" <?php if($RPTMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
-                  <OPTION VALUE="11" <?php if($RPTMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
-                  <OPTION VALUE="12" <?php if($RPTMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
-                </SELECT>
+            <OPTION VALUE="">--Month--</OPTION>
+            <?php
+              for($i = 1; $i <= 12; $i++) {
+                $dateObj   = DateTime::createFromFormat('!m', $i);
+                $monthName = $dateObj->format('F'); 
+                echo '<option value="'.$i.'" '.($RPTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
+              }
+            ?>
+        </SELECT>
 				<SELECT NAME="RPTYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
 					  <?php $CurrYear = date("Y");
-					     $x = 0;
+					     $x = -1;
 						 WHILE ($CurrYear-$x >= 1989){
 						 ?>
 						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
@@ -601,18 +596,13 @@ get_header(); ?>
 				<SPAN STYLE="width:50px; float:left">START:</SPAN>
 				<SELECT NAME="RPTSTARTMONTH">
 					  <OPTION VALUE="">--Month--</OPTION>
-					  <OPTION VALUE="01" <?php if($RPTSTARTMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
-					  <OPTION VALUE="02" <?php if($RPTSTARTMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
-					  <OPTION VALUE="03" <?php if($RPTSTARTMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
-					  <OPTION VALUE="04" <?php if($RPTSTARTMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
-					  <OPTION VALUE="05" <?php if($RPTSTARTMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
-					  <OPTION VALUE="06" <?php if($RPTSTARTMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
-					  <OPTION VALUE="07" <?php if($RPTSTARTMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
-					  <OPTION VALUE="08" <?php if($RPTSTARTMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
-					  <OPTION VALUE="09" <?php if($RPTSTARTMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
-					  <OPTION VALUE="10" <?php if($RPTSTARTMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
-					  <OPTION VALUE="11" <?php if($RPTSTARTMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
-					  <OPTION VALUE="12" <?php if($RPTSTARTMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
+            <?php
+              for($i = 1; $i <= 12; $i++) {
+                $dateObj   = DateTime::createFromFormat('!m', $i);
+                $monthName = $dateObj->format('F'); 
+                echo '<option value="'.$i.'" '.($RPTSTARTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
+              }
+            ?>
 				</SELECT>
 				<SELECT NAME="RPTSTARTYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
@@ -660,35 +650,6 @@ get_header(); ?>
 				</SELECT>
 				</P>
 			</DIV>
-			<div id="datesingle" style="display:none;">
-        <p>
-          Month / Year:
-          <select name="RPTMONTH">
-              <option value="">--Month--</option>
-              <?php
-              for($i = 1; $i <= 12; $i++) {
-                $dateObj   = DateTime::createFromFormat('!m', $i);
-                $monthName = $dateObj->format('F'); 
-                echo '<option value="'.$i.'" '.($RPTSTARTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
-              }
-              ?>
-          </select>
-          <select name="RPTYEAR">
-              <option value="">--Year--</option>
-              <?php $CurrYear = date("Y");
-                 $x = -1;
-                 while ($CurrYear-$x >= 1989) {
-                 ?>
-                 <option value='<?php echo $CurrYear-$x;?>' 
-                         <?php if($RPTSTARTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
-                       <?php echo $CurrYear-$x;?></option>
-                 <?php
-                 $x++;
-               }
-               ?>
-          </select>
-        </p>
-      </div>
       <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
 			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
 			<div id='staffVaction_options'  style='display:none'>
@@ -808,9 +769,9 @@ get_header(); ?>
 						showHideFields(["#message"]);
 					<?php } ?>
 				} else if ($(this).val() == "Graph12MonthActualBudget") {
-          showHideFields(["#staffaccount","#output","#buttonsDownload", "#datesingle", "#ministrydept"]);
+          showHideFields(["#staffaccount","#output","#buttonsDownload", "#monthyear", "#ministrydept"]);
         } else if ($(this).val() == "12MonthActuals") {
-          showHideFields(["#staffaccount","#output", "#buttonsPreview", "#buttonsDownload", "#datesingle", "#ministrydept"]);
+          showHideFields(["#staffaccount","#output", "#buttonsPreview", "#buttonsDownload", "#monthyear", "#ministrydept"]);
         }
 			});			
 		}).change();
@@ -819,7 +780,7 @@ get_header(); ?>
 			/* The list of field groupings that can be shown or hidden for different reports */
 			var fields = ["#staffaccount", "#monthyear", "#output", "#daterange", "#financials_opt", 
 						"#reportToMe_opt", "#staffVaction_options", "#staffHealth_options", "#message",
-						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck", "#datesingle", "#ministrydept"];
+						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck", "#ministrydept"];
 			
 			/* Iterate through the list of field groupings */
 			for (var i = 0; i < fields.length; i++) {
