@@ -1,14 +1,24 @@
 <?php
 global $wpdb;
-$sql = "SELECT photo
+$sql = "SELECT photo,
+		CASE 
+			WHEN user_login = '$current_user->user_login' THEN '1'
+			ELSE  '0'
+		    END  AS 'PRIORITY'
 		FROM employee
 		WHERE share_photo = '1' AND photo IS NOT NULL
+		ORDER BY PRIORITY DESC
 		";
 
 $result = $wpdb->get_results($sql, ARRAY_A);
-$random = 30;
+$random = 100;
 $photos = [];
-for($i = 0; $i < $random; $i++) {
+$x = 0;
+if($result[0]['PRIORITY'] == 1) {
+	$photos[0] = $result[0]['photo'];
+	$x = 1;
+}
+for($i = $x; $i < $random; $i++) {
 	$num = rand(0, count($result)-1);
 	$photos[$i] = $result[$num]['photo'];
 }
@@ -16,7 +26,6 @@ for($i = 0; $i < $random; $i++) {
 // foreach($result as $row) {
 //     echo $row['photo'].'<br>';
 // }
-
 
 ?>
 
@@ -90,15 +99,7 @@ transform:rotate(360deg);
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;(function ( $, window, document, undefined ) {
-
-	var SnowFlake = function(expireCallback) {
-		var that = this;
-		var vector = [0, 0];
-		var position = [0, 0];
-		var isOnscreen = false;
-		
-		
-		var pics = [
+	var pics = [
 		<?php
 		for($i = 0; $i < count($photos); $i++) {
 			if($i != 0)
@@ -108,6 +109,17 @@ transform:rotate(360deg);
 		
 		?>
 		];
+	var displayUserPic = true;
+	var lastUserPic = Date.now();
+		
+	var SnowFlake = function(expireCallback) {
+		var that = this;
+		var vector = [0, 0];
+		var position = [0, 0];
+		var isOnscreen = false;
+		
+		
+		
 		
 		var rand = Math.floor((Math.random() * <?php echo $random;?>));
 		//console.log("rand:"+rand);
@@ -119,6 +131,15 @@ transform:rotate(360deg);
 		} else {
 			//$element = $('<div class="snowflake" style="position: fixed; color:#fff;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;"><img src="/wp-content/images/flake2_140.png" style="position:fixed;"/><img src="https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'" width="60px" height="52px" style="position:fixed;left:40px;top:45px;"/></div>');
 			
+			if(<?php echo "'".$x."'";?> == '1' && (Date.now() - lastUserPic) / 1000 > 20) {
+				displayUserPic = true;
+			}
+			
+			if(displayUserPic) {
+				displayUserPic = false;
+				lastUserPic = Date.now();
+				rand = 0;
+			}
 			$element = $('<div class="snowflake" style="position: absolute; color:#fff;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;background-image: url(\'/wp-content/images/flake2_140.png\');width:140px;height:140px;">' +
 					'<div class="snowthumb" style="background-image: url(\'https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'\')"></div>' + 
 					
