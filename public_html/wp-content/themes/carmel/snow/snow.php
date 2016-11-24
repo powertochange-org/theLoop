@@ -1,12 +1,12 @@
 <?php
 global $wpdb;
 $sql = "SELECT photo
-        FROM employee
-        WHERE share_photo = '1' AND photo IS NOT NULL
-        ";
+		FROM employee
+		WHERE share_photo = '1' AND photo IS NOT NULL
+		";
 
 $result = $wpdb->get_results($sql, ARRAY_A);
-$random = 20;
+$random = 30;
 $photos = [];
 for($i = 0; $i < $random; $i++) {
 	$num = rand(0, count($result)-1);
@@ -29,16 +29,31 @@ for($i = 0; $i < $random; $i++) {
   -webkit-animation: spin 19s linear infinite;
   -moz-animation: spin 19s linear infinite;
   animation: spin 19s linear infinite;
-  
 }
 .snowflake img {
   border-radius: 30px;
+  ;
+}
+
+.snowthumb {
+	display: inline-block;
+	width: 60px;
+	height: 60px;
+	/*margin: 5px;*/
+	border-radius: 30px;
+	/*border: 3px solid #c99;*/
+	background-position: center center;
+	background-size: cover;
+	z-index: 9999;
+	position: absolute;
+	top:40px;
+	left:40px;
 }
 
 #main {
-    width: 700px;
-    height: 400px;
-    background-color: black;
+	width: 700px;
+	height: 400px;
+	background-color: black;
 }
 
  @-moz-keyframes 
@@ -58,16 +73,16 @@ transform:rotate(360deg);
 }
 }
 </style>
-<div id="main"  style="text-align: center;"><h1 style="color:#fff; text-align:center;">Merry Christmas from IT Services!</h1>
+<div id="main"  style="text-align: center;"><h1 style="color:#fff; text-align:center;font-size:34px;">Merry Christmas</h1><h1 style="color:#fff; text-align:center;font-size:20px;">from your I.T. team!</h1>
 <span><a href="/staff-directory/?page=myprofile">Upload</a> a photo if you want to see yourself here :)</span></div>
 <script>
 			jQuery(function() {
 				jQuery("body").snow({
-					intensity: 1,
+					intensity: 3,
 					sizeRange: [12, 30],
 					opacityRange: [0.4, 1],
 					driftRange: [-10, 30],
-					speedRange: [20, 80]
+					speedRange: [40, 80]
 				});
 			});
 		</script><script type="text/javascript">
@@ -81,7 +96,7 @@ transform:rotate(360deg);
 		var vector = [0, 0];
 		var position = [0, 0];
 		var isOnscreen = false;
-		//var $element = $('<div class="snowflake" style="position: fixed; color:#fff; text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;">&#10052;</div>');
+		
 		
 		var pics = [
 		<?php
@@ -96,7 +111,20 @@ transform:rotate(360deg);
 		
 		var rand = Math.floor((Math.random() * <?php echo $random;?>));
 		//console.log("rand:"+rand);
-		var $element = $('<div class="snowflake" style="position: fixed; color:#fff; background-color:green;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;"><img src="/wp-content/images/flake2_140.png" style="position:fixed;"/><img src="https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'" width="60px" height="52px" style="position:fixed;left:40px;top:45px;"/></div>');
+		var $element;
+		
+		if(Math.floor(Math.random() * 3) < 2) {
+			$element = $('<div class="snowflake" style="position: absolute; color:#fff; text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;">&#10052;</div>');
+			
+		} else {
+			//$element = $('<div class="snowflake" style="position: fixed; color:#fff;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;"><img src="/wp-content/images/flake2_140.png" style="position:fixed;"/><img src="https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'" width="60px" height="52px" style="position:fixed;left:40px;top:45px;"/></div>');
+			
+			$element = $('<div class="snowflake" style="position: absolute; color:#fff;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;background-image: url(\'/wp-content/images/flake2_140.png\');width:140px;height:140px;">' +
+					'<div class="snowthumb" style="background-image: url(\'https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'\')"></div>' + 
+					
+					'</div>');
+		}
+		
 
 		var updatePosition = function() {
 			$element.css({
@@ -159,8 +187,8 @@ transform:rotate(360deg);
 				//y: $(window).height(),
 				x: rect.left,
 				y: rect.top,
-				x2: rect.right,
-				y2: rect.bottom
+				x2: rect.right + 200,
+				y2: rect.bottom + 2000
 			};
 		};
 
@@ -186,7 +214,7 @@ transform:rotate(360deg);
 
 		var getFlake = function() {
 			var flake;
-			if (reclaimedFlakes.length > 20) {
+			if (reclaimedFlakes.length > 50) {
 				flake = reclaimedFlakes.shift(); //pop
 				//console.log('oh no'+reclaimedFlakes.length);
 			} else {

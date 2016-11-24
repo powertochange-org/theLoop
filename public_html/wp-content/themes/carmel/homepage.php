@@ -8,7 +8,10 @@
 	
     <div id="content-left">
 		<div class='image-slider'>
-			<?php /*
+		<?php 
+            if(get_option( 'snowhomescreen' , 0 )) {
+                include 'snow/snow.php';
+            } else {
 				$folder = '/wp-content/uploads/slides/';
 				
 				// Add as many images as have been set in the theme customizer
@@ -110,9 +113,11 @@
 				}
 					
 				
-			</script>*/
-			include 'snow/snow.php';
-			?>
+			</script>
+            
+        <?php
+		    }
+		?>
 			
 		</div>
     </div>
