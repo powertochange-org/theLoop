@@ -311,11 +311,8 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Graph1
   $reportParams['ReportMonth'] = $_POST['RPTMONTH'];
   if($_POST['DESGCODE'] == '')
     $reportParams['OrgAndMinistry'] = $_POST['ORGMINCODE'];
-  else
-    $reportParams['OrgAndMinistry'] = '01-001'; //Need to use a code because SSRS complains that it is missing
-  $reportParams['Cumulative'] = 'Yes';
+  $reportParams['Cumulative'] = $_POST['RPTCUMULATIVE'];
   $reportParams['ExecuteAsUser'] = $user_id;
-
   //Check for returned error message  
   $errorMsg = produceRSReport('/Financial/Graph 12 Month Actual vs Budget', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
   if(!isset($errorMsg)){
@@ -331,9 +328,13 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12Mont
   $reportParams['EndMonth'] = $_POST['RPTMONTH'].'/'.'1/'.$_POST['RPTYEAR'];
   $parts = explode('-', $_POST['ORGMINCODE']);
   $reportParams['OrgArea'] = $parts[0];
-  $reportParams['Ministry'] = $parts[1];
   $reportParams['ExecuteAsUser'] = $user_id;
-
+  if($_POST['DESGCODE'] != '') {
+    if($reportParams['OrgArea'] == '')
+      $reportParams['OrgArea'] = '40'; //Default to 40 if they have not entered in an OrgArea
+  } else {
+    $reportParams['Ministry'] = $parts[1];
+  }
   //Check for returned error message  
   $errorMsg = produceRSReport('/Financial/Organization/12 Month (by Month) Actuals by Ministry', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
   if(!isset($errorMsg)){
@@ -358,13 +359,14 @@ if(isset($_POST['previewBtn']) && isset($error)){
 
 //Values used to set the selected options
 $REPORT = $_POST["REPORT"]; 
-$RPTMONTH = $_POST["RPTMONTH"] ? $_POST["RPTMONTH"] : date("m");
-$RPTYEAR = $_POST["RPTYEAR"] ? $_POST["RPTYEAR"] : date("Y");
+$RPTMONTH = isset($_POST["RPTMONTH"]) ? $_POST["RPTMONTH"] : date("m");
+$RPTYEAR = isset($_POST["RPTYEAR"]) ? $_POST["RPTYEAR"] : date("Y");
 $RPTSTARTMONTH = $_POST["RPTSTARTMONTH"] ? $_POST["RPTSTARTMONTH"] : date("m");
 $RPTSTARTYEAR = $_POST["RPTSTARTYEAR"] ? $_POST["RPTSTARTYEAR"] : date("Y");
 $RPTENDMONTH = $_POST["RPTENDMONTH"] ? $_POST["RPTENDMONTH"] : date("m");
 $RPTENDYEAR = $_POST["RPTENDYEAR"] ? $_POST["RPTENDYEAR"] : date("Y");
 $RPTPERIOD = $_POST["RPTPERIOD"] ? $_POST["RPTPERIOD"] : 'MONTH';
+$RPTCUMULATIVE = isset($_POST['RPTCUMULATIVE']) ? $_POST['RPTCUMULATIVE'] : '';
 $reportToMe = 1; // Default to yes
 if (isset($_POST['reportToMe'])) { // But, if POST variable is set, override with that
 	$reportToMe = $_POST['reportToMe'];
@@ -423,8 +425,9 @@ if(isset($_GET["reportlink"])) {
 
 
 get_header(); ?>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
   <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/loopfunctions.js" type="text/javascript"></script>
   <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
   <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
@@ -448,7 +451,7 @@ get_header(); ?>
 				echo $_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 			?>">
 			<P>Choose Your Report:<BR>
-			<SELECT ID="repchoice" NAME="REPORT">
+			<SELECT ID="repchoice" NAME="REPORT" onchange="updateDefaultDates(this.value);">
                   <OPTION VALUE="">--DONATION REPORTS--</OPTION>
                   <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected='selected'");}?>>Monthly Donation Report</OPTION>
                   <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected='selected'");}?>>13 Month Donor Report</OPTION>
@@ -465,7 +468,7 @@ get_header(); ?>
 				  <!--<OPTION VALUE="StaffVacation" <?php if($REPORT == 'StaffVacation'){echo("selected='selected'");}?>>Staff Vacation</OPTION>-->
 				  <OPTION VALUE="StaffFinancialHealth" <?php if($REPORT == 'StaffFinancialHealth'){echo("selected='selected'");} ?>>Staff Financial Health</OPTION>
             </SELECT>
-			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')")>Help on this report</BUTTON>
+			<BUTTON TYPE="button" ID="dieHelpButton" style="display:none" onClick="window.open('/reports/detailed-income-and-expense-help/')">Help on this report</BUTTON>
 			</P>
       <div id="ministrydept" style="display:none;">
         <p>Ministry/Department
@@ -564,7 +567,7 @@ get_header(); ?>
 			</DIV>
 			<DIV ID="monthyear" STYLE="display:none">
 				<P>Choose the month and year to report on.<BR>
-				<SELECT NAME="RPTMONTH">
+				<SELECT NAME="RPTMONTH" ID="RPTMONTH">
             <OPTION VALUE="">--Month--</OPTION>
             <?php
               for($i = 1; $i <= 12; $i++) {
@@ -574,7 +577,7 @@ get_header(); ?>
               }
             ?>
         </SELECT>
-				<SELECT NAME="RPTYEAR">
+				<SELECT NAME="RPTYEAR" ID="RPTYEAR">
 					  <OPTION VALUE="">--Year--</OPTION>
 					  <?php $CurrYear = date("Y");
 					     $x = -1;
@@ -586,7 +589,7 @@ get_header(); ?>
 						 <?php
 						 $x++;
 						 }
-						 ?>				  										  								 	 <?php echo (date("Y") -4);?></OPTION>
+						 ?>
 				</SELECT>			
 				<BR>
 				</P>
@@ -650,6 +653,13 @@ get_header(); ?>
 				</SELECT>
 				</P>
 			</DIV>
+      <div id="cumulative" style="display:none;">
+        Cumulative: 
+        <select name="RPTCUMULATIVE">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
       <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
 			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
 			<div id='staffVaction_options'  style='display:none'>
@@ -666,7 +676,7 @@ get_header(); ?>
 						 <?php
 						 $x++;
 						 }
-						 ?>	<?php echo (date("Y") -4);?></OPTION>
+						 ?>
 				</SELECT>		
 			</div>
 			<DIV ID="output" STYLE="display:none">
@@ -769,7 +779,7 @@ get_header(); ?>
 						showHideFields(["#message"]);
 					<?php } ?>
 				} else if ($(this).val() == "Graph12MonthActualBudget") {
-          showHideFields(["#staffaccount","#output","#buttonsDownload", "#monthyear", "#ministrydept"]);
+          showHideFields(["#staffaccount","#output","#buttonsDownload", "#monthyear", "#ministrydept", "#cumulative"]);
         } else if ($(this).val() == "12MonthActuals") {
           showHideFields(["#staffaccount","#output", "#buttonsPreview", "#buttonsDownload", "#monthyear", "#ministrydept"]);
         }
@@ -780,7 +790,7 @@ get_header(); ?>
 			/* The list of field groupings that can be shown or hidden for different reports */
 			var fields = ["#staffaccount", "#monthyear", "#output", "#daterange", "#financials_opt", 
 						"#reportToMe_opt", "#staffVaction_options", "#staffHealth_options", "#message",
-						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck", "#ministrydept"];
+						"#dieHelpButton","#buttonsDownload","#buttonsPreview","#buttonsCheck", "#ministrydept", "#cumulative"];
 			
 			/* Iterate through the list of field groupings */
 			for (var i = 0; i < fields.length; i++) {
@@ -797,6 +807,27 @@ get_header(); ?>
 			 * we don't want it. So, always remove it and let that one report option re-add it */
 			$("#DESGCODE").removeAttr("title");
 		}
+    
+    function updateDefaultDates(value) {
+      var d = new Date();
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      
+      if(value == "Graph12MonthActualBudget" || value == "12MonthActuals") {
+        //Select the end of the fiscal year
+        if(month > 6) {
+          year += 1;
+        }
+        month = 6;
+      } else if(value == "DonorReport" || value == "InvestorReport" || value == "StaffFinancialHealth") { 
+        //Use the current date
+      } else {
+        return;
+      }
+      
+      document.getElementById("RPTYEAR").value = year;
+      document.getElementById("RPTMONTH").value = month;
+    }
 		
     $(document).ready(function() {
         $.ajax({
@@ -804,16 +835,22 @@ get_header(); ?>
             dataType: "json",
             type: "GET",
             success: function (data) {
-                //$('select#staffaccountadd').empty();
-                //$('select#staffacccountadd').append('<option> </option>');
+                var optionList = '';
                 for (var i=0; i<data.length; i++) {
-                    try {
-                        var text = data[i].Text.substr(data[i].Text.indexOf(':')+1).replace('Ministry of ','');
-                        var value = data[i].Value;
-                        var option = '<option value="'+value+'">'+text+'</option>';
-                        $('select#staffaccountadd').append(option);
-                    } catch(e) {}
+                  try {
+                      var text = data[i].Text.substr(data[i].Text.indexOf(':')+1).replace('Ministry of ','');
+                      var value = data[i].Value;
+                      var option = '<option value="'+value+'">'+text+'</option>';
+                      optionList += option;
+                  } catch(e) {}
                 }
+                
+                if(!detectIE()) {
+                  $('select#staffaccountadd').append(optionList);
+                } else {
+                  $('select#staffaccountadd').append('<option value="0">Internet Explorer does not support this feature.</option>');
+                }
+                
                 //Create filter for the list of names
                 var config = {
                   '.chosen-select'           : {},
@@ -834,7 +871,6 @@ get_header(); ?>
         });
     });
 		</SCRIPT>
-		</div>
 	</div>
 <!--main end-->
 </div>
