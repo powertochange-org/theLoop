@@ -1,6 +1,6 @@
 <?php
 global $wpdb;
-$sql = "SELECT photo,
+$sql = "SELECT photo, user_login,
 		CASE 
 			WHEN user_login = '$current_user->user_login' THEN '1'
 			ELSE  '0'
@@ -15,12 +15,14 @@ $random = 100;
 $photos = [];
 $x = 0;
 if($result[0]['PRIORITY'] == 1) {
-	$photos[0] = $result[0]['photo'];
+	$photos[0][0] = $result[0]['photo'];
+	$photos[0][1] = $result[0]['user_login'];
 	$x = 1;
 }
 for($i = $x; $i < $random; $i++) {
 	$num = rand(0, count($result)-1);
-	$photos[$i] = $result[$num]['photo'];
+	$photos[$i][0] = $result[$num]['photo'];
+	$photos[$i][1] = $result[$num]['user_login'];
 }
 
 // foreach($result as $row) {
@@ -104,7 +106,7 @@ transform:rotate(360deg);
 		for($i = 0; $i < count($photos); $i++) {
 			if($i != 0)
 				echo ',';
-			echo '"'.$photos[$i].'"';
+			echo '["'.$photos[$i][0].'", "'.$photos[$i][1].'"]';
 		}
 		
 		?>
@@ -141,7 +143,7 @@ transform:rotate(360deg);
 				rand = 0;
 			}
 			$element = $('<div class="snowflake" style="position: absolute; color:#fff;text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 2px;background-image: url(\'/wp-content/images/flake2_140.png\');width:140px;height:140px;">' +
-					'<div class="snowthumb" style="background-image: url(\'https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand]+'\')"></div>' + 
+					'<a href="/staff-directory/?page=profile&person='+pics[rand][1]+'"><div class="snowthumb" style="background-image: url(\'https://staff.powertochange.org/wp-content/uploads/staff_photos/'+pics[rand][0]+'\')"></div></a>' + 
 					
 					'</div>');
 		}
