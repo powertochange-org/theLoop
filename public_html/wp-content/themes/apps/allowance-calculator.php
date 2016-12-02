@@ -650,7 +650,7 @@ include('functions/js_functions.php');
 				<button onclick="displayAllowanceChange();">Click here if you wish to print or download only</button>
 				<div id="allowance-change" style="display:none;">
 					<strong>Change in Allowance or Hours</strong>
-					<!--<p>Fill out the below information if you plan to only download or print the results. If you are submitting this form to your supervisor, click on the Next button below instead.</p>-->
+					<p>Fill out the below information if you plan to only download or print the results. If you are submitting this form to your supervisor, click on the Next button below instead.</p>
 					<table><tr>
 					<td>Previous Allowance: <input type='text' id='input_preAllowance'></td>
 					<td>New Allowance: <input type='text' id='input_newAllowance'></td>
@@ -677,7 +677,7 @@ include('functions/js_functions.php');
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
-					<!--<td class='button'><input type='button' value='Next' onclick='download1();'></td>-->
+					<td class='button'><input type='button' value='Next' onclick='download1();'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>
 					<input type='button' value='More Info' onclick='$("#t").toggle();'>
