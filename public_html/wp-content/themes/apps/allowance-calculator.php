@@ -672,6 +672,7 @@ include('functions/js_functions.php');
 					<input type='button' value='Download/Print' onclick='download();'>
 				</div>
 				<hr>
+				<p>Please click next and fill out your new allowance and then click the submit button and this will automatically submit the form to your supervisor for approval.</p>
 				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
