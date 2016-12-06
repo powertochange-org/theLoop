@@ -1007,9 +1007,23 @@ class Workflow {
             if($configuration >= 7 || $configuration == 0)
                 $editableField = 0;
             
-            // echo 'DEBUG: ID:'.$row['FIELDID'].' | configuration:'.$configuration.' | editable:'.$editableField.' | APPROVAL_SHOW:'.$row['APPROVAL_SHOW'].' | APPROVAL_LEVEL:'.$row['APPROVAL_LEVEL']. ' | approvalStatus:'.$approvalStatus.' | Value:'.$fieldvalue.'<br>';
-            
-            
+            /* Creates the field based on the type of field it should be
+            * 0 - Textbox
+            * 1 - Label
+            * 2 - Option List
+            * 3 - Newline
+            * 4 - Checkbox
+            * 5 - Autofill Name
+            * 6 - Autofill Date
+            * 7 - Date
+            * 8 - 
+            * 9 - Horizontal Line
+            * 10 - Heading 2
+            * 11 - Heading 1
+            * 12 - Heading 3
+            * 13 - Radio Boxes
+            * 14 - File Upload
+            */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
                     if($configuration == 4 && $appLvlAccess || $approval_show) {
@@ -1358,7 +1372,41 @@ class Workflow {
                 } else {
                     $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
-            } 
+            } else if($row['TYPE'] == 14) { //File Upload
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= ' outside-text-center" style="';
+                    
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                
+                $response .= '"><div class="inside-text-center">';
+                
+                if($editableField) {
+                    $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
+                        onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
+                        value="">(Max: '.ini_get('upload_max_filesize').')';
+                    
+                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg"></div>';
+                    
+                    $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'"
+                        value="'.$fieldvalue.'"/>';
+                } else if(!$emailMode) {
+                    $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/'.$fieldvalue.'" target="blank">'.$fieldvalue.'</a>';
+                }
+                $response .= '</div></div>';
+            }
         }
         //In case the loop ended and the last id was an option list, close the field and div
         if($anotherOption && !$skipOptions)
@@ -3318,6 +3366,74 @@ class Workflow {
         }
         
         return 0;
+    }
+    
+    /*Checks if the user has access to a document that was uploaded through p2c forms. */
+    public function hasDocumentAccess($filename) {
+        global $wpdb;
+        if(Workflow::loggedInUser() == '0') {
+            return false;
+        }
+        $loggedInUser = Workflow::loggedInUser();
+        
+        $sql = "SELECT workflowformstatus.FORMID, USER, 
+                        APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                        BEHALFOF, PROCESSOR, workflowformstatus.SUBMISSIONID,
+                        workflowformsubmissions.FIELDID
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                INNER JOIN workflowformsubmissions ON workflowformsubmissions.SUBMISSIONID = workflowformstatus.SUBMISSIONID
+                WHERE workflowformsubmissions.VALUE = '$filename'";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        if(count($result) == 1) {
+            $row = $result[0];
+            $wfid = $row['FORMID'];
+            $submittedby = $row['USER'];
+            $behalfof = $row['BEHALFOF'];
+            $sbid = $row['SUBMISSIONID'];
+            $fieldid = $row['FIELDID'];
+        } else {
+            return false;
+        }
+        
+        //Allow users to view their own uploaded documents
+        if($submittedby == $loggedInUser) {
+            //Check if the submitter can view an approval upload
+            $sql = "SELECT APPROVAL_LEVEL, APPROVAL_ONLY, APPROVAL_SHOW
+                    FROM workflowformdetails
+                    WHERE FORMID = '$wfid' AND FIELDID = '$fieldid'";
+            $approvresult = $wpdb->get_results($sql, ARRAY_A);
+            
+            if(count($approvresult) == 1) {
+                //The file can only be viewed by approvers
+                if($approvresult[0]['APPROVAL_ONLY'] == '1' && $approvresult[0]['APPROVAL_SHOW'] == '0')
+                    return false;
+            }
+            return true;
+        }
+        
+        //Check if the person is authorized to look at this filled out form
+        if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
+            return true;
+        }
+        
+        if($submittedby != $loggedInUser) {
+            if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
+                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
+                //The approver will eventually have access to this submission again
+                return true;
+            } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                //An admin is trying to view the document
+                if($status == '2' || $status == '3' || $status == '10') {
+                    //submission is currently being edited by the submitter or it has been cancelled
+                    return false;
+                }
+                return true; //They are an admin and the submission was not cancelled
+            }
+        }
+        return false;
     }
 }
     

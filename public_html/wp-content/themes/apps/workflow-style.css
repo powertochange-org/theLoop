@@ -638,6 +638,10 @@ tr.selectedblackout:hover td {
     font-family: 'Open Sans', sans-serif;
 }
 
+.upload-msg {
+    color: red;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;
