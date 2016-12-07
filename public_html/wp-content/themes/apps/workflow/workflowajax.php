@@ -9,7 +9,7 @@ function workflow_upload_document() {
         echo json_encode($returndata);
         die();
     }
-    $uploaddir = dirname(dirname(dirname( __DIR__))).'\uploads\\p2cforms\\';
+    $uploaddir = dirname(dirname(dirname( __DIR__))).'/uploads/p2cforms/';
     
     $filename = $_FILES["documents"]['name'];
     $temp_name = $_FILES["documents"]['tmp_name'];
