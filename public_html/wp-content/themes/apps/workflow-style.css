@@ -374,98 +374,100 @@ div.hide, tr.hide {
 div.field1to25 {
     width: 25px;
 }
-
 div.field26to50 {
     width: 50px;
 }
-
 div.field51to75 {
     width: 75px;
 }
-
 div.field76to100 {
     width: 100px;
 }
-
 div.field101to125 {
     width: 125px;
 }
-
 div.field126to150 {
     width: 150px;
 }
-
 div.field151to175 {
     width: 175px;
 }
-
 div.field176to200 {
     width: 200px;
 }
-
 div.field201to225 {
     width: 225px;
 }
-
 div.field226to250 {
     width: 250px;
 }
-
 div.field251to275 {
     width: 275px;
 }
-
 div.field276to300 {
     width: 300px;
 }
-
 div.field301to325 {
     width: 325px;
 }
-
 div.field326to350 {
     width: 350px;
 }
-
 div.field351to375 {
     width: 375px;
 }
-
 div.field376to400 {
     width: 400px;
 }
-
 div.field401to425 {
     width: 425px;
 }
-
 div.field426to450 {
     width: 450px;
 }
-
 div.field451to475 {
     width: 475px;
 }
-
 div.field476to500 {
     width: 500px;
 }
-
 div.field501to525 {
     width: 525px;
 }
-
 div.field526to550 {
     width: 550px;
 }
-
 div.field551to575 {
     width: 575px;
 }
-
 div.field576to600 {
     width: 600px;
 }
+div.field601to650 {
+    width: 650px;
+}
+div.field651to700 {
+    width: 700px;
+}
+div.field701to750 {
+    width: 750px;
+}
+div.field751to800 {
+    width: 800px;
+}
+div.field801to850 {
+    width: 850px;
+}
+div.field851to900 {
+    width: 900px;
+}
+div.field901to950 {
+    width: 950px;
+}
+div.field951to1000 {
+    width: 980px;
+}
+
 
 #screen-blackout {
     display: none;

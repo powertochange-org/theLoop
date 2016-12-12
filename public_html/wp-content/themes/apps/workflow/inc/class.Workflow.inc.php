@@ -3316,6 +3316,22 @@ class Workflow {
             return 'field551to575';
         else if($size <= 600)
             return 'field576to600';
+        else if($size <= 650)
+            return 'field601to650';
+        else if($size <= 700)
+            return 'field651to700';
+        else if($size <= 750)
+            return 'field701to750';
+        else if($size <= 800)
+            return 'field751to800';
+        else if($size <= 850)
+            return 'field801to850';
+        else if($size <= 900)
+            return 'field851to900';
+        else if($size <= 950)
+            return 'field901to950';
+        else if($size >= 951)
+            return 'field951to1000';
         
         return '';
     }
