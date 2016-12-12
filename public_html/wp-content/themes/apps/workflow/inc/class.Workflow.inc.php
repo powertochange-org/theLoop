@@ -1023,6 +1023,7 @@ class Workflow {
             * 12 - Heading 3
             * 13 - Radio Boxes
             * 14 - File Upload
+            * 15 - Text Area
             */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1404,6 +1405,39 @@ class Workflow {
                         value="'.$fieldvalue.'"/>';
                 } else if(!$emailMode) {
                     $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/'.$fieldvalue.'" target="blank">'.$fieldvalue.'</a>';
+                }
+                $response .= '</div></div>';
+            } else if($row['TYPE'] == 15) { //Text Area
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= ' outside-text-center" style="';
+                    
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                
+                $response .= '"><div class="inside-text-center">';
+                
+                if($editableField) {
+                    $response .= '<textarea class="commenttext" style="width:100%;height:100px;" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
+                        '" ';
+                    if($row['REQUIRED'])
+                        $response .= ' required';
+                    if($emailMode)
+                        $response .= ' disabled';
+                    $response .= '>'.$fieldvalue.'</textarea>';
+                } else {
+                    $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
                 }
                 $response .= '</div></div>';
             }
