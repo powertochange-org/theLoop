@@ -2636,11 +2636,13 @@ class Workflow {
         for($i = 0; $i < count($recepients); $i++) {
             if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
                 if($status == 4) {
-                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                    $modifiedTemplate = $template;
+                    $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
+                    $body = str_replace('%EMAILDESIGN%', $modifiedTemplate, $mainTemplate);
                 } else if($status == 3) {
-                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                    $modifiedTemplate = $template;
+                    $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
+                    $body = str_replace('%EMAILDESIGN%', $modifiedTemplate, $mainTemplate);
                 } else if($recepients[$i][3] == 1) {
                     $body = str_replace('%EMAILDESIGN%', $processedTemplate, $mainTemplate);
                 } else {
