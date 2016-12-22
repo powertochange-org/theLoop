@@ -258,6 +258,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="12">Heading 3</option>
                 <option value="1">Instruction Text</option>
                 <option value="0">Entry Box Input</option>
+                <option value="15">Text Area</option>
                 <option value="4">Checkbox</option>
                 <option value="2">Drop-down List</option>
                 <option value="13">Radio Button</option>
@@ -267,6 +268,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="9">Horizontal Line</option>
                 <option value="5">Autofill Name</option>
                 <option value="6">Autofill Date</option>
+                <option value="14">File Upload</option>
             </select>
         </div>
         <div class="clear"></div>

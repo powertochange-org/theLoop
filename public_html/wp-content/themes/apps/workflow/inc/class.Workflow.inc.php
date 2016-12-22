@@ -4,11 +4,6 @@
 *
 *
 *THINGS THAT SHOULD BE UPDATED BEFORE RELEASE:
-*-Update the log in so that it is not stored as a session variable. Use the actualloggedinUser function instead.
-*-Remove the form field that lets you log in as someone else for debugging on the viewsubmissions.php file. 
-*-viewAllWorkflows() we need to change it so only an ADMIN can access that content
-*
-*
 *
 *
 * author: gerald.becker
@@ -1397,7 +1392,10 @@ class Workflow {
                 if($editableField) {
                     $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
                         onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
-                        value="">(Max: '.ini_get('upload_max_filesize').')';
+                        value="" ';
+                    if($row['REQUIRED'])
+                        $response .= ' required';
+                    $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
                     $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg"></div>';
                     
@@ -2445,16 +2443,7 @@ class Workflow {
     }
     
     public function sendEmail($submissionID) {
-        //require_once("phpmailer/vendor/autoload.php");
         require_once("PHPMailer-master/PHPMailerAutoload.php");
-        /*$headers = "From: hr@powertochange.org";
-        $subject = "Test";
-        $emailMessage = 
-        "put the message in here";
-
-        //mail('gerald.becker@p2c.com', $subject, $emailMessage, $headers);*/
-        
-        
         //$uniqueId = WorkFlow::workflowEmailToken($submissionID);//DEBUG
         
         $workflow = new Workflow();
@@ -2654,7 +2643,7 @@ class Workflow {
                 $mail->isSMTP();          // Set mailer to use SMTP
                 $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
                 //$mail->SMTPAuth = true;                            // Enable SMTP authentication
-                $mail->SMTPDebug = 2;
+                //$mail->SMTPDebug = 2;
                 //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
                 $mail->Port = 25;
 
@@ -2664,8 +2653,7 @@ class Workflow {
                 if(Workflow::debugMode()) {
                     if(Workflow::debugMode() == 2)
                         $mail->AddAddress('matthew.campbell@p2c.com'); 
-                    $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
-                    $mail->AddBCC('jordan.tarr@p2c.com');
+                    $mail->AddBCC('gerald.becker@p2c.com');
                 } else {
                     $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
                 }
