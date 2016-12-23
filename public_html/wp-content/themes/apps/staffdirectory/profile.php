@@ -32,22 +32,13 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			<div class="profile-image" style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
                 // Attempt to use their public giving site photo
-                $url = "http://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
+                $url = "https://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
                 // Check to see if that url is valid
-                // Use curl to test validity of URL; init the handle
-                $handle = curl_init($url);
-                // Set the option so that it returns the response to a variable
-                // (which we don't actually use), as opposed to printing out the
-                // response to the page
-                curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-                // Actually try to get the response from the url
-                curl_exec($handle);
-                // Check the response code
-                if (curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
-                    // It's INVALID (ie, user doesn't have a giving site image)
-                    // Use the standard image
+                $code = getHttpResponseCode_using_curl($url);
+                // If it's INVALID (ie, user doesn't have a giving site image)
+                // Use the standard image
+                if($code != 200)
                     $url = "/wp-content/uploads/staff_photos/anonymous.jpg";
-                } 
 				echo '<img src="'. $url . '" width=220 />';
 			}
 			else { //we have a photo and can share it

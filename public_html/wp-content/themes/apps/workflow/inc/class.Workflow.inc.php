@@ -4,11 +4,6 @@
 *
 *
 *THINGS THAT SHOULD BE UPDATED BEFORE RELEASE:
-*-Update the log in so that it is not stored as a session variable. Use the actualloggedinUser function instead.
-*-Remove the form field that lets you log in as someone else for debugging on the viewsubmissions.php file. 
-*-viewAllWorkflows() we need to change it so only an ADMIN can access that content
-*
-*
 *
 *
 * author: gerald.becker
@@ -696,6 +691,21 @@ class Workflow {
                     $configvalue = 9; 
                     echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
                         history below.<br></span>';
+                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    if($status == '2' || $status == '3') {
+                        echo '<span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
+                        return;
+                    } else if($status == '10') {
+                        echo '<span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        return;
+                    }
+                    
+                    echo '<span style="color:red;">This submission is currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.<br>It is being submitted to: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid).'</b></span><br><br>';
+                    
+                    //Set the flags to only view the submission
+                    $hasAnotherApproval = 0;
+                    $configvalue = 9; 
                 } else {
                     echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
                     return;
@@ -876,18 +886,18 @@ class Workflow {
         if($emailMode) {
             if($configuration == 4) {
                 $response .= '<p style="margin-bottom:30px;">Quick Reply: ';
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Approve</a>';
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Approve</a>';
                 
-                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Request Change</a>';
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Request Change</a>';
                 
-                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Not Approved</a>';
+                $response .= ' | <a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="text-decoration:none;">Not Approved</a>';
                 $response .= '</p>';
             } else {
                 $response .= '<p style="margin-bottom:30px;"></p>';
             }
             $response .= '<a style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
             text-decoration: none;" 
-                    href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'">
+                    href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'">
                     Click to view the form online</a>';
         }
         else
@@ -992,9 +1002,24 @@ class Workflow {
             if($configuration >= 7 || $configuration == 0)
                 $editableField = 0;
             
-            // echo 'DEBUG: ID:'.$row['FIELDID'].' | configuration:'.$configuration.' | editable:'.$editableField.' | APPROVAL_SHOW:'.$row['APPROVAL_SHOW'].' | APPROVAL_LEVEL:'.$row['APPROVAL_LEVEL']. ' | approvalStatus:'.$approvalStatus.' | Value:'.$fieldvalue.'<br>';
-            
-            
+            /* Creates the field based on the type of field it should be
+            * 0 - Textbox
+            * 1 - Label
+            * 2 - Option List
+            * 3 - Newline
+            * 4 - Checkbox
+            * 5 - Autofill Name
+            * 6 - Autofill Date
+            * 7 - Date
+            * 8 - 
+            * 9 - Horizontal Line
+            * 10 - Heading 2
+            * 11 - Heading 1
+            * 12 - Heading 3
+            * 13 - Radio Boxes
+            * 14 - File Upload
+            * 15 - Text Area
+            */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
                     if($configuration == 4 && $appLvlAccess || $approval_show) {
@@ -1343,7 +1368,77 @@ class Workflow {
                 } else {
                     $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
-            } 
+            } else if($row['TYPE'] == 14) { //File Upload
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= ' outside-text-center" style="';
+                    
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                
+                $response .= '"><div class="inside-text-center">';
+                
+                if($editableField) {
+                    $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
+                        onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
+                        value="" ';
+                    if($row['REQUIRED'])
+                        $response .= ' required';
+                    $response .= '>(Max: '.ini_get('upload_max_filesize').')';
+                    
+                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg"></div>';
+                    
+                    $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'"
+                        value="'.$fieldvalue.'"/>';
+                } else if(!$emailMode) {
+                    $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/'.$fieldvalue.'" target="blank">'.$fieldvalue.'</a>';
+                }
+                $response .= '</div></div>';
+            } else if($row['TYPE'] == 15) { //Text Area
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                
+                $response .= ' outside-text-center" style="';
+                    
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                
+                $response .= '"><div class="inside-text-center">';
+                
+                if($editableField) {
+                    $response .= '<textarea class="commenttext" style="width:100%;height:100px;" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
+                        '" ';
+                    if($row['REQUIRED'])
+                        $response .= ' required';
+                    if($emailMode)
+                        $response .= ' disabled';
+                    $response .= '>'.$fieldvalue.'</textarea>';
+                } else {
+                    $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
+                }
+                $response .= '</div></div>';
+            }
         }
         //In case the loop ended and the last id was an option list, close the field and div
         if($anotherOption && !$skipOptions)
@@ -1366,7 +1461,7 @@ class Workflow {
         
         if(0 <= $configuration && $configuration < 7 && !$emailMode) {
             if($configuration != 0) {
-                $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;';
+                $response .= '<textarea class="commenttext" name="commenttext" rows="5" cols="40" style="width: 100%;';
                 if(isset($_GET['response']) && $_GET['response'] == 'change')
                     $response .= 'border:2px solid red;';
                 $response .= '"></textarea>';
@@ -1434,6 +1529,7 @@ class Workflow {
                         class="processbutton">Re-calculate Allowance</button>';
                 }
             } else if($configuration == 4) {
+                $response .= '<input type="hidden" name="approverredirect" value="1"/>';
                 if($hasAnotherApproval) {
                     $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(4, 1);">Approve</button>';
                 } else {
@@ -1474,7 +1570,7 @@ class Workflow {
                 $response .= '<p>By clicking approve, I acknowledge that I have read and approve the change being requested. </p>';
             
             if( 0 < $configuration && $configuration < 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
             text-decoration: none; float:left;">View Form</a>';
                 //Uncomment if email for revisions should include quick buttons. But they really shouldn't
                 /*$response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=submit&lvl='.$approvalStatus.'&tk='.$uniqueId.'"><button type="button" style="background-color: #51abff;box-shadow: 0 0 5px 1px #969696; 
@@ -1487,23 +1583,24 @@ class Workflow {
                     display: block;float: left;font-family: sans-serif;font-size: 18px;margin: 20px 10px 20px 0;
                     min-width: 200px;">Delete Form</button></a>';*/
             } else if($configuration == 4) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=approve&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Approve</a>';
                 
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=change&lvl='.$approvalStatus.'&tk='.$uniqueId.'" style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Request Change</a>';
                 
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'"
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=deny&lvl='.$approvalStatus.'&tk='.$uniqueId.'"
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Not Approved</a>';
             } else if($configuration == 0) {
-                $response .= '<a href="'.$this->linkAddress.'/forms-information/workflow/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
+                $response .= '<a href="'.$this->linkAddress.'/forms-information/p2c-forms/?page=workflowentry&sbid='.$submissionID.'&response=retract&lvl='.$approvalStatus.'&tk='.$uniqueId.'" 
                     style="padding: 15px 8px 15px 8px; background-color: #F7941E;color: white; 
                     text-decoration: none;float:left;margin-right:30px;">Retract Submission</a>';
             }
         } else if($configuration == 9 && $hasAnotherApproval) {
-            $response .= '<textarea name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
+            $response .= '<input type="hidden" name="approverredirect" value="1"/>';
+            $response .= '<textarea class="commenttext" name="commenttext" rows="5" cols="40" style="width: 100%;"></textarea>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
             $response .= '<input type="hidden" name="wfid" value="'.$id.'">';
             $response .= '<input type="hidden" name="sbid" value="'.$submissionID.'">';
@@ -1744,7 +1841,7 @@ class Workflow {
         $response .= '<table id="view-submissions"><tr><th style="width: 250px;">Form Name</th><th style="width: 450px;">Link</th><th>Date</th><th>Enabled</th><th>Copy</th></tr>';
         
         foreach($result as $row) {
-            $response .= '<tr><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
+            $response .= '<tr class="form-links"><td><b>'.$row['NAME'].'</b></td><td><a href="?page=';
             
             if($row['DRAFT'])
                 $response .= 'createworkflow';
@@ -1754,7 +1851,7 @@ class Workflow {
             $response .= '&wfid='.$row['FORMID'].'">';
             
             if(!$row['DRAFT'])
-                $response .= '/forms-information/workflow/?page=workflowentry&wfid='.$row['FORMID'];
+                $response .= '/forms-information/p2c-forms/?page=workflowentry&wfid='.$row['FORMID'];
             else
                 $response .= 'EDIT FORM '.$row['NAME'];
             $response .= '</a></td>';
@@ -1781,181 +1878,198 @@ class Workflow {
         return $response;
     }
     
-    public function viewSubmissionSummary($userid, $formName, $submittedby, $date, $id) {
+    public function viewSubmissionSummary($userid, $formName, $submittedby, $date, $id, $formType) {
         global $wpdb;
         $response = '';
         
-        //User submissions
-        $sql = "SELECT STATUS, COUNT(STATUS) AS COUNT
-                FROM workflowformstatus
-                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
-                WHERE workflowformstatus.USER = '$userid'";
-        
-        if($formName != '') {
-            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
-        }
-        if($date != '') {
-            $sql .= " AND workflowformstatus.DATE_SUBMITTED = '$date' ";
-        }
-        if($id != '') {
-            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
-        }
-        
-        $sql .= " GROUP BY workflowformstatus.STATUS";
-        
-        $result = $wpdb->get_results($sql, ARRAY_A);
-        
-        $saved = $approved = $input = $denied = $pending = $cancelled = 0;
-        foreach($result as $row) {
-            if($row['STATUS'] == 2) { //saved
-                $saved = $row['COUNT'];
-            } else if($row['STATUS'] == 3) { //input required
-                $input = $row['COUNT'];
-            } else if($row['STATUS'] == 4) { //approval pending
-                $pending = $row['COUNT'];
-            } else if($row['STATUS'] == 7) { //approved
-                $approved = $row['COUNT'];
-            } else if($row['STATUS'] == 8) { //denied
-                $denied = $row['COUNT'];
+        if($formType == 'both' || $formType == 'my') {
+            //User submissions
+            $sql = "SELECT STATUS, COUNT(STATUS) AS COUNT
+                    FROM workflowformstatus
+                    INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                    WHERE workflowformstatus.USER = '$userid'";
+            
+            if($formName != '') {
+                $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
+            }
+            if($date != '') {
+                $sql .= " AND workflowformstatus.DATE_SUBMITTED = '$date' ";
+            }
+            if($id != '') {
+                $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
+            }
+            
+            $sql .= " GROUP BY workflowformstatus.STATUS";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            $saved = $approved = $input = $denied = $pending = $cancelled = 0;
+            foreach($result as $row) {
+                if($row['STATUS'] == 2) { //saved
+                    $saved = $row['COUNT'];
+                } else if($row['STATUS'] == 3) { //input required
+                    $input = $row['COUNT'];
+                } else if($row['STATUS'] == 4) { //approval pending
+                    $pending = $row['COUNT'];
+                } else if($row['STATUS'] == 7) { //approved
+                    $approved = $row['COUNT'];
+                } else if($row['STATUS'] == 8) { //denied
+                    $denied = $row['COUNT'];
+                }
             }
         }
         
-        //Approver
-        $sql = "(SELECT  workflowformstatus.STATUS,
-                        COUNT(workflowformstatus.STATUS) AS COUNT,
-                        '0' AS 'PROCESS',
-                        '' AS 'PROCESSED'
-                FROM workflowformstatus
-                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
-                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
-                WHERE ( 
-                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
-                    OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
-                    OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
-                    OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
-                
-                
-                //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
-                //    //OR employee.supervisor = '$userid')) ";
-        $roles = Workflow::getRole($userid);
-        
-        for($x = 1; $x <= 4; $x++) {
-            $sql .= "OR (STATUS_APPROVAL = '".$x."' OR STATUS_APPROVAL = '100') AND (";
+        if($formType == 'both' || $formType == 'staff') {
+            //Approver
+            $sql = "(SELECT  workflowformstatus.STATUS,
+                            COUNT(workflowformstatus.STATUS) AS COUNT,
+                            '0' AS 'PROCESS',
+                            '' AS 'PROCESSED'
+                    FROM workflowformstatus
+                    INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                    LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                    WHERE ( 
+                        ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
+                        AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
+                    
+                    
+                    //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
+                    //    //OR employee.supervisor = '$userid')) ";
+            $roles = Workflow::getRole($userid);
+            
+            for($x = 1; $x <= 4; $x++) {
+                $sql .= "OR (STATUS_APPROVAL = '".$x."' OR STATUS_APPROVAL = '100') AND (";
+                for($i = 0; $i < count($roles); $i++) {
+                    if($i != 0)
+                        $sql .= "OR ";
+                    $sql .= "workflowform.APPROVER_ROLE";
+                    if($x != 1)
+                        $sql .= $x;
+                    $sql .= " = '$roles[$i]' ";
+                }
+                $sql .= ") ";
+            
+            }
+            
+            //Check if they were a past direct supervisor approver
+            $sqlDirect = "SELECT SUBMISSIONID
+                    FROM workflowsuphistory
+                    WHERE USER_ID = '$userid'";
+            
+            $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
+            foreach($resultDirect as $rowDirect) {
+                $sql .= " OR (STATUS_APPROVAL = '100' 
+                            AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
+            }
+            
+            $sql .= ") AND (workflowformstatus.STATUS != '2' 
+                        AND workflowformstatus.STATUS != '3' 
+                        AND workflowformstatus.STATUS != '10') ";
+            if($formName != '') {
+                $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
+            }
+            if($submittedby != '') {
+                $sql .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+            }
+            if($date != '') {
+                $sql .= " AND (workflowformstatus.DATE_SUBMITTED = '$date' OR workflowformstatus.DATE_SUBMITTED = '$date') ";
+            }
+            if($id != '') {
+                $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
+            }
+            //        WHERE workflowformstatus.USER = '$userid'
+            
+            $sql .= "GROUP BY workflowformstatus.STATUS) UNION ALL (SELECT  workflowformstatus.STATUS,
+                            COUNT(workflowformstatus.STATUS) AS COUNT,
+                            '1' AS 'PROCESS',
+                            workflowformstatus.PROCESSED AS 'PROCESSED'
+                    FROM workflowformstatus
+                    INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                    LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                    WHERE (";
+            
+            
             for($i = 0; $i < count($roles); $i++) {
                 if($i != 0)
                     $sql .= "OR ";
-                $sql .= "workflowform.APPROVER_ROLE";
-                if($x != 1)
-                    $sql .= $x;
+                $sql .= "workflowform.PROCESSOR";
                 $sql .= " = '$roles[$i]' ";
             }
             $sql .= ") ";
-        
-        }
-        
-        //Check if they were a past direct supervisor approver
-        $sqlDirect = "SELECT SUBMISSIONID
-                FROM workflowsuphistory
-                WHERE USER_ID = '$userid'";
-        
-        $resultDirect = $wpdb->get_results($sqlDirect, ARRAY_A);
-        foreach($resultDirect as $rowDirect) {
-            $sql .= " OR (STATUS_APPROVAL = '100' 
-                        AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
-        }
-        
-        $sql .= ") AND (workflowformstatus.STATUS != '2' 
-                    AND workflowformstatus.STATUS != '3' 
-                    AND workflowformstatus.STATUS != '10') ";
-        if($formName != '') {
-            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
-        }
-        if($submittedby != '') {
-            $sql .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
-        }
-        if($date != '') {
-            $sql .= " AND (workflowformstatus.DATE_SUBMITTED = '$date' OR workflowformstatus.DATE_SUBMITTED = '$date') ";
-        }
-        if($id != '') {
-            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
-        }
-        //        WHERE workflowformstatus.USER = '$userid'
-        
-        $sql .= "GROUP BY workflowformstatus.STATUS) UNION ALL (SELECT  workflowformstatus.STATUS,
-                        COUNT(workflowformstatus.STATUS) AS COUNT,
-                        '1' AS 'PROCESS',
-                        workflowformstatus.PROCESSED AS 'PROCESSED'
-                FROM workflowformstatus
-                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
-                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
-                WHERE (";
-        
-        
-        for($i = 0; $i < count($roles); $i++) {
-            if($i != 0)
-                $sql .= "OR ";
-            $sql .= "workflowform.PROCESSOR";
-            $sql .= " = '$roles[$i]' ";
-        }
-        $sql .= ") ";
-        
-        
-                
-        $sql .= "AND workflowformstatus.STATUS = '7' GROUP BY PROCESSED) ";
-        
-        //die($sql);
-        $result = $wpdb->get_results($sql, ARRAY_A);
-        
-        $approverPending = $approverApproved = $approverDenied = $notprocessed = $processed = 0;
-        foreach($result as $row) {
-            if($row['STATUS'] == 4) { //approval pending
-                $approverPending = $row['COUNT'];
-            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 0) { //approved
-                $approverApproved = $row['COUNT'];
-            } else if($row['STATUS'] == 8) { //denied
-                $approverDenied = $row['COUNT'];
-            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 0) { //not processed
-                $notprocessed = $row['COUNT'];
-            } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 1) { //processed
-                $processed = $row['COUNT'];
+            
+            
+                    
+            $sql .= "AND workflowformstatus.STATUS = '7' GROUP BY PROCESSED) ";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            $approverPending = $approverApproved = $approverDenied = $notprocessed = $processed = 0;
+            foreach($result as $row) {
+                if($row['STATUS'] == 4) { //approval pending
+                    $approverPending = $row['COUNT'];
+                } else if($row['STATUS'] == 7 && $row['PROCESS'] == 0) { //approved
+                    $approverApproved = $row['COUNT'];
+                } else if($row['STATUS'] == 8) { //denied
+                    $approverDenied = $row['COUNT'];
+                } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 0) { //not processed
+                    $notprocessed = $row['COUNT'];
+                } else if($row['STATUS'] == 7 && $row['PROCESS'] == 1 && $row['PROCESSED'] == 1) { //processed
+                    $processed = $row['COUNT'];
+                }
             }
         }
-        
         
         //Display summary
         $response .= '<div id="workflow-summary">';
         $response .= '<table style="margin-left: auto; margin-right:auto;">';
-        $response .= '<tr><td style="border-right: 1px solid black;padding:10px;">';
+        $response .= '<tr><td style="';
+        if($formType == 'both')
+            $response .= 'border-right: 1px solid black;';
+        $response .= 'padding:10px;">';
         
-        $response .= '<a href="#workflow-summary" class="nav-option-link selected-submissions" id="user-submissions-summary" onclick="switchRole(0);"><div class="nav-option-outside">
-        <div class="nav-option-inside"><h2 style="color:inherit;">My Forms</h2>';
+        if($formType == 'both' || $formType == 'my') {
+            $response .= '<a href="#workflow-summary" class="nav-option-link selected-submissions" id="user-submissions-summary" ';
+            if($formType == 'both')
+                $response .= 'onclick="switchRole(0);"';
+            $response .= '><div class="nav-option-outside">
+            <div class="nav-option-inside"><h2 style="color:inherit;">My Forms</h2>';
+            
+            $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
+            $response .= '<tr><th>Status</th><th>Count</th></tr>';
+            $response .= '<tr><td class="left">Saved</td><td class="center">'.$saved.'</td></tr>';
+            $response .= '<tr><td class="left">Input Required</td><td class="center">'.$input.'</td></tr>';
+            $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$pending.'</td></tr>';
+            $response .= '<tr><td class="left">Approved</td><td class="center">'.$approved.'</td></tr>';
+            $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$denied.'</td></tr>';
+            $response .= '</table>';
+            $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
         
-        $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
-        $response .= '<tr><th>Status</th><th>Count</th></tr>';
-        $response .= '<tr><td class="left">Saved</td><td class="center">'.$saved.'</td></tr>';
-        $response .= '<tr><td class="left">Input Required</td><td class="center">'.$input.'</td></tr>';
-        $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$pending.'</td></tr>';
-        $response .= '<tr><td class="left">Approved</td><td class="center">'.$approved.'</td></tr>';
-        $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$denied.'</td></tr>';
-        $response .= '</table>';
-        $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
+            $response .= '</td><td style="padding:10px;vertical-align: top;">';
+        }
         
-        $response .= '</td><td style="padding:10px;vertical-align: top;">';
-        
-        $response .= '<a href="#workflow-summary" class="nav-option-link" id="approver-submissions-summary" onclick="switchRole(1);"><div class="nav-option-outside">
-        <div class="nav-option-inside"><h2 style="color:inherit;">My Staff</h2>';
-        
-        $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
-        $response .= '<tr><th>Status</th><th>Count</th></tr>';
-        $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$approverPending.'</td></tr>';
-        $response .= '<tr><td class="left">Approved</td><td class="center">'.$approverApproved.'</td></tr>';
-        $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$approverDenied.'</td></tr>';
-        $response .= '<tr><td class="left">Not Processed</td><td class="center">'.$notprocessed.'</td></tr>';
-        $response .= '<tr><td class="left">Processed</td><td class="center">'.$processed.'</td></tr>';
-        $response .= '</table>';
-        $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
-        
+        if($formType == 'both' || $formType == 'staff') {
+            $response .= '<a href="#workflow-summary" class="nav-option-link';
+            if($formType == 'staff')
+                $response .= ' selected-submissions';
+            $response .= '" id="approver-submissions-summary" ';
+            if($formType == 'both')
+                $response .= 'onclick="switchRole(1);"';
+            $response .= '><div class="nav-option-outside">
+            <div class="nav-option-inside"><h2 style="color:inherit;">My Staff\'s Forms</h2>';
+            
+            $response .= '<table id="view-submissions" style="margin-left:auto;margin-right:auto;">';
+            $response .= '<tr><th>Status</th><th>Count</th></tr>';
+            $response .= '<tr><td class="left">Approval Pending</td><td class="center">'.$approverPending.'</td></tr>';
+            $response .= '<tr><td class="left">Approved</td><td class="center">'.$approverApproved.'</td></tr>';
+            $response .= '<tr><td class="left">Not Approved</td><td class="center">'.$approverDenied.'</td></tr>';
+            $response .= '<tr><td class="left">Not Processed</td><td class="center">'.$notprocessed.'</td></tr>';
+            $response .= '<tr><td class="left">Processed</td><td class="center">'.$processed.'</td></tr>';
+            $response .= '</table>';
+            $response .= '<br><p style="color:inherit;">Click to view forms.</p></div></div></a>';
+        }
         $response .= '</td></tr></table>';
         
         $response .= '</div>';
@@ -2062,7 +2176,7 @@ class Workflow {
             
             //Display the results
             $response .= '<td>'.$row['SUBMISSIONID'].'</td>
-                <td>'.$row['NAME'].'</a></td>
+                <td>'.$row['NAME'].'</td>
                 <td>'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                 <td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';
@@ -2101,13 +2215,27 @@ class Workflow {
         return $response;
     }
     
-    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id) {
+    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll) {
         global $wpdb;
         $LOADMOREAMT = 7; //Changes the number of submissions displayed under each section
         $response = '';
         
         if($userid == '' || $userid == '0') {
             return 'You need to be logged in to view submissions.';
+        }
+        
+        $searchFilter = "";
+        if($formName != '') {
+            $searchFilter .= " AND (workflowform.NAME LIKE '%$formName%') ";
+        }
+        if($submittedby != '') {
+            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+        }
+        if($date != '') {
+            $searchFilter .= " AND (workflowformstatus.DATE_SUBMITTED = '$date') ";
+        }
+        if($id != '') {
+            $searchFilter .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
         
         $sql = "("."SELECT  workflowform.NAME, 
@@ -2163,25 +2291,17 @@ class Workflow {
                         AND workflowformstatus.SUBMISSIONID = '".$rowDirect['SUBMISSIONID']."') ";
         }
         
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
         
         //$sql .= "OR STATUS_APPROVAL = '100' AND (";
-        
         
         $sql .= ") AND (workflowformstatus.STATUS != '2' 
                     AND workflowformstatus.STATUS != '3' 
                     AND workflowformstatus.STATUS != '10') ";
-        if($formName != '') {
-            $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
-        }
-        if($submittedby != '') {
-            $sql .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
-        }
-        if($date != '') {
-            $sql .= " AND (workflowformstatus.DATE_SUBMITTED = '$date' OR workflowformstatus.DATE_SUBMITTED = '$date') ";
-        }
-        if($id != '') {
-            $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
-        }
+        $sql .= $searchFilter;
         //        WHERE workflowformstatus.USER = '$userid'
         $sql .= ")";
         
@@ -2201,7 +2321,7 @@ class Workflow {
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
-                WHERE (";
+                WHERE ((";
         
         
         for($i = 0; $i < count($roles); $i++) {
@@ -2212,17 +2332,24 @@ class Workflow {
         }
         $sql .= ") ";
         
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
         
+        $sql .= ") ";
+        
+        $sql .= $searchFilter;
                 
         $sql .= "AND workflowformstatus.STATUS = '7') 
                 ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";
-        //die($sql);
+        
         $result = $wpdb->get_results($sql, ARRAY_A);
         
-        $response .= '<div id="approver-submissions" class="hide">';
+        $response .= '<div id="approver-submissions">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="5"><h2>My Staff</h2><br></td></tr>';
+        $response .= '<tr><td colspan="5"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
         
         $response .= '<tr><td colspan="5">
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
@@ -2280,7 +2407,7 @@ class Workflow {
             
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
             $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
-                            <td style="width:450px;">'.$row['NAME'].'</a></td>
+                            <td style="width:450px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                             <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>';
@@ -2304,7 +2431,7 @@ class Workflow {
         }
         
         
-        $response .= '</table></div><div style="margin-bottom:50px;"></div>';
+        $response .= '</table></div>';
         
         $response = str_replace('%PENDING%', (($pending == 0) ? $pending : '<b>'.$pending.'</b>'), $response);
         $response = str_replace('%APPROVED%', $approved, $response);
@@ -2316,16 +2443,7 @@ class Workflow {
     }
     
     public function sendEmail($submissionID) {
-        //require_once("phpmailer/vendor/autoload.php");
         require_once("PHPMailer-master/PHPMailerAutoload.php");
-        /*$headers = "From: hr@powertochange.org";
-        $subject = "Test";
-        $emailMessage = 
-        "put the message in here";
-
-        //mail('gerald.becker@p2c.com', $subject, $emailMessage, $headers);*/
-        
-        
         //$uniqueId = WorkFlow::workflowEmailToken($submissionID);//DEBUG
         
         $workflow = new Workflow();
@@ -2507,11 +2625,13 @@ class Workflow {
         for($i = 0; $i < count($recepients); $i++) {
             if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
                 if($status == 4) {
-                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                    $modifiedTemplate = $template;
+                    $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
+                    $body = str_replace('%EMAILDESIGN%', $modifiedTemplate, $mainTemplate);
                 } else if($status == 3) {
-                    $template = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $template);
-                    $body = str_replace('%EMAILDESIGN%', $template, $mainTemplate);
+                    $modifiedTemplate = $template;
+                    $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
+                    $body = str_replace('%EMAILDESIGN%', $modifiedTemplate, $mainTemplate);
                 } else if($recepients[$i][3] == 1) {
                     $body = str_replace('%EMAILDESIGN%', $processedTemplate, $mainTemplate);
                 } else {
@@ -2523,17 +2643,17 @@ class Workflow {
                 $mail->isSMTP();          // Set mailer to use SMTP
                 $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
                 //$mail->SMTPAuth = true;                            // Enable SMTP authentication
-                $mail->SMTPDebug = 2;
+                //$mail->SMTPDebug = 2;
                 //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
                 $mail->Port = 25;
 
-                $mail->From = 'workflowloop-no-reply@p2c.com';
-                $mail->FromName = 'Workflow Email';
+                $mail->From = 'p2cforms-no-reply@p2c.com';
+                $mail->FromName = 'P2C Forms';
                 
                 if(Workflow::debugMode()) {
                     if(Workflow::debugMode() == 2)
                         $mail->AddAddress('matthew.campbell@p2c.com'); 
-                    $mail->AddBCC('gerald.becker@p2c.com'); //TODO: multiple emails gerald.becker@p2c.com
+                    $mail->AddBCC('gerald.becker@p2c.com');
                 } else {
                     $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
                 }
@@ -2542,13 +2662,13 @@ class Workflow {
                 $mail->IsHTML(true);
                 
                 if($status == 3)
-                    $mail->Subject = 'Workflow submission requiring further input - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' submission requiring further input - Submission ID # '.$submissionID;
                 else if($status == 4)
-                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else if($status == 7 && $recepients[$i][3] == 1)
-                    $mail->Subject = 'Workflow email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else
-                    $mail->Subject = 'Your workflow submission has been reviewed - Submission ID # '.$submissionID;
+                    $mail->Subject = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
                  
                                                             
                 $mail->Body = $body;
@@ -2558,7 +2678,205 @@ class Workflow {
         }
     }
     
+    /*Returns submissions for a given form that a user is an approver for.
+     *Only submissions in progress or that have been completed will appear.
+     */
+    public function viewAllSubmissionsGrid($userid, $form, $viewAll) {
+        global $wpdb;
+        $response = '';
+        
+        if($userid == '' || $userid == '0') {
+            return 'You need to be logged in to view submissions.';
+        }
+        
+        $sql = "SELECT  workflowform.NAME, 
+                        workflowform.APPROVER_ROLE, 
+                        workflowform.APPROVER_ROLE2, 
+                        workflowform.APPROVER_ROLE3, 
+                        workflowform.APPROVER_ROLE4, 
+                        workflowform.PROCESSOR, 
+                        workflowformstatus.PROCESSED, 
+                        workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.STATUS,
+                        workflowformstatus.STATUS_APPROVAL,
+                        workflowformstatus.DATE_SUBMITTED,
+                        workflowformstatus.COMMENT,
+                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
+                LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                WHERE workflowform.FORMID = '$form' AND ( ";
+        
+        $roles = Workflow::getRole($userid);
+        
+        for($x = 1; $x <= 4; $x++) {
+            if($x != 1)
+                $sql .= " OR ";
+            $sql .= " (STATUS_APPROVAL = '".$x."' OR STATUS_APPROVAL = '100') AND (";
+            for($i = 0; $i < count($roles); $i++) {
+                if($i != 0)
+                    $sql .= "OR ";
+                $sql .= "workflowform.APPROVER_ROLE";
+                if($x != 1)
+                    $sql .= $x;
+                $sql .= " = '$roles[$i]' ";
+            }
+            $sql .= ") ";
+        }
+        
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
+        
+        $sql .= ") AND (workflowformstatus.STATUS != '2' 
+                    AND workflowformstatus.STATUS != '3' 
+                    AND workflowformstatus.STATUS != '10') ";
+        $sql .= "ORDER BY STATUS, PROCESSED, DATE_SUBMITTED DESC, NAME ASC";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        //If there are no results the user has access to
+        if(!$result) {
+            return 'There are no submissions to view.';
+        }
+        
+        $response .= '<div id="approver-submissions">';
+        $response .= '<table id="grid-submissions">';
+        
+        $completeResults;
+        //Figure out which fields contain user input data. Create the array to hold that data
+        $formFields;
+        $sql = "SELECT  wdet.TYPE,
+                        wdet.POSITION,
+                        wdet.FIELDID
+                FROM workflowformdetails wdet
+                WHERE wdet.FORMID = '$form'
+                    AND wdet.TYPE IN ('0', '4', '5', '6', '7', '13', '2')
+                GROUP BY wdet.FIELDID
+                ORDER BY wdet.POSITION";
+        $resultFields = $wpdb->get_results($sql, ARRAY_A);
+        
+        $tableHeader = '<tr class="submissions-header"><th>ID</th><th>Date</th><th>Employee</th><th>Status</th>';
+        foreach($resultFields as $row) {
+            $formFields[$row['FIELDID']] = '';
+            $tableHeader .= '<th>'.$row['FIELDID'].'</th>';
+        }
+        $tableHeader .= '<th style="min-width:150px;">Comments</th>';
+        $tableHeader .= '</tr>';
+        
+        //Assemble all the data in an array so we can display it how we want later
+        foreach($result as $k=>$row) {
+            $completeResults[] = $row;
+            $completeResults[$k]['data'] = $formFields;
+            
+            $sql = "SELECT  wsub.VALUE,
+                            wstat.SUBMISSIONID, 
+                            wstat.STATUS,
+                            wstat.STATUS_APPROVAL,
+                            wstat.DATE_SUBMITTED,
+                            wdet.TYPE,
+                            wdet.POSITION,
+                            wdet.FIELDID
+                    FROM workflowformsubmissions wsub
+                    INNER JOIN workflowformstatus wstat ON wsub.SUBMISSIONID = wstat.SUBMISSIONID
+                    INNER JOIN workflowformdetails wdet ON wsub.FIELDID = wdet.FIELDID AND wstat.FORMID = wdet.FORMID
+                    WHERE wstat.FORMID = '$form' AND wsub.SUBMISSIONID = '$row[SUBMISSIONID]'";
+              
+            $subresult = $wpdb->get_results($sql, ARRAY_A);
+            
+            foreach($subresult as $subrow) {
+                $completeResults[$k]['data'][$subrow['FIELDID']] = $subrow['VALUE'];
+            }
+        }
+        
+        //Display the results
+        $response .= $tableHeader;
+        foreach($completeResults as $row) {
+            $response .= '<tr>';
+            $response .= '<td>'.$row['SUBMISSIONID'].'</td>';
+            $response .= '<td>'.$row['DATE_SUBMITTED'].'</td>';
+            $response .= '<td>'.$row['USERNAME'].'</td>';
+            $response .= '<td>';
+            if($row['STATUS'] == '4')
+                $response .= 'In Progress - Level '.$row['STATUS_APPROVAL'];
+            else if($row['STATUS'] == '7')
+                $response .= 'Approved';
+            $response .= '</td>';
+            
+            foreach($resultFields as $cell) {
+                $response .= '<td>'.$row['data'][$cell['FIELDID']].'</td>';
+            }
+            $response .= '<td style="font-size:10px;">'.$row['COMMENT'].'</td>';
+            $response .= '</tr>';
+        }
+        $response .= '</table></div>';
+        
+        return $response;
+    }
     
+    /*Returns a list of forms that the user is an approver for.*/
+    public function viewAllFormsWithAccess($userid, $viewAll) {
+        global $wpdb;
+        $sql = "SELECT  workflowform.FORMID,
+                        workflowform.NAME, 
+                        workflowform.APPROVER_ROLE, 
+                        workflowform.APPROVER_ROLE2, 
+                        workflowform.APPROVER_ROLE3, 
+                        workflowform.APPROVER_ROLE4, 
+                        workflowform.PROCESSOR,
+                        workflowform.ENABLED
+                FROM workflowform
+                WHERE ( ";
+                
+        $roles = Workflow::getRole($userid);
+        
+        for($x = 1; $x <= 4; $x++) {
+            if($x != 1)
+                $sql .= "OR (";
+            else
+                $sql .= " (";
+            for($i = 0; $i < count($roles); $i++) {
+                if($i != 0)
+                    $sql .= "OR ";
+                $sql .= "workflowform.APPROVER_ROLE";
+                if($x != 1)
+                    $sql .= $x;
+                $sql .= " = '$roles[$i]' ";
+            }
+            $sql .= ") ";
+        
+        }
+        //Check if they are an admin and should be able to see all forms
+        if($viewAll) {
+            $sql .= " OR 1 = 1 ";
+        }
+        $sql .= ") ORDER BY ENABLED DESC, NAME";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $response .= '<div id="approver-submissions">';
+        $response .= '<table id="grid-submissions">';
+        $response .= '<tr class="submissions-header"><th>Form Name</th><th>Form ID</th><th>Approval 1</th>
+            <th>Approval 2</th><th>Approval 3</th><th>Approval 4</th><th>Processor</th><th>Enabled</th></tr>';
+        
+        foreach($result as $row) {
+            $response .= '<tr class="selectedblackout ';
+            $response .= 'approver-4';
+            $response .= '" data-href="?page=viewsubmissionsbyform&form='.$row['FORMID'].'">';
+            $response .=  '<td>'.$row['NAME'].'</td>
+                            <td>'.$row['FORMID'].'</td>
+                            <td>'.$row['APPROVER_ROLE'].'</td>
+                            <td>'.$row['APPROVER_ROLE2'].'</td>
+                            <td>'.$row['APPROVER_ROLE3'].'</td>
+                            <td>'.$row['APPROVER_ROLE4'].'</td>
+                            <td>'.$row['PROCESSOR'].'</td>
+                            <td>'.$row['ENABLED'].'</td>';
+            $response .= '</tr>';
+        }
+        $response .= '</table></div>';
+        return $response;
+    }
     
     public function __toString() {
         return $this->$name;
@@ -2883,9 +3201,8 @@ class Workflow {
     }
     
     
-    public function getNextRoleName($currentLevel, $hasAnotherApproval, $formID, $resolveName, $sbid) {
-        //echo 'DEBUG: has approval: '.$hasAnotherApproval.' level:'.$currentLevel. ' form:'.$formID;
-        if(!$hasAnotherApproval)
+    public function getNextRoleName($currentLevel, $hasAnotherApproval, $formID, $resolveName, $sbid, $current = 0) {
+        if(!$hasAnotherApproval && $current == 0 || $currentLevel == 100)
             return 'Form Complete';
         global $wpdb;
         $response = '';
@@ -2893,13 +3210,13 @@ class Workflow {
         $sql = "SELECT workflowroles.NAME, ROLEID
                 FROM workflowform ";
         
-        if($currentLevel == 0) {
+        if($currentLevel == 0 || $current == 1 && $currentLevel == 1) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE = workflowroles.ROLEID ";
-        } else if($currentLevel == 1) {
+        } else if($currentLevel == 1 || $current == 1 && $currentLevel == 2) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE2 = workflowroles.ROLEID ";
-        } else if($currentLevel == 2) {
+        } else if($currentLevel == 2 || $current == 1 && $currentLevel == 3) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE3 = workflowroles.ROLEID ";
-        } else if($currentLevel == 3) {
+        } else if($currentLevel == 3 || $current == 1 && $currentLevel == 4) {
             $sql .= "INNER JOIN workflowroles ON workflowform.APPROVER_ROLE4 = workflowroles.ROLEID ";
         } 
         $sql .= "WHERE FORMID = '$formID'";
@@ -2989,6 +3306,22 @@ class Workflow {
             return 'field551to575';
         else if($size <= 600)
             return 'field576to600';
+        else if($size <= 650)
+            return 'field601to650';
+        else if($size <= 700)
+            return 'field651to700';
+        else if($size <= 750)
+            return 'field701to750';
+        else if($size <= 800)
+            return 'field751to800';
+        else if($size <= 850)
+            return 'field801to850';
+        else if($size <= 900)
+            return 'field851to900';
+        else if($size <= 950)
+            return 'field901to950';
+        else if($size >= 951)
+            return 'field951to1000';
         
         return '';
     }
@@ -3073,6 +3406,74 @@ class Workflow {
         }
         
         return 0;
+    }
+    
+    /*Checks if the user has access to a document that was uploaded through p2c forms. */
+    public function hasDocumentAccess($filename) {
+        global $wpdb;
+        if(Workflow::loggedInUser() == '0') {
+            return false;
+        }
+        $loggedInUser = Workflow::loggedInUser();
+        
+        $sql = "SELECT workflowformstatus.FORMID, USER, 
+                        APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                        BEHALFOF, PROCESSOR, workflowformstatus.SUBMISSIONID,
+                        workflowformsubmissions.FIELDID
+                FROM workflowformstatus
+                INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                INNER JOIN workflowformsubmissions ON workflowformsubmissions.SUBMISSIONID = workflowformstatus.SUBMISSIONID
+                WHERE workflowformsubmissions.VALUE = '$filename'";
+        
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        if(count($result) == 1) {
+            $row = $result[0];
+            $wfid = $row['FORMID'];
+            $submittedby = $row['USER'];
+            $behalfof = $row['BEHALFOF'];
+            $sbid = $row['SUBMISSIONID'];
+            $fieldid = $row['FIELDID'];
+        } else {
+            return false;
+        }
+        
+        //Allow users to view their own uploaded documents
+        if($submittedby == $loggedInUser) {
+            //Check if the submitter can view an approval upload
+            $sql = "SELECT APPROVAL_LEVEL, APPROVAL_ONLY, APPROVAL_SHOW
+                    FROM workflowformdetails
+                    WHERE FORMID = '$wfid' AND FIELDID = '$fieldid'";
+            $approvresult = $wpdb->get_results($sql, ARRAY_A);
+            
+            if(count($approvresult) == 1) {
+                //The file can only be viewed by approvers
+                if($approvresult[0]['APPROVAL_ONLY'] == '1' && $approvresult[0]['APPROVAL_SHOW'] == '0')
+                    return false;
+            }
+            return true;
+        }
+        
+        //Check if the person is authorized to look at this filled out form
+        if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
+            return true;
+        }
+        
+        if($submittedby != $loggedInUser) {
+            if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
+                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
+                //The approver will eventually have access to this submission again
+                return true;
+            } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                //An admin is trying to view the document
+                if($status == '2' || $status == '3' || $status == '10') {
+                    //submission is currently being edited by the submitter or it has been cancelled
+                    return false;
+                }
+                return true; //They are an admin and the submission was not cancelled
+            }
+        }
+        return false;
     }
 }
     

@@ -5,8 +5,8 @@
 * -In the addField() function, make sure to create a div that can be targeted by javascript
 *  Go to a div and add id="myuniquename' + totalCount +'" 
 *
-* -Also add an if statement that checks whether it should be hidden when it gets coped to the history
-*  area. EX: skipfieldsettings
+* -Also add an if statement that checks whether it should be hidden when it gets copied to the history
+*  area. This is done in the hideSettings() function. EX: skipfieldsettings
 *
 * -Do the above step in the createworkflow.php file as well since this is the initial field config spot
 * 
@@ -25,6 +25,19 @@
 * Go to the workflowDetailsFixAll() function and add code that will add the hide class to the div if you
 * want it to be hidden. This function is called in the history section and the area where new fields are
 * added as well. 
+*
+*
+*
+*
+* ==============================================================================================================
+* = More Simple Instructions on how to add an input field type (ex: Input box, text area, fileupload box, etc) =
+* ==============================================================================================================
+* 1) In createworkflow.php, scroll to the select input name="fieldtype". Add an option and give it a new value number.
+* 2) Go to the hideSettings(setting, fieldType) function. Add your new field type into the different sections depending
+*    whether or not you want fields hidden. 
+* 3) Add the field type to the function fieldTypeContent(selectedValue)
+* 4) Add how the field displays on a form in the function preview().
+* 5) Add the field to the server php file
 *
 * author: gerald.becker
 *
@@ -258,6 +271,11 @@ function fieldTypeContent(selectedValue) {
     } else {
         response += '<option value="0">Entry Box Input</option>';
     }
+    if(selectedValue == 15) {
+        response += '<option value="15" selected>Text Area</option>';
+    } else {
+        response += '<option value="15">Text Area</option>';
+    }
     if(selectedValue == 4) {
         response += '<option value="4" selected>Checkbox</option>';
     } else {
@@ -303,24 +321,22 @@ function fieldTypeContent(selectedValue) {
     } else {
         response += '<option value="6">Autofill Date</option>';
     }
+    if(selectedValue == 14) {
+        response += '<option value="14" selected>File Upload</option>';
+    } else {
+        response += '<option value="14">File Upload</option>';
+    }
     return response;
 }
 
 function editableCheck(selectedValue, type) {
     var response = '<input type="checkbox" id="editable' + totalCount + '" name="editable' + totalCount + '"';
-    if(selectedValue == true) {
+    if(!hideSettings('approvalrights', type) && selectedValue == true) {
         response += ' checked'; 
     }
     response += ' onchange="toggleCheckbox(this.id);" ';
     
-    if(type == 1 || //Instruction
-        type == 3 || //create new line
-        type == 5 || //Autofill Name
-        type == 6 || //Autofill Date
-        type == 9 || //horizontal line
-        type == 10 ||  //Heading
-        type == 11 ||  //Heading 1
-        type == 12)  //Heading 3
+    if(hideSettings('approvalrights', type))
         response += 'hidden';
     
     response += '>Can this field be modified during approval steps?<br>';
@@ -359,16 +375,7 @@ function requiredCheck(selectedValue, type) {
     }
     response += ' onchange="toggleCheckbox(this.id);" ';
     
-    
-    if(type == 1 || //Instruction
-        type == 3 || //create new line
-        type == 4 || //Checkbox
-        type == 5 || //Autofill Name
-        type == 6 || //Autofill Date
-        type == 9 || //horizontal line
-        type == 10 ||  //Heading
-        type == 11 ||  //Heading 1
-        type == 12)  //Heading 3
+    if(hideSettings('fieldsettings', type))
         response += 'hidden';
     
     response += ' title="Does the field have to be filled out by the user?">Required Field';
@@ -449,14 +456,14 @@ function approvalLevelEdit(elem) {
     
 }
 
-function toggleCheckbox(elem) {
-    var selectedValue = find(elem).value;
+function toggleCheckbox(elem, remove = 0) {
+    var selectedElement = find(elem);
     
-    if(find(elem).checked) {
-        find(elem).setAttribute("checked", "checked");
+    if(!remove && selectedElement.checked) {
+        selectedElement.setAttribute("checked", "checked");
     }
     else {
-        find(elem).removeAttribute("checked");
+        selectedElement.removeAttribute("checked");
     }
 }
 
@@ -494,12 +501,21 @@ function preview() {
             if(find("workflowsize"+i).value != "") {
                 updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
             }
-            
             updateText += '><div class="inside-text-center">';
-            
-
             updateText += '<input type="text" placeholder="' + find("workflowlabel"+i).value + '">';
-           
+            updateText += '</div></div>';
+            
+        } else if(find("fieldtype"+i).value == 15) { //Text Area
+            updateText += '<div class="workflow workflowright style-1 outside-text-center ';
+            if(find("approvallevel"+i).value != 0) 
+                updateText += 'approval';
+            updateText += '"';
+            
+            if(find("workflowsize"+i).value != "") {
+                updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
+            }
+            updateText += '><div class="inside-text-center">';
+            updateText += '<textarea style="width:100%;height:100px;"></textarea>';
             updateText += '</div></div>';
             
         } else if(find("fieldtype"+i).value == 3) { //Newline
@@ -678,7 +694,19 @@ function preview() {
                     find("workflowradio"+i+"-"+x).value + '</option>'; 
             }
             updateText += '</select></div>';
-        } 
+        } else if(find("fieldtype"+i).value == 14) { //File Upload
+            updateText += '<div class="workflow workflowright style-1 outside-text-center ';
+            if(find("approvallevel"+i).value != 0) 
+                updateText += 'approval';
+            updateText += '"';
+            
+            if(find("workflowsize"+i).value != "") {
+                updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
+            }
+            updateText += '><div class="inside-text-center" style="text-align:left;">';
+            updateText += '<input type="file" disabled>';
+            updateText += '</div></div>';
+        }
     }
     
     find("previewform").innerHTML = updateText;
@@ -773,21 +801,13 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
     var valueFieldHide = 0;
     var sizeFieldHide = 0;
     
-    
-    if(type == 3 || //create new line
-        type == 5 || //autofill name
-        type == 6 || //autofill date
-        type == 9) { //horizontal line
+    //Hide the "Text:*" field 
+    if(hideSettings('textfield', type))
         valueFieldHide = 1;
-    }
     
-    if(type == 10 || //heading
-        type == 11 || //heading 1
-        type == 12 || //heading 3
-        type == 9) { //horizontal line
+    //Hide the "Field Size:" field 
+    if(hideSettings('fieldsize', type))
         sizeFieldHide = 1;
-    }
-    
     
     var text = '';
     if(type != '8' && type != '13' && type != '2') {
@@ -959,39 +979,20 @@ function workflowDetailsFixAll(id, type, label, size, labelb, sizeb, history, ra
  * Ex: Create New Line does not need to have to be a required field or appear on approval view only.
  */
 function fixExtraFields(id, type) {
-    
     //Set Required Field
-    if(type == 1 || //Instruction
-        type == 3 || //create new line
-        type == 4 || //Checkbox
-        type == 5 || //Autofill Name
-        type == 6 || //Autofill Date
-        type == 9 || //horizontal line
-        type == 10 ||  //Heading
-        type == 11 ||  //Heading 1
-        type == 12)  //Heading 3
+    if(hideSettings('fieldsettings', type))
         find("requiredfield" + id).setAttribute("hidden", "true");
     else
         find("requiredfield" + id).removeAttribute("hidden");
     
-    
     //Set if field is editable
-    if(type == 1 || //Instruction
-        type == 3 || //create new line
-        type == 5 || //Autofill Name
-        type == 6 || //Autofill Date
-        type == 9 || //horizontal line
-        type == 10 ||  //Heading
-        type == 11 ||  //Heading 1
-        type == 12)  //Heading 3
+    if(hideSettings('approvalrights', type))
         find("editable" + id).setAttribute("hidden", "true");
     else
         find("editable" + id).removeAttribute("hidden");
     
-    
     //Approval level and Displayed on finished forms page for everyone to see
-    if(type == 3 || //create new line
-        type == 9) { //horizontal line
+    if(hideSettings('approvallevels', type)) {
         find("approvallevel" + id).setAttribute("hidden", "true");
         find("approvalshow" + id).setAttribute("hidden", "true");
     } else {
@@ -1040,17 +1041,21 @@ function toggleExtraSettings(id) {
     if(hideSettings('fieldsettings', fieldType)) { 
         find("fieldsettings1" + field).setAttribute("hidden", "true");
         find("fieldsettings2" + field).setAttribute("hidden", "true");
+        toggleCheckbox("requiredfield" + field, 1);
     } else {
         find("fieldsettings1" + field).removeAttribute("hidden");
         find("fieldsettings2" + field).removeAttribute("hidden");
+        toggleCheckbox("requiredfield" + field);
     }
     
     if(hideSettings('approvalrights', fieldType)) { 
         find("approvalrights1" + field).setAttribute("hidden", "true");
         find("approvalrights2" + field).setAttribute("hidden", "true");
+        toggleCheckbox("editable" + field, 1);
     } else {
         find("approvalrights1" + field).removeAttribute("hidden");
         find("approvalrights2" + field).removeAttribute("hidden");
+        toggleCheckbox("editable" + field);
     }
     
     if(hideSettings('approvallevels', fieldType)) { 
@@ -1205,10 +1210,10 @@ function processWorkflow(status) {
 }
 
 function hideSettings(setting, fieldType) {
-    if(setting == 'fieldsettings') {
+    if(setting == 'fieldsettings') { //Hides the "Required Field" checkbox when creating a form
         if(fieldType == 11 || //Heading 1
             fieldType == 10 || //Heading 
-            fieldType == 12 || //Heading 
+            fieldType == 12 || //Heading 3
             fieldType == 1 || //Instruction 
             fieldType == 3 || //New Line 
             fieldType == 4 || //Checkbox 
@@ -1220,7 +1225,7 @@ function hideSettings(setting, fieldType) {
         } else {
             return 0;
         }
-    } else if(setting == 'approvalrights') {
+    } else if(setting == 'approvalrights') { //Hides the "Can this field be modified during approval steps?" checkbox
         if(fieldType == 11 || //Heading 1
             fieldType == 10 || //Heading 
             fieldType == 12 || //Heading 
@@ -1228,16 +1233,40 @@ function hideSettings(setting, fieldType) {
             fieldType == 3 || //New Line  
             fieldType == 5 || //Autofill Name 
             fieldType == 6 || //Autofill Date 
-            fieldType == 9 //Horizontal line 
+            fieldType == 9 || //Horizontal line 
+            fieldType == 14 //File Upload 
             ) {
             return 1;
         } else {
             return 0;
         }
-    } else if(setting == 'approvallevels') {
+    } else if(setting == 'approvallevels') { //Hides all the approval type options
         if(fieldType == 3 || //new line
             fieldType == 9 //Horizontal line 
             ) { 
+            return 1;
+        } else {
+            return 0;
+        }
+    } else if(setting == 'textfield') { //Hides the "Text:*" field 
+        if( fieldType == 3 || //create new line
+            fieldType == 5 || //autofill name
+            fieldType == 6 || //autofill date
+            fieldType == 9 || //horizontal line
+            fieldType == 15 || //Text Area
+            fieldType == 14 //File Upload
+            ) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else if(setting == 'fieldsize') { //Hides the "Field Size:" field 
+        if( fieldType == 10 || //heading
+            fieldType == 11 || //heading 1
+            fieldType == 12 || //heading 3
+            fieldType == 9 || //horizontal line
+            fieldType == 14 //File Upload
+            ) {
             return 1;
         } else {
             return 0;

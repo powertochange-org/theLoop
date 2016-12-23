@@ -149,8 +149,10 @@ global $SERVER_SQL2012;
 	
 	//Fix the logo image in SSRS 2012
   //$response = preg_replace('#<IMG onerror\=\"this\.errored\=true\;\" SRC[^>]*>#','<img src="/wp-content/P2C_LOGO_WEB.gif" />',$response);
-  $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '<img src="/wp-content/P2C_LOGO_WEB.gif" style="width: 23mm;"/>', $response, 1);
-  $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '', $response, 1); //Type Finance in here if we need the clickable link
+  if(!(strpos($reportPath, '12 Month (by Month) Actuals by Ministry') !== false))
+    $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '<img src="/wp-content/P2C_LOGO_WEB.gif" style="width: 23mm;"/>', $response, 1);
+  if(!(strpos($reportPath, '12 Month (by Month) Actuals by Ministry') !== false))
+    $response = preg_replace("/<IMG\s+[^>]*SRC=\"([^\"]*)\"[^>]*>/", '', $response, 1); //Type Finance in here if we need the clickable link
   
 	//Get rid of the extra column that causes the content to get crunched to the left
 	$response = str_ireplace('<td width="100%" height="0"></td>',"",$response);
@@ -166,8 +168,6 @@ global $SERVER_SQL2012;
 
 function accountBalance($ProjCode, $user_id) {
   $reportParams['ProjectCodeSearch'] = $ProjCode;
-  $reportParams['ReportYear'] = date("Y"); 
-  $reportParams['ReportMonth'] = date("n");
   $reportParams['ExecuteAsUser'] = $user_id;
 
   $result = produceRSReport('/General/Account Balance', 'CSV', $reportParams, false);
@@ -193,7 +193,10 @@ function accountBalance($ProjCode, $user_id) {
 		$data = CsvSplit(trim($rows[$i]), $headers);
 			//$returnStr .= "$data[AccountCode] - $data[AccountDescription]: $data[Balance]<br />";
 		if ($data['AccountCode']) {
-			$returnStr .= "$data[AccountCode] - $data[AccountDescription]: \$ $data[Balance]<br />";
+      $returnStr .= "$data[AccountCode] - $data[AccountDescription]";
+      if(!($data['AccountDescription'] == 'NOT VALID' || $data['AccountDescription'] == "YOU DON'T HAVE ACCESS TO THIS ACCOUNT"))
+			  $returnStr .= ": \$ $data[Balance]";
+      $returnStr .= "<br />";
 		}
 	}
 

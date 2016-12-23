@@ -29,12 +29,26 @@
 								echo '<a href="'.$userData->user_url.'" rel="external nofollow" class="url">'.get_comment_author().'</a>';//comment_author_link(); 
 							else */
 								echo '<a href="/staff-directory/?page=profile&person='.$userData->user_login.'" rel="external nofollow" class="url">'.get_comment_author().'</a>';
-							$query = "SELECT  photo, share_photo FROM employee WHERE user_login = '".$userData->user_login."'";
+							$query = "SELECT  photo, share_photo, staff_account FROM employee WHERE user_login = '".$userData->user_login."'";
 							$photoInfo = $wpdb-> get_results($wpdb->prepare($query, ""));
-							if($photoInfo[0]->share_photo == 1) {
+							if(!is_null($photoInfo[0]->photo) && $photoInfo[0]->share_photo == 1) {
 								echo '<br><img src="/wp-content/uploads/staff_photos/' . $photoInfo[0]->photo . '" width="50" style="border-radius: 15px;"/>';
 							} else {
-								echo '<br><img src="/wp-content/uploads/staff_photos/anonymous.jpg" width="50" style="border-radius: 15px;"/>';
+								$useAnonymous = true;
+								$url = '';
+								if($photoInfo[0]->staff_account > '800000') {
+									// Attempt to use their public giving site photo
+									$url = "https://secure.powertochange.org/images/Product/medium/" . $photoInfo[0]->staff_account . ".jpg";
+									// Check to see if that url is valid
+									$code = getHttpResponseCode_using_curl($url);
+									// If it's INVALID (ie, user doesn't have a giving site image)
+									// Use the standard image
+									if($code == 200) // It's VALID! So, use it instead of the anonymous image
+										$useAnonymous = false;
+								}
+								if($useAnonymous)
+									$url = "/wp-content/uploads/staff_photos/anonymous.jpg";
+								echo '<br><img src="'.$url.'" width="50" style="border-radius: 15px;"/>';
 							}
 						?>
 					</strong></p>
