@@ -11,11 +11,11 @@
 *
 */
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/chosen/chosen.jquery.js" type="text/javascript"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/workflow/chosen/docsupport/prism.css">
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/workflow/chosen/chosen.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
 <h1>Roles</h1>
 <?php
 if(isset($_SESSION['ERRMSG'])) {
