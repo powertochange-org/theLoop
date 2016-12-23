@@ -4,18 +4,22 @@ if ( ! function_exists( 'add_action' ) ) {
 	header( 'Location: /' );
 	exit;
 }
+
+$error_message   = __( "Woohaa the link to manage your subscriptions has expired, don't worry, just enter your email below and a new link will be send.", "subscribe-reloaded");
+
 global $wp_subscribe_reloaded;
 ob_start();
 $wp_subscribe_reloaded->stcr->utils->register_plugin_scripts();
 $wp_subscribe_reloaded->stcr->utils->add_plugin_js_scripts();
 
-if ( ! empty( $email ) ) {
-	// Send management link
-	$subject        = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_subject', 'Manage your subscriptions on [blog_name]' ) ), ENT_QUOTES, 'UTF-8' );
-	$page_message   = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_content', '' ) ), ENT_QUOTES, 'UTF-8' );
-	$email_message  = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_email_content', '' ) ), ENT_QUOTES, 'UTF-8' );
-	$manager_link   = get_bloginfo( 'url' ) . get_option( 'subscribe_reloaded_manager_page', '/comment-subscriptions/' );
+if ( isset( $_POST[ 'sre' ] ) && trim( $_POST[ 'sre' ] ) !== "" ) {
+	$email         = esc_attr( $_POST[ 'sre' ] );
+	$subject       = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_subject', 'Manage your subscriptions on [blog_name]' ) ), ENT_QUOTES, 'UTF-8' );
+	$page_message  = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_content', '' ) ), ENT_QUOTES, 'UTF-8' );
+	$email_message = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_management_email_content', '' ) ), ENT_QUOTES, 'UTF-8' );
+	$manager_link  = get_bloginfo( 'url' ) . get_option( 'subscribe_reloaded_manager_page', '/comment-subscriptions/' );
 	$one_click_unsubscribe_link = $manager_link;
+
 	if ( function_exists( 'qtrans_convertURL' ) ) {
 		$manager_link = qtrans_convertURL( $manager_link );
 	}
@@ -26,9 +30,7 @@ if ( ! empty( $email ) ) {
 	$manager_link .= ( strpos( $manager_link, '?' ) !== false ) ? '&' : '?';
 	$manager_link .= "srek=" . $wp_subscribe_reloaded->stcr->utils->get_subscriber_key($clean_email) . "&srk=$subscriber_salt&amp;srsrc=e";
 	$one_click_unsubscribe_link .= ( strpos( $one_click_unsubscribe_link, '?' ) !== false ) ? '&' : '?';
-	$one_click_unsubscribe_link .= ( ( strpos( $one_click_unsubscribe_link, '?' ) !== false ) ? '&' : '?' )
-								. "srek=" . $this->utils->get_subscriber_key( $clean_email )
-								. "&srk=$subscriber_salt" . "&sra=u;srsrc=e" . "&srp=";
+	$one_click_unsubscribe_link .= ( ( strpos( $one_click_unsubscribe_link, '?' ) !== false ) ? '&' : '?' ) . "srek=" . $this->utils->get_subscriber_key( $clean_email ) . "&srk=$subscriber_salt" . "&sra=u" . "&srp=";
 
 	// Replace tags with their actual values
 	$subject       = str_replace( '[blog_name]', get_bloginfo( 'name' ), $subject );
@@ -53,7 +55,6 @@ if ( ! empty( $email ) ) {
 		'toEmail'      => $clean_email
 	);
 	$wp_subscribe_reloaded->stcr->utils->send_email( $email_settings );
-
 	echo wpautop( $page_message );
 }
 else
@@ -63,10 +64,12 @@ else
 		$message = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage( $message );
 	}
 	?>
-	<p><?php echo wpautop( $message ); ?></p>
+	<p><?php echo wpautop( $error_message ); ?></p>
 	<form action="<?php
-		echo esc_url( $_SERVER[ 'REQUEST_URI' ]);?>"
-		method="post" name="sub-form">
+	$url = $_SERVER[ 'REQUEST_URI' ];
+	$url = preg_replace('/sre=\w+&|&key\_expired=\d+/', '', $url );
+	echo esc_url( $url . "&key_expired=1" );
+	?>" name="sub-form" method="post">
 		<fieldset style="border:0">
 			<p><label for="subscribe_reloaded_email"><?php _e( 'Email', 'subscribe-reloaded' ) ?></label>
 				<input id='subscribe_reloaded_email' type="text" class="subscribe-form-field" name="sre" value="<?php echo isset( $_COOKIE['comment_author_email_' . COOKIEHASH] ) ? $_COOKIE['comment_author_email_' . COOKIEHASH] : 'email'; ?>" size="22" onfocus="if(this.value==this.defaultValue)this.value=''" onblur="if(this.value=='')this.value=this.defaultValue" />
@@ -74,10 +77,9 @@ else
 			</p>
 		</fieldset>
 	</form>
-<?php
+	<?php
 }
 $output = ob_get_contents();
 ob_end_clean();
-
 return $output;
 ?>

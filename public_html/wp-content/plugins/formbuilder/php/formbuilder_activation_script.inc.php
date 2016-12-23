@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
 	/**
@@ -1163,6 +1164,42 @@ WARNING! This update will change how the email FROM address is created. You may 
 					"));
 
 				update_option('formbuilder_version', "1.05");
+			}
+
+
+
+			// Upgrade to version 1.06
+			if(get_option('formbuilder_version') < 1.06)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.06", nl2br("
+* Security Release: Fixing some potential XSS vulnerabilities.
+					"));
+
+				update_option('formbuilder_version', "1.06");
+			}
+
+
+
+			// Upgrade to version 1.07
+			if(get_option('formbuilder_version') < 1.07)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.07", nl2br("
+* Security Release: Additional security fixes.
+					"));
+
+				update_option('formbuilder_version', "1.07");
+			}
+
+
+
+			// Upgrade to version 1.08
+			if(get_option('formbuilder_version') < 1.08)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.08", nl2br("
+* Security Release: Code updates to comply with WordPress.org security requirements.
+					"));
+
+				update_option('formbuilder_version', "1.08");
 			}
 			
 			

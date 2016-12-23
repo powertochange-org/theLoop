@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class FBFormEditor extends FBObject
 {
@@ -115,11 +116,11 @@ class FBFormEditor extends FBObject
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order ASC");
 #					$tableFields->remove_row($fieldKey);
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order ASC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order ASC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 					$sql = "DELETE FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey';";
@@ -144,11 +145,11 @@ class FBFormEditor extends FBObject
 #					$actionRow = $tableFields->load_row($fieldKey);
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order ASC");
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order ASC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order ASC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 #					$firstRow = $tableFields->load_row(reset($relatedRows));
@@ -185,12 +186,12 @@ class FBFormEditor extends FBObject
 				if($fieldValue == __("Move Down", 'formbuilder'))
 				{
 #					$actionRow = $tableFields->load_row($fieldKey);
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order DESC");
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order DESC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 

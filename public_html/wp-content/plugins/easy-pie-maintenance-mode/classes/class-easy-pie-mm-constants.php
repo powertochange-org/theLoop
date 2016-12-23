@@ -1,11 +1,11 @@
 <?php
 
 /*
-  Easy Pie Maintenance Mode Plugin
-  Copyright (C) 2013, Synthetic Thought LLC
-  website: easypiewp.com contact: bob@easypiewp.com
+  EZP Maintenance Mode Plugin
+  Copyright (C) 2016, Snap Creek LLC
+  website: snapcreek.com contact: support@snapcreek.com
 
-  Easy Pie Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
+  EZP Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
   June 2007. Copyright (C) 2007 Free Software Foundation, Inc., 51 Franklin
   St, Fifth Floor, Boston, MA 02110, USA
   
@@ -24,18 +24,19 @@
 if (!class_exists('Easy_Pie_MM_Constants')) {
 
     /**
-     * Constants for Easy Pie Maintenance Mode Plugin
+     * Constants for EZP Maintenance Mode Plugin
      *
-     * @author Bob Riley <bob@easypiewp.com>
+     * @author Snap Creek Software <support@snapcreek.com>
      * @copyright 2013 Synthetic Thought LLC
      */
-    class Easy_Pie_MM_Constants {
+    class Easy_Pie_MM_Constants 
+	{
         //const OPTIONS_GROUP_NAME = 'easy-pie-mm-options-group';
 
         const OPTION_NAME = 'easy-pie-mm-options';
         const MAIN_PAGE_KEY = 'easy-pie-mm-main-page';
         const PLUGIN_SLUG = 'easy-pie-maintenance-mode';
-        const PLUGIN_VERSION = "0.6.7"; // RSR Version
+        const PLUGIN_VERSION = "1.0.1"; // RSR Version
 
         /* Pseudo constants */
 
