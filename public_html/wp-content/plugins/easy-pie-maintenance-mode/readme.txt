@@ -1,10 +1,10 @@
-=== Easy Pie Maintenance Mode ===
-Contributors: bobriley
+=== EZP Maintenance Mode ===
+Contributors: bobriley, corylamleorg
 Donate link: http://easypiewp.com/donate/
 Tags: maintenance, admin, administration, construction, under construction, maintenance mode, offline, unavailable, launch, wordpress maintenance mode, site maintenance
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 0.6.7
+Stable tag: 1.0.1 
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,11 +12,11 @@ Easily let website visitors know your site is undergoing maintenance.
 
 == Description ==
 
-Need to let your visitors know your site is undergoing maintenance? Easy Pie Maintenance Mode makes it easy! 
+Need to let your visitors know your site is undergoing maintenance? EZP Maintenance Mode makes it easy! 
 
 ### Maintenance Mode Basic Features
-* **Simple.** No confusing options or complex setup.
-* **Mini themes.** Choose between four professionally-designed, responsive mini-themes to display when in Maintenance Mode.
+* **Very Simple.** No confusing options or complex setup.
+* **Mini themes.** Choose which professionally-designed, responsive mini-theme to display when in Maintenance Mode.
 * **Pre-styled text.** Title, header, headline and message text gets styled without requiring HTML or CSS.
 * **Add your own logo.** Add your own logo using the WordPress Media Library to give Maintenance Mode a personal touch.
 
@@ -25,9 +25,9 @@ Need to let your visitors know your site is undergoing maintenance? Easy Pie Mai
 * **User Mini Themes.** Greatly customize Maintenance Mode by creating your own mini-theme.
 
 ### Overview
-Easy Pie Maintenance Mode was designed to let you get to the important work of improving your site while visitors know you are performing maintenance in the shortest time possible. We've supplied four very nice looking themes to display when your site is undergoing maintenance.  Additionally, you can easily cator these to your tastes using CSS. For the advanced users, you can create your own mini theme  to be displayed when the site is undergoing maintenance.
+EZP Maintenance Mode was designed to let you get to the important work of improving your site while visitors know you are performing maintenance in the shortest time possible. We've supplied four very nice looking themes to display when your site is undergoing maintenance.  Additionally, you can easily cator these to your tastes using CSS. 
 
-In this way, both beginners and pros will find Easy Pie Maintenance Mode not only easy to use but highly flexible as well.
+In this way, both beginners and pros will find EZP Maintenance Mode not only easy to use but highly flexible as well.
 
 
 Thanks to the developers of [bxSlider](http://bxslider.com) for their cool image viewer.
@@ -58,20 +58,10 @@ Thanks to the developers of [bxSlider](http://bxslider.com) for their cool image
 
 == Frequently Asked Questions ==
 
-= How can I create a new mini-theme? =
-
-The page ['How to create a Maintenance Mode Theme'](http://easypiewp.com/how-to-create-maintenance-mode-theme) describes the process.
-
 = Why is my site is still viewable? =
 Maintenance mode is only shown to visitors who are not logged in. The easiest way to check things yourself is view your site with a different browser type than the one you're logged in with (i.e. if you're logged in with Chrome, view the site in Firefox or Internet Explorer or vice versa). 
 
 Alternatively, you can log out or view the site in incognito/private mode with an instance of the same browser type.
-
-= My custom theme changed after plugin upgrade!? =
-
-Make sure your theme is in the user theme directory and not in the plugins directory where the built-in themes are. Maintenance Mode pulls themes from both the plugins directory AND the user theme directory, however only the user theme directory is preserved between updates.
-
-Therefore, if you want to doctor a theme you'll need to first copy it from the plugins directory into the user theme directory, as explained in ['How to create a Maintenance Mode Theme'](http://easypiewp.com/how-to-create-maintenance-mode-theme).
 
 = What happens if a search engine hits my site while it's in maintenance mode? =
 
@@ -87,19 +77,33 @@ Simply add the following line to your wp-config.php file:
 
 Afterward either uninstall or reconfigure the conflicting plugins.
 
-If you aren't comfortable doing this or are unsure how to do this, [please contact me](mailto:bob@easypiewp.com) and I'll be happy to walk you through the process.
+If you aren't comfortable doing this or are unsure how to do this, [please contact me](mailto:support@snapcreek.com) and I'll be happy to walk you through the process.
+
+= Why isn't the Preview Changes button working? =
+This is most likely due to your browser's popup blocker. Click on the Preview Changes button and look for an indication in your browser's control bar that a popup has been blocked. Click on this indication to allow future popups to go through then retry.
 
 = How do I report a bug? =
 
-Please capture as much information you can about your system, specifically use the error log to gather new information if you are comfortable. The [Easy Pie Error Log Guide](http://easypiewp.com/quickly-diagnose-wordpress-problems-using-error-log/) outlines how to do this.
-Then, please [let me know](mailto:bob@easypiewp.com) what's going on, with as much detail as you have.
+Please capture as much information you can about your system, specifically use the error log to gather new information if you are comfortable. The [EZP Error Log Guide](http://easypiewp.com/quickly-diagnose-wordpress-problems-using-error-log/) outlines how to do this.
+Then, please [let me know](mailto:support@snapcreek.com) what's going on, with as much detail as you have.
 
 == Screenshots ==
  
 1. Plugin configuration
-2. Site in maintenance mode when using the 'temporarily closed' mini-theme.
+2. Site in maintenance mode when using the 'Temporarily Closed' mini-theme.
+3. Site in maintenance mode when using the 'Plain Jane' mini-theme.
+4. Site in maintenance mode when using the 'Black Sawhorse' mini-theme.
 
 == Changelog ==
+
+= 1.0.1 =
+* UI overhaul
+* Added preview capability
+
+= 1.0.0 =
+* Small UI tweaks
+* Renamed to EZP Maintenance Mode
+* Changed references to Snap Creek Software
 
 = 0.6.7 =
 * UI tweaks
@@ -139,6 +143,12 @@ Then, please [let me know](mailto:bob@easypiewp.com) what's going on, with as mu
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+UI overhaul, added preview capability
+
+= 1.0.0 =
+Small UI tweaks, renamed to EZP Maintenance Mode, changed references to Snap Creek Software
 
 = 0.6.7 =
 UI tweaks

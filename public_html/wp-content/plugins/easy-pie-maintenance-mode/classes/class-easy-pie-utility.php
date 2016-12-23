@@ -1,11 +1,11 @@
 <?php
 
 /*
-  Easy Pie Maintenance Mode Plugin
-  Copyright (C) 2013, Synthetic Thought LLC
-  website: easypiewp.com contact: bob@easypiewp.com
+  EZP Maintenance Mode Plugin
+  Copyright (C) 2016, Snap Creek LLC
+  website: snapcreek.com contact: support@snapcreek.com
 
-  Easy Pie Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
+  EZP Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
   June 2007. Copyright (C) 2007 Free Software Foundation, Inc., 51 Franklin
   St, Fifth Floor, Boston, MA 02110, USA
   
@@ -24,12 +24,12 @@
 if (!class_exists('Easy_Pie_Utility')) {
 
     /**
-     * Utility class for Easy Pie plugins
+     * Utility class for EZP plugins
      *
-     * @author Bob Riley <bob@easypiewp.com>
+     * @author Snap Creek Software <support@snapcreek.com>
      * @copyright 2013 Synthetic Thought LLC
      */
-    class Easy_Pie_Utility {
+    class EZP_MM_U {
                 /**
          * Set option value if it isn't already set
          */
@@ -44,6 +44,12 @@ if (!class_exists('Easy_Pie_Utility')) {
          */
         public static function set_option(&$option_array, $key, $value) {
             $option_array[$key] = $value;
+        }
+		
+		public static function get_option_value($subkey) {
+            $optionArray = get_option(Easy_Pie_MM_Constants::OPTION_NAME);
+
+            return $optionArray[strtolower($subkey)];
         }
     }
 }

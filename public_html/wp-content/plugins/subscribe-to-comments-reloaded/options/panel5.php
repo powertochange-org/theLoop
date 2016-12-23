@@ -9,7 +9,7 @@ $faulty_fields = '';
 
 if ( array_key_exists( "generate_key", $_POST ) ) {
 	global $wp_subscribe_reloaded;
-	$unique_key = $wp_subscribe_reloaded->generate_key();
+	$unique_key = $wp_subscribe_reloaded->stcr->utils->generate_key();
 	subscribe_reloaded_update_option( 'unique_key', $unique_key, 'text' );
 
 	// Display an alert in the admin interface if something went wrong
@@ -24,11 +24,17 @@ if ( array_key_exists( "generate_key", $_POST ) ) {
 } else {
 	// Update options
 	if ( isset( $_POST['options'] ) ) {
+		if ( isset( $_POST['options']['safely_uninstall'] ) && ! subscribe_reloaded_update_option( 'safely_uninstall', $_POST['options']['safely_uninstall'], 'yesno' ) ) {
+			$faulty_fields = __( 'Safetly Uninstall', 'subscribe-reloaded' ) . ', ';
+		}
 		if ( isset( $_POST['options']['purge_days'] ) && ! subscribe_reloaded_update_option( 'purge_days', $_POST['options']['purge_days'], 'integer' ) ) {
 			$faulty_fields = __( 'Autopurge requests', 'subscribe-reloaded' ) . ', ';
 		}
 		if ( isset( $_POST['options']['enable_double_check'] ) && ! subscribe_reloaded_update_option( 'enable_double_check', $_POST['options']['enable_double_check'], 'yesno' ) ) {
 			$faulty_fields = __( 'Enable double check', 'subscribe-reloaded' ) . ', ';
+		}
+		if ( isset( $_POST['options']['stcr_position'] ) && ! subscribe_reloaded_update_option( 'stcr_position', $_POST['options']['stcr_position'], 'yesno' ) ) {
+			$faulty_fields = __( 'StCR Position', 'subscribe-reloaded' ) . ', ';
 		}
 		if ( isset( $_POST['options']['notify_authors'] ) && ! subscribe_reloaded_update_option( 'notify_authors', $_POST['options']['notify_authors'], 'yesno' ) ) {
 			$faulty_fields = __( 'Subscribe authors', 'subscribe-reloaded' ) . ', ';
@@ -51,9 +57,6 @@ if ( array_key_exists( "generate_key", $_POST ) ) {
 		if ( isset( $_POST['options']['admin_bcc'] ) && ! subscribe_reloaded_update_option( 'admin_bcc', $_POST['options']['admin_bcc'], 'yesno' ) ) {
 			$faulty_fields = __( 'BCC admin on Notifications', 'subscribe-reloaded' ) . ', ';
 		}
-		if ( isset( $_POST['options']['commentbox_place'] ) && ! subscribe_reloaded_update_option( 'commentbox_place', $_POST['options']['commentbox_place'], 'yesno' ) ) {
-			$faulty_fields = __( 'StCR Subscription Box Position', 'subscribe-reloaded' ) . ', ';
-		}
 		// Display an alert in the admin interface if something went wrong
 		echo '<div class="updated fade"><p>';
 		if ( empty( $faulty_fields ) ) {
@@ -69,14 +72,32 @@ if ( array_key_exists( "generate_key", $_POST ) ) {
 
 wp_print_scripts( 'quicktags' );
 ?>
-<form action="admin.php?page=subscribe-to-comments-reloaded/options/index.php&subscribepanel=<?php echo $current_panel ?>" method="post">
+<form action="" method="post">
 	<table class="form-table <?php echo $wp_locale->text_direction ?>">
+		<tr>
+			<th scope="row">
+				<label for="safely_uninstall"><?php _e( 'Safely Uninstall', 'subscribe-reloaded' ) ?></label></th>
+			<td>
+				<input type="radio" name="options[safely_uninstall]" id="safely_uninstall" value="yes"<?php echo ( subscribe_reloaded_get_option( 'safely_uninstall' ) == 'yes' ) ? ' checked="checked"' : ''; ?>> <?php _e( 'Yes', 'subscribe-reloaded' ) ?> &nbsp; &nbsp; &nbsp;
+				<input type="radio" name="options[safely_uninstall]" value="no" <?php echo ( subscribe_reloaded_get_option( 'safely_uninstall' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'No', 'subscribe-reloaded' ) ?>
+				<div class="description"><?php _e( 'This option will allow you to delete the plugin with WordPress without loosing your subscribers. Any database table and plugin options are wipeout.', 'subscribe-reloaded' ); ?></div>
+			</td>
+		</tr>
 		<tr>
 			<th scope="row"><label for="purge_days"><?php _e( 'Autopurge requests', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
 				<input type="text" name="options[purge_days]" id="purge_days" value="<?php echo subscribe_reloaded_get_option( 'purge_days' ); ?>" size="10"> <?php _e( 'days', 'subscribe-reloaded' ) ?>
 				<div class="description"><?php _e( "Delete pending subscriptions (not confirmed) after X days. Zero disables this feature.", 'subscribe-reloaded' ); ?></div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="stcr_position"><?php _e( 'StCR Position', 'subscribe-reloaded' ) ?></label></th>
+			<td>
+				<input type="radio" name="options[stcr_position]" id="stcr_position" value="yes"<?php echo ( subscribe_reloaded_get_option( 'stcr_position' ) == 'yes' ) ? ' checked="checked"' : ''; ?>> <?php _e( 'Yes', 'subscribe-reloaded' ) ?> &nbsp; &nbsp; &nbsp;
+				<input type="radio" name="options[stcr_position]" value="no" <?php echo ( subscribe_reloaded_get_option( 'stcr_position' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'No', 'subscribe-reloaded' ) ?>
+				<div class="description"><?php _e( 'If this option is enable the subscription box will be above the submit button in your comment form. Use this when your theme is outdated and using the incorrect WordPress Hooks and the checkbox is not displayed.', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -106,7 +127,7 @@ wp_print_scripts( 'quicktags' );
 				<div class="description"><?php _e( 'If enabled, will send email messages with content-type = text/html instead of text/plain', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
-		<tr>
+	<!-- 	<tr>
 			<th scope="row">
 				<label for="htmlify_message_links"><?php _e( 'HTMLify links in emails', 'wp-comment-subscriptions' ) ?></label>
 			</th>
@@ -115,7 +136,7 @@ wp_print_scripts( 'quicktags' );
 				<input type="radio" name="options[htmlify_message_links]" value="no" <?php echo ( subscribe_reloaded_get_option( 'htmlify_message_links' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'No', 'subscribe-reloaded' ) ?>
 				<div class="description"><?php _e( 'If enabled, will wrap all links in messages with <code>&lt;a href=""&gt;&lt;/a&gt;</code> (only when HTML emails enabled).', 'subscribe-reloaded' ); ?></div>
 			</td>
-		</tr>
+		</tr> -->
 		<tr>
 			<th scope="row">
 				<label for="process_trackbacks"><?php _e( 'Process trackbacks', 'subscribe-reloaded' ) ?></label></th>
@@ -151,15 +172,6 @@ wp_print_scripts( 'quicktags' );
 				<input type="radio" name="options[admin_bcc]" id="admin_bcc" value="yes"<?php echo ( subscribe_reloaded_get_option( 'admin_bcc' ) == 'yes' ) ? ' checked="checked"' : ''; ?>> <?php _e( 'Yes', 'subscribe-reloaded' ) ?> &nbsp; &nbsp; &nbsp;
 				<input type="radio" name="options[admin_bcc]" value="no" <?php echo ( subscribe_reloaded_get_option( 'admin_bcc' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'No', 'subscribe-reloaded' ) ?>
 				<div class="description"><?php _e( 'Send a copy of all Notifications to the administrator.', 'subscribe-reloaded' ); ?></div>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row">
-				<label for="commentbox_place"><?php _e( 'StCR Box Position', 'subscribe-reloaded' ) ?></label></th>
-			<td>
-				<input type="radio" name="options[commentbox_place]" id="commentbox_place" value="yes"<?php echo ( subscribe_reloaded_get_option( 'commentbox_place' ) == 'yes' ) ? ' checked="checked"' : ''; ?>> <?php _e( 'Yes', 'subscribe-reloaded' ) ?> &nbsp; &nbsp; &nbsp;
-				<input type="radio" name="options[commentbox_place]" value="no" <?php echo ( subscribe_reloaded_get_option( 'commentbox_place' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'No', 'subscribe-reloaded' ) ?>
-				<div class="description"><?php _e( 'If this option is enable the subscriptioin box will be above the submit button in your comment form.', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
 		<tr>

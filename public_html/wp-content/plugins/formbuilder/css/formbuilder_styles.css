@@ -45,8 +45,7 @@ div.formBuilderSuccess h4 {
 }
 .formBuilderForm .formBuilderSubmit {
 	clear: both;
-	padding-left: 160px;
-	padding-top: 10px;
+	text-align: right;
 }
 
 /* Generic Label Controls */
@@ -168,10 +167,6 @@ div.formBuilderPageBreak {
 }
 
 .formBuilderForm input {
-}
-
-.formBuilderSubmit input {
-	font-size: 120%;
 }
 
 .formBuilderHelpTextToggle {
