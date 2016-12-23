@@ -35,7 +35,7 @@ require_once('workflow/inc/class.Workflow.inc.php');
     <script language="javascript" type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/script.js?ver=1.0.0"></script>
     <?php 
         if(isset($_GET['page']) && $_GET['page'] == 'createworkflow') {
-            echo '<script language="javascript" type="text/javascript" src="'.get_stylesheet_directory_uri().'/workflow/createworkflowscript.js?ver=1.0.0"></script>';
+            echo '<script language="javascript" type="text/javascript" src="'.get_stylesheet_directory_uri().'/workflow/createworkflowscript.js?ver=1.1.0"></script>';
         } ?>
     <div id="content" class='staff-d'>
         <?php if (have_posts()) : while (have_posts()) : the_post();  ?>
