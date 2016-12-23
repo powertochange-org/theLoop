@@ -1,10 +1,10 @@
 <?php
 /*
-  Easy Pie Maintenance Mode Plugin
-  Copyright (C) 2013, Synthetic Thought LLC
-  website: easypiewp.com contact: bob@easypiewp.com
+  EZP Maintenance Mode Plugin
+  Copyright (C) 2016, Snap Creek LLC
+  website: snapcreek.com contact: support@snapcreek.com
 
-  Easy Pie Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
+  EZP Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
   June 2007. Copyright (C) 2007 Free Software Foundation, Inc., 51 Franklin
   St, Fifth Floor, Boston, MA 02110, USA
 
@@ -28,9 +28,9 @@ require_once("class-easy-pie-mm-utility.php");
 if (!class_exists('Easy_Pie_MM')) {
 
     /**
-     * Main class of Easy Pie Maintenance Mode plugin
+     * Main class of EZP Maintenance Mode Plugin
      *
-     * @author Bob Riley <bob@easypiewp.com>
+     * @author Snap Creek Software <support@snapcreek.com>
      * @copyright 2013 Synthetic Thought LLC
      */
     class Easy_Pie_MM extends Easy_Pie_Plugin_Base {
@@ -45,12 +45,14 @@ if (!class_exists('Easy_Pie_MM')) {
 
             parent::__construct(Easy_Pie_MM_Constants::PLUGIN_SLUG);
 
+			$in_preview_mode = isset($_GET['ezp_mm_preview']);
+							
             // Pseudo-constant intialization
 
             $this->add_class_action('plugins_loaded', 'plugins_loaded_handler');
 
             // RSR TODO - is_admin() just says if admin panel is attempting to be displayed - NOT to see if someone is an admin
-            if (is_admin() == true) {
+            if (is_admin()) {
 
                 if ($this->get_option_value("enabled") == true) {
 
@@ -65,7 +67,7 @@ if (!class_exists('Easy_Pie_MM')) {
                 //- Actions
                 $this->add_class_action('admin_init', 'admin_init_handler');
                 $this->add_class_action('admin_menu', 'add_to_admin_menu');
-            } else if ($this->get_option_value("enabled") == true) {
+            } else if (($this->get_option_value("enabled") == true) || $in_preview_mode) {
 
                 $this->add_class_action('template_redirect', 'display_maintenance_page');
             }
@@ -85,11 +87,12 @@ if (!class_exists('Easy_Pie_MM')) {
          * Display the maintenance page
          */
         public function display_maintenance_page() {
-
+			
+			$in_preview_mode = isset($_GET['ezp_mm_preview']);
+			
             if ((!defined('EASY_PIE_MM_DISABLE') || (EASY_PIE_MM_DISABLE == false))) {
-
-                // For now 
-                if (!is_user_logged_in()) {
+				
+                if (!is_user_logged_in() || $in_preview_mode) {
 
                     header('HTTP/1.1 503 Service Temporarily Unavailable');
                     header('Status: 503 Service Temporarily Unavailable');
@@ -106,7 +109,7 @@ if (!class_exists('Easy_Pie_MM')) {
                         if ($manifest != null) {
 
                             $active_manifest_path = $manifest->manifest_path;
-                            Easy_Pie_Utility::set_option($this->options, 'active_manifest_path', $active_manifest_path);
+                            EZP_MM_U::set_option($this->options, 'active_manifest_path', $active_manifest_path);
                         } else {
 
                             $this->debug("Couldn't find manifest for key " . $key);
@@ -193,7 +196,7 @@ if (!class_exists('Easy_Pie_MM')) {
          *  enqueue_styles
          *  Loads the required css links only for this plugin  */
         public function enqueue_styles() {
-            
+           
             $styleRoot = plugins_url() . "/" . Easy_Pie_MM_Constants::PLUGIN_SLUG . "/styles";
             
             wp_register_style('jquery.bxslider.css', $styleRoot . '/jquery.bxslider.css', array(), Easy_Pie_MM_Constants::PLUGIN_VERSION);
@@ -201,6 +204,7 @@ if (!class_exists('Easy_Pie_MM')) {
 
             wp_register_style('easy-pie-styles.css', $styleRoot . '/easy-pie-styles.css', array(), Easy_Pie_MM_Constants::PLUGIN_VERSION);
             wp_enqueue_style('easy-pie-styles.css');
+
         }
 
         // <editor-fold defaultstate="collapsed" desc=" Action Handlers ">
@@ -274,17 +278,17 @@ if (!class_exists('Easy_Pie_MM')) {
                 $this->options = array();
             }
 
-            Easy_Pie_Utility::set_option($this->options, 'plugin_version', Easy_Pie_MM_Constants::PLUGIN_VERSION);
+            EZP_MM_U::set_option($this->options, 'plugin_version', Easy_Pie_MM_Constants::PLUGIN_VERSION);
 
-            Easy_Pie_Utility::set_default_option($this->options, 'enabled', false);
-            Easy_Pie_Utility::set_default_option($this->options, 'page_template_key', "plain");
-            Easy_Pie_Utility::set_default_option($this->options, 'title', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'header', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'headline', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'message', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'logo_url', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'active_manifest_path', null);
-            Easy_Pie_Utility::set_default_option($this->options, 'css', null);
+            EZP_MM_U::set_default_option($this->options, 'enabled', false);
+            EZP_MM_U::set_default_option($this->options, 'page_template_key', "plain");
+            EZP_MM_U::set_default_option($this->options, 'title', null);
+            EZP_MM_U::set_default_option($this->options, 'header', null);
+            EZP_MM_U::set_default_option($this->options, 'headline', null);
+            EZP_MM_U::set_default_option($this->options, 'message', null);
+            EZP_MM_U::set_default_option($this->options, 'logo_url', null);
+            EZP_MM_U::set_default_option($this->options, 'active_manifest_path', null);
+            EZP_MM_U::set_default_option($this->options, 'css', null);
 
             update_option(Easy_Pie_MM_Constants::OPTION_NAME, $this->options);
         }
@@ -292,20 +296,21 @@ if (!class_exists('Easy_Pie_MM')) {
         public function add_settings_sections() {
 
             $section_id = 'easy-pie-mm-control-section';
-            add_settings_section($section_id, 'Control', array($this, 'render_control_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
-            add_settings_field('easy-pie-mm-mode-on', $this->__('Enabled'), array($this, 'render_checkbox_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-mode-on', 'subkey' => 'enabled'));
+            add_settings_section($section_id, 'CONTROL', array($this, 'render_control_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
+            add_settings_field('easy-pie-mm-mode-on', $this->__('Enabled'), array($this, 'render_enabled_checkbox'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id);
 
             $section_id = 'easy-pie-mm-theme-section';
-            add_settings_section($section_id, $this->__('Visuals'), array($this, 'render_theme_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
+            add_settings_section($section_id, $this->__('BACKGROUND'), array($this, 'render_theme_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
             add_settings_field('easy-pie-mm-theme', $this->__('Mini-theme'), array($this, 'render_active_theme_selector'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-theme', 'subkey' => 'page_template_key'));
 
             $section_id = 'easy-pie-mm-template_fields-section';
-            add_settings_section($section_id, $this->__('Fields'), array($this, 'render_template_fields_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
-            add_settings_field('easy-pie-mm-field-title', $this->__('Title'), array($this, 'render_text_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-title', 'subkey' => 'title'));
+            add_settings_section($section_id, $this->__('FIELDS'), array($this, 'render_template_fields_section'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY);
+            add_settings_field('easy-pie-mm-field-logo', $this->__('Logo'), array($this, 'render_logo_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-logo', 'subkey' => 'logo_url'));
+			add_settings_field('easy-pie-mm-field-title', $this->__('Title'), array($this, 'render_text_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-title', 'subkey' => 'title'));
             add_settings_field('easy-pie-mm-field-header', $this->__('Header'), array($this, 'render_text_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-header', 'subkey' => 'header'));
             add_settings_field('easy-pie-mm-field-headline', $this->__('Headline'), array($this, 'render_text_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-headline', 'subkey' => 'headline'));
             add_settings_field('easy-pie-mm-field-message', $this->__('Message'), array($this, 'render_text_area'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-message', 'subkey' => 'message', 'size' => 80));
-            add_settings_field('easy-pie-mm-field-logo', $this->__('Logo'), array($this, 'render_logo_field'), Easy_Pie_MM_Constants::MAIN_PAGE_KEY, $section_id, array('id' => 'easy-pie-mm-field-logo', 'subkey' => 'logo_url'));
+            
         }
 
         public function render_text_field($args) {
@@ -340,6 +345,23 @@ if (!class_exists('Easy_Pie_MM')) {
             <?php
         }
 
+		public function render_enabled_checkbox($args) {
+            $options = get_option(Easy_Pie_MM_Constants::OPTION_NAME);
+			
+            $subkey = 'enabled';
+            $id = 'easy-pie-mm-mode-on';
+
+            $optionExpression = Easy_Pie_MM_Constants::OPTION_NAME . "[" . $subkey . "]";
+            $currentValue = $options[$subkey];
+
+            $checkedText = checked(1, $options[$subkey], false);
+            ?>
+            <div>
+                <input style="margin-right:5px;" value="1" id="<?php echo $id; ?>" type="checkbox" name="<?php echo $optionExpression; ?>" <?php echo $checkedText; ?> >Yes</input>
+            </div>            
+            <?php					
+        }
+		
         // RSR: Why the hell do we need to set value to 1?
         public function render_checkbox_field($args) {
             $options = get_option(Easy_Pie_MM_Constants::OPTION_NAME);
@@ -546,8 +568,8 @@ if (!class_exists('Easy_Pie_MM')) {
         public function add_to_admin_menu() {
 
             // RSR TODO: Localize main page title and menu entry
-            //$page_hook_suffix = add_options_page("Easy Pie Maintenance Mode", "Maintenance Mode", "manage_options", Easy_Pie_MM_Constants::MAIN_PAGE_KEY, array($this, 'display_options_page'));
-            $page_hook_suffix = add_options_page("Easy Pie Maintenance Mode", "Maintenance Mode", "manage_options", Easy_Pie_MM_Constants::PLUGIN_SLUG, array($this, 'display_options_page'));
+            //$page_hook_suffix = add_options_page("EZP Maintenance Mode", "Maintenance Mode", "manage_options", Easy_Pie_MM_Constants::MAIN_PAGE_KEY, array($this, 'display_options_page'));
+            $page_hook_suffix = add_options_page("EZP Maintenance Mode", "Maintenance Mode", "manage_options", Easy_Pie_MM_Constants::PLUGIN_SLUG, array($this, 'display_options_page'));
 
             add_action('admin_print_scripts-' . $page_hook_suffix, array($this, 'enqueue_scripts'));
 
