@@ -1224,7 +1224,10 @@ class Workflow {
                     }
                     $response .= '>';
                 } else {
-                    $response .= '<input type="date" disabled value="'.date("Y-m-d", strtotime($fieldvalue)).'">';
+                    $response .= '<input type="date" disabled value="';
+                    if($fieldvalue != '')
+                        $response .= date("Y-m-d", strtotime($fieldvalue));
+                    $response .= '">';
                 }
                 $response .= '</div></div>';
             } else if($row['TYPE'] == 9) { //Horizontal Line
