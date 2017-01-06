@@ -3,10 +3,8 @@
 		<div id='simple-search-staff'>
 			<? /* Use GET method instead of POST so the URL to get to specific search results is
 			      visible to the end-user, and can be bookmarked or linked to */ ?>
-			<a href="./?page=search" style="background-color:#f7941d;"><p class='orange-box' style='padding: 9px;font-size:24px;'>WELCOME TO THE STAFF DIRECTORY!</p></a> 
+			<h3><p style='padding: 9px;font-size:24px; color:#f7941d;'>WELCOME TO THE STAFF DIRECTORY!</p></h3> 
 			<br>
-			<p>This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.</p> 
-
 			<p>Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.</p>
 			<?php /*<!-- BR>
 			<a class='false-link' onclick='$("#simple-search-staff").hide();$("#advanced-search-staff").show();'><h2>Show Adavanced Search</h2></a>*/?>
