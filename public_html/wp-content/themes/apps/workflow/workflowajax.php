@@ -38,7 +38,7 @@ function workflow_upload_document() {
                 }
                 if (move_uploaded_file($temp_name,$uploadfile)) {
                     $returndata['ReturnCode'] = '0';
-                    $returndata['Msg'] = 'File "'.$filename.'" uploaded successfully.';
+                    $returndata['Msg'] = 'File "'.$filename.'" uploaded successfully. <a href="/wp-content/uploads/p2cforms/'.$timefilename.'" target="blank">'.$timefilename.'</a>';
                     $returndata['Upload'] = $timefilename;
                 } else {
                     $returndata['ReturnCode'] = '6';

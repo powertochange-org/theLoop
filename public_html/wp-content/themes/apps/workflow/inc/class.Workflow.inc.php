@@ -1396,12 +1396,16 @@ class Workflow {
                     $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
                         onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
                         value="" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED'] && $fieldvalue == '')
                         $response .= ' required';
                     $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
-                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg"></div>';
-                    
+                    if($fieldvalue != '')
+                        $response .= '<span style="font-size:10px;color:red;">**Overwrites current file.</span>';
+                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg">';
+                    if($fieldvalue != '')
+                        $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/'.$fieldvalue.'" target="blank">'.$fieldvalue.'</a>';
+                    $response .= '</div>';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'"
                         value="'.$fieldvalue.'"/>';
                 } else if(!$emailMode) {

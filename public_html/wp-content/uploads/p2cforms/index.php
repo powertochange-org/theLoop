@@ -33,5 +33,6 @@ if (is_user_logged_in()) {
         }
     }
 }
-echo 'Please contact <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if you require access to this document.';
+echo 'Please contact <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if you require access to this document.<br>
+    <br>If you have just uploaded this document, it will become available once you submit your form.';
 ?>
