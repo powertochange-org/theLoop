@@ -1073,7 +1073,7 @@ class Workflow {
                         $response .= ' disabled';
                     $response .= '>';
                 } else {
-                    $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
+                    $response .= '<span class="disabled-response">'.$fieldvalue.'</span>';
                 }
                 $response .= '</div></div>';
             } else if($row['TYPE'] == 3) { //Newline
