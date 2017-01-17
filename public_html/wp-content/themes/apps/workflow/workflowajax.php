@@ -17,6 +17,7 @@ function workflow_upload_document() {
     switch ($_FILES["documents"]['error']) {
         case 0:  // good upload
             if (is_uploaded_file($temp_name)) {
+                $filename = str_replace('%', '', $filename); //Remove the % symbol from the filename
                 $timefilename = time()."_".basename($filename);
                 $uploadfile = $uploaddir.$timefilename;
                 

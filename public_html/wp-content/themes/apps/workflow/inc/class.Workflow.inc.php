@@ -3422,6 +3422,7 @@ class Workflow {
             return false;
         }
         $loggedInUser = Workflow::loggedInUser();
+        $filename = addslashes($filename); 
         
         $sql = "SELECT workflowformstatus.FORMID, USER, 
                         APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 

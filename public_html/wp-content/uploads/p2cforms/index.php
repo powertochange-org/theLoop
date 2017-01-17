@@ -6,6 +6,7 @@ if (is_user_logged_in()) {
     $filename = rawurldecode($_SERVER['REQUEST_URI']);
     $parts = explode("/", $filename);
     $filename = end($parts);
+    $filename = str_replace('\\', '', $filename);
     $obj = new Workflow();
     if($obj->hasDocumentAccess($filename) == true) {
         //Display the document
