@@ -294,6 +294,7 @@
 				<a class='orange_button' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
 			</div>
             <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+            <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
             <script>var jQuery_min = $.noConflict(true);</script>
             <script type="text/javascript" src="<?php bloginfo('template_url');?>/js/jquery.totemticker.js"></script>
             <script type="text/javascript">

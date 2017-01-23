@@ -6,6 +6,7 @@ if (is_user_logged_in()) {
     $filename = rawurldecode($_SERVER['REQUEST_URI']);
     $parts = explode("/", $filename);
     $filename = end($parts);
+    $filename = str_replace('\\', '', $filename);
     $obj = new Workflow();
     if($obj->hasDocumentAccess($filename) == true) {
         //Display the document
@@ -33,5 +34,6 @@ if (is_user_logged_in()) {
         }
     }
 }
-echo 'Please contact <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if you require access to this document.';
+echo 'Please contact <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if you require access to this document.<br>
+    <br>If you have just uploaded this document, it will become available once you submit your form.';
 ?>

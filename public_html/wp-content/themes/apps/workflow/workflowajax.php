@@ -17,6 +17,7 @@ function workflow_upload_document() {
     switch ($_FILES["documents"]['error']) {
         case 0:  // good upload
             if (is_uploaded_file($temp_name)) {
+                $filename = str_replace('%', '', $filename); //Remove the % symbol from the filename
                 $timefilename = time()."_".basename($filename);
                 $uploadfile = $uploaddir.$timefilename;
                 
@@ -38,7 +39,7 @@ function workflow_upload_document() {
                 }
                 if (move_uploaded_file($temp_name,$uploadfile)) {
                     $returndata['ReturnCode'] = '0';
-                    $returndata['Msg'] = 'File "'.$filename.'" uploaded successfully.';
+                    $returndata['Msg'] = 'File "'.$filename.'" uploaded successfully. <a href="/wp-content/uploads/p2cforms/'.$timefilename.'" target="blank">'.$timefilename.'</a>';
                     $returndata['Upload'] = $timefilename;
                 } else {
                     $returndata['ReturnCode'] = '6';

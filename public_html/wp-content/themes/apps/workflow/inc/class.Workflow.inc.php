@@ -1073,7 +1073,7 @@ class Workflow {
                         $response .= ' disabled';
                     $response .= '>';
                 } else {
-                    $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
+                    $response .= '<span class="disabled-response">'.$fieldvalue.'</span>';
                 }
                 $response .= '</div></div>';
             } else if($row['TYPE'] == 3) { //Newline
@@ -1224,7 +1224,10 @@ class Workflow {
                     }
                     $response .= '>';
                 } else {
-                    $response .= '<input type="date" disabled value="'.date("Y-m-d", strtotime($fieldvalue)).'">';
+                    $response .= '<input type="date" disabled value="';
+                    if($fieldvalue != '')
+                        $response .= date("Y-m-d", strtotime($fieldvalue));
+                    $response .= '">';
                 }
                 $response .= '</div></div>';
             } else if($row['TYPE'] == 9) { //Horizontal Line
@@ -1393,12 +1396,16 @@ class Workflow {
                     $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
                         onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
                         value="" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED'] && $fieldvalue == '')
                         $response .= ' required';
                     $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
-                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg"></div>';
-                    
+                    if($fieldvalue != '')
+                        $response .= '<span style="font-size:10px;color:red;">**Overwrites current file.</span>';
+                    $response .= '<div id="file'.$row['FIELDID'].'msg" class="upload-msg">';
+                    if($fieldvalue != '')
+                        $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/'.$fieldvalue.'" target="blank">'.$fieldvalue.'</a>';
+                    $response .= '</div>';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'"
                         value="'.$fieldvalue.'"/>';
                 } else if(!$emailMode) {
@@ -3415,6 +3422,7 @@ class Workflow {
             return false;
         }
         $loggedInUser = Workflow::loggedInUser();
+        $filename = addslashes($filename); 
         
         $sql = "SELECT workflowformstatus.FORMID, USER, 
                         APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 

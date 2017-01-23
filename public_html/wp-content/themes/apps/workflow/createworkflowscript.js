@@ -1233,8 +1233,7 @@ function hideSettings(setting, fieldType) {
             fieldType == 3 || //New Line  
             fieldType == 5 || //Autofill Name 
             fieldType == 6 || //Autofill Date 
-            fieldType == 9 || //Horizontal line 
-            fieldType == 14 //File Upload 
+            fieldType == 9 //Horizontal line 
             ) {
             return 1;
         } else {

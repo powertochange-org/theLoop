@@ -644,6 +644,15 @@ tr.selectedblackout:hover td {
     color: red;
 }
 
+.disabled-response {
+    background-color: #EBEBE4;
+    border: 1px solid #DCDCDC;
+    padding: 2px;
+    display: inline-block;
+    min-height: 20px;
+    min-width: 100%;
+}
+
 @media (max-width: 767px) {
     #content-workflow {
         margin: 0;
