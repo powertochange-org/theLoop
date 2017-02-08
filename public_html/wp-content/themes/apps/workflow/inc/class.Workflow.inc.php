@@ -2759,7 +2759,7 @@ class Workflow {
                         wdet.FIELDID
                 FROM workflowformdetails wdet
                 WHERE wdet.FORMID = '$form'
-                    AND wdet.TYPE IN ('0', '4', '5', '6', '7', '13', '2')
+                    AND wdet.TYPE IN ('0', '4', '5', '6', '7', '13', '2', '14', '15')
                 GROUP BY wdet.FIELDID
                 ORDER BY wdet.POSITION";
         $resultFields = $wpdb->get_results($sql, ARRAY_A);
@@ -2812,7 +2812,16 @@ class Workflow {
             $response .= '</td>';
             
             foreach($resultFields as $cell) {
-                $response .= '<td>'.$row['data'][$cell['FIELDID']].'</td>';
+                $response .= '<td';
+                if($cell['TYPE'] == '15')
+                    $response .= ' style="font-size:10px;min-width:200px;"';
+                $response .= '>';
+                if($cell['TYPE'] == '14')
+                    $response .= '<a href="'.$this->linkAddress.'/wp-content/uploads/p2cforms/';
+                $response .= $row['data'][$cell['FIELDID']];
+                if($cell['TYPE'] == '14')
+                    $response .= '" target="blank">'.$row['data'][$cell['FIELDID']].'</a>';
+                $response .= '</td>';
             }
             $response .= '<td style="font-size:10px;">'.$row['COMMENT'].'</td>';
             $response .= '</tr>';
