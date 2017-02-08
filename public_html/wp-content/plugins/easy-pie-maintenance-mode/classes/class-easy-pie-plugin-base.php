@@ -1,11 +1,11 @@
 <?php
 
 /*
-  Easy Pie Maintenance Mode Plugin
-  Copyright (C) 2013, Synthetic Thought LLC
-  website: easypiewp.com contact: bob@easypiewp.com
+  EZP Maintenance Mode Plugin
+  Copyright (C) 2016, Snap Creek LLC
+  website: snapcreek.com contact: support@snapcreek.com
  
-  Easy Pie Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
+  EZP Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
   June 2007. Copyright (C) 2007 Free Software Foundation, Inc., 51 Franklin
   St, Fifth Floor, Boston, MA 02110, USA
   
@@ -24,9 +24,9 @@
 if (!class_exists('Easy_Pie_Plugin_Base')) {
     
     /**
-     * Base class of Easy Pie plugins
+     * Base class of EZP plugins
      *
-     * @author Bob Riley <bob@easypiewp.com>
+     * @author Snap Creek Software <support@snapcreek.com>
      * @copyright 2013 Synthetic Thought LLC
      */
     class Easy_Pie_Plugin_Base {

@@ -1,20 +1,15 @@
 <div id="sidebar" class="staff-directory-sidebar">
 	<div class="sidebaritem-staff-directory">
-		<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1><BR>
-		
 		<div id='simple-search-staff'>
 			<? /* Use GET method instead of POST so the URL to get to specific search results is
 			      visible to the end-user, and can be bookmarked or linked to */ ?>
-			<form id='s_s_s' method="GET" action=""><div class='search-box' style='border-color:#adafb2'>
-				<input id='staff-search' class='search-input' type='textbox' name='search' placeholder='Search' />
-				<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
-			</div></form>
-			<BR>
-			<p>You can search using any relevant keywords, like name, job title, ministry, city, postal code, etc.</p>
-			<!-- BR>
-			<a class='false-link' onclick='$("#simple-search-staff").hide();$("#advanced-search-staff").show();'><h2>Show Adavanced Search</h2></a -->
+			<h3><p style='padding: 9px;font-size:24px; color:#f7941d;'>WELCOME TO THE STAFF DIRECTORY!</p></h3> 
+			<br>
+			<p>Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.</p>
+			<?php /*<!-- BR>
+			<a class='false-link' onclick='$("#simple-search-staff").hide();$("#advanced-search-staff").show();'><h2>Show Adavanced Search</h2></a>*/?>
 		</div>
-		<div id='advanced-search-staff' style='display:none'>
+		<?php /*<div id='advanced-search-staff' style='display:none'>
 			<form id='a_s_s' method="post" action="">
 				<input class='a_search' type='textbox' name='first_name' placeholder='First Name' />
 				<input class='a_search' type='textbox' name='last_name' placeholder='Last Name' />
@@ -26,6 +21,6 @@
 			</form>
 			<BR>
 			<a class='false-link' onclick='$("#advanced-search-staff").hide();$("#simple-search-staff").show();'><h2>Show Basic Search</h2></a>
-		</div>
+		</div>*/?>
 	</div>
 </div>

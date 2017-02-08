@@ -38,6 +38,7 @@ if (get_theme_mod('survey_active')) {
         <?php $siteURL = get_bloginfo('url'); ?>
         <link href="<?php bloginfo('template_url'); ?>/style.css" rel="stylesheet" type="text/css" />
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+        <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.ico" />
         <?php wp_head(); ?> 
          <script type='text/javascript'>
            
@@ -66,24 +67,22 @@ if (get_theme_mod('survey_active')) {
             type: "POST",
             // use apps.powertochange.org for master,
             // use ptcstaff.powertochange.local for dev 
-            url: "https://apps.powertochange.org/DesktopModules/AgapeConnect/StaffRmb/WebService.asmx/getStaffAppsButtonResponsive",
+            url: "https://staffappsbutton.powertochange.org",
             success: function (data) {
                 $('#staffAppButtonPlaceholder').replaceWith(data);
             }
           });           
         });
         </script>
-		<script type="text/javascript">
-		  var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-17609569-4']);
-		  _gaq.push(['_trackPageview']);
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-		  (function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })();
-		</script>
+      ga('create', 'UA-17609569-4', 'auto');
+      ga('send', 'pageview');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>  
     <body>
@@ -98,7 +97,10 @@ if (get_theme_mod('survey_active')) {
           <div class="search-position">
             <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
               <div class='search-box'>
-                <input name="s" id="s" class='search-input' placeholder='Search' type='text' />
+                <?php $_SESSION['wiki'] = 0; //Resetting wiki flag so that search results don't filter to wiki only ?>
+                <input name="s" id="s" class='search-input' placeholder='Search' type='text' 
+                <?php if(isset($_GET['s']) && !isset($_GET['wiki'])) {echo 'value="'.$s.'"';} ?>
+                data-swplive="true"/>
                 <img onclick="document.getElementById('sb_searchform').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search.png'>
               </div>
             </form>
@@ -112,10 +114,34 @@ if (get_theme_mod('survey_active')) {
           });
         
         });
-        
       </script>
       <button id="mobile-menu"><img src="/wp-content/themes/carmel/img/menu_icon.png" alt="" /></button>
 			<div class='menu_bg'>
 				<?php wp_nav_menu( array( 'theme_location'=>'main', 'menu_class' => 'menu', 'depth' => 1)); ?>
 			</div>
+      <div id='main-nav-full-screen'>
+        <?php wp_nav_menu( array( 'theme_location'=>'main', 'container' => '', 'menu_class' => 'menu', 'depth' => 3)); ?>
+      </div>
+      <script>
+        var timeout = null;
+        var selectedElement = null;
+        $('#main-nav-full-screen ul.menu > li').mouseenter(function() {
+          if(selectedElement != null) {
+            selectedElement.removeClass("display-sub-menu");
+            clearTimeout(timeout);
+          }
+          selectedElement = $(this).find('ul');
+          timeout = setTimeout(function () {
+              selectedElement.addClass("display-sub-menu");
+              console.log('display');
+          }, 500);
+        }).mouseleave(function() {
+          if(selectedElement != null) {
+            selectedElement.removeClass("display-sub-menu");
+          }
+          selectedElement = null;
+          clearTimeout(timeout);
+          timeout = null;
+        });
+      </script>
 		</header>

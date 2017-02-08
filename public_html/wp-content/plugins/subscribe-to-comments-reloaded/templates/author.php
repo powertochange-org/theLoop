@@ -19,30 +19,30 @@ if ( ! empty( $_POST['email_list'] ) ) {
 	$action = ! empty( $_POST['sra'] ) ? $_POST['sra'] : ( ! empty( $_GET['sra'] ) ? $_GET['sra'] : '' );
 	switch ( $action ) {
 	case 'delete':
-		$rows_affected = $wp_subscribe_reloaded->delete_subscriptions( $post_ID, $email_list );
+		$rows_affected = $wp_subscribe_reloaded->stcr->delete_subscriptions( $post_ID, $email_list );
 		echo '<p class="updated">' . __( 'Subscriptions deleted:', 'subscribe-reloaded' ) . " $rows_affected</p>";
 		break;
 	case 'suspend':
-		$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_ID, $email_list, 'C' );
+		$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_ID, $email_list, 'C' );
 		echo '<p class="updated">' . __( 'Subscriptions suspended:', 'subscribe-reloaded' ) . " $rows_affected</p>";
 		break;
 	case 'activate':
-		$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_ID, $email_list, '-C' );
+		$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_ID, $email_list, '-C' );
 		echo '<p class="updated">' . __( 'Subscriptions activated:', 'subscribe-reloaded' ) . " $rows_affected</p>";
 		break;
 	case 'force_y':
-		$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_ID, $email_list, 'Y' );
+		$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_ID, $email_list, 'Y' );
 		echo '<p class="updated">' . __( 'Subscriptions updated:', 'subscribe-reloaded' ) . " $rows_affected</p>";
 		break;
 	case 'force_r':
-		$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_ID, $email_list, 'R' );
+		$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_ID, $email_list, 'R' );
 		echo '<p class="updated">' . __( 'Subscriptions updated:', 'subscribe-reloaded' ) . " $rows_affected</p>";
 		break;
 	default:
 		break;
 	}
 }
-$message = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_author_text' ) ), ENT_COMPAT, 'UTF-8' );
+$message = html_entity_decode( stripslashes( get_option( 'subscribe_reloaded_author_text' ) ), ENT_QUOTES, 'UTF-8' );
 if ( function_exists( 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage' ) ) {
 	$message = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage( $message );
 }
@@ -52,7 +52,7 @@ echo "<p>$message</p>";
 	<form action="<?php echo htmlspecialchars( $_SERVER['REQUEST_URI'] ) ?>" method="post" id="email_list_form" name="email_list_form" onsubmit="if(this.sra[0].checked) return confirm('<?php _e( 'Please remember: this operation cannot be undone. Are you sure you want to proceed?', 'subscribe-reloaded' ) ?>')">
 		<fieldset style="border:0">
 			<?php
-$subscriptions = $wp_subscribe_reloaded->get_subscriptions( 'post_id', 'equals', $post_ID, 'dt', 'ASC' );
+$subscriptions = $wp_subscribe_reloaded->stcr->get_subscriptions( 'post_id', 'equals', $post_ID, 'dt', 'ASC' );
 if ( is_array( $subscriptions ) && ! empty( $subscriptions ) ) {
 	echo '<p id="subscribe-reloaded-title-p">' . __( 'Title', 'subscribe-reloaded' ) . ': <strong>' . $target_post->post_title . '</strong></p>';
 	echo '<p id="subscribe-reloaded-legend-p">' . __( 'Legend: Y = all comments, R = replies only, C = inactive', 'subscribe-reloaded' ) . '</p>';
@@ -68,12 +68,15 @@ if ( is_array( $subscriptions ) && ! empty( $subscriptions ) ) {
 	echo '</ul>';
 	echo '<p id="subscribe-reloaded-select-all-p"><a class="subscribe-reloaded-small-button" href="#" onclick="t=document.forms[\'email_list_form\'].elements[\'email_list[]\'];c=t.length;if(!c){t.checked=true}else{for(var i=0;i<c;i++){t[i].checked=true}};return false;">' . __( 'Select all', 'subscribe-reloaded' ) . '</a> ';
 	echo '<a class="subscribe-reloaded-small-button" href="#" onclick="t=document.forms[\'email_list_form\'].elements[\'email_list[]\'];c=t.length;if(!c){t.checked=!t.checked}else{for(var i=0;i<c;i++){t[i].checked=false}};return false;">' . __( 'Invert selection', 'subscribe-reloaded' ) . '</a></p>';
-	echo '<p id="subscribe-reloaded-action-p">' . __( 'Action:', 'subscribe-reloaded' ) . '
-			<input type="radio" name="sra" value="delete" id="action_type_delete" /> <label for="action_type_delete">' . __( 'Delete', 'subscribe-reloaded' ) . '</label> &nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="sra" value="suspend" id="action_type_suspend" checked="checked" /> <label for="action_type_suspend">' . __( 'Suspend', 'subscribe-reloaded' ) . '</label> &nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="sra" value="force_y" id="action_type_force_y" /> <label for="action_type_force_y">' . __( 'All comments', 'subscribe-reloaded' ) . '</label> &nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="sra" value="force_r" id="action_type_force_r" /> <label for="action_type_force_r">' . __( 'Replies to my comments', 'subscribe-reloaded' ) . '</label> &nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="sra" value="activate" id="action_type_activate" /> <label for="action_type_activate">' . __( 'Activate', 'subscribe-reloaded' ) . '</label></p>';
+	echo '<p id="subscribe-reloaded-action-p">' . __( 'Action:', 'subscribe-reloaded' );
+	echo '<select name="sra">';
+		echo '<option value="">'. __( 'Choose your action', 'subscribe-reloaded' ) .'</option>';
+		echo '<option value="delete">'. __( 'Delete', 'subscribe-reloaded' ) .'</option>';
+		echo '<option value="suspend">'. __( 'Suspend', 'subscribe-reloaded' ) .'</option>';
+		echo '<option value="force_y">'. __( 'All comments', 'subscribe-reloaded' ) .'</option>';
+		echo '<option value="force_r">'. __( 'Replies to my comments', 'subscribe-reloaded' ) .'</option>';
+		echo '<option value="activate">'. __( 'Activate', 'subscribe-reloaded' ) .'</option>';
+	echo '<select>';
 	echo '<p id="subscribe-reloaded-update-p"><input type="submit" class="subscribe-form-button" value="' . __( 'Update subscriptions', 'subscribe-reloaded' ) . '" /><input type="hidden" name="srp" value="' . intval( $post_ID ) . '"/></p>';
 
 } else {

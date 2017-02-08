@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
  	function formbuilder_options_default()
  	{
  		global $wpdb;
@@ -172,11 +174,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	
 	/**
 	 * Old form editing controls.
-	 * @param unknown_type $form_id
+	 * @param $form_id
 	 */
  	function formbuilder_options_editForm($form_id)
  	{
  		global $wpdb;
+	    if(!is_numeric($form_id))
+	    	return;
  		
  		/*
  		 * Permissions control.  Block users who can't create new forms.
@@ -293,14 +297,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 			if(isset($_POST['fieldAction']) AND is_array($_POST['fieldAction']))
 			{
 				$fieldAction = $_POST['fieldAction'];
-				$fieldKey = key($fieldAction);
+				$fieldKey = addslashes(htmlentities(key($fieldAction)));
 				$fieldValue = current($fieldAction);
 
 				if($fieldValue == __('Add New Field', 'formbuilder'))
 				{
 					if($fieldKey == "newField")
 					{	// Create a new field at the end of the form.
-						$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order DESC;";
+						$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order DESC;";
 						$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 #						$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order DESC");
 						$actionRow = $relatedRows[0];
@@ -321,13 +325,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 				}
 				if($fieldValue == __("Add Another", 'formbuilder'))
 				{
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 					#$actionRow = $tableFields->load_row($fieldKey);
 
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order DESC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 					#$relatedRows = $tableFields->search_rows("$form_id", "form_id");
 
@@ -363,11 +367,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order ASC");
 #					$tableFields->remove_row($fieldKey);
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order ASC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order ASC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 					$sql = "DELETE FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey';";
@@ -392,11 +396,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #					$actionRow = $tableFields->load_row($fieldKey);
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order ASC");
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order ASC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order ASC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 #					$firstRow = $tableFields->load_row(reset($relatedRows));
@@ -433,12 +437,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 				if($fieldValue == __("Move Down", 'formbuilder'))
 				{
 #					$actionRow = $tableFields->load_row($fieldKey);
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = $fieldKey ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE id = '$fieldKey' ORDER BY display_order DESC;";
 					$results = $wpdb->get_results($sql, ARRAY_A);
 					$actionRow = $results[0];
 
 #					$relatedRows = $tableFields->search_rows("$form_id", "form_id", "display_order DESC");
-					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order DESC;";
+					$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order DESC;";
 					$relatedRows = $wpdb->get_results($sql, ARRAY_A);
 
 
@@ -628,6 +632,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  	function formbuilder_options_exportForm($form_id)
  	{
  		global $wpdb;
+	    if(!is_numeric($form_id))
+	    	return;
 		
 		if(!formbuilder_user_can('create'))
 		{
@@ -642,7 +648,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  		$results = $wpdb->get_results($sql, ARRAY_A);
  		$form = $results[0];
  		
- 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = $form_id ORDER BY display_order ASC;";
+ 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FIELDS . " WHERE form_id = '$form_id' ORDER BY display_order ASC;";
  		$fields = $wpdb->get_results($sql, ARRAY_A);
  		if($fields)
  		{
@@ -658,7 +664,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  		$autoresponse = $results[0];
  		$form['autoresponse'] = $autoresponse;
  		
- 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_TAGS . " WHERE form_id = $form_id;";
+ 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_TAGS . " WHERE form_id = '$form_id';";
  		$tags = $wpdb->get_results($sql, ARRAY_A);
  		if($tags)
  		{
@@ -895,6 +901,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  	function formbuilder_options_copyForm($form_id)
  	{
 		global $wpdb;
+	    if(!is_numeric($form_id))
+	    	return;
 		
 		if(!formbuilder_user_can('create'))
 		{
@@ -943,6 +951,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	function formbuilder_options_removeForm($form_id)
 	{
 		global $wpdb;
+		if(!is_numeric($form_id))
+			return;
 		
 		if(!formbuilder_user_can('create'))
 		{

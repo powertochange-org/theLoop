@@ -78,7 +78,7 @@ wp_print_scripts( 'quicktags' );
 $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' ) == 'yes' );
 ?>
 
-<form action="admin.php?page=subscribe-to-comments-reloaded/options/index.php&subscribepanel=<?php echo $current_panel ?>" method="post">
+<form action="" method="post">
 	<h3><?php _e( 'Options', 'subscribe-reloaded' ) ?></h3>
 	<table class="form-table <?php echo $wp_locale->text_direction ?>">
 		<tbody>
@@ -89,7 +89,7 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 			<td>
 				<input type="radio" name="options[manager_page_enabled]" id="manager_page_enabled" value="yes"<?php echo ( subscribe_reloaded_get_option( 'manager_page_enabled', 'no' ) == 'yes' ) ? ' checked="checked"' : ''; ?>> <?php _e( 'Enabled', 'subscribe-reloaded' ) ?> &nbsp; &nbsp; &nbsp;
 				<input type="radio" name="options[manager_page_enabled]" value="no" <?php echo ( subscribe_reloaded_get_option( 'manager_page_enabled', 'no' ) == 'no' ) ? '  checked="checked"' : ''; ?>> <?php _e( 'Disabled', 'subscribe-reloaded' ) ?>
-				<div class="description"><?php _e( 'Disable the virtual management page if you need to create a <a href="http://behstant.com/subscribe-reloaded/realMgnPage.php">real page</a> to make your theme happy.', 'subscribe-reloaded' ) ?></div>
+				<div class="description"><?php _e( 'Disable the virtual management page if you need to create a <a href="https://github.com/stcr/subscribe-to-comments-reloaded/wiki/KB#create-a-real-management-page">real page</a> to make your theme happy.', 'subscribe-reloaded' ) ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -131,8 +131,16 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 			<th scope="row"><label for="request_mgmt_link"><?php _e( 'Request link', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
-				<textarea name="options[request_mgmt_link]" id="request_mgmt_link" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'request_mgmt_link' ); ?></textarea>
-
+				<?php
+					$id_request_mgmt_link = "request_mgmt_link";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_request_mgmt_link}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_request_mgmt_link ), $id_request_mgmt_link, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( 'Text shown to those who request to manage their subscriptions.', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
@@ -141,8 +149,16 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 				<label for="request_mgmt_link_thankyou"><?php _e( 'Request submitted', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
-				<textarea name="options[request_mgmt_link_thankyou]" id="request_mgmt_link_thankyou" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'request_mgmt_link_thankyou' ); ?></textarea>
-
+				<?php
+					$id_request_mgmt_link_thankyou = "request_mgmt_link_thankyou";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_request_mgmt_link_thankyou}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_request_mgmt_link_thankyou ), $id_request_mgmt_link_thankyou, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( 'Thank you note shown after the request here above has been processed. Allowed tags: [post_title], [post_permalink]', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
@@ -151,8 +167,16 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 				<label for="subscribe_without_commenting"><?php _e( 'Subscribe without commenting', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
-				<textarea name="options[subscribe_without_commenting]" id="subscribe_without_commenting" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'subscribe_without_commenting' ); ?></textarea>
-
+				<?php
+					$id_subscribe_without_commenting = "subscribe_without_commenting";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_subscribe_without_commenting}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_subscribe_without_commenting ), $id_subscribe_without_commenting, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( 'Text shown to those who want to subscribe without commenting. Allowed tags: [post_title], [post_permalink]', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
@@ -161,8 +185,16 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 				<label for="subscription_confirmed"><?php _e( 'Subscription processed', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
-				<textarea name="options[subscription_confirmed]" id="subscription_confirmed" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'subscription_confirmed' ); ?></textarea>
-
+				<?php
+					$id_subscription_confirmed = "subscription_confirmed";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_subscription_confirmed}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_subscription_confirmed ), $id_subscription_confirmed, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( 'Thank you note shown after the subscription request has been processed (double check-in disabled). Allowed tags: [post_title], [post_permalink]', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
@@ -171,24 +203,48 @@ $is_html_enabled = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' )
 				<label for="subscription_confirmed_dci"><?php _e( 'Subscription processed (DCI)', 'subscribe-reloaded' ) ?></label>
 			</th>
 			<td>
-				<textarea name="options[subscription_confirmed_dci]" id="subscription_confirmed_dci" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'subscription_confirmed_dci' ); ?></textarea>
-
+				<?php
+					$id_subscription_confirmed_dci = "subscription_confirmed_dci";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_subscription_confirmed_dci}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_subscription_confirmed_dci ), $id_subscription_confirmed_dci, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( 'Thank you note shown after the subscription request has been processed (double check-in enabled). Allowed tags: [post_title], [post_permalink]', 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row"><label for="author_text"><?php _e( 'Authors', 'subscribe-reloaded' ) ?></label></th>
 			<td>
-				<textarea name="options[author_text]" id="author_text" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'author_text' ); ?></textarea>
-
+				<?php
+					$id_author_text = "author_text";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_author_text}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_author_text ), $id_author_text, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( "Introductory text for the authors' management page.", 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row"><label for="user_text"><?php _e( 'Users', 'subscribe-reloaded' ) ?></label></th>
 			<td>
-				<textarea name="options[user_text]" id="user_text" rows="3" cols="70"><?php echo subscribe_reloaded_get_option( 'user_text' ); ?></textarea>
-
+				<?php
+					$id_user_text = "user_text";
+					$args_notificationContent = array(
+						"media_buttons" => false,
+						"textarea_rows" => 3,
+						"teeny"         => true,
+						"textarea_name" => "options[{$id_user_text}]"
+					);
+					wp_editor( subscribe_reloaded_get_option( $id_user_text ), $id_user_text, $args_notificationContent );
+				?>
 				<div class="description"><?php _e( "Introductory text for the users' management page.", 'subscribe-reloaded' ); ?></div>
 			</td>
 		</tr>

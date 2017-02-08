@@ -441,13 +441,118 @@ function sanitize_date($string) {
     return $string;
 }
 
+/*Used for the loop search if the user clicks on one of the filter buttons.*/
+function wpshock_search_filter( $query ) {
+    if ( $query->is_search ) {
+        $searchfilter = "";
+        if(isset($_GET['searchfilter']))
+            $searchfilter = $_GET['searchfilter'];
+        $query->set( 'post_type', array($searchfilter) );
+    }
+    return $query;
+}
+if(isset($_GET['searchfilter']))
+    add_filter('pre_get_posts','wpshock_search_filter');
+
+/*Searches for posts that are newer than 3 years and searches for all kb articles and loop pages.*/
+function wpsearch_date_filter( $where ) {
+    global $wp_query;
+    
+    $where .= " AND (post_date >= '".date('Y-m-d', strtotime('-3 years'))."' 
+        AND wp_posts.post_type = 'post' 
+        OR wp_posts.post_type IN ('page', 'incsub_wiki')) ";
+    
+    return $where;
+}
+
+//Applies the date filter only when using the search bar
+if(isset($_GET['s']) && !isset($_GET['showarchived']))
+    add_filter( 'posts_where' , 'wpsearch_date_filter' );
+ 
+
 /*
  * Jason B: Commented this out 2015-02-23 as it needs more testing before deploying to production. But, need to 
  *  deploy other changes in this file to production
  *
+ * Gerald B: Adding code to check if there is a publish button first. Then display the confirmation alert. 
+ */
 function add_publish_confirmation(){ 
-    echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    //echo '<script type="text/javascript" src="/wp-content/themes/carmel/functions.js"></script>';
+    $confirmation_message = get_option( 'publishconfirmationmessage' , 'Are you sure you want to publish this post?' ); 
+    
+    //Get all categories including ones that have no posts yet. 
+    $cats = get_categories(array('hide_empty' => false));
+    
+    echo '<script type="text/javascript">';
+    echo 'var publish = document.getElementById("publish");'; 
+    echo 'if(publish !== null){';
+    echo 'publish.onclick = function(){ ';
+    echo 'var cats = document.getElementsByName("post_category[]");';
+    echo 'var wpcats = [];';
+    $i = 0;
+    foreach($cats as $cat) {
+        echo 'wpcats['.$i++.']'.' = ['.$cat->cat_ID.', "'.$cat->name.'"];';
+    }
+    //Matches all the checked categories with their names and creates a confirmation message displaying those categories.
+    echo '
+        var categoryMessage = "";
+        var i;
+        for (i = 0; i < cats.length; i++) {
+            if (cats[i].type == "checkbox" && cats[i].checked) {
+                var selectedCat = cats[i].id.split("in-category-")[1];
+                var i;
+                for (x = 0; x < wpcats.length; x++) {
+                    if(selectedCat == wpcats[x][0]) {
+                        categoryMessage += ("\n" + wpcats[x][1]);
+                    }
+                }
+            }
+        }';
+    echo 'var fullMessage = "'.$confirmation_message.'" + categoryMessage;';
+    echo 'return confirm(fullMessage); };'; 
+    echo '}'; 
+    echo '</script>'; 
 } 
 add_action('admin_footer', 'add_publish_confirmation');
-*/
+
+// Remove social links from subscribe2 email messages
+function s2_social_links_off() {
+    return array();
+}
+add_filter('s2_social_links', 's2_social_links_off');
+
+function getHttpResponseCode_using_curl($url, $followredirects = true){
+    // returns int responsecode, or false (if url does not exist or connection timeout occurs)
+    // NOTE: could potentially take up to 0-30 seconds , blocking further code execution (more or less depending on connection, target site, and local timeout settings))
+    // if $followredirects == false: return the FIRST known httpcode (ignore redirects)
+    // if $followredirects == true : return the LAST  known httpcode (when redirected)
+    if(! $url || ! is_string($url)){
+        return false;
+    }
+    $ch = curl_init($url);
+    if($ch === false){
+        return false;
+    }
+    curl_setopt($ch, CURLOPT_HEADER         ,true);    // we want headers
+    curl_setopt($ch, CURLOPT_NOBODY         ,true);    // dont need body
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER ,true);    // catch output (do NOT print!)
+    if($followredirects){
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION ,true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS      ,10);  // fairly random number, but could prevent unwanted endless redirects with followlocation=true
+    }else{
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION ,false);
+    }
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);   // fairly random number (seconds)... but could prevent waiting forever to get a result
+    curl_setopt($ch, CURLOPT_TIMEOUT        ,6);   // fairly random number (seconds)... but could prevent waiting forever to get a result
+    //curl_setopt($ch, CURLOPT_USERAGENT      ,"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");   // pretend we're a regular browser
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_exec($ch);
+    if(curl_errno($ch)){   // should be 0
+        curl_close($ch);
+        return false;
+    }
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // note: php.net documentation shows this returns a string, but really it returns an int
+    curl_close($ch);
+    return $code;
+}
 ?>

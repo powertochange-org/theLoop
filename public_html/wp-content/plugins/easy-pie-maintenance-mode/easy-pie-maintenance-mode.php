@@ -1,21 +1,21 @@
 <?php
 /*
-  Plugin Name: Easy Pie Maintenance Mode
-  Plugin URI: http://easypiewp.com/easy-pie-maintenance-mode-faq/
+  Plugin Name: EZP Maintenance Mode
+  Plugin URI: https://snapcreek.com/ezp-coming-soon/docs/faq-maintenance-mode/
   Description: Lets people know that your site is temporarily down.
-  Version: 0.6.7
-  Author: Bob Riley
-  Author URI: http://www.easypiewp.com
+  Version: 1.0.1
+  Author: Snap Creek Software
+  Author URI: https://snapcreek.com
   Text Domain: easy-pie-maintenance-mode
   License: GPL v3 
 */
 
 /*
-  Easy Pie Maintenance Mode Plugin
-  Copyright (C) 2013, Synthetic Thought LLC
-  website: easypiewp.com contact: bob@easypiewp.com
+  EZP Maintenance Mode Plugin
+  Copyright (C) 2016, Snap Creek LLC
+  website: snapcreek.com contact: support@snapcreek.com
 
-  Easy Pie Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
+  EZP Maintenance Mode Plugin is distributed under the GNU General Public License, Version 3,
   June 2007. Copyright (C) 2007 Free Software Foundation, Inc., 51 Franklin
   St, Fifth Floor, Boston, MA 02110, USA
   

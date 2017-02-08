@@ -14,9 +14,10 @@ case 'add':
 	$post_id = esc_attr( $post_id ); // Let us make sure that there is not XSS exploits.
 	$email   = esc_attr( $email ); // Let us make sure that there is not XSS exploits.
 
-	$wp_subscribe_reloaded->add_subscription( $post_id, $email, $status );
+	$wp_subscribe_reloaded->stcr->add_subscription( $post_id, $email, $status );
+
 	if ( strpos( $status, 'C' ) !== false ) {
-		$wp_subscribe_reloaded->confirmation_email( $post_id, $email );
+		$wp_subscribe_reloaded->stcr->confirmation_email( $post_id, $email );
 	}
 
 	echo '<div class="updated"><p>' . __( 'Subscription added.', 'subscribe-reloaded' ) . '</p></div>';
@@ -32,8 +33,8 @@ case 'edit':
 	$old_email   = esc_attr( $old_email ); // Let us make sure that there is not XSS exploits.
 	$new_email   = esc_attr( $new_email ); // Let us make sure that there is not XSS exploits.
 
-	$wp_subscribe_reloaded->update_subscription_status( $post_id, $old_email, $status );
-	$wp_subscribe_reloaded->update_subscription_email( $post_id, $old_email, $new_email );
+	$wp_subscribe_reloaded->stcr->update_subscription_status( $post_id, $old_email, $status );
+	$wp_subscribe_reloaded->stcr->update_subscription_email( $post_id, $old_email, $new_email );
 
 	echo '<div class="updated"><p>' . __( 'Subscriptions updated.', 'subscribe-reloaded' ) . '</p></div>';
 	break;
@@ -45,7 +46,7 @@ case 'delete-subscription':
 	$post_id = esc_attr( $post_id ); // Let us make sure that there is not XSS exploits.
 	$email   = esc_attr( $email ); // Let us make sure that there is not XSS exploits.
 
-	$wp_subscribe_reloaded->delete_subscriptions( $post_id, $email );
+	$wp_subscribe_reloaded->stcr->delete_subscriptions( $post_id, $email );
 
 	echo '<div class="updated"><p>' . __( 'Subscription deleted.', 'subscribe-reloaded' ) . '</p></div>';
 	break;
@@ -65,23 +66,23 @@ default:
 
 		switch ( $action ) {
 		case 'delete':
-			$rows_affected = $wp_subscribe_reloaded->delete_subscriptions( $post_list, $email_list );
+			$rows_affected = $wp_subscribe_reloaded->stcr->delete_subscriptions( $post_list, $email_list );
 			echo '<div class="updated"><p>' . __( 'Subscriptions deleted:', 'subscribe-reloaded' ) . " $rows_affected</p></div>";
 			break;
 		case 'suspend':
-			$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_list, $email_list, 'C' );
+			$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_list, $email_list, 'C' );
 			echo '<div class="updated"><p>' . __( 'Subscriptions suspended:', 'subscribe-reloaded' ) . " $rows_affected</p></div>";
 			break;
 		case 'activate':
-			$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_list, $email_list, '-C' );
+			$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_list, $email_list, '-C' );
 			echo '<div class="updated"><p>' . __( 'Subscriptions activated:', 'subscribe-reloaded' ) . " $rows_affected</p></div>";
 			break;
 		case 'force_y':
-			$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_list, $email_list, 'Y' );
+			$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_list, $email_list, 'Y' );
 			echo '<div class="updated"><p>' . __( 'Subscriptions updated:', 'subscribe-reloaded' ) . " $rows_affected</p></div>";
 			break;
 		case 'force_r':
-			$rows_affected = $wp_subscribe_reloaded->update_subscription_status( $post_list, $email_list, 'R' );
+			$rows_affected = $wp_subscribe_reloaded->stcr->update_subscription_status( $post_list, $email_list, 'R' );
 			echo '<div class="updated"><p>' . __( 'Subscriptions updated:', 'subscribe-reloaded' ) . " $rows_affected</p></div>";
 			break;
 		default:
@@ -98,17 +99,17 @@ $order         = ! empty( $_POST['sro'] ) ? $_POST['sro'] : ( ! empty( $_GET['sr
 $offset        = ! empty( $_POST['srsf'] ) ? intval( $_POST['srsf'] ) : ( ! empty( $_GET['srsf'] ) ? intval( $_GET['srsf'] ) : 0 );
 $limit_results = ! empty( $_POST['srrp'] ) ? intval( $_POST['srrp'] ) : ( ! empty( $_GET['srrp'] ) ? intval( $_GET['srrp'] ) : 25 );
 
-$subscriptions = $wp_subscribe_reloaded->get_subscriptions( $search_field, $operator, $search_value, $order_by, $order, $offset, $limit_results );
-$count_total   = count( $wp_subscribe_reloaded->get_subscriptions( $search_field, $operator, $search_value ) );
+$subscriptions = $wp_subscribe_reloaded->stcr->get_subscriptions( $search_field, $operator, $search_value, $order_by, $order, $offset, $limit_results );
+$count_total   = count( $wp_subscribe_reloaded->stcr->get_subscriptions( $search_field, $operator, $search_value ) );
 
 $count_results = count( $subscriptions ); // 0 if $results is null
 $ending_to     = min( $count_total, $offset + $limit_results );
 $previous_link = $next_link = '';
 if ( $offset > 0 ) {
 	$new_starting  = ( $offset > $limit_results ) ? $offset - $limit_results : 0;
-	$previous_link = "<a href='options-general.php?page=subscribe-to-comments-reloaded/options/index.php&amp;subscribepanel=1&amp;srf=$search_field&amp;srt=" . urlencode( $operator ) . "&amp;srv=$search_value&amp;srob=$order_by&amp;sro=$order&amp;srsf=$new_starting&amp;srrp=$limit_results'>" . __( '&laquo; Previous', 'subscribe-reloaded' ) . "</a> ";
+	$previous_link = "<a href='admin.php?page=stcr_manage_subscriptions&amp;srf=$search_field&amp;srt=" . urlencode( $operator ) . "&amp;srv=$search_value&amp;srob=$order_by&amp;sro=$order&amp;srsf=$new_starting&amp;srrp=$limit_results'>" . __( '&laquo; Previous', 'subscribe-reloaded' ) . "</a> ";
 }
 if ( ( $ending_to < $count_total ) && ( $count_results > 0 ) ) {
 	$new_starting = $offset + $limit_results;
-	$next_link    = "<a href='options-general.php?page=subscribe-to-comments-reloaded/options/index.php&amp;subscribepanel=1&amp;srf=$search_field&amp;srt=" . urlencode( $operator ) . "&amp;srv=$search_value&amp;srob=$order_by&amp;sro=$order&amp;srsf=$new_starting&amp;srrp=$limit_results'>" . __( 'Next &raquo;', 'subscribe-reloaded' ) . "</a> ";
+	$next_link    = "<a href='admin.php?page=stcr_manage_subscriptions&amp;srf=$search_field&amp;srt=" . urlencode( $operator ) . "&amp;srv=$search_value&amp;srob=$order_by&amp;sro=$order&amp;srsf=$new_starting&amp;srrp=$limit_results'>" . __( 'Next &raquo;', 'subscribe-reloaded' ) . "</a> ";
 }

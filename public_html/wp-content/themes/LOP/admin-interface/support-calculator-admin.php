@@ -23,7 +23,7 @@ function parseConstantInput(){
 	if (isAdmin()){
 
 		//todo error handling
-		$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["constants"])));
+		$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["constants"]), $wpdb));
 		if (count($data) < 51){
 			return; //no data
 		}

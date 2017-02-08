@@ -11,8 +11,7 @@ $delimiter = '&#x2e;';
 $current_user = wp_get_current_user();
 $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
 $sql = "SELECT CONCAT(
-		`area_code`, '$delimiter', 
-		REPLACE(`contact_number`,'-', '$delimiter'),
+		REPLACE(REPLACE(REPLACE(REPLACE(`phone_number`,'-', '$delimiter'), ' ', '$delimiter'), '(', ''), ')', ''),
 		CASE
 			WHEN `extension` is null THEN ''
 			WHEN `extension` = '' THEN ''
@@ -21,16 +20,14 @@ $sql = "SELECT CONCAT(
 		) as number
 			FROM phone_number 
 			WHERE 
-				`employee_id` = '$user->external_id' and 
+				`employee_number` = '$user->external_id' and
 				`is_ministry` = 1 and 
-				`phone_type` = 'BUS' 
-			ORDER BY `is_primary` DESC
+				`phone_type` = 'Business' 
 			LIMIT 0,1";
 //echo $sql;
 $phone = $wpdb->get_row($sql);
 $cell = $wpdb->get_row("SELECT CONCAT(
-		`area_code`, '$delimiter', 
-		REPLACE(`contact_number`,'-', '$delimiter'),
+		REPLACE(REPLACE(REPLACE(REPLACE(`phone_number`,'-', '$delimiter'), ' ', '$delimiter'), '(', ''), ')', ''),
 		CASE
 			WHEN `extension` is null THEN ''
 			WHEN `extension` = '' THEN ''
@@ -39,10 +36,9 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 		) as number
 			FROM phone_number 
 			WHERE 
-				`employee_id` = '$user->external_id' and
+				`employee_number` = '$user->external_id' and
 				`is_ministry` = 1 and 
-				`phone_type` = 'CELL' 
-			ORDER BY `is_primary` DESC
+				`phone_type` = 'Business Mobile' 
 			LIMIT 0,1");
 
 $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', 'http://athletesinaction.com/'),
@@ -101,19 +97,19 @@ get_header(); ?>
 		if ($i < count($parts) - 2){
 			if ($i % 3 == 0 and $i > 0) {?>
 				<tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class="crumbs-image" src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
-			<? } ?>
+			<?php } ?>
 			<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 			<td class ='crumbs' style='width:22px;'><img class="crumbs-image" src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
 		<?php } else if ($i < count($parts) - 1){
 			if ($i % 3 == 0 and $i > 0) {?>
 				</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class="crumbs-image" src='<?php bloginfo('template_url'); ?>/img/forms_level_grey.png' width='22' height='37' /></td>
-			<? } ?>
+			<?php } ?>
 			<td class ='crumbs'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 			<td  class ='crumbs' style='width:22px;'><img class="crumbs-image" src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
 		<?php } else { 
 			if ($i % 3 == 0 and $i > 0) {?>
 				</tr></table><table style='width:100%;margin:30px 0;border-collapse: collapse;'><tr><td class ='crumbs' style='width:22px;'><img class="crumbs-image" src='<?php bloginfo('template_url'); ?>/img/forms_level.png' width='22' height='37' /></td>
-			<? } ?>
+			<?php } ?>
 			<td class ='crumbs' style='background-color:#f7941d; width:auto;'><a href='<?php echo $link ?>'><?php echo get_page_by_path( $link )->post_title ?></a></td>
 		<?php }
 	 } ?>

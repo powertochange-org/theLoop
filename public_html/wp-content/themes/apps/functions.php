@@ -4,4 +4,7 @@
 /* Register Ajax handlers for P2C-S Stats Reporting */
 include_once('p2cs-stats-reports/ajax-handler.php');
 
+//Include the AJAX workflow file
+include_once('workflow/workflowajax.php');
+
 ?>

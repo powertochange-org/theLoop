@@ -7,7 +7,7 @@ parseAdminRemove();
 function parseAdminInput(){
 	global $wpdb;
 	if (isAdmin()){
-		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_add_admin"]));
+		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_add_admin"]), $wpdb);
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
 			return;
@@ -27,7 +27,7 @@ function parseAdminInput(){
 function parseAdminRemove(){
 	global $wpdb;
 	if (isAdmin()){
-		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_remove_admin"]));
+		$admin = mysql_real_escape_string(htmlspecialchars($_GET["input_remove_admin"]), $wpdb);
 		$user = get_user_by('login', $admin );
 		if ($admin==""){
 			return;

@@ -25,13 +25,22 @@
 						<!--/box-->    
 					 <?php endwhile; ?>
 					<div id="page-nav">
-					    <?php next_posts_link('&laquo; Previous Entries') ?>
-					    <?php previous_posts_link('Next Entries &raquo;') ?>
-					</div>
+				    <div style="float:left;">
+				    	<?php previous_posts_link('&laquo; Newer Entries'); ?>
+				    </div>
+				    <div style="float:right;">
+				    	<?php next_posts_link('Older Entries &raquo;');?>
+				    </div>
+				</div>
 				<?php endif; ?>	
 			</div>
 			</div>
         	<div id="content-right" class="mobile-off">
+        	<?php if (in_category('prayer-requests')){ ?>
+				<a class='orange_button submit-request' href="mailto:prayersupport@powertochange.org"><center style='color:#ffffff;'>SUBMIT A PRAYER REQUEST</center></a>
+			<?php } else if(in_category('staff-stories')) {?>
+				<a class='orange_button submit-request' href="mailto:staffstories@p2c.com"><center style='color:#ffffff;'>SUBMIT A STAFF STORY</center></a>
+			<?php } ?>
 			<?php get_sidebar(''); ?>
 		</div></div><div style='clear:both;'></div>
         </div>

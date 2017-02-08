@@ -48,8 +48,8 @@ function generate_pdf(){
 
 	//todo style not user stored data\
 	// todo remove var_dump($data);
-	if (count($data) == 26){
-		$label = Array('Name:', 'Hours per week:', 'Province:', 'Hours per week (spouse):', 'Staff Account:', 'Benefit Coverage:', 'Ministry:', 'Decline Benefits:', 'Monthly Allowance/Salary', 'Employer Paid CPP/EI', 'Monthly Allowance/Salary - Spouse', 'Employer Paid CPP/EI - Spouse', 'Extended Health', 'Provincial Medical', 'Medical Allowance', 'Worker\'s Compensation', 'Staff Conference', 'MPD correspondence', 'Reimbursable Ministry Expenses', 'Subtotal', 'Central Resource Charge', 'Monthly Support Goal', 'Solid Monthly Support', 'Total Funds Yet to be Raised', 'Bridge Amount', 'Percent Supported');
+	if (count($data) == 27){
+		$label = Array('Name:', 'Hours per week:', 'Province:', 'Hours per week (spouse):', 'Staff Account:', 'Benefit Coverage:', 'Ministry:', 'Decline Benefits:', 'Monthly Allowance/Salary', 'Employer Paid CPP/EI', 'Monthly Allowance/Salary - Spouse', 'Employer Paid CPP/EI - Spouse', 'Extended Health', 'Dental', 'Provincial Medical', 'Medical Allowance', 'Worker\'s Compensation', 'Staff Conference', 'MPD correspondence', 'Reimbursable Ministry Expenses', 'Subtotal', 'Central Resource Charge', 'Monthly Support Goal', 'Solid Monthly Support', 'Total Funds Yet to be Raised', 'Bridge Amount', 'Percent Supported');
 		$pdf = new FPDF();
 		$pdf->AddPage();
 		$pdf->Image(get_stylesheet_directory_uri().'/res/footer-logo.png'); //todo change
@@ -90,7 +90,7 @@ function generate_pdf(){
 				}
 			}
 			else {
-				if ($i == 21 || $i == 23){
+				if ($i == 22 || $i == 24){ //Monthly Support Goal and Total Funds Yet to be Raised (greyed)
 					$pdf->SetFillColor(217);
 					$fill = true;
 				}
@@ -99,7 +99,7 @@ function generate_pdf(){
 				}
 				$border = 0;
 				$pdf->Cell($labelBotMaxWidth, 6,  $label[$i], $border, 0, 'L', $fill);
-				if ($i == 25){
+				if ($i == 26){ //The percent Supported Field needs to be in percent
 					$pdf->Cell($dataMaxWidth, 6,  ($data[$i] * 100).'%', $border, 0, 'R', $fill);
 				}
 				else {
@@ -177,10 +177,10 @@ include('functions/js_functions.php'); ?>
 			global $wpdb,$current_user_id, $support_dataID;
 			$ID = $current_user_id;
 			//todo error handling
-			$data = explode('+',  mysql_real_escape_string(htmlspecialchars($_GET["data"])));	
+			$data = explode('+',  mysqli_real_escape_string($wpdb->dbh, htmlspecialchars($_GET["data"])));	
 			
 			$support_dataID = getDataID($ID);
-			if ($support_dataID == null){
+			if ($support_dataID == null || 0 == $support_dataID){
 				$spouse = getSpouse();
 				if($spouse != -1){
 					$support_dataID = getDataID($spouse);
@@ -240,8 +240,8 @@ include('functions/js_functions.php'); ?>
 			return $result[0]->$field;
 		}
 		
-		if (isAdmin()){
-			include('admin-interface/support-calculator-admin.php');
+		if (isAppAdmin('support_calculator_admin', 0)) {
+			include('calculators/support-calculator-admin.php');
 		}
 		
 		//these next six functions just help generate the table
@@ -490,7 +490,11 @@ include('functions/js_functions.php'); ?>
 				return (salary + salary_s) * medical_QC;
 			}
 			if (province == BC){
-				return medical_BC[coverage];
+				if(coverage_int == 0) {
+					return medical_BC[coverage];
+				} else {
+					return 0;
+				}
 			}
 			return 0;
 		}
@@ -604,6 +608,7 @@ include('functions/js_functions.php'); ?>
 				"+" + salary_s.toFixed(2) + 
 				"+" + cpp_s.toFixed(2) +
 				"+" + health.toFixed(2) +
+				"+" + dental_amt.toFixed(2) +
 				"+" + medical.toFixed(2) +
 				"+" + hcsa.toFixed(2) + 
 				"+" + workers.toFixed(2) + 
@@ -919,7 +924,7 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live.">
+					<select name="input_province" id="input_province" title="Please enter your tax province.  In most cases, this is the province where you live." onchange="calculate();">
 					<option value="0" <?php if (setProvince() == 0) echo "selected"; ?>>Alberta</option>
 					<option value="1" <?php if (setProvince() == 1) echo "selected"; ?>>British Columbia</option>
 					<option value="2" <?php if (setProvince() == 2) echo "selected"; ?>>Manitoba</option>

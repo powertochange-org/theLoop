@@ -22,7 +22,36 @@
 			<li class="<?php if (the_author('', false) == get_comment_author()) echo 'author'; else echo $oddcomment; ?>" id="comment-<?php comment_ID() ?>">
 				<div class="comment_meta">
 					<?php if(function_exists('get_avatar')) { echo get_avatar($comment, '40'); } ?>
-					<p class="meta"><strong><?php comment_author_link()?></strong></p>
+					<?php $id = get_comment(get_comment_ID())->user_id; $userData = get_userdata($id);?>
+					<p class="meta"><strong>
+						<?php 
+							/*if($userData->user_url != "") //Use this code in case we decide to allow user websites again
+								echo '<a href="'.$userData->user_url.'" rel="external nofollow" class="url">'.get_comment_author().'</a>';//comment_author_link(); 
+							else */
+								echo '<a href="/staff-directory/?page=profile&person='.$userData->user_login.'" rel="external nofollow" class="url">'.get_comment_author().'</a>';
+							$query = "SELECT  photo, share_photo, staff_account FROM employee WHERE user_login = '".$userData->user_login."'";
+							$photoInfo = $wpdb-> get_results($wpdb->prepare($query, ""));
+							if(!is_null($photoInfo[0]->photo) && $photoInfo[0]->share_photo == 1) {
+								echo '<br><img src="/wp-content/uploads/staff_photos/' . $photoInfo[0]->photo . '" width="50" style="border-radius: 15px;"/>';
+							} else {
+								$useAnonymous = true;
+								$url = '';
+								if($photoInfo[0]->staff_account > '800000') {
+									// Attempt to use their public giving site photo
+									$url = "https://secure.powertochange.org/images/Product/medium/" . $photoInfo[0]->staff_account . ".jpg";
+									// Check to see if that url is valid
+									$code = getHttpResponseCode_using_curl($url);
+									// If it's INVALID (ie, user doesn't have a giving site image)
+									// Use the standard image
+									if($code == 200) // It's VALID! So, use it instead of the anonymous image
+										$useAnonymous = false;
+								}
+								if($useAnonymous)
+									$url = "/wp-content/uploads/staff_photos/anonymous.jpg";
+								echo '<br><img src="'.$url.'" width="50" style="border-radius: 15px;"/>';
+							}
+						?>
+					</strong></p>
 					<p><?php comment_date('F j, Y') ?></p>
 				</div>
 			

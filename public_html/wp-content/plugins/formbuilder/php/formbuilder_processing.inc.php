@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	/**
 	 * This is run before the template is shown in order to process any form post data
@@ -120,18 +121,23 @@
 	// Function to display and process the actual form.
 	function formbuilder_process_form($form_id, $data=false)
 	{
+		do_action('formbuilder_start_process_form', $form_id);
+
 		global $wpdb;
 		
 		if (! defined('SID')) {
 			define('SID', '');
 		}
 
+		if(!is_numeric($form_id))
+			return;
+
 		$formBuilderTextStrings = formbuilder_load_strings();
 		
 		$siteurl = get_option('siteurl');
 		$relative_path = str_replace(ABSOLUTE_PATH, "/", FORMBUILDER_PLUGIN_PATH);
 		//$page_path = $siteurl . $relative_path;
-		$page_path = plugin_dir_url(__DIR__);
+		$page_path = plugin_dir_url( dirname(dirname(__FILE__)) . '/formbuilder.php' );
 
 		// Pull the form data from the db for the selected form ID.
 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FORMS . " WHERE id='$form_id';";
@@ -518,7 +524,7 @@ function toggleVisOff(boxid)
 						case "small text area":
 							$formLabel = "<div class='$formLabelCSS'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " $formHelpJava</div>";
 							$formInput = "<div class='formBuilderSmallTextarea controls'><textarea name='" . $field['name'] . "' rows='4' cols='50' " .
-									"id='field$divID' onblur=\"fb_ajaxRequest('" . $page_path . "php/formbuilder_parser.php', " .
+									"id='field$divID' onblur=\"fb_ajaxRequest('./', " .
 									"'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\" >" .
 									$field['value'] . "</textarea></div>";
 						break;
@@ -526,14 +532,14 @@ function toggleVisOff(boxid)
 						case "large text area":
 							$formLabel = "<div class='$formLabelCSS'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " $formHelpJava</div>";
 							$formInput = "<div class='formBuilderLargeTextarea controls'><textarea name='" . $field['name'] . "' rows='10' cols='80' " .
-									"id='field$divID' onblur=\"fb_ajaxRequest('" . $page_path . "php/formbuilder_parser.php', " .
+									"id='field$divID' onblur=\"fb_ajaxRequest('./', " .
 									"'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, " .
 									"'formBuilderErrorSpace$divID')\" >" . $field['value'] . "</textarea></div>";
 						break;
 
 						case "password box":
 							$formLabel = "<div class='$formLabelCSS'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " </div>";
-							$formInput = "<div class='formBuilderInput controls'><input type='password' name='" . $field['name'] . "' value='" . $field['value'] . "' id='field$divID' onblur=\"fb_ajaxRequest('" . $page_path . "php/formbuilder_parser.php', 'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\" /> $formHelpJava</div>";
+							$formInput = "<div class='formBuilderInput controls'><input type='password' name='" . $field['name'] . "' value='" . $field['value'] . "' id='field$divID' onblur=\"fb_ajaxRequest('./', 'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\" /> $formHelpJava</div>";
 						break;
 
 						case "required password":
@@ -772,7 +778,7 @@ function toggleVisOff(boxid)
 																			. "name='" . $field['name'] . "' "
 																			. "value='" . $field['value'] . "' "
 																			. "id='field$divID' "
-																			. "onblur=\"fb_ajaxRequest('" . $page_path . "php/formbuilder_parser.php', 'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\"/> $formHelpJava</div>";
+																			. "onblur=\"fb_ajaxRequest('./', 'formid=" . $form['id'] . "&amp;fieldid=" . $field['id'] . "&amp;val='+document.getElementById('field$divID').value, 'formBuilderErrorSpace$divID')\"/> $formHelpJava</div>";
 						break;
 					}
 
@@ -941,6 +947,16 @@ function toggleVisOff(boxid)
 				// Final check of fields before marking form as successfully submitted...
 				$extendedForm = apply_filters('formbuilder_submit_final_check', $extendedForm);
 				$post_errors = apply_filters('formbuilder_final_errors_filter', $post_errors);
+			}
+
+
+			// Allow third-party plugins to process form results.
+			if(empty($post_errors)
+			   && isset($_POST['formBuilderForm']['FormBuilderID'])
+			   && $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
+			{
+				do_action('formbuilder_do_submit', $extendedForm);
+				$post_errors = apply_filters('formbuilder_do_submit_errors_filter', $post_errors);
 			}
 
 			

@@ -1,6 +1,8 @@
 <?php
 
-/*This file contains functions that are used by support-calculator.php and allowance-calculator.php  and maybe useful elsewhere*/
+/*This file contains functions that are used by support-calculator.php and allowance-calculator.php  and maybe useful elsewhere.
+Functions for general admin access in the loop has been added.
+*/
 
 //get the current user's spouse or null if no spouse
 
@@ -41,10 +43,23 @@ function getFieldEmployee($field, $id=null){
 
 //returns wether the current user is an admin
 function isAdmin(){
+	return AdminLevel(0);
+}
+
+function AdminLevel($l){
 	global $current_user_id;
-	$ID = $current_user_id;
-	$result = get_user_meta($ID, 'support_calculator_admin', true);			
-	return $result == 1;
+	return (pow(2, $l) & intval(get_user_meta($current_user_id, 'support_calculator_admin', true))) > 0;
+}
+
+/*
+ *Checks if the user is an admin for a certain program.
+ *@param $accessLevel - The level of access to check. 0 is admin, 
+ *						1 - see function AdminLevel($l) - this is what it replicates
+ *@param $app - The application name to check. For example: support_calculator_admin **do not add the loopadmin_ part
+ */
+function isAppAdmin($app, $accessLevel) {
+	$current_user_id = wp_get_current_user()->id;
+	return (pow(2, $accessLevel) & intval(get_user_meta($current_user_id, ('loopadmin_'.$app), true))) > 0;
 }
 
 function getConstant($field){
@@ -114,6 +129,128 @@ function changeNL($string){
 		}
 	}
 	return $out;
+}
+
+/*
+* Gets an array of all the different apps that use the loop admin functionality
+*/
+function getAppList() {
+	global $wpdb;
+	$values = array();
+	
+	$sql = "SELECT meta_key
+			FROM wp_usermeta
+			WHERE meta_key LIKE '%loopadmin_%'
+			GROUP BY meta_key
+			ORDER BY meta_key ASC";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	foreach($result as $row) {
+		$tmp = split('loopadmin_', $row['meta_key']);
+		$values[] = array($tmp[1]); 
+	}
+	
+	return $values;
+}
+
+/*
+* Gets all the users in the loop.
+*/
+function getAllUsers() {
+	global $wpdb;
+	$values = array();
+	
+	$sql = "SELECT ID, display_name
+			FROM wp_users
+			ORDER BY display_name ASC";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	foreach($result as $row) {
+		$values[] = array($row['ID'], $row['display_name']);
+	}
+	
+	return $values;
+}
+
+/*
+Gets the employees and their staff account #.
+*/
+function getAllEmployeesStaffAccounts() {
+	global $wpdb;
+	$values = array();
+	
+	$sql = "SELECT staff_account, CONCAT(first_name, ' ', last_name) AS fullname
+			FROM employee
+			WHERE staff_account != ''
+			ORDER BY FULLNAME ASC";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	foreach($result as $row) {
+		$values[] = array($row['staff_account'], $row['fullname']);
+	}
+	
+	return $values;
+}
+
+/*
+*Gets a list of all the apps that users have access to.
+*/
+function getMemberAppAccess() {
+	global $wpdb;
+	$values = array();
+	
+	$sql = "SELECT user_id, meta_key, meta_value, display_name
+			FROM wp_usermeta 
+			LEFT OUTER JOIN wp_users ON wp_users.ID = wp_usermeta.user_id
+			WHERE meta_key LIKE '%loopadmin_%' AND user_id != '0' AND meta_value != '0'
+			ORDER BY display_name, umeta_id ASC  ";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	foreach($result as $row) {
+		$tmp = split('loopadmin_', $row['meta_key']);
+		$values[] = array('ROLE'.$tmp[1].'USER'.$row['user_id'], $row['display_name'], $tmp[1]);
+	}
+	
+	return $values;
+}
+
+/*
+* Stores a new app name in the database. It can then be used to add users to that app, thus giving them admin access.
+* To use this new access level, just use the code isAppAdmin('appname', 0) to check if they have admin access.
+*/
+function storeApp($appname) {
+	global $wpdb;
+	$sql = "SELECT COUNT(*) AS ENTRYCOUNT
+			FROM wp_usermeta
+			WHERE user_id = '0' AND meta_key = 'loopadmin_".$appname."'";
+	
+	$result = $wpdb->get_results($sql, ARRAY_A);
+	
+	if($result[0]['ENTRYCOUNT'] == '0') {
+		$sql = "INSERT INTO wp_usermeta (user_id, meta_key)
+				VALUES ('0', 'loopadmin_".$appname."')";
+		$result = $wpdb->query($sql);
+		return $result;
+	}
+	return 0;
+}
+
+/*
+* Gives a user access to an app. Stores it in the db.
+*/
+function storeMember($appname, $member) {
+	return update_user_meta($member, 'loopadmin_'.$appname, '1');
+}
+
+/*
+* Removes user access from an app. Updates it in the db.
+*/
+function removeMember($appname, $member) {
+	return delete_user_meta($member, 'loopadmin_'.$appname); 
 }
 
 ?>

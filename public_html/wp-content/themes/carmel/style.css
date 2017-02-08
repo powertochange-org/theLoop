@@ -192,6 +192,7 @@ li.menu-item.current-menu-item  a{
 	position:relative;
 	top:22px;
 	border-top:thin solid #218ac9;
+	display: none;/*Only used for mobile now*/
 }
 
 .menu{
@@ -300,7 +301,7 @@ hr{
 	margin:10px 0;
 }
 
-#main-content .btn1 {
+#main-content .btn1, input#btn_save {
 	width:225px;
 	height:55px;
 	background:#f7941d;
@@ -312,20 +313,26 @@ hr{
 	line-height:normal;
 	font-size: 14pt;
 	letter-spacing: 1px;
+	cursor: pointer;
 }
 
 #sidebar{
 	width:240px;
 	min-height:384px;
-	/*max-height: 386px;*/
 	background-color:#eaeae8;
 	padding:20px;
 	float:right;
 }
 
+div.home-page #sidebar {
+    max-height: 386px;
+}
+
 #sidebar.homesidebar {
 	min-height: 415px;
 	padding: 9px 20px 0px 16px;
+        position:relative;
+        overflow-y:hidden;
 }
 
 #sidebar.homesidebar hr {
@@ -361,8 +368,57 @@ hr{
 	color: #4a4d4e;
 }
 
+#sidebar #staff-account-balance {
+    width:240px;
+    background-color:#eaeae8;
+    position:absolute;
+    bottom:0px;
+    display:none;
+}
+
+#sidebar #staff-account-balance>p {
+    position:static;
+    padding-left:20px;
+    padding-bottom:10px;
+}
+
+#sidebar #staff-account-balance>input {
+    position:static; 
+    width:100%;
+    font-family: Roboto Slab; 
+    font-size: small;
+    margin-top:-37px
+}
+
 #sidebar .recent-comment:hover p {
 	color: #4a4d4e;
+}
+
+#sidebar .recent-comment p, #sidebar .wpp-post-title{
+        text-overflow:ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
+}
+
+#sidebar div.recent-comment p {
+    margin-bottom: 0;
+}
+
+#sidebar span.commentcontent {
+    font-size: 12px;
+}
+
+#sidebar div.recent-comment {
+    margin-bottom: 5px;
+}
+
+#vertical-ticker {
+    overflow:hidden;
+}
+
+#vertical-ticker li {
+    display:block;
+    border-bottom:1px solid #ddd;
 }
 
 .search-img{
@@ -377,6 +433,9 @@ hr{
 	cursor:pointer;
 }
 
+#wp-admin-bar-search {
+	display: none;
+}
 
 .search-box{
 	border: 1px solid #0079c1;
@@ -700,10 +759,10 @@ a.crumbstest {
 }
 
 div.search-position {
-	position:static;
+	position:relative;
 	float:right;
 	top:0px;
-	margin-right: -175px;
+	margin-right: 0;
 	margin-top: 11px;
 }
 
@@ -870,7 +929,482 @@ ul.wpp-list li {
 	margin: 0;
 }
 
+#page-nav {
+	font-size: 25px;
+}
 
+/*Wiki Styling*/
+h1.entry-title {
+    font-family: 'Open Sans', sans-serif;
+    color: #0079C1;
+    margin-top: 20px;
+}
+
+#wikicontent {
+	border: 2px solid black;
+}
+
+a.wiki-nav-links {
+	background-color:#f7941d;
+	color: #000000;
+	margin-top: 10px;
+	padding:10px;
+	border-style: none;
+	border-radius:5px;
+}
+
+#wiki-nav-bar a.wiki-nav-links:hover{
+	color: white;
+}
+
+#wiki-nav-bar a {
+	display: inline-block;
+}
+
+div #wiki-nav-bar {
+	margin-top: 20px;
+}
+img.wiki-header-img {
+	border-radius: 10px;
+	box-shadow: 0px 0px 50px -5px #888888;
+	margin-top: -20px;
+}
+#searchform  {
+	margin-bottom: 30px;
+}
+
+input[type="text"].fieldform {
+    display: block;
+    margin: 0;
+    width: 99%;
+    height: 89%;
+    font-family: sans-serif;
+    font-size: 18px;
+    /*appearance: none;*/
+    box-shadow: none;
+    border-radius: none;
+}
+
+input[type="text"].fieldform {
+    display: initial;
+    height: 40px;
+}
+
+input[type="text"]:focus.fieldform {
+    outline: none;
+}
+
+input[type="text"].fieldform {
+    padding: 0px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+input[type="text"]:focus.fieldform,
+input[type="text"].focus.fieldform {
+    border: solid 1px #707070;
+    box-shadow: 0 0 5px 1px #969696;
+}
+
+input[type="submit"].fieldform {
+    display: block;
+    /*margin: 5px 0 20px 0;*/
+    width: 99%;
+    height: 40px;
+    font-family: sans-serif;
+    font-size: 18px;
+    box-shadow: 0 0 5px 1px #969696;
+}
+
+div.incsub_wiki_tabs.incsub_wiki_tabs_top li.incsub_wiki_link_advanced_edit {
+    display: none !important;
+}
+
+.wiki-search-input {
+	width: 80%; 
+	float: left;
+}
+
+.wiki-search-submit {
+	width: 15%; 
+	float: left;
+}
+
+#wikicontent_ifr {
+	border: 2px solid black;
+}
+
+.cat-count {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+}
+
+.wiki-section {
+    float: left;
+    margin-right: 20px;
+    width: 300px;
+    background-color: #dbe9fd;
+    border-radius: 5px;
+    padding: 5px;
+    min-height: 300px;
+    box-shadow: 0 0 9px 2px #969696;
+}
+
+.wiki-section h3 {
+    background-color: #dddddd;
+    border-radius: 5px;
+    padding: 5px 15px;
+    border: 1px solid #97979a;
+}
+
+#content-left.wiki-fix {
+    float: none;
+    width: 100%;
+}
+
+.wiki-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.sub-categories a {
+    color: #4a4d4e;
+}
+
+ul.sub-categories {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.wiki-section-link {
+    color: #4a4d4e;
+    display: inline-block;
+    width: 90%;
+}
+
+.wiki-section-link:hover {
+    color: #0079C1;
+}
+
+.wiki-section ul.wiki-list li::before {
+    background-image: url("/wp-content/images/Self-Help-Wiki-Icon-no-text.png" );
+    background-size: 15px 15px;
+    display: inline-block;
+    width: 15px; 
+    height: 15px;
+    content:"";
+    vertical-align: top;
+    margin-top: 4px;
+}
+
+.wiki-section li::after {
+    
+}
+
+.wiki-section li {
+    padding-top: 5px;
+}
+
+.wiki-section-group-gap {
+    margin-bottom: 50px;
+}
+
+#kbrequest {
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 50px;
+}
+
+#kbrequest textarea {
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 22px;
+    font-family: sans-serif;
+    border: 1px solid black;
+}
+
+#kbrequest input {
+    background-color: #f7941d;
+    color: #000000;
+    font-size: 20px;
+    margin-top: 10px;
+    padding: 10px 200px;
+    border-style: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#kbrequest input:hover {
+    color: white;
+}
+
+#kb-prev-requests ul {
+    /*margin: 0;*/
+    padding: 0;
+}
+
+#kb-prev-requests li {
+    background-color: #dbe9fd;
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 0 0 9px 2px #969696;
+    list-style-type: none;
+    margin-bottom: 15px;
+}
+
+.kb-left {
+    width: 10%;
+    display: inline-block;
+    font-size: 40px;
+    vertical-align: top;
+}
+
+.kb-left-icon {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    background-image: url(/wp-content/images/upvote.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+.kb-left-icon:hover {
+    background-image: url(/wp-content/images/upvoted.png);
+}
+
+.kb-left-icon.selected {
+    background-image: url(/wp-content/images/upvoted.png);
+}
+
+.kb-left img {
+    margin-right: 7px;
+}
+
+.kb-right {
+    width: 90%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.kb-right button {
+    background-color: #DDDDDD;
+    color: #000000;
+    padding: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 20px;
+    border: 1px solid #a2a2a2;
+}
+
+.kbmsg {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#main-nav-full-screen {
+    height: 49px; /* set to the height you want your menu to be */
+    margin: 0 0 10px; /* just to give some spacing */
+    
+    background:#005e90;
+	position:relative;
+	top:22px;
+	border-top:thin solid #218ac9;
+	z-index: 10;
+}
+#main-nav-full-screen .menu{
+	padding: 0;
+	width:1000px;
+	margin:0 auto;
+    position: relative; /*Sets the position so that the submenus will be placed correctly*/
+}
+
+#main-nav-full-screen .current-menu-item a,
+#main-nav-full-screen .current-page-ancestor a {
+	background:#0079c1;
+	border-bottom:thin solid #218ac9;
+}
+
+#main-nav-full-screen ul li a:hover,
+#main-nav-full-screen .sub-menu li a:hover { /*This is grabbing sub menus on direct*/
+	background:#0079c1;
+}
+
+/*Should grab and make a box out of each section*/
+#main-nav-full-screen  ul.sub-menu {
+	position: absolute;
+	top: 50px;
+	left: 0px;
+	width: 1000px;
+	height: initial;
+}
+#main-nav-full-screen  ul.sub-menu li {
+	float: left;
+	height: 200px;
+	margin-left: 35px;
+	margin-top: 10px;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu {
+	height: initial;
+	width: 200px; 
+	position: relative; /*prevents the sub sub menus from shifting away*/
+	top: 0px;
+	display: block;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu li {
+	top: 0px;
+	height: initial;
+    min-height: 20px;
+    max-height: 50px;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+#main-nav-full-screen ul.sub-menu ul.sub-menu li a {
+	text-decoration: none;
+	border: none;
+	font-weight: normal;
+	padding-top: 2px;
+	padding-bottom: 3px;
+}
+
+#main-nav-full-screen  ul.sub-menu li.menu-item a {
+	background-color: initial;
+	height: initial;
+	color: white;
+	width: 100%;
+	display: block;
+	text-decoration: underline;
+	line-height: initial;
+	margin-top: 1px; /*Fix to prevent a tag from reaching onto other links*/
+	padding: 0px;
+	font-weight: bold;
+}
+
+#main-nav-full-screen  ul.sub-menu li.menu-item a:hover {
+	background-color: #0079c1;
+	color: white;
+}
+
+#main-nav-full-screen ul    {
+    margin: 0; padding: 0; /* only needed if you have not done a CSS reset */
+}
+#main-nav-full-screen li    {
+    display: block;
+    float: left;
+    line-height: 51px; /* this should be the same as your #main-nav height */
+    height: 51px; /* this should be the same as your #main-nav height */
+    margin: 0; padding: 0; /* only needed if you don't have a reset */
+}
+
+#main-nav-full-screen ul.menu {
+	position: relative;
+	top: -1px; 
+}
+
+#main-nav-full-screen li a  {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    transition: all 0.15s linear;
+}
+#main-nav-full-screen .menu-item a {
+	overflow: hidden;
+}
+
+#main-nav-full-screen .sub-menu .menu-item a {
+	background:#005e90;
+    border-bottom: thin solid #218ac9;
+}
+
+#main-nav-full-screen ul ul { /* this targets all sub menus */
+    display: none; /* hide all sub menus from view */
+    position: absolute;
+    top: 52px; /* this should be the same height as the top level menu -- height + padding + borders */
+    left: -100px;
+    width: 400px;
+    background-color: #005e90;
+}
+#main-nav-full-screen ul ul ul { 
+	background-color: none;
+}
+
+#main-nav-full-screen ul ul li { /* this targets all submenu items */
+    float: none; /* overwriting our float up above */
+    width: 200px; /* set to the width you want your sub menus to be. This needs to match the value we set below */
+}
+#main-nav-full-screen ul ul li a { /* target all sub menu item links */
+    width:200px;
+}
+
+#main-nav-full-screen ul.sub-menu:hover {
+	display: block;
+}
+
+#main-nav-full-screen ul li .display-sub-menu {
+	display: block;
+}
+
+#main-nav-full-screen ul ul li ul {
+    /* target all second, third, and deeper level sub menus */
+    left: 230px; /* this needs to match the sub menu width set above -- width + padding + borders */
+    top: 0; /* this ensures the sub menu starts in line with its parent item */
+}
+
+/*Fixes the main nav links on the nav bar.*/
+#main-nav-full-screen ul.menu li a {
+    padding-left: 23px;
+    padding-right: 23px;
+}
+
+.searchwp-live-search-results {
+	width: 450px !important;
+}
+
+div.update-profile {
+	width: 100%;
+	position: fixed;
+	top: 235px;
+	left: 0;
+	z-index: 1000;
+}
+
+div.update-profile div { 
+	background-color: #DDDDDD;
+	width: 600px;
+	padding: 30px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 4px solid black;
+	box-shadow: 0px 0px 100px 80px #FFFFFF;
+	border-radius: 10px;
+}
+
+div.update-profile a.orange_button {
+	color: white;
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	text-align: center;
+	min-height: 45px;
+	margin-right: 10px;
+}
+
+div.update-profile h3 {
+	text-align: center;
+	margin-bottom: 10px;
+} 
+
+#staff-apps-quadrant div.staff-app-button-styling {
+	padding: 5px 20px;
+}
 
 /*
 	This is the media query for displaying content based on screen size.
@@ -1036,6 +1570,9 @@ ul.wpp-list li {
 	.menu_bg_show {
 		display: block;
 	}
+	#main-nav-full-screen {
+        display: none;
+    }
 	footer .privacy {
 		text-align: center;
 		margin-left: 10px;
@@ -1165,7 +1702,7 @@ ul.wpp-list li {
 		font-size: 1.5em;
 		padding-left: 10px;
 	}
-	#main-content .btn1 { 
+	#main-content .btn1, input#btn_save { 
 		width: 100%;
 		font-size: 12pt;
 		font-weight: bold;
@@ -1244,6 +1781,66 @@ ul.wpp-list li {
 
 	#main-content.form .post div.nav-option-inside {
 		width: 100%; 
+	}
+	
+	/*Wiki style*/
+	#wikicontent {
+		width: 92%;
+		margin-left: 1%;
+	}
+	
+	#incsub_wiki-tags {
+		width: 130px;
+	}
+	
+	#wiki-page-wrapper input.incsub_wiki_title {
+		width: 94%;
+		margin-left: 1%;
+	}
+	
+	a.wiki-nav-links {
+		width: 90%;
+		padding: 10px 5%;
+	}
+	div #wiki-nav-bar {
+		width: 100%;
+		margin-top: 10px; 
+		display: inline-block;
+		text-align: center;
+	}
+	
+	.wiki-search-input {
+		width: 100%; 
+	}
+
+	.wiki-search-submit {
+		width: 100%; 
+	}
+	
+	#content-left.wiki-fix {
+		float: none;
+	}
+	
+	.wiki-section {
+        margin-bottom: 40px;
+    }
+    
+    .wiki-section-group-gap {
+        margin-bottom: 0;
+    }
+    
+    img.wiki-header-img {
+		margin-top: -30px;
+	}
+    /*End of wiki styling*/
+	
+	.searchwp-live-search-results {
+		width: 100% !important;
+		left: 0 !important;
+	}
+	
+	#staff-apps-quadrant div.staff-app-button-styling {
+		padding: 5px 5px;
 	}
 }
 

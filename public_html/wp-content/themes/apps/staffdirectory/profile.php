@@ -13,14 +13,14 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 	<?php 
 	$current_user = wp_get_current_user();
 	if(!isset($profile) || $current_user->user_login == $profile){
-		echo '<h4 class="profile"><a style="color:#adafb2;font-weight:bold;" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
+		echo '<h4 class="profile"><a class="profile-link" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
 		
 		if(count($_POST) > 0){
 			include('update.php');
 		}
 	}
 	else{
-		echo '<h4 class="profile"><a  style="color:#adafb2;font-weight:bold;" href= "?page=profile">MY PROFILE</a></h4>';
+		echo '<h4 class="profile"><a class="profile-link" href= "?page=profile">MY PROFILE</a></h4>';
 	} ?>
 	
 	<BR><BR><BR><BR>
@@ -32,22 +32,13 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			<div class="profile-image" style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
                 // Attempt to use their public giving site photo
-                $url = "http://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
+                $url = "https://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
                 // Check to see if that url is valid
-                // Use curl to test validity of URL; init the handle
-                $handle = curl_init($url);
-                // Set the option so that it returns the response to a variable
-                // (which we don't actually use), as opposed to printing out the
-                // response to the page
-                curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-                // Actually try to get the response from the url
-                curl_exec($handle);
-                // Check the response code
-                if (curl_getinfo($handle, CURLINFO_HTTP_CODE) != 200) {
-                    // It's INVALID (ie, user doesn't have a giving site image)
-                    // Use the standard image
+                $code = getHttpResponseCode_using_curl($url);
+                // If it's INVALID (ie, user doesn't have a giving site image)
+                // Use the standard image
+                if($code != 200)
                     $url = "/wp-content/uploads/staff_photos/anonymous.jpg";
-                } 
 				echo '<img src="'. $url . '" width=220 />';
 			}
 			else { //we have a photo and can share it
@@ -56,7 +47,8 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			</div>
 			<div class="profile-content">
 			<h4>MINISTRY INFORMATION</h4>
-			<BR><p style='margin:0;'>
+			<BR>
+			<p style='margin:0;'>
 			<?php 
 			if(!empty($user->ministry_address_line1) || !empty($user->ministry_city)){
 				echo "<strong>Address:</strong> ";
@@ -80,15 +72,8 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE is_ministry=1 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){ $type = 'Office';}
-					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
-					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
-					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
-					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
-					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
-					else { $type = '??';}
-					
-					echo "<strong>".$type .": </strong>".$phone->phone_number;
+
+					echo "<strong>".$phone->phone_type .": </strong>".$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo " EXT: $phone->extension";
@@ -100,7 +85,7 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE is_ministry = 1 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
-						echo "<strong>Email:</strong> $email->email_address<BR>";
+						echo "<strong>Email:</strong> <a href=\"mailto:".$email->email_address."\">".$email->email_address."</a><BR>";
 				}
 			}
 			if (!empty($user->ministry_website) || !empty($user->ministry_twitter_handle) || !empty($user->ministry_skype) || !empty($user->ministry_facebook)) {
@@ -121,14 +106,18 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo '<strong>Skype:</strong> ' . $user->ministry_skype. '<BR>';
 				}
 				if(!empty($user->ministry_facebook)){
-					echo '<strong>Facebook:</strong> ' . $user->ministry_facebook. '<BR>';
+					echo '<strong>Facebook:</strong> <a href="http://www.facebook.com/' . $user->ministry_facebook . 
+					'" target=_blank>' . $user->ministry_facebook . '</a><BR>';
+				}
+				if(!empty($user->ministry_instagram)){
+					echo '<strong>Instagram:</strong> <a href="http://www.instagram.com/' . $user->ministry_instagram . 
+					'" target=_blank>' . $user->ministry_instagram . '</a><BR>';
 				}
 			}
-			echo "<br>";
 			if(isset($user->spouse_employee_number)){ //if you're married to someone on staff we link your profiles.
 				$spouse = $wpdb->get_row("SELECT * FROM employee WHERE employee_number = '" . $user->spouse_employee_number . "'");
 				if(isset($spouse->employee_number)){
-					echo '<strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a><br /><br />"; 
+					echo '<br><strong>Spouse:</strong> <a href ="?page=profile&person=' . $spouse->user_login . '">' . $spouse->first_name . ' ' . $spouse->last_name . "</a>"; 
 				}
 			}
 			?>
@@ -159,21 +148,25 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo ", $user->country";
 				}
 			}
+			else {
+				if (!empty($user->city)) {
+					echo "$user->city";
+				}
+				if (!empty($user->province)) {
+					echo ", $user->province";
+				}
+				if (!empty($user->country) && ($user->country <> 'CA')) {
+					echo ", $user->country";
+				}
+			}
 			echo"<br>";
 
 			//grab phone numbers that are shared, then display them
 			$phones = $wpdb->get_results('SELECT * FROM phone_number WHERE share_phone=1 AND is_ministry=0 AND employee_number = "' . $user->employee_number . '"');
 			if (!empty($phones)) {
 				foreach ($phones as $phone){
-					if($phone->phone_type == 'BUS'){ $type = 'Office';}
-					else if($phone->phone_type == 'HOME'){ $type = 'Home';}
-					else if($phone->phone_type == 'CELL'){ $type = 'Cell';}
-					else if($phone->phone_type == 'CELL-BUS'){ $type = 'Cell (bus)';}
-					else if($phone->phone_type == 'FAX'){ $type = 'Fax';}
-					else if($phone->phone_type == 'OTHER'){ $type = 'Other';}
-					else { $type = '??';}
 
-					echo '<strong>' . $type . ': </strong> '.$phone->phone_number;
+					echo '<strong>' . $phone->phone_type . ': </strong> '.$phone->phone_number;
                     // Make sure we have an extension before adding the dash
 					if (isSet($phone->extension) && !empty($phone->extension)) {
 						echo ' EXT: '.$phone->extension;
@@ -185,9 +178,9 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			$emails = $wpdb->get_results('SELECT * FROM email_address WHERE share_email=1 AND is_ministry = 0 AND employee_number = "' . $user->employee_number . '"  ORDER BY is_ministry DESC');
 			if (!empty($emails)) {
 				foreach ($emails as $email){
-						echo '<strong>Email:</strong> '. $email->email_address . '<BR>';
+					echo "<strong>Email:</strong> <a href=\"mailto:".$email->email_address."\">".$email->email_address."</a><BR>";
 				}
-			}					
+			}
 			if (!empty($user->website) || !empty($user->twitter_handle) || !empty($user->skype) || !empty($user->facebook)) {
 				//if user has a website, share that too
 				if(!empty($user->website)){
@@ -207,7 +200,12 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 					echo '<strong>Skype:</strong> ' . $user->skype . '<BR>';
 				}
 				if(!empty($user->facebook)){
-					echo '<strong>Facebook:</strong> ' . $user->facebook . '<BR>';
+					echo '<strong>Facebook:</strong> <a href="http://www.facebook.com/' . $user->facebook . 
+					'" target=_blank>' . $user->facebook . '</a><BR>';
+				}
+				if(!empty($user->instagram)){
+					echo '<strong>Instagram:</strong> <a href="http://www.instagram.com/' . $user->instagram . 
+					'" target=_blank>' . $user->instagram . '</a><BR>';
 				}
 			}
 			?>
@@ -217,6 +215,6 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			</div><div style='clear:both;'></div>
 		</div>
 	</div>
-	<div id="content-right" class="staff-directory-sidebar">   
+	<div id="content-right" class="staff-directory-sidebar staff-directory download">   
 		<?php include('pro_sidebar.php') ?>
 	</div><div style='clear:both;'></div>

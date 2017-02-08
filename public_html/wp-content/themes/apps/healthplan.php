@@ -7,6 +7,7 @@ Template Name: zApp Health_Plan
 
 // Create array of health care spending account plans. The keys are the names, and the
 // values are the monthly contribution amounts
+include('functions/functions.php');
 $plans = array(
 	'Granite' => 0,
 	'Bronze' => 25,
@@ -155,7 +156,7 @@ recorded. You chose the following plan:
  
 You will be paid out March 8, June 8, September 8 and December 8th, a quarterly amount of  \$".($plans[$healthplan]*3)." should your staff account have sufficient funds.
 
-For more information about the Medical Allowance, contact Rachel Janz (rachel.janz@p2c.com).
+For more information about the Medical Allowance, contact HR (hr@p2c.com).
 
 Your HR team
 ";
@@ -171,8 +172,7 @@ Your HR team
 		    <?php  
 				//This sections gives administrators (or users with special permission) access to the healthplanreport.php page.
 				$isAdministrator = get_user_meta($current_user->ID, "wp_capabilities", true);
-				if('true'==get_user_meta($current_user->ID, "healthplan_admin", true) //if user is flagged as as having access to healthplan
-					|| '1'==$isAdministrator[administrator] ){ //or if user is wp admin
+				if(isAppAdmin('healthplan', 0)) { //if user is flagged as as having access to healthplan
 			?>
 					<table>
 						<tr>

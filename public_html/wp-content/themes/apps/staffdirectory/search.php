@@ -5,8 +5,9 @@
 * This is the search engine for finding staff in the Staff Directory. Builds a query, and returns results. 
 *
 *
-*/?>
-<p/><h4 class="profile"><a style="color:#adafb2;font-weight:bold;" href= "?page=profile" >MY PROFILE</a></h4>
+*/
+?>
+<p/><h4 class="profile"><a class="profile-link" href= "?page=profile" >MY PROFILE</a></h4>
 <BR><BR><BR><BR>
 <hr style='margin-top:0'>
 <div style="clear:both"></div>
@@ -20,18 +21,33 @@
 					} elseif (isset($_GET['search'])) {
 						$search = $_GET['search'];
 					}
-					echo "<p class='orange-box'  style='padding: 9px;'>SEARCH RESULTS FOR: \"".strtoupper($search)."\"</p> <p /><p/>";
 				}
-				else { //display welcome message if nothing being search for
-					?><p class='orange-box' style='padding: 9px;'>WELCOME TO THE STAFF DIRECTORY!</p> <p /><p/>
-
-		This application replaces the booklet version of the PTC Staff Address Book. You can search for other staff members by name, ministry, role title, or city.<p/> 
-
-		Your personal information is all initially marked as "Private".  Please click on "My Profile" (above, right), upload a photo of yourself, update any incorrect information, and choose what you would like to share with other staff.<p/>
-<?php
+				
+				?>
+				<h1 style='font-size:25pt;font-family:Roboto Slab;font-weight:100;'>Search for Staff</h1>
+				<form id='s_s_s' method="GET" action="">
+					<div class='staff-search-box' 
+						<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>  style="margin-top:40px;margin-bottom:40px;" <?php } else { ?> 
+							style="margin-bottom:20px;" <?php } ?>
+							>
+						<input id='staff-search-main' class='search-input staff-search-input' type='textbox' name='search' placeholder='name, job title, ministry, city, postal code' value='<?php echo $search;?>' autocomplete="off"/>
+						<img onclick="document.getElementById('s_s_s').submit();" class='search-img' src='<?php bloginfo('template_url'); ?>/img/search-bw.png'>
+					</div>
+					<?php if (!(isset($_POST['search']) || isset($_GET['search']))) { ?>
+					<p>You can search using any relevant keywords, like name, job title, ministry, city, postal code, etc.</p> <?php } ?>
+				</form>
+				
+				<?php
+				if (isset($_POST['search']) || isset($_GET['search'])) {
+					$searchTerm = $search;
+					if($searchTerm == '' && isset($_GET['ministryname']))
+						$searchTerm = $_GET['ministryname'];
+					echo "<p class='orange-box' style='padding: 9px; margin-top:40px;'>SEARCH RESULTS FOR: \"".strtoupper($searchTerm)."\"</p> <br>";
 				}
+				
+				
 				if(! empty($search)){ 
-					$names = preg_split("/[\s,]+/", $search);  // split the search string by any number of commas or space characters,
+					$names = preg_split("/[\s,]+/", $search, -1, PREG_SPLIT_NO_EMPTY);  // split the search string by any number of commas or space characters,
 					//this is where my intelligent search kicks in. here we try to identify some input
 					//check if ministry
 					$j=0;
@@ -60,36 +76,24 @@
 					
 					//this section of the code concatenate all of the shared information in the database into one easy to search column.
 					$concatquery = "
-						
-							CONCAT_WS(' ',
-								IFNULL(first_name, ''), IFNULL(last_name, ''), IFNULL(ministry, ''), IFNULL(role_title, ''), IFNULL(region, ''), 
-								IFNULL(ministry_address_line1, ''), IFNULL(ministry_address_line2, ''), IFNULL(ministry_address_line3, ''),
-								IFNULL(ministry_city, ''), IFNULL(ministry_province, ''), IFNULL(ministry_country, ''), IFNULL(ministry_postal_code, ''),
-								IFNULL(website, ''), IFNULL(twitter_handle, ''), IFNULL(skype, ''), IFNULL(ministry_website, ''), 
-								IFNULL(ministry_twitter_handle, ''), IFNULL(ministry_skype, ''),
-								IF( share_photo =1, IFNULL(photo, ''),  ' ' ) ,
-								IF( share_address ='None', ' ', 
-													CONCAT(
-														IFNULL(province, '') ,
-														IF( share_address ='PROVONLY', ' ', 
-																		CONCAT(
-																			IFNULL(city, ''),
-																			IF( share_address ='CITY&PROV', ' ',
-																							CONCAT(
-																							IFNULL(address_line1,''),
-																							IFNULL(address_line2,''),
-																							IFNULL(address_line3,''),
-																							IFNULL(postal_code,''))
-																			)
-																		)
-														)
-													)
-								)
-							) 
-					";
+						CONCAT_WS(' ',
+							IFNULL(first_name, ''), IFNULL(last_name, ''), IFNULL(ministry, ''), IFNULL(role_title, ''), 
+							IFNULL(ministry_address_line1, ''), IFNULL(ministry_address_line2, ''), IFNULL(ministry_address_line3, ''),
+							IFNULL(ministry_city, ''), IFNULL(ministry_province, ''), IFNULL(ministry_country, ''), IFNULL(ministry_postal_code, ''),
+							IFNULL(website, ''), IFNULL(twitter_handle, ''), IFNULL(skype, ''), IFNULL(ministry_website, ''), 
+							IFNULL(ministry_twitter_handle, ''), IFNULL(ministry_skype, ''),
+							IFNULL(city, ''),
+							IF(share_address='FULL', 
+								CONCAT_WS(' ',
+									IFNULL(address_line1,''),
+									IFNULL(address_line2,''),
+									IFNULL(address_line3,''),
+									IFNULL(postal_code,'')),
+								' '
+							)
+						)";
 					
-					
-					$queryPart1 = " SELECT *,  ";
+					$queryPart1 = " SELECT user_login, photo, first_name, last_name, role_title, ministry, share_photo, staff_account,  ";
 					$queryPart2 = "";
 					$queryPart4 = "";
 					$first=true;			  
@@ -107,7 +111,7 @@
 					}
 					$queryPart3 = " AS relevance FROM employee ";
 					$queryPart5 = " ORDER BY relevance DESC, first_name, last_name ";
-					//echo $queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5 ;
+					
 					$results = $wpdb-> get_results($wpdb->prepare($queryPart1 . $queryPart2 . $queryPart3. $queryPart4 . $queryPart5  , Search::twice($names)));
 
 					foreach($results as $result){ //populate this array with data from query
@@ -122,12 +126,33 @@
 						$alldata[$j]['staff_account'] = $data['staff_account'];
 						$j++;
 					}	
+				} else if(isset($_GET['ministryname'])) {
+					//If they specified a ministry to search within
+					$ministryname = $_GET['ministryname'];
+					$query = "	SELECT user_login, photo, first_name, last_name, 
+									role_title, ministry, share_photo, staff_account 
+								FROM employee
+								WHERE ministry = '%s'
+								ORDER BY first_name, last_name";
+					$results = $wpdb-> get_results($wpdb->prepare($query, $ministryname));
+					$j = 0;
+					foreach($results as $result){ //populate this array with data from query
+						$data = objectToArray($result);
+						$alldata[$j]['user_login'] = $data['user_login']; //we don't publish this
+						$alldata[$j]['photo'] = $data['photo'];
+						$alldata[$j]['first_name'] = $data['first_name'];
+						$alldata[$j]['last_name']  = $data['last_name'];
+						$alldata[$j]['role_title'] = $data['role_title'];
+						$alldata[$j]['ministry'] = $data['ministry'];
+						$alldata[$j]['share_photo'] = $data['share_photo'];
+						$alldata[$j]['staff_account'] = $data['staff_account'];
+						$j++;
+					}
 				}
 				
 				
 				if(! empty($alldata)){ //put the data into a nice table
 					// Obtain a list of columns
-					
 					for($i = 0; $i < count($alldata); $i++){
 						echo "<div class='person'><div style='float:left;width:50px;min-height:10px;'>";
 						if(is_null($alldata[$i]['photo']) || $alldata[$i]['share_photo'] == 0){ //if we do not have a picture for this user
@@ -137,21 +162,14 @@
 							// If they have a staff account, attempt to use their public giving site 
 							// photo; use the smaller "icon" image for search results
 							if ($alldata[$i]['staff_account'] > '800000') {
-								$url = "http://secure.powertochange.org/images/Product/icon/" . $alldata[$i]['staff_account'] . ".jpg";
-								// Check to see if that url is valid
-								// Use curl to test validity of URL; init the handle
-								$handle = curl_init($url);
-								// Set the option so that it returns the response to a variable
-								// (which we don't actually use), as opposed to printing out the
-								// response to the page
-								curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-								// Actually try to get the response from the url
-								curl_exec($handle);
-								// Check the response code
-								if (curl_getinfo($handle, CURLINFO_HTTP_CODE) == 200) {
-									// It's VALID! So, use it instead of the anonymous image
+								// Attempt to use their public giving site photo
+				                $url = "https://secure.powertochange.org/images/Product/medium/" . $alldata[$i]['staff_account'] . ".jpg";
+				                // Check to see if that url is valid
+				                $code = getHttpResponseCode_using_curl($url);
+				                // If it's INVALID (ie, user doesn't have a giving site image)
+				                // Use the standard image
+				                if($code == 200) // It's VALID! So, use it instead of the anonymous image
 									$useAnonymous = false;
-								}
 							}
 							
 							if ($useAnonymous) {
@@ -181,11 +199,26 @@
 <div id="content-right" class='download staff-directory staff-directory-sidebar' >   
 	<?php the_content();
 	include('pro_sidebar.php') ?>
-	<script type="text/javascript">
-	/* On this search page, set the focus to the search box */
-	document.getElementById("staff-search").focus();
-	</script>
+	
 </div><div style='clear:both;'></div>
+<script type="text/javascript">
+	/*Create shadow effect on the search box. CSS alone won't work.*/
+	var textareas = document.getElementsByClassName('staff-search-input');
+	for (i = 0; i < textareas.length; i++){
+	    if (textareas[i].parentNode.tagName.toString().toLowerCase() == 'div') {
+	        textareas[i].onfocus = function(){
+	            this.parentNode.style.boxShadow = '0px 0px 5px 1px #000000';
+	        }
+	        textareas[i].onblur = function(){
+	            this.parentNode.style.boxShadow = '0px 0px 5px 1px #888888';
+	        }
+	    }
+	}
+</script>
+<script type="text/javascript">
+	/* On this search page, set the focus to the search box */
+	document.getElementById("staff-search-main").focus();
+</script>
 <?php
 	function objectToArray($d) {
 		if (is_object($d)) {

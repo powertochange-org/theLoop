@@ -1,10 +1,11 @@
-<?php
+<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 formbuilder_admin_nav('forms');
 $_GET += array('pageNumber' => '');
 ?>
 <fieldset class="options metabox-holder">
 
 	<div class="info-box-formbuilder postbox">
+
 		<h3 class="info-box-title hndle"><?php _e('Current Forms', 'formbuilder'); ?></h3>
 		<div class="inside">
 		<style>
@@ -33,8 +34,8 @@ $_GET += array('pageNumber' => '');
 			}
 		?>
 		<form class='formSearch' name="formSearch" method="GET" action="<?php echo FB_ADMIN_PLUGIN_PATH; ?>">
-			<input name='page' type="hidden" value="<?php echo $_GET['page']; ?>" />
-			<input name='pageNumber' type="hidden" value="<?php echo $_GET['pageNumber']; ?>" />
+			<input name='page' type="hidden" value="<?php echo htmlentities($_GET['page']); ?>" />
+			<input name='pageNumber' type="hidden" value="<?php echo htmlentities($_GET['pageNumber']); ?>" />
 			<input name='formSearch' type="text" size="10" value="<?php echo $formSearch; ?>" />
 			<input class='searchButton' name='Search' type="submit" value="Search" />
 		</form>
@@ -114,7 +115,7 @@ $_GET += array('pageNumber' => '');
 				$nav = __('Page', 'formbuilder') . ': ' . fb_get_paged_nav($numForms, $itemLimit, false);
 				
 				if(isset($_GET['pageNumber']))
-					$page = $_GET['pageNumber'];
+					$page = htmlentities($_GET['pageNumber']);
 				else
 					$page = "";
 					
@@ -139,7 +140,7 @@ $_GET += array('pageNumber' => '');
 					<?php _e('Recipient', 'formbuilder'); ?>
 					<div width='125' style='float: right; text-align: right;'>
 						<?php echo $nav; ?>
-					</span>
+					</div>
 				</th>
 			</tr>
 			<?php

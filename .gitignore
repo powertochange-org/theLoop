@@ -31,9 +31,13 @@ public_html/wp-content/themes/*
 !public_html/wp-content/themes/carmel/*
 !public_html/wp-content/themes/LOP
 !public_html/wp-content/themes/LOP/*
-!public_html/wp-content/uploads
-!public_html/wp-content/images/
+!public_html/wp-content/uploads/
 public_html/wp-content/uploads/*
+!public_html/wp-content/uploads/p2cforms
+public_html/wp-content/uploads/p2cforms/*
+!public_html/wp-content/uploads/p2cforms/index.php
+!public_html/wp-content/uploads/p2cforms/.htaccess
+!public_html/wp-content/images/
 !public_html/wp-content/uploads/index.php
 !public_html/wp-content/uploads/.htaccess_*
 !public_html/wp-content/wptouch-data
@@ -44,4 +48,3 @@ public_html/wp-content/uploads/*
 # This is a file type created by Mac OS that stores folder attributes
 # Should have no impact on code
 .DS_Store
-/public_html/wp-content/themes/apps/nbproject/private/

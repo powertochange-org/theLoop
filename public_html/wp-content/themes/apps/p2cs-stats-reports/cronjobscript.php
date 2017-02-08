@@ -187,7 +187,7 @@ function updateInteractionDetails($orgid, $person) {
                     $initiatornames = $initiatornames . $p['first_name'] . " " . $p['last_name']. ", ";
                 }
             }
-            $initiatornames = rtrim($initiatornames, ', ');            
+            $initiatornames = rtrim($initiatornames, ', ');
             $interactionarray = array(
                 'receiver_id' => $interaction['receiver_id'],
                 'receiver_name' => $person['first_name'] . " " . $person['last_name'],

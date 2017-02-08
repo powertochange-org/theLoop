@@ -2,8 +2,8 @@
 Contributors: sudar  
 Tags: email, log, multisite  
 Requires at least: 3.3  
-Tested up to: 4.0  
-Stable tag: 1.7.5  
+Tested up to: 4.5.2  
+Stable tag: 1.9.1  
 
 Logs every email sent through WordPress. Works with WordPress Multisite as well
 
@@ -19,9 +19,9 @@ The logged emails will be stored in a separate table and can be viewed from the 
 
 In the admin interface, all the logged emails can be delete in bulk or can also be selectively deleted based on date, email and subject.
 
-### Forward email (Pro addon)
+### Resend email (Pro addon)
 
-You can [buy the Forward email pro addon](http://sudarmuthu.com/wordpress/email-log/pro-addons#forward-email-addon), which allows you to send a copy of all the emails send from WordPress, to another email address. The addon allows you to choose whether you want to forward through to, cc or bcc fields. This can be extremely useful when you want to debug by analyzing the emails that are sent from WordPress. The cost of the addon is $15 and you can buy it through [paypal](http://sudarmuthu.com/out/buy-email-log-forward-email-addon).
+You can [buy the Resend email pro addon](http://sudarmuthu.com/wordpress/email-log/pro-addons#resend-email-addon), which allows you to resend the email directly from the email log. The addon allows you to modify the different fields before resending the email. The cost of the addon is $15 and you can buy it through [paypal](http://sudarmuthu.com/out/buy-email-log-resend-email-addon).
 
 ### More Fields (Pro addon)
 
@@ -35,6 +35,9 @@ You can [buy the More Fields pro addon](http://sudarmuthu.com/wordpress/email-lo
 
 The cost of the addon is $15 and you can buy it through [paypal](http://sudarmuthu.com/out/buy-email-log-more-fields-addon).
 
+### Forward email (Pro addon)
+
+You can [buy the Forward email pro addon](http://sudarmuthu.com/wordpress/email-log/pro-addons#forward-email-addon), which allows you to send a copy of all the emails send from WordPress, to another email address. The addon allows you to choose whether you want to forward through to, cc or bcc fields. This can be extremely useful when you want to debug by analyzing the emails that are sent from WordPress. The cost of the addon is $15 and you can buy it through [paypal](http://sudarmuthu.com/out/buy-email-log-forward-email-addon).
 
 ### Cleaning up db on uninstall
 
@@ -55,7 +58,8 @@ If you are looking for ideas, then you can start with one of the following TODO 
 The following are the features that I am thinking of adding to the Plugin, when I get some free time. If you have any feature request or want to increase the priority of a particular feature, then let me know.
 
 - Add option to automatically delete the logs periodically
-- Add the ability to resend the emails
+- Add an option to export logs as csv file
+- <strike>Add the ability to resend the emails</strike>. Done in Resend Email Add-on
 - <strike>Make it MU compatible</strike>. Done in v1.7
 
 ### Support
@@ -117,6 +121,32 @@ wpmandrill plugin has a bug that prevents this plugin from logging the content o
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v1.9.1 - (2016-07-02) - (Dev time: 0.5 hour) =
+- Fix: Only allow users with `manage_option` capability to view email content.
+
+= v1.9 - (2016-06-19) - (Dev time: 6 hours) =
+- Fix: Improve the performance of count query (issue #33)
+- Docs: Added access modifiers to class methods
+- Docs: Removed unused array_get() method
+- Docs: Inline documentation added
+- Tests: Added Unit tests
+
+= v1.8.2 (2016-04-20) - (Dev time: 1 hour) =
+- Tweak: Log all emails from the TO field. Earlier the plugin was logging only the first email
+- Fix: Fixed issues in parsing reply-to and content-type headers
+
+= v1.8.1 (2015-12-27) - (Dev time: 0.5 hour) =
+- Fix: Fixed the "Delete All Logs" issue that was introduced in v1.8
+
+= v1.8 (2015-12-26) - (Dev time: 5 hours) =
+- New: Added filters and actions for addons
+- New: Added Resend Email Addon
+- Tweak: Optimize for large number of logs
+- Tweak: Use charset and collate that is defined in wp-config.php file
+- Tweak: Format email content
+- Tweak: Remove PHP4 compatible code
+- Fix: Sanitize the delete email log url
 
 = v1.7.5  (2014-09-23) - (Dev time: 1 hour) =
 - Tweak: Remove PHP 4.0 compatibility code
@@ -224,6 +254,21 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+- Fixed a minor security issue that allowed unprevilleged users to view content of logged emails
+
+= 1.9 =
+- Fixed issues with pagination.
+
+= 1.8.2 =
+Added the ability to log all emails in the TO field instead of just the first one
+
+= 1.8.1 =
+Fixed issue with "Delete All Logs" action that was introduced in v1.8
+
+= 1.8 =
+Added support for resending emails through addon
 
 = 1.7.5 =
 Fix a bug in the save user options function

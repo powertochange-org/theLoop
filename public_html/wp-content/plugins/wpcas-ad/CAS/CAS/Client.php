@@ -2878,9 +2878,10 @@ class CAS_Client
 				$query_string	= $this->removeParameterFromQueryString('ticket', $request_uri[1]);
 
 				// If the query string still has anything left, append it to the final URI
-				if ($query_string !== '')
-				$final_uri	.= "?$query_string";
-
+				if ($query_string !== '') {
+					$parts = explode("=", urldecode($query_string),2);
+					$final_uri      .= "?".$parts[0]."=".urlencode($parts[1]);
+				}
 			}
 				
 			phpCAS::trace("Final URI: $final_uri");
