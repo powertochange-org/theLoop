@@ -62,7 +62,7 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'Office of the EDA' =>  array('2014/07/Advancement-Email1.png', ''),
 	'Office of the EDMS' =>  array('2014/07/Ministry-Services-Email.png', ''),
 	'Partner Care' =>  array('2014/07/Advancement-Email1.png', ''),
-	'Power to Change - Students' =>  array('2014/07/Office-President-Email.png', 'http://p2c.com/students'),
+	'Power to Change - Students' =>  array('2014/07/Office-President-Email.png', 'https://p2c.com/students'),
 	'President\'s Office' =>  array('2014/07/Office-President-Email.png', ''),
 	'Project Services' =>  array('2014/07/Project-Services-Email.png', ''),
 	'The Life Project' =>  array('2014/07/TheLife-Email.png', 'http://thelife.com/'),
@@ -196,7 +196,7 @@ get_header(); ?>
 				}
 				signature += '</a></td></tr>' +
 					'<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="http://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'http://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
+					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'https://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
 					'<?php
 						if(array_key_exists($current_user->user_login, $division)){ //special people
 							echo $division[$current_user->user_login][0];
