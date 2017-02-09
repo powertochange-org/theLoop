@@ -3,7 +3,7 @@
 		//if(!isset($test->user_login)){ //we use updates to update the sync table. so if they don't have a sync record just make a blank one
 		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
 		//}
-
+		
         // This keeps track of all the changes that were made that require
         // notifications, so we can send out an email with the changes
         $changes = array();
@@ -15,9 +15,20 @@
         // Wordpress by default adds slashes to escape strings. How we are using
         // them, however, prefers that they are not escaped
         $_POST = stripslashes_deep($_POST);
+				
+		//set the login to be either the current user or who an admin wants to edit
+		$login_of_person_being_edited;
+		
+		if (isAppAdmin('admin_picture_add', 0) && isset($_GET['person'])){
+		
+			$login_of_person_being_edited = $_GET['person'];
+	
+		} else {
+			$login_of_person_being_edited = $current_user->user_login;
+		}
 
         if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
-            include ('upload.processor.php');
+		    include ('upload.processor.php');
         }
 		
 		//all these ifs check if the user changed something. then it updates the database (including to a sync table so we can send it back to HRIS
@@ -27,7 +38,7 @@
             // The standard $wpdb->update call doesn't work with nulls, so this
             // is the only way to insert a null into the table; it should be
             // safe though, because there are no user-input parameters.
-            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$current_user->user_login'");
+            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$login_of_person_being_edited'");
 		}
 		
 		//Ministry Address
@@ -225,6 +236,7 @@
 		
 		//Personal Note
 		if(substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,8000) != $user->notes){
+			
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
@@ -244,14 +256,14 @@
             // Update the employee table with all of the changes we have collected
 		    $wpdb->update(	'employee',
 		    				$employeeChanges,
-                            array( 'user_login' => $current_user->user_login  )
+                            array( 'user_login' => $login_of_person_being_edited  )
 		    			);
         }
 
         // Send email notification for changes
         //sendEmail($changes, "$user->first_name $user->last_name");
 		// Re-read user, in case values changed
-		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
+		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $login_of_person_being_edited . "'");//haha
 
 function isMinistryAddress($address) {
 	if (endsWith($address, '@powertochange.org')

@@ -8,10 +8,24 @@
 *
 *
 **/
-	//var_dump($_POST);//this is super helpful for debugging/building anything with the forms
+    //var_dump($_POST);//this is super helpful for debugging/building anything with the forms
 	include 'countryToNumber.php';
-	$current_user = wp_get_current_user();
-	$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
+	include(dirname(__FILE__)."/../functions/functions.php");
+
+	
+	
+	$user;
+	$login_of_person_being_edited;
+	
+	if (isAppAdmin('admin_picture_add', 0) && isset($_GET['person'])){
+		
+		$login_of_person_being_edited = $_GET['person'];
+	} else {
+		
+		$current_user = wp_get_current_user();
+		$login_of_person_being_edited = $current_user->user_login;
+	}
+		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $login_of_person_being_edited . "'");
 
 
 // make a note of the current working directory relative to root.
@@ -92,6 +106,7 @@ $max_file_size = 30000000; // size in bytes
 				<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/jquery.Jcrop.min.js"></script>
 				<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/staffdirectory.js" ></script> <?php
 				if (is_null($user->photo)){ //if we don't have a photo
+				
 					// Attempt to use their public giving site photo
 					$url = "http://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
 					// Check to see if that url is valid
@@ -113,6 +128,7 @@ $max_file_size = 30000000; // size in bytes
 					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="ADD IMAGE"><?php 
 				}
 				else { //we have a photo and can share it
+				
 					echo '<img id="photo" style="display:block" src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />'; ?>
 					<input class='orange changepic' id="addpic" type="button" onclick='$("#file").click();' value="CHANGE IMAGE" >
                     <input class='orange changepic' style="display: block;" title='Remove this image, and revert to the image on your public staff giving site (if you have one)' type="button" id="removepic" value="REMOVE IMAGE" onclick="deleteImage()"/> <?php 
@@ -129,8 +145,21 @@ $max_file_size = 30000000; // size in bytes
 
 
 
-			<div style='float:left;padding-left:23px;width:457px'>
-			<form onsubmit="return preSubmit();" id='theForm' action="?page=profile" method="post" enctype='multipart/form-data'>
+			<div style='float:left;padding-left:23px;width:457px'> 
+			<?php
+			//determining page to send person (whether an admin is editing someone else or we edit ourselves)
+			if (isAppAdmin('admin_picture_add', 0) && isset($_GET['person'])){
+				
+				echo '<form onsubmit="return preSubmit();" id="theForm" action="?page=profile&person=' . $login_of_person_being_edited 
+				. '" method="post" enctype="multipart/form-data">';
+			
+			} else {
+				
+				echo '<form onsubmit="return preSubmit();" id="theForm" action="?page=profile" method="post" enctype="multipart/form-data">';
+
+			}
+			?>
+			
 				<!-- These are fields for the photo upload stuff -->
 				<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size ?>">
 				<input id="file" type="file" name="file" style='display:none;' accept="image/png,image/gif,image/jpeg">
@@ -181,6 +210,7 @@ $max_file_size = 30000000; // size in bytes
 				<div class="form">
 				<table> <?php
 					$phones	 = $wpdb-> get_results("SELECT * FROM phone_number WHERE employee_number = '" . $user->employee_number . "' AND is_ministry='1' ORDER BY share_phone DESC");
+						
 					if($phones){
 						$last = end($phones); ?>
 						<tr>
@@ -250,7 +280,7 @@ $max_file_size = 30000000; // size in bytes
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
-							<td> <?php 
+							<td> <?php 							
 								echo $user->address_line1;
 								if($user->address_line2) { 
 									echo "<br>".$user->address_line2; 
@@ -344,7 +374,7 @@ $max_file_size = 30000000; // size in bytes
 					<textarea id="notes" name="notes" cols="60" rows="5"><?php echo $user->notes ?></textarea>
 					<br />
 					<br />
-					<input class='orange' type="submit" onclick='alert("NOTE: To edit your personal address, as well as ministry and personal phone numbers and email addresses, please go to Dayforce. Changes made there will typically show up in the Staff Directory within 24 hours.");' value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;cursor:pointer;' />
+					<input class='orange' type="submit" onclick='alert("NOTE: To edit the street address, as well as ministry and personal phone numbers and email addresses, please go to Dayforce. Changes made there will typically show up in the Staff Directory within 24 hours.");' value="SAVE & VIEW PROFILE" style='padding:10px;letter-spacing:1px;font-weight:bold;font-size:16pt;cursor:pointer;' />
 					
 				</div>
 
@@ -359,7 +389,7 @@ $max_file_size = 30000000; // size in bytes
 <?php 
 //Records that the user updated their profile so they are not warned for another year
 $update_profile_status = 0;
-$user_id = get_current_user_id();
+$user_id = get_user_by( 'user_login', $login_of_person_being_edited );
 $user_profile_settings =  get_user_meta($user_id, 'update_profile'); 
 if(!empty($user_profile_settings)) {
 	$update_profile_status = $user_profile_settings[0][0];
