@@ -660,8 +660,8 @@ get_header(); ?>
           <option value="No">No</option>
         </select>
       </div>
-      <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
-			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
+      <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Include only my direct reports (uncheck to include staff further down the reporting chain)</label><BR></div>
+			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show financials (salaries and account balances)</label></div>
 			<div id='staffVaction_options'  style='display:none'>
 				YEAR:
 				<SELECT NAME="vac_year">
