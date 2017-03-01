@@ -317,14 +317,26 @@ include('functions/js_functions.php'); ?>
 		
 		//constants for calculations the original value are beside the description of the variable
 		var cpp_rate = <?php echo getConstant("cpp_rate") ?> //0.0495; //Canada Pension Plan rate
-		var cpp_max = <?php echo getConstant("cpp_max") ?> //51100;   //Canada Pension Plan 
+		var cpp_rate_QC = <?php echo getConstant("cpp_rate_QC") ?> //?; //Canada Pension Plan rate
+
+		var cpp_max = <?php echo getConstant("cpp_max") ?> //51100;   //Canada Pension Plan
+		var cpp_max_QC = <?php echo getConstant("cpp_max_QC") ?> //?;   //Quebec Pension Plan
+
 									//maximum pensionable earnings (annual)
 		var cpp_exempt = <?php echo getConstant("cpp_exempt") ?> //3500; //Canada Pension Plan exemption (annual)
-		
+		var cpp_exempt_QC = <?php echo getConstant("cpp_exempt_QC") ?> //?; //Quebec Pension Plan exemption (annual)
+
 		var ei_rate1  = <?php echo getConstant("ei_rate1") ?> //0.0188; //Employment Insurance rate (EE rate)
+		var ei_rate1_QC  = <?php echo getConstant("ei_rate1_QC") ?> //0.0127?; //Employment Insurance rate (EE rate) for Quebec
+
 		var ei_rate2 = <?php echo getConstant("ei_rate2") ?> //1.201;  //Employment Insurance rate (ER rate)
+		var ei_rate2_QC = <?php echo getConstant("ei_rate2_QC") ?> //?;  //Employment Insurance rate (ER rate) for Quebec
+
 		var ei_max = <?php echo getConstant("ei_max") ?> //47400;    //Employment Insurance maximum insurable earnings (annual)
-		
+		var qpip_annual_ei_max = <?php echo getConstant("qpip_annual_ei_max") ?> //?;    //Employment Insurance maximum insurable earnings (annual)  QPIP quebec max
+
+		var qpip_rate_QC_ER = <?php echo getConstant("qpip_rate_QC_ER") ?> //?about 0.767%;    // QPIP quebec
+
 		//Extended Health Coverage
 		var ehc = new Array(<?php echo getConstant("ehc_single") ?>, <?php echo getConstant("ehc_couple") ?>, <?php echo getConstant("ehc_family") ?>);
 			//= new Array(100, 220, 260); //single, couple, family
@@ -406,9 +418,23 @@ include('functions/js_functions.php'); ?>
 		
 		//monthly salary
 		function get_cpp_ei(salary) {
-			var cpp_ei = (Math.min(salary, cpp_max) - cpp_exempt / 24) 
-				* cpp_rate; //24 months
-			cpp_ei += Math.min(salary, cpp_max) * ei_rate1 * ei_rate2;
+			var cpp_ei;
+
+				//if province is Quebec, use quebec rate, else use the normal one, check if max needs a change for QC
+				if (province == QC){
+					cpp_ei = (Math.min(salary, cpp_max_QC) - cpp_exempt_QC / 24)
+						* cpp_rate_QC; //24 months
+
+					cpp_ei += Math.min(salary, cpp_max_QC) * ei_rate1_QC * ei_rate2_QC;
+					cpp_ei += Math.min(salary, qpip_annual_ei_max) * qpip_rate_QC_ER;
+
+				} else {
+					cpp_ei = (Math.min(salary, cpp_max) - cpp_exempt / 24)
+						* cpp_rate; //24 months
+
+						//switched cpp max to ei max
+					cpp_ei += Math.min(salary, ei_max) * ei_rate1 * ei_rate2;
+				}
 			return Math.max(0, cpp_ei);
 		}
 
@@ -446,21 +472,21 @@ include('functions/js_functions.php'); ?>
 				total += salary * 24 * add_rate / 1000; //24 months, per $1000
 				total += Math.min(life_max, salary * 24) * life_rate / 1000; //24 months, per $1000
 				total += dept_life[coverage];
-				
+
 				//spouse
 				total += salary_s * 24 * add_rate / 1000; //24 months, per $1000
 				total += Math.min(life_max, salary_s * 24) * life_rate / 1000; //24 months, per $1000
 				total += dept_life[coverage];
 			}
-			
-			return total * health_tax[province];						
+
+			return total * health_tax[province];
 		}
-		
+
 		function get_dental_cost() {
 			if (hours < part_time){
 				return 0;
-			} 
-			
+			}
+
 			if (province == FR || decline || decline_dental){
 				return 0;
 			}
@@ -468,15 +494,15 @@ include('functions/js_functions.php'); ?>
 				console.log("MB");
 				return dental[coverage] * ehc_MB;
 			}
-			
-			
+
+
 			if(coverage_int == 1) {
 				return dental_int[coverage] * health_tax[province];
 			} else {
 				return dental[coverage] * health_tax[province];
 			}
 		}
-		
+
 		function get_medical(){
 			//Ontario and Quebec medical percentage of salary while
 			//British Columbia it is a flat rate
@@ -498,22 +524,22 @@ include('functions/js_functions.php'); ?>
 			}
 			return 0;
 		}
-		
+
 		function get_workers(){
 			return salary * workers_rate[province] / 100; //per $100
 		}
-		
+
 		function set_value(element, value){
 			//todo look nice
 			document.getElementById(element).innerHTML = value.toFixed(2);
 		}
-		
+
 		function set_content(element, value){
 			document.getElementById(element).innerHTML = value;
 		}
-		
+
 		function calculate(){
-			
+
 			province = parseInt(document.getElementById("input_province").value);
 			hours = get_value_float("input_hours");
 			eligible_toggle();
@@ -522,50 +548,50 @@ include('functions/js_functions.php'); ?>
 			coverage_int = parseInt(document.getElementById("input_coverage_int").value);
 			decline = document.getElementById("input_decline").checked;
 			decline_dental = document.getElementById("input_decline_dental").checked;
-			
+
 			if (hours < part_time){
 				hcsa = 0;
 			} else {
 				hcsa = get_value_float("input_hcsa");
 			}
-			
+
 			salary = get_value_float("input_salary");
 			cpp = get_cpp_ei(salary + hcsa);
 			set_value("output_cpp", cpp);
-			
+
 			salary_s = get_value_float("input_salary_s");
 			cpp_s = get_cpp_ei(salary_s);
 			set_value("output_cpp_s", cpp_s);
-			
+
 			health = get_benefit_cost();
 			set_value("output_health", health);
-			
+
 			dental_amt = get_dental_cost();
 			set_value("output_dental", dental_amt);
-			
+
 			medical = get_medical();
 			set_value("output_medical", medical);
-			
+
 			workers = get_workers();
 			set_value("output_workers", workers);
-			
+
 			conference = get_value_float("input_conference");
 			mpd = get_value_float("input_mpd");
 			expenses = get_value_float("input_expenses");
-			
+
 			subtotal = salary + cpp + salary_s + cpp_s + health + dental_amt + medical + hcsa + workers + conference + mpd + expenses;
 			set_value("output_subtotal", subtotal);
 			total = subtotal / (1 - cr_charge);
 			set_value("output_total", total);
 			charge = total - subtotal;
 			set_value("output_charge", charge);
-			
+
 			support = get_value_float("input_support");
 			tobe_raised = total - support;
 			set_value("output_tobe_raised", tobe_raised);
 			bridge = tobe_raised * (1 - cr_charge);
 			set_value("output_bridge", bridge);
-			
+
 			if (total == 0){
 				percent = 0;
 			}
@@ -574,8 +600,8 @@ include('functions/js_functions.php'); ?>
 			}
 			//todo look nice
 			document.getElementById("output_percent").innerHTML = Math.round(percent * 100) + "%";
-			
-			
+
+
 			//summary table
 			set_value("summ_salary", salary);
 			set_value("summ_salary_s", salary_s);
@@ -583,54 +609,54 @@ include('functions/js_functions.php'); ?>
 			set_value("summ_expenses", conference + mpd + expenses + charge);
 			set_value("summ_total", total);
 			set_value("summ_tobe_raised", tobe_raised);
-			
+
 		}
-		
+
 		function saveData(){
 			calculate(); //this stores what the user inputs into the variables
 			var data = hours + "+" + hours_s + "+" + coverage + "+" + decline + "+" + salary + "+" + salary_s + "+" + hcsa + "+" + conference + "+" + mpd  + "+" + expenses + "+" +  support + "+" +  coverage_int + "+" + decline_dental;
 			document.getElementById("data").value = data;
 			sendData.submit();
 		}
-		
+
 		function getDownloadData(){
 			//todo look nice
-			var data = document.getElementById("input_name").value + 
-				"+" + Math.round(hours * 10) / 10 + 
+			var data = document.getElementById("input_name").value +
+				"+" + Math.round(hours * 10) / 10 +
 				"+" + document.getElementById("input_province").value +
-				"+" + Math.round(hours_s * 10) /10 + 
-				"+" + document.getElementById("input_account").value + 
+				"+" + Math.round(hours_s * 10) /10 +
+				"+" + document.getElementById("input_account").value +
 				"+" + coverage +
-				"+" + document.getElementById("input_ministry").value + 
-				"+" + decline + 
-				"+" + salary.toFixed(2) + 
-				"+" + cpp.toFixed(2) + 
-				"+" + salary_s.toFixed(2) + 
+				"+" + document.getElementById("input_ministry").value +
+				"+" + decline +
+				"+" + salary.toFixed(2) +
+				"+" + cpp.toFixed(2) +
+				"+" + salary_s.toFixed(2) +
 				"+" + cpp_s.toFixed(2) +
 				"+" + health.toFixed(2) +
 				"+" + dental_amt.toFixed(2) +
 				"+" + medical.toFixed(2) +
-				"+" + hcsa.toFixed(2) + 
-				"+" + workers.toFixed(2) + 
+				"+" + hcsa.toFixed(2) +
+				"+" + workers.toFixed(2) +
 				"+" + conference.toFixed(2) +
 				"+" + mpd.toFixed(2)  +
 				"+" + expenses.toFixed(2) +
 				"+" +  subtotal.toFixed(2) +
 				"+" + charge.toFixed(2) +
-				"+" + total.toFixed(2) + 
-				"+" + support.toFixed(2) + 
-				"+" + tobe_raised.toFixed(2) + 
-				"+" + bridge.toFixed(2) + 
+				"+" + total.toFixed(2) +
+				"+" + support.toFixed(2) +
+				"+" + tobe_raised.toFixed(2) +
+				"+" + bridge.toFixed(2) +
 				"+" + percent.toFixed(2);
 			return data;
 		}
-		
+
 		function downloadData(){
 			document.getElementById("download").value=getDownloadData();
 			document.getElementById("downloadDataForm").target = '_blank';
 			document.getElementById("downloadDataForm").submit();
 		}
-		
+
 		function clearFields(){
 			//province and coverage are not cleared because they do not have a "null" value
 			document.getElementById("input_name").value = "";
@@ -649,18 +675,18 @@ include('functions/js_functions.php'); ?>
 			document.getElementById("input_support").value = 0;
 			calculate();
 		}
-		
+
 		var default_hcsa = '<select name="simple_hcsa" id="simple_hcsa" title="Please enter the monthly amount you would like to contribute to a HCSA." value="2"><option value="0" <?php if (getData("hcsa") == 0) echo "selected"; ?>>0</option><option value="25" <?php if (getData("hcsa") == 25) echo "selected"; ?>>25</option><option value="50" <?php if (getData("hcsa") == 50) echo "selected"; ?>>50</option><option value="100" <?php if (getData("hcsa") == 100) echo "selected"; ?>>100</option><option value="150" <?php if (getData("hcsa") == 150) echo "selected"; ?>>150</option><option value="200" <?php if (getData("hcsa") == 200) echo "selected"; ?>>200</option><option value="300" <?php if (getData("hcsa") == 300) echo "selected"; ?>>300</option><option value="350" <?php if (getData("hcsa") == 350) echo "selected"; ?>>350</option><option value="400" <?php if (getData("hcsa") == 400) echo "selected"; ?>>400</option><option value="500" <?php if (getData("hcsa") == 500) echo "selected"; ?>>500</option></select>';
 		var default_coverage = '<select name="simple_coverage" id="simple_coverage" title="Please select the type of benefits you require." value="2"><option value="0" <?php if (getData("coverage") == 0) echo "selected"; ?>>Single</option><option value="1" <?php if (getData("coverage") == 1) echo "selected"; ?>>Couple</option><option value="2" <?php if (getData("coverage") == 2) echo "selected"; ?>>Family</option></select>';
-		
+
 		var default_coverage_int = '<select name="simple_coverage_int" id="simple_coverage_int" title="Please select the region type." value="2"><option value="0" <?php if (getData("coverage_int") == 0) echo "selected"; ?>>National</option><option value="1" <?php if (getData("coverage_int") == 1) echo "selected"; ?>>International</option></select>';
-		
+
 		function eligible(){
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
 				document.getElementById("table_coverage").innerHTML = 'ineligible';
 				document.getElementById("table_coverage_int").innerHTML = 'ineligible';
 				document.getElementById("table_hcsa").innerHTML = 'ineligible';
-				
+
 			}
 			else {
 				document.getElementById("table_coverage").innerHTML = default_coverage;
@@ -668,10 +694,10 @@ include('functions/js_functions.php'); ?>
 				document.getElementById("table_hcsa").innerHTML = default_hcsa;
 			}
 		}
-		
+
 		function eligible_toggle() {
 			if(hours < part_time) {
-				document.getElementById("input_coverage").style.visibility = "hidden"; 
+				document.getElementById("input_coverage").style.visibility = "hidden";
 				document.getElementById("input_coverage_int").style.visibility = "hidden";
 				document.getElementById("input_decline").style.visibility = "hidden";
 				document.getElementById("input_decline_dental").style.visibility = "hidden";
@@ -684,7 +710,7 @@ include('functions/js_functions.php'); ?>
 				document.getElementById("input_hcsa").style.visibility = "visible";
 			}
 		}
-		
+
 		function goForm(){
 			$('html,body').scrollTop(0);
 			if (get_value_float("simple_hours") < part_time && get_value_float("simple_hours_s") < part_time){
@@ -710,26 +736,26 @@ include('functions/js_functions.php'); ?>
 			calculate();
 			skip();
 		}
-		
+
 		function skip(){
 			$('html,body').scrollTop(0);
 			document.getElementById("simple_form").style.display = "none";
 			document.getElementById("table_form").style.display = "block";
 		}
-		
+
 		function back(){
 			$('html,body').scrollTop(0);
 			document.getElementById("table_form").style.display = "none";
 			document.getElementById("simple_form").style.display = "block";
 		}
-		
+
 		function window_load(){
 			calculate();
 			eligible();
 		}
-		
+
 		var show_detail = false;
-		
+
 		function toggle_detail(){
 			var block = document.getElementById("table_full");
 			var button = document.getElementById("detail_view");
@@ -743,7 +769,7 @@ include('functions/js_functions.php'); ?>
 				button.value="Show Details";
 			}
 		}
-		
+
 		function toggle_benefits() {
 			var declineInput = document.getElementById("input_decline");
 			if(declineInput.checked) {
@@ -752,13 +778,13 @@ include('functions/js_functions.php'); ?>
 				document.getElementById("input_decline_dental").style.visibility = "visible";
 			}
 		}
-		
+
 		window.onload = window_load;
     </script>
 	<form name="downloadDataForm" id="downloadDataForm" action="" method="get">
 		<input type="hidden" name="download" id="download" value="">
 	</form>
-	
+
 	<form name="sendData" id="sendData" action="" method="get">
 		<input type="hidden" name="data" id="data" value="">
 	</form>
@@ -869,7 +895,7 @@ include('functions/js_functions.php'); ?>
 				<td>
 					<input type="text" name="simple_mpd" id="simple_mpd" value="<?php echo getData("mpd"); ?>">
 				</td>
-				
+
 			</tr>
 			<tr>
 				<td>
@@ -957,7 +983,7 @@ include('functions/js_functions.php'); ?>
 					</p>
 				</td>
 				<td>
-					<input type="text" name="input_account" id="input_account" maxlength='6' value="<?php echo getFieldEmployee("staff_account"); ?>"> 
+					<input type="text" name="input_account" id="input_account" maxlength='6' value="<?php echo getFieldEmployee("staff_account"); ?>">
 				</td>
 				<td>
 					<p>
@@ -1155,7 +1181,7 @@ include('functions/js_functions.php'); ?>
 				</td>
 				<td>
 					<input type="text" name="input_expenses" id="input_expenses" onchange="calculate();" title="These are expenses that you will be reimbursing from your staff account that are related to your ministry.  All staff should enter a minimum of $100.
-		
+
 When selecting an amount, consider expenses like cell phone, conferences, training, ministry trips, etc" value="<?php echo getData("expenses"); ?>">
 				</td>
 			</tr>
@@ -1248,5 +1274,5 @@ When selecting an amount, consider expenses like cell phone, conferences, traini
 <!--main end-->
 </div>
 <!--wrapper end-->
-<div class="clear"></div>		
+<div class="clear"></div>
 <?php get_footer(); ?>
