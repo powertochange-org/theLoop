@@ -48,7 +48,7 @@
 .staffright {
     width: 600px;
     float:left;
-    font-weight: 600;
+    font-weight: 500;
 }
 @media (max-width: 767px) {
     .staffcontainer {
@@ -65,7 +65,7 @@
     }
     .staffright p {
         font-size: 12px;
-            line-height: normal;
+        line-height: normal;
     }
     #mobile-menu {
         top: 350px;
