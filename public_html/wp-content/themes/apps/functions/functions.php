@@ -4,6 +4,10 @@
 Functions for general admin access in the loop has been added.
 */
 
+if(!isset($current_user_id)){
+	$current_user_id = wp_get_current_user()->id;
+}
+
 //get the current user's spouse or null if no spouse
 
 $function_spouse = null;
