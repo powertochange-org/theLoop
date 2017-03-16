@@ -7,6 +7,6 @@ include_once('p2cs-stats-reports/ajax-handler.php');
 //Include the AJAX workflow file
 include_once('workflow/workflowajax.php');
 
-include_once('advMag\function.php');
+include_once('advMag/function.php');
 
 ?>

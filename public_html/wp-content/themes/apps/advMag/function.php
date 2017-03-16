@@ -55,7 +55,7 @@ class AdvMag{
 	}
 	
 	private static function getAccounts(){
-		require_once(get_stylesheet_directory().'\functions\functions.php');
+		require_once(get_stylesheet_directory().'/functions/functions.php');
 		self::$api = new API(null, null, null, 30, true);
 		//todo limit who ie only CS
 		//$pc = getFieldEmployee('staff_account');
