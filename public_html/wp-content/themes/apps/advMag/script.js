@@ -2,6 +2,7 @@ var advMag = {
 
 	init: function(){
 		this.send('getDonors', null, function(data){
+			$('.advMag tbody').empty();
 			if(0 == data.r.length){
 				$('.advMag tbody').append("<tr><td colspan='5'>nothing found</td></tr>");
 			} else {
@@ -16,6 +17,9 @@ var advMag = {
 				}
 				advMag.addActionListeners();
 			}
+		}, function(){
+			$('.advMag tbody').empty();
+			$('.advMag tbody').append("<tr><td colspan='5'>an error occurred</td></tr>");
 		});
 	},
 	

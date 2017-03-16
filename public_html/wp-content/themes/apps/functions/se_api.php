@@ -45,7 +45,7 @@ class API{
 		$this->login = "$username:$password";
 		$this->storeToken = $storeToken;
 		if($this->storeToken){
-			$t = get_option(self::$option_prefix.$this->server);
+			$t = get_option(self::$option_prefix.'token_'.$this->server);
 			if($t){
 				$this->token = $t;
 			}
@@ -207,15 +207,16 @@ class API{
 	}	
 		
 	private function connect(){
+		error_log('SE API Login');
 		$this->token = $this->login();
 
 		//check if exist update / insert
 		if($this->storeToken){
 			$t = get_option(self::$option_prefix.'token_'.$this->server);
-			if($t){
-				update_option(self::$option_prefix.'token_'.$this->server, $this->token);
-			} else {
+			if(false === $t){
 				add_option(self::$option_prefix.'token_'.$this->server, $this->token, '', 'no');
+			} else {
+				update_option(self::$option_prefix.'token_'.$this->server, $this->token);
 			}
 		}
 
