@@ -57,7 +57,7 @@ get_header(); ?>
 				<th class='lang'>Invalid</th>
 				<th><button class='lang' disabled='disabled'>Save All</button></th>
 			</tr></thead>
-			<tbody></tbody>
+			<tbody><tr><td colspan='5'>loading...</td></tr></tbody>
 		</table>
 		</div>
 		
