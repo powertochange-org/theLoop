@@ -1,6 +1,6 @@
 <?php
 
-require(get_stylesheet_directory().'\functions\se_api.php');
+require(get_stylesheet_directory().'/functions/se_api.php');
 
 class AdvMag{
 	private static $prefix = 'advmag_';
@@ -24,7 +24,6 @@ class AdvMag{
 	}
 	
 	public static function sendInfo(){
-		require_once(get_stylesheet_directory().'\functions\functions.php');
 		$id = null;
 		foreach(self::getAccounts()as $a){
 			if($_REQUEST['id'] == $a['Id']){
