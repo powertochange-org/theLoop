@@ -198,7 +198,7 @@ phoneCost['Alcatel A392CC'] = {term:0,outright:80,discount:0,brand:"Other"};
 					
 					if(phoneCost[phone]['brand'] == phonebrand) {
 						var phoneplan = document.getElementById('phoneplan').value;
-						if(phoneplan == "voice" && !(phone == "Galaxy J3" || phone == "LG X Power")) {
+						if(phoneplan == "voice" && !(phone == "Galaxy J3" || phone == "LG X Power" || phone == "Moto G Play")) {
 							continue;
 						}
 						var option = document.createElement("option");
