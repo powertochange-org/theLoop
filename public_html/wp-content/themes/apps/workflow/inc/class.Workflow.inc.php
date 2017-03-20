@@ -26,7 +26,7 @@ class Workflow {
     private static $currentUserEmployeeNum;  // Store the current user's employee number for easy access later
     private $uniqueToken;
     private $linkAddress;
-    private $allowanceCalculatorID = 43; //This needs to match the form ID in the database for the allowance calculator
+    private $allowanceCalculatorID = 133; //This needs to match the form ID in the database for the allowance calculator
     
     public function __construct() {
         $this->linkAddress = get_home_url( '/');
@@ -394,7 +394,9 @@ class Workflow {
                 $sql .= ", COMMENT = '$newtext' ";
                 
             }
-            if($formID == $this->allowanceCalculatorID) {
+            //Process the extra misc content including for historic forms
+            //43 = Allowance calculator up until 3/20/2017
+            if($formID == $this->allowanceCalculatorID || $formID = 43) {
                 $misc_content = str_replace("\\", "\\\\", $misc_content);
                 $misc_content = str_replace("'", "\'", $misc_content);
                 $sql .= ", MISC_CONTENT = '$misc_content' ";
@@ -1531,7 +1533,7 @@ class Workflow {
                     $response .= '10, 0';
                 $response .= ');">Delete Form</button>';
                 
-                if($id == $this->allowanceCalculatorID && $submissionID != 0) {
+                if(($id == $this->allowanceCalculatorID || $id = 43) && $submissionID != 0) {
                     $response .= '<button type="button" onclick="location.href=\'/mpd/allowance-goal-calculations/allowance-calculator/?sbid='.$submissionID.'\'" 
                         class="processbutton">Re-calculate Allowance</button>';
                 }
