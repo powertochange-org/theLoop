@@ -175,14 +175,14 @@ phoneCost['Alcatel A392CC'] = {term:0,outright:80,discount:0,brand:"Other"};
 					'<tr><td>' + term + '</td><td>'+planCost[planindex]+'</td><td>'+TCOdiscount+'</td></tr>' + '</table>';
 				
 				document.getElementById('displayBYOD').innerHTML = "$"+BYODcost + planDetails + 
-					'<tr><td>' + outright + '</td><td>'+planCost[planindex]+'</td><td>'+BYODdiscount+'</td></tr>' + '</table>';
+					'<tr><td>' + outright + '</td><td>'+planCost[planindex + "BYOD"]+'</td><td>'+BYODdiscount+'</td></tr>' + '</table>';
 				
 				
 				if(phoneCost[selectedphone]['brand'] == "Apple") {
 					var BYODcostAPPLE = phoneCost[selectedphone]['discount'] - BYODdiscount + (planCost[(planindex + "BYOD")]*36) + unlockedCost;
 					document.getElementById('displayBYOD').innerHTML += "<br>" + "Apple Discount: $" 
 						+ BYODcostAPPLE + planDetails + 
-					'<tr><td>' + phoneCost[selectedphone]['discount'] + '</td><td>'+planCost[planindex]+'</td><td>'+BYODdiscount+'</td></tr>' + '</table>';;
+					'<tr><td>' + phoneCost[selectedphone]['discount'] + '</td><td>'+planCost[planindex + "BYOD"]+'</td><td>'+BYODdiscount+'</td></tr>' + '</table>';;
 				}
 			}
 			
@@ -239,6 +239,7 @@ phoneCost['Alcatel A392CC'] = {term:0,outright:80,discount:0,brand:"Other"};
 	
 	#breakdown td, th {
 		border: 1px solid black;
+		text-align: center;
 	}
 	
 </style>
