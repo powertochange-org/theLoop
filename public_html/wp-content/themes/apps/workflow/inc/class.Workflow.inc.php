@@ -213,7 +213,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken) {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes = '') {
         /*
         1) Brand new field
         2) Continue to edit
@@ -235,7 +235,7 @@ class Workflow {
         
         
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -246,6 +246,7 @@ class Workflow {
             $oldstatus = $row['STATUS'];
             $oldApprovalStatus = $row['STATUS_APPROVAL'];
             $oldcomment = $row['COMMENT'];
+            $oldhrnotes = $row['HR_NOTES'];
             $oldDirectApprover = $row['APPROVER_DIRECT'];
             if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
@@ -257,8 +258,21 @@ class Workflow {
             }
             //echo 'DEBUG: Old Status:'.$oldstatus.'<br>';
         }
-        if($oldstatus == 4) {
-            
+        
+        //HR Notes
+        if($hrnotes != '' && Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
+            $hrnotes = str_replace("\\", "\\\\", $hrnotes);
+            $hrnotes = str_replace("'", "\'", $hrnotes);
+        } else if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
+            //If HR removed notes
+            if($oldhrnotes != '')
+                $hrnotes = ' ';
+        } else {
+            $hrnotes = '';
+        }
+        
+        if($oldstatus == 4 || ($newstatus == 50 && $hrnotes != '')) {
+            //continue updating 
         } else if($oldstatus >= 7 && !($oldstatus == 7 && $newstatus == 20)) {
             $_SESSION['ERRMSG'] = 'This form can no longer be edited.';
             header('location: ?page=viewsubmissions');
@@ -279,7 +293,9 @@ class Workflow {
                     str_replace("'", "\'", $commenttext).'<br>';
                 
                 $sql .= " COMMENT = '$newtext', ";
-                
+            }
+            if($hrnotes != '') {
+                $sql .= " HR_NOTES = '$hrnotes', ";
             }
             $sql .= "PROCESSED = '1'";
             
@@ -293,6 +309,13 @@ class Workflow {
             $result = $wpdb->query($sql, ARRAY_A);
             
             //Prevents sending of an email.
+            return 0;
+        } else if($newstatus == 50) {
+            //Update only the HR notes
+            $sql = "UPDATE workflowformstatus 
+                    SET HR_NOTES = '$hrnotes'
+                    WHERE SUBMISSIONID = '$submissionID'";
+            $result = $wpdb->query($sql, ARRAY_A);
             return 0;
         }
         
@@ -341,12 +364,19 @@ class Workflow {
         
             //echo 'SUBMISSION ID : '.$submissionID.' not found. <br>';
             
-            $sql = "INSERT INTO workflowformstatus (USER, STATUS, FORMID, MISC_CONTENT, DATE_SUBMITTED, COMMENT, BEHALFOF, APPROVER_DIRECT)
+            $sql = "INSERT INTO workflowformstatus (USER, STATUS, FORMID, MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
+                                                    HR_NOTES, BEHALFOF, APPROVER_DIRECT)
                     VALUES ('$user', '$newstatus', '$formID', '$new_misc_content', '".date('Y-m-d')."', ";
             
             if($commenttext != '') {
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
                 $sql .= "'<b>[".Workflow::loggedInUserName()." on: ".date("Y-m-d H:i")."]</b><br>".str_replace("'", "\'", $commenttext)."<br>', ";
+            } else {
+                $sql .= "NULL, ";
+            }
+            
+            if($hrnotes != '') {
+                $sql .= "'$hrnotes', ";
             } else {
                 $sql .= "NULL, ";
             }
@@ -392,7 +422,9 @@ class Workflow {
                     str_replace("'", "\'", $commenttext).'<br>';
                 
                 $sql .= ", COMMENT = '$newtext' ";
-                
+            }
+            if($hrnotes != '') {
+                $sql .= ", HR_NOTES = '$hrnotes' ";
             }
             //Process the extra misc content including for historic forms
             //43 = Allowance calculator up until 3/20/2017
@@ -570,7 +602,7 @@ class Workflow {
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
                             APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
-                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -583,6 +615,7 @@ class Workflow {
                 $configvalue = $status = $row['STATUS'];
                 $approvalStatus = $row['STATUS_APPROVAL'];
                 $comments = $row['COMMENT'];
+                $hrnotes = $row['HR_NOTES'];
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
@@ -763,7 +796,7 @@ class Workflow {
         }
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
-            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext);
+            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes);
     }
     
     
@@ -813,8 +846,12 @@ class Workflow {
     *
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
-        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext) {
+        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '') {
         global $wpdb;
+        $formActive = 0;
+        if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
+            $formActive = 1;
+        
         $response = '%EMAILCLICK%';
         
         $sql = "SELECT NAME, BEHALFOF_SHOW
@@ -909,7 +946,7 @@ class Workflow {
             $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">'.$workflowName.'</div>';
         
         
-        if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
+        if($formActive)
             $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
         
         //Display the misc content
@@ -1460,6 +1497,22 @@ class Workflow {
             $response .= '<div style="clear:both;"></div>';
         }
         
+        //HR Notes - Special notes that only the HR Notes group can edit and change
+        if(!$emailMode && Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
+            //If the form is no longer active but the HR notes need to be updated, create the form tags
+            if(!$formActive)
+                $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
+            $response .= '<div><h3>HR / Payroll Notes</h3></div>';
+            $response .= '<textarea id="hrnotes" class="hrnotes" name="hrnotes" rows="5" cols="40" style="width: 100%;">'.$hrnotes.'</textarea>';
+            $response .= '<br><br>';
+            if(!$formActive) {
+                $response .= '<input type="hidden" id="ns" name="ns" value="50">';
+                $response .= '<input type="hidden" id="wfid" name="wfid" value="0">';
+                $response .= '<input type="hidden" id="sbid" name="sbid" value="'.$submissionID.'">';
+                $response .= '<button class="processbutton" type="submit">Update HR Notes</button><button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div></form>';
+            }
+        }
+        
         //Display the comments history
         if(!$emailMode) {
             $response .= '<h3 id="add-comments">Comments</h3>';
@@ -1616,114 +1669,71 @@ class Workflow {
             $response .= '<input type="hidden" id="ns" name="ns" value="20">';
             $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(20, 1);">Processed</button>';
             $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
-        } else if(!$emailMode) {
-            //Display approval history //Uncomment the below code to have it only show up once the form is complete.
-            
-            /*$sql = "SELECT *
-                    FROM workflowformhistory
-                    WHERE SUBMISSION_ID = '$submissionID'
-                    ORDER BY DATE_SUBMITTED ASC";
-        
-            $result = $wpdb->get_results($sql, ARRAY_A);
-            
-            $response .= '<table id="workflowhistory"><tr><td colspan=3><h3>Approval History</h3></td></tr>';
-            $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
-            foreach($result as $row) {
-                
-                
-                if($row['ACTION'] == 2) {
-                    //$temp .= 'Saved';
-                    continue;
-                } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
-                    //$temp = 'Saved';
-                    continue;
-                } else if($row['ACTION'] == 3) {
-                    $temp = 'Review Required Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
-                    $temp = 'Submitted';
-                } else if($row['ACTION'] == 4) {
-                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 7) {
-                    $temp = 'Approved Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
-                    $temp = 'Cancelled Submission';
-                } else if($row['ACTION'] == 8) {
-                    $temp = 'Denied Lvl: '.$row['APPROVAL_LEVEL'];
-                } else {
-                    continue;
-                }
-                $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td>';
-                $response .= $temp;
-                $response .= '</td>';
-                $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
-                
-            }
-            
-            $response .= '</table>';*/
-        }
+        }   
+          
         
         //Show the history of the submission
-        if(true) {
-            $sql = "SELECT *
-                    FROM workflowformhistory
-                    WHERE SUBMISSION_ID = '$submissionID'
-                    ORDER BY DATE_SUBMITTED ASC";
+        $sql = "SELECT *
+                FROM workflowformhistory
+                WHERE SUBMISSION_ID = '$submissionID'
+                ORDER BY DATE_SUBMITTED ASC";
+    
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        if(!$emailMode)
+            $response .= '<div class="clear"></div>';
+        else
+            $response .= '<div style="clear:both;"></div>';
         
-            $result = $wpdb->get_results($sql, ARRAY_A);
-            if(!$emailMode)
-                $response .= '<div class="clear"></div>';
-            else
-                $response .= '<div style="clear:both;"></div>';
-            if($emailMode)
-                $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Approval history</div>';
+        if($emailMode)
+            $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Approval history</div>';
+        
+        $response .= '<table id="workflowhistory"><tr><td colspan=3>';
+        if(!$emailMode) 
+            $response .= '<h3>Approval History</h3></td></tr>';
+        
+        $response .= '</td></tr>';
+        $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
+        foreach($result as $row) {
             
-            $response .= '<table id="workflowhistory"><tr><td colspan=3>';
-            if(!$emailMode) 
-                $response .= '<h3>Approval History</h3></td></tr>';
             
-            $response .= '</td></tr>';
-            $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
-            foreach($result as $row) {
-                
-                
-                if($row['ACTION'] == 2) {
-                    //$temp .= 'Saved';
-                    continue;
-                } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
-                    //$temp = 'Retracted - Saved';
-                    continue;
-                } else if($row['ACTION'] == 3) {
-                    $temp = 'Review Required';// Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
-                    $temp = 'Submitted';
-                } else if($row['ACTION'] == 4) {
-                    $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 7) {
-                    $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
-                    $temp = 'Cancelled Submission';
-                } else if($row['ACTION'] == 8) {
-                    $temp = 'Denied';// Lvl: '.$row['APPROVAL_LEVEL'];
-                } else if($row['ACTION'] == 20) {
-                    $temp = 'Processed';
-                } else {
-                    continue;
-                }
-                $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td';
-                if($emailMode) 
-                    $response .= ' style="text-align:center;padding:0 10px;"';
-                $response .= '>'.$temp;
-                $response .= '</td>';
-                $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
-                
+            if($row['ACTION'] == 2) {
+                //$temp .= 'Saved';
+                continue;
+            } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
+                //$temp = 'Retracted - Saved';
+                continue;
+            } else if($row['ACTION'] == 3) {
+                $temp = 'Review Required';// Lvl: '.$row['APPROVAL_LEVEL'];
+            } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
+                $temp = 'Submitted';
+            } else if($row['ACTION'] == 4) {
+                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+            } else if($row['ACTION'] == 7) {
+                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+            } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
+                $temp = 'Cancelled Submission';
+            } else if($row['ACTION'] == 8) {
+                $temp = 'Denied';// Lvl: '.$row['APPROVAL_LEVEL'];
+            } else if($row['ACTION'] == 20) {
+                $temp = 'Processed';
+            } else {
+                continue;
             }
+            $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td';
+            if($emailMode) 
+                $response .= ' style="text-align:center;padding:0 10px;"';
+            $response .= '>'.$temp;
+            $response .= '</td>';
+            $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
             
-            $response .= '</table>';
         }
         
+        $response .= '</table>';
         
         
-        $response .= '<div class="clear"></div>';
+        
+        
+        $response .= '<div class="clear page-break"></div>';
         
         //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
@@ -2258,7 +2268,7 @@ class Workflow {
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME,
+                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
                         '0' AS 'PROCESS'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
@@ -2369,7 +2379,7 @@ class Workflow {
                     </td></tr>';
 
        
-        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:450px;">Form Name</th><th style="width:150px;">Submitted By</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th></tr>';
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:150px;">Staff Name</th><th style="width:450px;">Form Name</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th></tr>';
         
         $prevState = 1;
         $processorState = -1;
@@ -2416,8 +2426,8 @@ class Workflow {
             
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
             $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
-                            <td style="width:450px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
+                            <td style="width:450px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
                             <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '</tr>';

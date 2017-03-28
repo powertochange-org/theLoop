@@ -22,6 +22,7 @@
         if($admin) {
     ?>
     <a href="?page=viewsubmissions&forms=all">All Staff's Forms</a>
+    <a href="?page=viewsubmissionsbyform">View By Form</a>
     <a href="?page=roles">Roles</a>
     <?php 
         } 
