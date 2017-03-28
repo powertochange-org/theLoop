@@ -2335,7 +2335,7 @@ class Workflow {
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME,
+                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
                         '1' AS 'PROCESS'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
