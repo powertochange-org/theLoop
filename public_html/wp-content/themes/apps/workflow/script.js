@@ -361,3 +361,8 @@ function formSearch() {
 function closePreview() {
     find("screen-blackout").style.display = 'none';
 }
+
+function printForm() {
+    document.getElementById('hrnotes').style.height = document.getElementById('hrnotes').scrollHeight + 'px';
+    window.print();
+}

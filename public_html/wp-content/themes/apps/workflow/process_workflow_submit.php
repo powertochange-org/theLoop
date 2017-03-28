@@ -12,12 +12,8 @@
 */
 
 
-if(!isset($_POST["count"])) {
-    die("count field missing");
-}
-
 if(!isset($_POST["wfid"])) {
-    die("count field missing");
+    die("wfid field missing");
 }
 
 if(!isset($_POST["sbid"])) {
@@ -54,6 +50,7 @@ $newstatus = $_POST["ns"];
 $fields = array();
 $misc_content = '';
 $commenttext = '';
+$hrnotes = '';
 $sup = 0;
 
 //echo 'The total count is: '.$_POST['count'].' and the new status is :'.$newstatus.'<br>';
@@ -83,6 +80,12 @@ if(isset($_POST['commenttext']) && $_POST['commenttext'] != '') {
     $commenttext = stripslashes($_POST['commenttext']);
     $commenttext = str_replace("<script", htmlentities("<script"), $commenttext);
     $commenttext = str_replace("</script", htmlentities("</script"), $commenttext);
+} 
+
+if(isset($_POST['hrnotes']) && $_POST['hrnotes'] != '') {
+    $hrnotes = stripslashes($_POST['hrnotes']);
+    $hrnotes = str_replace("<script", htmlentities("<script"), $hrnotes);
+    $hrnotes = str_replace("</script", htmlentities("</script"), $hrnotes);
 } 
 
 if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {
@@ -118,7 +121,7 @@ for($i = 0; $i < $numfields; $i++) {
 
 $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes);
 
 if($sbid != 0)
     $obj->sendEmail($sbid); //TODO : Enable this to send emails
