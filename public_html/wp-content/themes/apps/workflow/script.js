@@ -35,6 +35,7 @@ var totalCount = 0;
 var timeout;
 var newRadioFields = 2;
 var DEFAULTNEWRADIOFIELDS = 2;
+var submissionLink = true;
 
 function test() {
     alert("HAHA");
@@ -365,4 +366,15 @@ function closePreview() {
 function printForm() {
     document.getElementById('hrnotes').style.height = document.getElementById('hrnotes').scrollHeight + 'px';
     window.print();
+}
+
+function loadComments(commentid) {
+    submissionLink = false;
+    var text = '';
+    var elem = document.getElementById('comment' + commentid);
+    if(elem != null)
+        text = elem.innerHTML;
+    var text = '<h2 class="center" style="color:black;">Comments</h2><br>' + text;
+    document.getElementById('previewform').innerHTML = text;
+    document.getElementById('screen-blackout').style.display = 'inherit';
 }

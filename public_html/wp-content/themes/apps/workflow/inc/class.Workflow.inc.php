@@ -2236,7 +2236,6 @@ class Workflow {
     
     public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll) {
         global $wpdb;
-        $LOADMOREAMT = 7; //Changes the number of submissions displayed under each section
         $response = '';
         
         if($userid == '' || $userid == '0') {
@@ -2269,7 +2268,13 @@ class Workflow {
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
                         CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
-                        '0' AS 'PROCESS'
+                        workflowformstatus.COMMENT,
+                        '0' AS 'PROCESS',
+                        CASE WHEN (workflowformstatus.STATUS_APPROVAL = '1' AND workflowform.APPROVER_ROLE = '8') THEN 'S'
+                            WHEN (workflowformstatus.STATUS_APPROVAL = '2' AND workflowform.APPROVER_ROLE2 = '8') THEN 'S' 
+                            WHEN (workflowformstatus.STATUS_APPROVAL = '3' AND workflowform.APPROVER_ROLE3 = '8') THEN 'S'
+                            WHEN (workflowformstatus.STATUS_APPROVAL = '4' AND workflowform.APPROVER_ROLE4 = '8') THEN 'S'
+                        END AS 'FLAG'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -2336,7 +2341,9 @@ class Workflow {
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
                         CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
-                        '1' AS 'PROCESS'
+                        workflowformstatus.COMMENT,
+                        '1' AS 'PROCESS',
+                        '' AS 'FLAG'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -2365,12 +2372,16 @@ class Workflow {
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
+        $response .= '<div id="screen-blackout" style="display: none;"><div id="popuppreview">
+            <div id="previewform"></div><div style="clear:both;"></div> 
+            <button type="button" onclick="closePreview();" class="btn1 close-btn">Close</button></div></div>';
+        
         $response .= '<div id="approver-submissions">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="5"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
+        $response .= '<tr><td colspan="7"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
         
-        $response .= '<tr><td colspan="5">
+        $response .= '<tr><td colspan="7">
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
                         <div id="approver-status-link7" class="workflow-status-link" onclick="switchTab(1, 7);">Approved (%APPROVED%)</div>
                         <div id="approver-status-link8" class="workflow-status-link" onclick="switchTab(1, 8);">Not Approved (%DENIED%)</div>
@@ -2379,7 +2390,7 @@ class Workflow {
                     </td></tr>';
 
        
-        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:150px;">Staff Name</th><th style="width:450px;">Form Name</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th></tr>';
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:150px;">Staff Name</th><th style="width:400px;">Form Name</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th><th style="width:20px;">F</th><th></th></tr>';
         
         $prevState = 1;
         $processorState = -1;
@@ -2387,21 +2398,21 @@ class Workflow {
         foreach($result as $row) {
             if($row['STATUS'] != $prevState && !$row['PROCESS']) {
                 if($row['STATUS'] == 4) {
-                    $response .= '<tr class="approver-4"><td colspan=5><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
+                    $response .= '<tr class="approver-4"><td colspan=7><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
                     $prevState = 4;
                 } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
-                    $response .= '<tr class="approver-7 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+                    $response .= '<tr class="approver-7 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
-                    $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
+                    $response .= '<tr class="approver-8 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
                     $prevState = 8;
                 }
             } else if($processorState < 1 && $row['PROCESS'] && $row['STATUS'] == 7) {
                 if($processorState == -1 && !$row['PROCESSED']) {
-                    $response .= '<tr class="approver-9 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
+                    $response .= '<tr class="approver-9 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
                     $processorState = 0;
                 } else if(($processorState == 0 || $processorState == -1) && $row['PROCESSED']) {
-                    $response .= '<tr class="approver-10 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
+                    $response .= '<tr class="approver-10 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
                     $processorState = 1;
                 }
             }
@@ -2427,26 +2438,33 @@ class Workflow {
             $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
             $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
-                            <td style="width:450px;">'.$row['NAME'].'</td>
+                            <td style="width:400px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
-                            <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>';
+                            <td style="width:125px;">'.$row['DATE_SUBMITTED'].'</td>
+                            <td style="width:20px;">'.$row['FLAG'].'<div id="comment'.$row['SUBMISSIONID'].
+                                '" style="display:none;">'.$row['COMMENT'].'</div></td>
+                            <td onclick="loadComments(\''.$row['SUBMISSIONID'].'\');" style="width:20px;vertical-align:middle;">';
+            if($row['COMMENT'] != '')
+                $response .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
+            
+            $response .= '</td>';
             $response .= '</tr>';
         }
         //Add section headers just in case they weren't created so the user knows which page they are on
         if($pending == 0) {
-            $response .= '<tr class="approver-4"><td colspan=5><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
+            $response .= '<tr class="approver-4"><td colspan=7><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
         }
         if($approved == 0) {
-            $response .= '<tr class="approver-7 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+            $response .= '<tr class="approver-7 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
         }
         if($denied == 0) {
-            $response .= '<tr class="approver-8 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
+            $response .= '<tr class="approver-8 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
         }
         if($notprocessed == 0) {
-            $response .= '<tr class="approver-9 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
+            $response .= '<tr class="approver-9 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
         }
         if($processed == 0) {
-            $response .= '<tr class="approver-10 hide"><td colspan=5><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
+            $response .= '<tr class="approver-10 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
         }
         
         
