@@ -141,7 +141,10 @@ if(Workflow::debugMode()) {
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         $(".selectedblackout").click(function () {
-            window.document.location = $(this).data("href");
+            if(submissionLink) 
+                window.document.location = $(this).data("href");
+            if(!submissionLink)
+                submissionLink = true;
         });
     });
 </script>
