@@ -98,7 +98,7 @@ var phoneCost = [];
 				
 				
 phoneCost['iPhone SE 16GB'] = {term:0,outright:590,discount:567,brand:"Apple"};
-phoneCost['iPhone SE 64GB'] = {term:30,outright:645,discount:616,brand:"Apple"};
+phoneCost['iPhone SE 128GB'] = {term:30,outright:730,discount:695,brand:"Apple"};
 phoneCost['iPhone 6s 32GB'] = {term:70,outright:775,discount:754,brand:"Apple"};
 phoneCost['iPhone 6s 128GB'] = {term:200,outright:915,discount:881,brand:"Apple"};
 phoneCost['iPhone 6s Plus 32GB'] = {term:200,outright:915,discount:881,brand:"Apple"};
