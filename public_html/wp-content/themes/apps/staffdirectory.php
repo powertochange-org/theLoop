@@ -46,7 +46,9 @@
 					case "approval":
 					  include 'staffdirectory/approval.php';
 					  break;
-					  
+					case "givingpage":
+						include 'staffdirectory/givingpage.php';
+						break;
 					default:
 					  include "staffdirectory/search.php";
 					}

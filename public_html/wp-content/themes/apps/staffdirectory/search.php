@@ -7,7 +7,7 @@
 *
 */
 ?>
-<p/><h4 class="profile"><a class="profile-link" href= "?page=profile" >MY PROFILE</a></h4>
+<p/><h4 class="profile"><a class="profile-link" href= "?page=profile" >MY PROFILE</a> | <a class="profile-link" href= "?page=givingpage" >GIVING PAGE</a></h4>
 <BR><BR><BR><BR>
 <hr style='margin-top:0'>
 <div style="clear:both"></div>
