@@ -1,6 +1,6 @@
 <?php
-include get_stylesheet_directory() .'/functions/so_api.php';
-include get_stylesheet_directory().'/functions/webservice.php';
+//include get_stylesheet_directory() .'/functions/so_api.php';
+include get_stylesheet_directory().'/functions/webService.php';
 
 class Givingpage{
 	public static $prefix = 'advgp_';
