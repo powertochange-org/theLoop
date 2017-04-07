@@ -29,7 +29,7 @@ $(document).ready(function() {
 <script src="https://secure.powertochange.org/jscripts/list.aspx" ></script>
 <hr style='clear:both'>
 <div id='input'>
-	<div><span>ProjectCode:</span><span class='projectcode' value='loading...'></span></div>
+	<div><span>ProjectCode:</span><span class='projectcode'>'loading...'</span></div>
 	<div><span>Link:</span><span class='link'></span></div>
 	<div><span>Amount:</span><input class='amount' type='text' /></div>
 	<div><span>Frequency:</span><label><input class='frequency ot' name='frequency' type='radio' value='ot' />One Time</label><label><input class='frequency m' name='frequency' type='radio' value='m' />Monthy</label></div>
