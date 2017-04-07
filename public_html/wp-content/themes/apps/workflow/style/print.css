@@ -1,0 +1,27 @@
+/*Reset Style*/
+body {
+    margin:0;
+    padding:0; 
+}
+
+#workflow-navbar, header, footer {
+    display: none;
+}
+
+.disabled-response {
+    min-width: 0;
+}
+
+div.workflow {
+    float: none;
+    display: inline;
+}
+
+#content {
+    padding-bottom: 30px;
+    overflow: visible;
+}
+
+.page-break {
+    page-break-before: always;
+}
