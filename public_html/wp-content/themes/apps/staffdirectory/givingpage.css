@@ -1,0 +1,28 @@
+#input span:first-child{
+	width: 179px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+#input .image{
+	vertical-align: top;
+}
+
+#input textarea{
+	width: 500px;
+	height: 150px;
+}
+
+#input .image + img{
+	/* if you change this, you will need to change resizeImage function in givingpage.js */
+	width: 150px;
+}
+
+.jcrop-holder {
+	display: inline-block;
+}
+
+.jcrop-vline  + .jcrop-tracker {
+	border-radius: 50%;
+	border: 1px white dashed;
+}
