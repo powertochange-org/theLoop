@@ -1,6 +1,6 @@
 <?php
-include $_SERVER["DOCUMENT_ROOT"].'\wp-content\themes\apps\functions\so_api.php';
-include $_SERVER["DOCUMENT_ROOT"].'\wp-content\themes\apps\functions\webservice.php';
+include get_stylesheet_directory() .'/functions/so_api.php';
+include get_stylesheet_directory().'/functions/webservice.php';
 
 class Givingpage{
 	public static $prefix = 'advgp_';
@@ -15,7 +15,7 @@ class Givingpage{
 	}
 	
 	static function getInfo(){
-		require_once(get_stylesheet_directory().'\functions\functions.php');
+		require_once(get_stylesheet_directory().'/functions/functions.php');
 		//$pc = getFieldEmployee('staff_account');
 		$pc = '810550';
 		//fe/male
