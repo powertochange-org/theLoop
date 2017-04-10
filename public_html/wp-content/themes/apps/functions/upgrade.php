@@ -17,5 +17,5 @@ if(0 == $wpdb->num_rows) {
 	$wpdb->get_results("ALTER TABLE `employee` ADD gender varchar(1);");
 	
 	//loading dummy value.  Should be fixed after a sync
-	$wpdb->get_results("UPDATE `employee` SET gender = case when RAND() < 0.5 then 'M' else 'F';");
+	$wpdb->get_results("UPDATE `employee` SET gender = case when RAND() < 0.5 then 'M' else 'F' end;");
 }
