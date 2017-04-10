@@ -1,18 +1,28 @@
 <?php
+require_once(get_stylesheet_directory().'/functions/functions.php');
+
 /**
 * Giving Page
+* 
+* Author: matthew.chell
 *
+* This part of staff directory allows staff to edit there givingpage
 *
+* This page has several dependency:
+*	-StudioOnline
+*		>stylesheets
+*		>javascripts
+*		>Storefront webservice
+*		>Our webservice
+*	-Our StudioEnterprise webservice
 **/
-
-//SO_API::getProduct(93);
 
 ?>
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/jquery.Jcrop.css" type="text/css" />
 <link href="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage-sample.css" rel="stylesheet" type="text/css" />
 <link href="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage.css" rel="stylesheet" type="text/css" />
 <!-- link rel="stylesheet" href="https://secure.powertochange.org/App_Themes/Skin_1/Q_style_25.css" type="text/css" / -->
-<link href="https://secure.powertochange.org/App_Themes/Skin_1/aspira.css" type="text/css" rel="stylesheet">
+<link href="<?php echo get_option(Givingpage::$prefix.'soServer');?>/App_Themes/Skin_1/aspira.css" type="text/css" rel="stylesheet">
 <script>
 $(document).ready(function() {
 	givingpage.ajaxurl = '<?php echo admin_url('admin-ajax.php');?>';
@@ -24,10 +34,16 @@ $(document).ready(function() {
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/jquery.Jcrop.min.js"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage.js"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage-sample.js"></script>
-<script src="https://secure.powertochange.org/jscripts/ptc.js" ></script>
-<script src="https://secure.powertochange.org/jscripts/ptc_op.js" ></script>
-<script src="https://secure.powertochange.org/jscripts/list.aspx" ></script>
+<script src="<?php echo get_option(Givingpage::$prefix.'soServer');?>/jscripts/ptc.js" ></script>
+<script src="<?php echo get_option(Givingpage::$prefix.'soServer');?>/jscripts/ptc_op.js" ></script>
+<script src="<?php echo get_option(Givingpage::$prefix.'soServer');?>/jscripts/list.aspx?r=<?php echo rand() ?>" ></script>
 <hr style='clear:both'>
+<?php  echo needOptions(array(
+	Givingpage::$prefix.'soServer',
+	Givingpage::$prefix.'seWebService',
+	Givingpage::$prefix.'soServer_User',
+	Givingpage::$prefix.'soServer_Pass'
+)) ?>
 <div id='input'>
 	<div><span>ProjectCode:</span><span class='projectcode'>loading...</span></div>
 	<div><span>Link:</span><span class='link'></span></div>
@@ -39,9 +55,9 @@ $(document).ready(function() {
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
 	<div><span>E Ack Letter:</span><textarea class='eAck'></textarea></div>
 	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div>
-	<div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
-	<button>Save</button>
+	<button class='save'>Save</button>
 </div>
+<div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
 <div id="sample">
 	<div id='don-box'>
 	<div class='max-width'>

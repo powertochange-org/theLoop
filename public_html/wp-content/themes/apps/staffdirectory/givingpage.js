@@ -69,8 +69,8 @@ resizeImage: function(image64, x, y, w, h){
 	canvas.width = 350;
 	canvas.height = 350;
 	//350 is output size and 150 is the input size is scaled to that by css
-	canvas.getContext('2d').drawImage(image, -x * 350 / w, -y * 350 / h, 150 * 350 / w + 1, image.naturalHeight * 150 / image.naturalWidth * 350 / h + 1);
-	return canvas.toDataURL("image/png");
+	canvas.getContext('2d').drawImage(image, -x * 350 / w, -y * 350 / h, 150 * 350 / w, image.naturalHeight * 150 / image.naturalWidth * 350 / h);
+	return canvas.toDataURL("image/jpeg");
 },
 
 getPicture: function(){
@@ -130,6 +130,18 @@ init: function(host){
 	this.send('GetInfo', null, function(data){
 		givingpage.project = givingpage.getStaffProjectBySKU(data.r.pc);
 		var p = givingpage.project;
+		if('undefined' == typeof p){
+			$('#input').next().remove();
+			$('#input').replaceWith("Error: No giving page found or something is not set up correctly.  If you do have a giving page, please contact: <a href='mailto:helpdesk@p2c.com?subject=Loop-Givingpage&body=Name:" + ptc_op.parseXML(data.r.name) + ",%20Projectcode:" + data.r.pc  +"'>helpdesk@p2c.com</a><br /><br />");
+			$('#sample').remove();
+			return;
+		}
+		p.label_old = data.r.name;
+		p.cats_old = [];
+		for(var i = 0; i < data.r.cats.length; i ++){
+			p.cats_old.push(new ptc_op.Category(data.r.cats[i]));
+		}
+		
 		p.gender = data.r.gender;
 		//set inputs;
 		$('#input .projectcode').html(p.sku);
@@ -240,8 +252,38 @@ init: function(host){
 		givingpage.project.display();
 	});
 	$('#input .description, #input .description-french').change(givingpage.setDescription);
-	$('#input .preview').change(function(){
-		ptc_currentLocale = $('#input .preview:checked').val();
+	$('#input .save').click(function(){
+		var d = {};
+		var p = givingpage.project;
+		if($('#input .closed').is(':checked')){
+			d.closed = 1;
+		} else {
+			d.closed = 0;
+			d.des = $('#input .description').val();
+			d.desFre = $('#input .description-french').val();
+			d.eAck = $('#input .eAck-french').val();
+			d.eAckFre = $('#input .eAck-french').val();
+			if('onetime' in p.data){
+				d.onetime = p.data.onetime;
+			}
+			else if('recurring' in p.data){
+				d.recurring = p.data.recurring;
+			}
+			if(null == givingpage.resize){
+				d.isPic = 0;
+			} else {
+				d.isPic = 1;
+				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
+			}
+		}
+		givingpage.send('SetInfo', d, function(data){
+			alert(data);
+		}, function(){
+			alert('no');
+		});
+	});
+	$('.preview').change(function(){
+		ptc_currentLocale = $('.preview:checked').val();
 		givingpage.project.display();
 	});
 }
