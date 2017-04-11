@@ -55,7 +55,6 @@ class Givingpage{
 				),
 				'ImageFilenameOverride' => array('@value' => '')
 			);
-			$extensionData['logo'] = 0;
 		}
 		$pid = self::getProductID();
 		if($_POST['closed']){
@@ -82,6 +81,7 @@ class Givingpage{
 				),
 				'ImageFilenameOverride' => array('@value' => '')
 			);
+			$extensionData['logo'] = 0;
 		} else {
 			
 			$p = self::getAllItems()['project'][$pid];
@@ -129,13 +129,14 @@ class Givingpage{
 				}
 			}
 			
-			
-			//todo eAcks
 			$data['Description'] = array(
 				'@cdata' => '<ml><locale name="en-US">'.strip_tags($_POST['des']).'</locale>'.
 					'<locale name="fr-CA">'.strip_tags($_POST['desFre']).'</locale></ml>'
 			);
 		}
+		
+		//todo eAcks
+		
 		if(array_key_exists('onetime', $_POST)){
 			$extensionData['onetime'] = $_POST['onetime'];
 		} else if(array_key_exists('recurring', $_POST)){
