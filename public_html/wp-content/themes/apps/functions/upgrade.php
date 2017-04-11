@@ -5,14 +5,14 @@
 *	Author: matthew.chell
 **/
 
-$wpdb->get_results("SHOW COLUMNS FROM `employee` = 'department'");
+$wpdb->get_results("SHOW COLUMNS FROM `employee` like 'department'");
 if(0 == $wpdb->num_rows) {
 	$wpdb->get_results("ALTER TABLE `employee` ADD department varchar(100);");
 	//loading dummy value.  Should be fixed after a sync
 	$wpdb->get_results("UPDATE `employee` SET department = '';");
 }
 
-$wpdb->get_results("SHOW COLUMNS FROM `employee` = 'gender'");
+$wpdb->get_results("SHOW COLUMNS FROM `employee` like 'gender'");
 if(0 == $wpdb->num_rows) {
 	$wpdb->get_results("ALTER TABLE `employee` ADD gender varchar(1);");
 	
