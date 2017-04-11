@@ -7,6 +7,7 @@ class Givingpage{
 	private static $allItems = null;
 	
 	static function canUse(){
+		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		return true;
 		return '8' == getFieldEmployee('staff_account')[0] || 
@@ -23,6 +24,7 @@ class Givingpage{
 	}
 	
 	static function getInfo(){
+		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		//todo $pc = getFieldEmployee('staff_account');
 		$pc = '870220';
@@ -33,6 +35,7 @@ class Givingpage{
 	}
 	
 	static function setInfo(){
+		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		$extensionData = array('edited' => 1);
 		$data = array();
@@ -148,7 +151,7 @@ class Givingpage{
 		if (-1 != getSpouse()){ 
 			return 'married'; // :)
 		}
-		if('M' == getFieldEmployee('staff_account')){
+		if('M' == getFieldEmployee('gender')){
 			return 'male';
 		}
 		return 'female';
