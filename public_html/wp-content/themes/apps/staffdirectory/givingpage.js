@@ -3,6 +3,7 @@ ajaxurl: '',
 project: null,
 host: '',
 resize: null,
+guid: 0,
 
 override: function(){
 
@@ -277,9 +278,17 @@ init: function(host){
 			}
 		}
 		givingpage.send('SetInfo', d, function(data){
-			alert(data);
+			var g = givingpage.guid ++;
+			$('#input .save').after("<div id='msg_" + g + "'>Changes Saved!</div>");
+			setTimeout(function(){
+				$('#input #msg_' + g).remove();
+			}, 10000);
 		}, function(){
-			alert('no');
+			var g = givingpage.guid ++;
+			$('#input .save').after("<div id='msg_" + g + "'>An error occurred</div>");
+			setTimeout(function(){
+				$('#input #msg_' + g).remove();
+			}, 10000);
 		});
 	});
 	$('.preview').change(function(){
