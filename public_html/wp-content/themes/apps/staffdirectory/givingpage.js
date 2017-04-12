@@ -236,6 +236,7 @@ init: function(host){
 			p.description_old = p.description;
 			p.description = '';
 		} else {
+			p.data.logo = 1;
 			if('label_old' in p){
 				p.label = p.label_old;
 			}
@@ -277,19 +278,13 @@ init: function(host){
 				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
 		}
+		var g = givingpage.guid ++;
 		givingpage.send('SetInfo', d, function(data){
-			var g = givingpage.guid ++;
-			$('#input .save').after("<div id='msg_" + g + "'>Changes Saved!</div>");
-			setTimeout(function(){
-				$('#input #msg_' + g).remove();
-			}, 10000);
+			$('#input #msg_' + g).html("Changes Saved!");
 		}, function(){
-			var g = givingpage.guid ++;
-			$('#input .save').after("<div id='msg_" + g + "'>An error occurred</div>");
-			setTimeout(function(){
-				$('#input #msg_' + g).remove();
-			}, 10000);
+			$('#input #msg_' + g).html("An error occurred");
 		});
+		$('#input .save').after("<div id='msg_" + g + "'>Saving...</div>");
 	});
 	$('.preview').change(function(){
 		ptc_currentLocale = $('.preview:checked').val();

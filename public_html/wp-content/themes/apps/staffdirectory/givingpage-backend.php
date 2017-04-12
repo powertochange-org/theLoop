@@ -184,7 +184,7 @@ class Givingpage{
 		$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
 				'ministry' => 'Athletes in Action', //getFieldEmployee('ministry'),
-				'department' => '' //getFieldEmployee('department')
+				'department' => getFieldEmployee('department')
 			)
 		)['body']['d']);
 		
