@@ -193,8 +193,6 @@ class Workflow {
             
             $sql .= ")";
             $result = $wpdb->query($sql, ARRAY_A);
-            //echo 'RESULT: '.$i.' : '.$result.'<br>';
-            //echo $sql.'<br>';
             if(!$result) {
                 die('Failed to insert form fields.');
             }
@@ -225,17 +223,9 @@ class Workflow {
         $oldstatus = 1;
         $oldcomment = '';
         $historyApprovalStage = 0;
-        /*echo 'DISPLAYING THE RESULTS for WFID:'.$formID.'<br>';
-
-        for($i = 0; $i < count($fields); $i++) {
-            echo $fields[$i][0].'='.$fields[$i][1].'<br>';
-            
-        }
-        echo 'done display<br>';*/
-        
         
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -244,6 +234,7 @@ class Workflow {
         if(count($result) != 0) {
             $row = $result[0];
             $oldstatus = $row['STATUS'];
+            $oldprocessed = $row['PROCESSED'];
             $oldApprovalStatus = $row['STATUS_APPROVAL'];
             $oldcomment = $row['COMMENT'];
             $oldhrnotes = $row['HR_NOTES'];
@@ -256,7 +247,6 @@ class Workflow {
                 header('location: ?page=viewsubmissions');
                 die();
             }
-            //echo 'DEBUG: Old Status:'.$oldstatus.'<br>';
         }
         
         //HR Notes
@@ -271,7 +261,7 @@ class Workflow {
             $hrnotes = '';
         }
         
-        if($oldstatus == 4 || ($newstatus == 50 && $hrnotes != '')) {
+        if($oldstatus == 4 || ($newstatus == 50 && $hrnotes != '') || (60 <= $newstatus && $newstatus <= 63)) {
             //continue updating 
         } else if($oldstatus >= 7 && !($oldstatus == 7 && $newstatus == 20)) {
             $_SESSION['ERRMSG'] = 'This form can no longer be edited.';
@@ -315,6 +305,45 @@ class Workflow {
             $sql = "UPDATE workflowformstatus 
                     SET HR_NOTES = '$hrnotes'
                     WHERE SUBMISSIONID = '$submissionID'";
+            $result = $wpdb->query($sql, ARRAY_A);
+            return 0;
+        } else if(60 <= $newstatus && $newstatus <= 63) {
+            /* 60 - File (Archive) the submission
+             * 61 - Un-file submission
+             * 62 - Void submission
+             * 63 - Unvoid submission
+             */
+            //Updates a submission to mark it as archived "filed" or voided
+            if(!Workflow::hasRoleAccess(Workflow::loggedInUser(), 26))
+                return 0;
+            //Do not archive active submissions
+            if($oldstatus < 7) {
+                $_SESSION['ERRMSG'] = 'This submission cannot be voided or filed as it is not yet complete.';
+                return 0;
+            } else if($oldstatus == 7 && ($newstatus == 62 || $newstatus == 63)) {
+                $_SESSION['ERRMSG'] = 'An approved submission cannot be voided.';
+                return 0;
+            }
+            $hrfiled = -1;
+            $voidfield = -1;
+            if($newstatus == 60)
+                $hrfiled = 1;
+            else if($newstatus == 61)
+                $hrfiled = 0;
+            else if($newstatus == 62)
+                $voidfield = 1;
+            else if($newstatus == 63)
+                $voidfield = 0;
+            
+            $sql = "UPDATE workflowformstatus 
+                    SET ";
+            
+            if($hrfiled != -1)
+                $sql .= "HR_FILED = '$hrfiled' ";
+            if($voidfield != -1)
+                $sql .= "HR_VOID = '$voidfield' ";
+            
+            $sql .="WHERE SUBMISSIONID = '$submissionID'";
             $result = $wpdb->query($sql, ARRAY_A);
             return 0;
         }
@@ -592,6 +621,7 @@ class Workflow {
         $misc_content = '';
         $comments = '';
         $submittedby = '';
+        $hrfiled = $hrvoid = '';
         //TODO: use this class to configure the loadWorkflowEntry function
         
         $loggedInUser = Workflow::loggedInUser();
@@ -602,7 +632,7 @@ class Workflow {
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
                             APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
-                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -616,6 +646,8 @@ class Workflow {
                 $approvalStatus = $row['STATUS_APPROVAL'];
                 $comments = $row['COMMENT'];
                 $hrnotes = $row['HR_NOTES'];
+                $hrfiled = $row['HR_FILED'];
+                $hrvoid = $row['HR_VOID'];
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
@@ -796,7 +828,7 @@ class Workflow {
         }
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
-            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes);
+            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid);
     }
     
     
@@ -846,7 +878,8 @@ class Workflow {
     *
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
-        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '') {
+        $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
+        $hrvoid = '') {
         global $wpdb;
         $formActive = 0;
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
@@ -1506,10 +1539,32 @@ class Workflow {
             $response .= '<textarea id="hrnotes" class="hrnotes" name="hrnotes" rows="5" cols="40" style="width: 100%;">'.$hrnotes.'</textarea>';
             $response .= '<br><br>';
             if(!$formActive) {
-                $response .= '<input type="hidden" id="ns" name="ns" value="50">';
+                $response .= '<button class="processbutton" onclick="saveSubmission(50, 0);">Update HR Notes</button><button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div>';
+            }
+            
+            //Display Archive and Delete options
+            //Processed or just approved with no processing required
+            if(($configuration == 7 || $configuration == 9) && ($status == 10 || $status == 7) 
+                    || ($configuration == 8 || ($configuration == 9 && $status == 8)))
+                if($hrfiled == 0)
+                    $response .= '<button type="button" class="processbutton" onclick="saveSubmission(60, 0);">Filed</button>';
+                else if($hrfiled == 1)
+                    $response .= '<button type="button" class="processbutton" onclick="saveSubmission(61, 0);">UnFile</button>';
+            //Not approved
+            if($configuration == 8 || ($configuration == 9 && $status == 8)) 
+                if($hrvoid == 0)
+                    $response .= '<button type="button" class="processbutton" onclick="saveSubmission(62, 0);">Void</button>';
+                else if($hrvoid == 1)
+                    $response .= '<button type="button" class="processbutton" onclick="saveSubmission(63, 0);">Un-Void</button>';
+            
+            $response .= '<div style="clear:both;"></div>';
+            
+            
+            if(!$formActive) {
+                $response .= '<input type="hidden" id="ns" name="ns" value="0">';
                 $response .= '<input type="hidden" id="wfid" name="wfid" value="0">';
                 $response .= '<input type="hidden" id="sbid" name="sbid" value="'.$submissionID.'">';
-                $response .= '<button class="processbutton" type="submit">Update HR Notes</button><button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div></form>';
+                $response .= '</form>';
             }
         }
         
@@ -1897,9 +1952,19 @@ class Workflow {
         return $response;
     }
     
-    public function viewSubmissionSummary($userid, $formName, $submittedby, $date, $id, $formType) {
+    public function viewSubmissionSummary($userid, $formName, $submittedby, $date, $id, $formType, $showVoid = 1, 
+        $showFiled = 2) {
         global $wpdb;
         $response = '';
+        $searchFilter = '';
+        if($showVoid == 0)
+            $searchFilter .= " AND HR_VOID = '0' ";
+        else if($showVoid == 1)
+            $searchFilter .= " AND HR_VOID = '1' ";
+        if($showFiled == 0)
+            $searchFilter .= " AND HR_FILED = '0' ";
+        else if($showFiled == 1)
+            $searchFilter .= " AND HR_FILED = '1' ";
         
         if($formType == 'both' || $formType == 'my') {
             //User submissions
@@ -1917,7 +1982,7 @@ class Workflow {
             if($id != '') {
                 $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
             }
-            
+            $sql .= $searchFilter;
             $sql .= " GROUP BY workflowformstatus.STATUS";
             
             $result = $wpdb->get_results($sql, ARRAY_A);
@@ -1999,6 +2064,7 @@ class Workflow {
             if($id != '') {
                 $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
             }
+            $sql .= $searchFilter;
             //        WHERE workflowformstatus.USER = '$userid'
             
             $sql .= "GROUP BY workflowformstatus.STATUS) UNION ALL (SELECT  workflowformstatus.STATUS,
@@ -2021,7 +2087,7 @@ class Workflow {
             
             
                     
-            $sql .= "AND workflowformstatus.STATUS = '7' GROUP BY PROCESSED) ";
+            $sql .= "AND workflowformstatus.STATUS = '7' ".$searchFilter." GROUP BY PROCESSED) ";
             
             $result = $wpdb->get_results($sql, ARRAY_A);
             
@@ -2096,10 +2162,15 @@ class Workflow {
         return $response;
     }
     
-    public function viewAllSubmissions($userid, $formName, $date, $id) {
+    public function viewAllSubmissions($userid, $formName, $date, $id, $showVoid = 2) {
         global $wpdb;
-        $LOADMOREAMT = 7; //Changes the number of submissions displayed under each section
         $response = '';
+        
+        $searchFilter = '';
+        if($showVoid == 0)
+            $searchFilter .= " AND HR_VOID = '0' ";
+        else if($showVoid == 1)
+            $searchFilter .= " AND HR_VOID = '1' ";
         
         if($userid == '' || $userid == '0') {
             return 'You need to be logged in to view submissions.';
@@ -2119,7 +2190,7 @@ class Workflow {
         if($id != '') {
             $sql .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
-        
+        $sql .= $searchFilter;
         $sql .= " ORDER BY workflowformstatus.STATUS, workflowformstatus.DATE_SUBMITTED DESC";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -2234,10 +2305,18 @@ class Workflow {
         return $response;
     }
     
-    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll) {
+    /**
+      * @param showVoid  0 - Show only nonvoided submissions
+      *                  1 - Show only voided submissions
+      *                  2 - Show all submissions
+      * @param showFiled 0 - Show only un-filed submissions
+      *                  1 - Show only filed submissions
+      *                  2 - Show all submissions
+      */
+    public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll, $showVoid = 1, 
+        $showFiled = 2) {
         global $wpdb;
         $response = '';
-        
         if($userid == '' || $userid == '0') {
             return 'You need to be logged in to view submissions.';
         }
@@ -2255,6 +2334,18 @@ class Workflow {
         if($id != '') {
             $searchFilter .= " AND workflowformstatus.SUBMISSIONID = '$id' ";
         }
+        if($showVoid == 0)
+            $searchFilter .= " AND HR_VOID = '0' ";
+        else if($showVoid == 1)
+            $searchFilter .= " AND HR_VOID = '1' ";
+        if($showFiled == 0)
+            $searchFilter .= " AND HR_FILED = '0' ";
+        else if($showFiled == 1)
+            $searchFilter .= " AND HR_FILED = '1' ";
+        
+        
+        // if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26))
+        //     $sql .= " AND "
         
         $sql = "("."SELECT  workflowform.NAME, 
                         workflowform.APPROVER_ROLE, 
@@ -2327,6 +2418,7 @@ class Workflow {
                     AND workflowformstatus.STATUS != '10') ";
         $sql .= $searchFilter;
         //        WHERE workflowformstatus.USER = '$userid'
+        
         $sql .= ")";
         
         $sql .= " UNION ALL (SELECT  workflowform.NAME, 
@@ -2367,7 +2459,7 @@ class Workflow {
         
         $sql .= $searchFilter;
                 
-        $sql .= "AND workflowformstatus.STATUS = '7') 
+        $sql .= "AND workflowformstatus.STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL) 
                 ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
