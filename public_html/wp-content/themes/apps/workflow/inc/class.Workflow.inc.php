@@ -2923,7 +2923,7 @@ class Workflow {
         $response .= $tableHeader;
         foreach($completeResults as $row) {
             $response .= '<tr>';
-            $response .= '<td>'.$row['SUBMISSIONID'].'</td>';
+            $response .= '<td><a href="./?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">'.$row['SUBMISSIONID'].'</a></td>';
             $response .= '<td>'.$row['DATE_SUBMITTED'].'</td>';
             $response .= '<td>'.$row['USERNAME'].'</td>';
             $response .= '<td>';
