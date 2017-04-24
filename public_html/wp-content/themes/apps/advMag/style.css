@@ -1,4 +1,7 @@
-.advMag td span{
-	display:inline-block;
-	min-width: 100px;
+.saved td{
+	background-color: #b3ffb3;
+}
+
+.error td{
+	background-color: #ffb3b3;
 }

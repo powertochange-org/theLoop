@@ -43,6 +43,7 @@ get_header(); ?>
     <div id="content-left">
     	<div class="mobile-indent">
 		<?php the_content(); ?>
+		<link rel='stylesheet' type='text/css' media='screen'  href="<?php echo get_stylesheet_directory_uri(); ?>/advMag/style.css" />
 		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js"></script>
 		<script>
 			var ajaxurl = '<?php echo admin_url('admin-ajax.php');?>'
@@ -51,10 +52,8 @@ get_header(); ?>
 		<div class='advMag'>
 		<table>
 			<thead><tr>
-				<th class='lang'>Method</th>
 				<th class='lang'>Name</th>
-				<th class='lang'>Address</th>
-				<th class='lang'>Invalid</th>
+				<th class='lang'>Language</th>
 				<th><button class='lang' disabled='disabled'>Save All</button></th>
 			</tr></thead>
 			<tbody><tr><td colspan='5'>loading...</td></tr></tbody>

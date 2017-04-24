@@ -14,9 +14,7 @@ class AdvMag{
 			$table[] = array(
 				'id' => $a['Id'],
 				'name' => $a['FormattedName'],
-				'method' => $c['method'],
-				'address' => self::getAddress($a),
-				'invalid' => self::getInvalid($a['Id'])
+				'lang' => self::$api->getCode($a['Id'], 'DDCLANG')
 			);
 		}
 		header('Content-Type: application/json');
@@ -35,11 +33,11 @@ class AdvMag{
 			http_response_code(400);
 			die();
 		}
-		if(array_key_exists('MAGAZINE', $_REQUEST)){
-			if($_REQUEST['MAGAZINE']){
-				self::$api->setCode($id, 'MAGAZINE', $_REQUEST['MAGAZINE']);
+		if(array_key_exists('DDCLANG', $_REQUEST)){
+			if($_REQUEST['DDCLANG']){
+				self::$api->setCode($id, 'DDCLANG', $_REQUEST['DDCLANG']);
 			} else {
-				self::$api->deleteCode($id, 'MAGAZINE');
+				self::$api->deleteCode($id, 'DDCLANG');
 			}
 		}
 		
