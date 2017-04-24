@@ -8,10 +8,8 @@ var advMag = {
 			} else {
 				for(var i = 0; i < data.r.length; i ++){
 					$('.advMag tbody').append(
-						"<tr data-id'" + data.r[i].id + "' ><td>" + advMag.printMethodSelection(data.r[i].method) + "</td>" + //todo
-						"<td>" + data.r[i].name + "</td>" +
-						"<td data-id'" + data.r[i].address.id + "'>" + advMag.printAddress(data.r[i].address) + "</td>" +
-						"<td>" + data.r[i].invalid + "</td>" +
+						"<tr data-id='" + data.r[i].id + "' ><td>" + data.r[i].name + "</td>" + //todo
+						"<td>" + advMag.printLanguageSelection(data.r[i].lang) + "</td>" +
 						"<td><button class='lang' disabled='disabled'>Save</button></td></tr>"
 					)
 				}
@@ -46,38 +44,17 @@ var advMag = {
 			} else {
 				$('.advMag th button').removeAttr('disabled');
 			}
+			row.removeClass('saved');
+			row.removeClass('error');
 		});
-		$('body').on('click', '.advMag th button', function(){
-			//first see if dirty
-			var d = false;
-			var row = $(this).closest('tr');
-			row.find('input, select').each(function(){
-				if($(this).val() != $(this).data('orgval')){
-					d = true;
-					return false;
-				}
-			});
-			if(d){
-				row.addClass('dirty');
-				row.find('button').removeAttr('disabled');
-			} else {
-				row.removeClass('dirty');
-				row.find('button').attr('disabled', 'disabled');
-			}
-			if(0 == $('.advMag .dirty').length){
-				$('.advMag th button').attr('disabled', 'disabled');
-			} else {
-				$('.advMag th button').removeAttr('disabled');
-			}
-		});
-		/*$('body').on('click', '.advMag td button', function(){
+		$('body').on('click', '.advMag td button', function(){
 			advMag.save($(this).closest('tr'));
 		});
 		$('body').on('click', '.advMag th button', function(){
-			$(this).closest('table').find('tbody tr').each(function(){
+			$(this).closest('table').find('tbody tr.dirty').each(function(){
 				advMag.save(this);
 			});
-		});*/
+		});
 		/*$('.advMag td span').click(function(){
 			if(0 == $(this).children().length){
 				var h = $(this).html();
@@ -90,18 +67,30 @@ var advMag = {
 		//first see if dirty
 		var d = false;
 		var data = {id: $(row).data('id')};
+		var success = [];
+		
+		$(row).removeClass('saved');
+		$(row).removeClass('error');
 		
 		$(row).find('input, select').each(function(){
 			if($(this).val() != $(this).data('orgval')){
 				d = true;
 				data[$(this).data('field')] = $(this).val();
+				success.push({field: $(this), val: $(this).val()});
 			}
 		});
 		if(d){
 			this.send('sendInfo', data, function(){
 				console.log('s' + data.id);
+				for(var i = 0; i < success.length; i ++){
+					success[i].field.data('orgval', success[i].val);
+				}
+				$(row).removeClass('dirty');
+				$(row).addClass('saved');
+				$(row).find('button').attr('disabled', 'disabled');
 			}, function(){
 				console.log('e' + data.id);
+				$(row).addClass('error');
 			});
 		}
 	},
@@ -132,6 +121,15 @@ var advMag = {
 			"<option value='' class='lang'>Method</option>" +
 			"<option value='HAND' class='lang'" + ('HAND' == value ? " selected='selected'" : '') + ">Hand</option>" +
 			"<option value='MAIL' class='lang'" + ('MAIL' == value ? " selected='selected'" : '') + ">Mailed</option>" +
+		"</select>";
+	},
+	
+	printLanguageSelection: function(value){
+		return "<select data-field='DDCLANG' data-orgval='" + value + "'>" +
+			"<option value='' class='lang'>Lanuage</option>" +
+			"<option value='E' class='lang'" + ('E' == value ? " selected='selected'" : '') + ">English</option>" +
+			"<option value='F' class='lang'" + ('F' == value ? " selected='selected'" : '') + ">French</option>" +
+			"<option value='PF' class='lang'" + ('PF' == value ? " selected='selected'" : '') + ">Prefer French</option>" +
 		"</select>";
 	},
 	
