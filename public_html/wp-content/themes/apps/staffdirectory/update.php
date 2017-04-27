@@ -1,13 +1,13 @@
 <?php include 'countryToNumber.php';
 		//$test = $wpdb->get_row('SELECT * from approval_address_change where user_login="' . $user->user_login . '"');
 		//if(!isset($test->user_login)){ //we use updates to update the sync table. so if they don't have a sync record just make a blank one
-		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login)); 
+		//	$wpdb->insert( 'approval_address_change', array( 'user_login' => $user->user_login));
 		//}
 
         // This keeps track of all the changes that were made that require
         // notifications, so we can send out an email with the changes
         $changes = array();
-        
+
         // These is a variable to track all needed changes to the employee
         // table, so we only have to update it once
         $employeeChanges = array();
@@ -16,30 +16,41 @@
         // them, however, prefers that they are not escaped
         $_POST = stripslashes_deep($_POST);
 
+		//set the login to be either the current user or who an admin wants to edit
+		$login_of_person_being_edited;
+
+		if (isAppAdmin('admin_picture_add', 0) && isset($_GET['person'])){
+
+			$login_of_person_being_edited = $_GET['person'];
+
+		} else {
+			$login_of_person_being_edited = $current_user->user_login;
+		}
+
         if(is_uploaded_file($_FILES['file']['tmp_name'])) { // If we have a new photo
-            include ('upload.processor.php');
+		    include ('upload.processor.php');
         }
-		
+
 		//all these ifs check if the user changed something. then it updates the database (including to a sync table so we can send it back to HRIS
 		// Remove Photo
 		if($_POST['deleteImage'] == 1){ //user clicked remove photo button
-            // Update the row, setting share_photo to 0 and photo to NULL. 
+            // Update the row, setting share_photo to 0 and photo to NULL.
             // The standard $wpdb->update call doesn't work with nulls, so this
             // is the only way to insert a null into the table; it should be
             // safe though, because there are no user-input parameters.
-            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$current_user->user_login'");
+            $wpdb->query("UPDATE employee set share_photo = 0, photo = NULL where user_login = '$login_of_person_being_edited'");
 		}
-		
+
 		//Ministry Address
-		
+
 		//checking if anything is different
-		if (strip_tags($_POST['ministryAddress']['line1']) != $user->ministry_address_line1 
+		if (strip_tags($_POST['ministryAddress']['line1']) != $user->ministry_address_line1
 				|| strip_tags($_POST['ministryAddress']['line2']) != $user->ministry_address_line2
 				|| strip_tags($_POST['ministryAddress']['city']) != $user->ministry_city
 				|| strip_tags($_POST['ministryAddress']['pr']) != $user->ministry_province
 				|| strip_tags($_POST['ministryAddress']['country']) != $user->ministry_country
 				|| strip_tags($_POST['ministryAddress']['pc']) != $user->ministry_postal_code){
-				
+
 			// Store all of the changes needed
 			$employeeChanges['ministry_address_line1'] = strip_tags($_POST['ministryAddress']['line1']);
 			$employeeChanges['ministry_address_line2'] = strip_tags($_POST['ministryAddress']['line2']);
@@ -50,14 +61,14 @@
 
 			// Add to the changes for the email
 			$changes['Ministry Address'] = array(
-				'old' => 
+				'old' =>
 					getField($user->ministry_address_line1) . " <br/>" .
 		            getField($user->ministry_address_line2) . " <br/>" .
 		            getField($user->ministry_city) . " <br/>" .
 		            getField($user->ministry_province) . " <br/>" .
 		            getField($user->ministry_country) . " <br/>" .
 		            getField($user->ministry_postal_code),
-                'new' => 
+                'new' =>
 				    getField(strip_tags($_POST['ministryAddress']['line1']))  . "<br/>" .
 				    getField(strip_tags($_POST['ministryAddress']['line2']))  . "<br/>" .
 				    getField(strip_tags($_POST['ministryAddress']['city']))  . "<br/>" .
@@ -79,7 +90,7 @@
                     } elseif ($value['share'] == 'ministryshare' || $phone->is_ministry == 1) {
                         continue; //Skip to the next personal address
                     }
-                    
+
                     if ($phoneshare != $phone->share_phone) {
                         $wpdb->insert( 'sync',
                                 array(  'table_name'    => 'phone_number',
@@ -88,15 +99,15 @@
                                         'changed_date'  =>  date('Y-m-d H-i-s'),
                                         'user_login'    => $user->user_login
                                 ));
-                        $wpdb->update( 'phone_number', 
+                        $wpdb->update( 'phone_number',
                                 array( 'share_phone' => $phoneshare),
                                 array(  'phone_number_id' => $id));
                     }
-                     
+
                 }
-            } 
+            }
         }
-		
+
 		//Spouse Employee Number
 		if (strip_tags($_POST['spouseEmployeeNumber']) != $user->spouse_employee_number ){
 
@@ -107,21 +118,21 @@
 				$spouse_employee_number = strip_tags($_POST['spouseEmployeeNumber']);
 			}
 
-			$wpdb->update( 'employee', 
+			$wpdb->update( 'employee',
 				array( 'spouse_employee_number' => $spouse_employee_number),
 				array(	'employee_number' => $user->employee_number));
 		}
-		
+
 		//Email
         if($_POST['email'] != NULL) {
     		foreach($_POST['email'] as $key => $value){
-    		
+
     			//if add new
     			if ($key >= 0) {
     				$id = $key;
     				$emails = $wpdb-> get_results("SELECT * FROM email_address WHERE email_address_id = '" . $id . "'");
     				$email = $emails[0];
-    				
+
     				if ($email->is_ministry == 1) {
     					continue;
     				} else {
@@ -139,22 +150,22 @@
     				if ($shared != $email->share_email) {
                         // Let the user know if the type of email was automatically changed
                         //echo getEmailNoticeChange($email->is_ministry, $ministry, $address);
-    							
-    					$wpdb->update( 'email_address', 
+
+    					$wpdb->update( 'email_address',
     							array( 'share_email' => $shared),
-    							array( 'email_address_id' => $id  ) 
+    							array( 'email_address_id' => $id  )
     						);
-    				
+
     				}
-    				
+
     			}
     		}
         }
-		
+
 		//Ministry Social Media
-		
+
 		//checking if anything is different
-		if (strip_tags($_POST['ministryWebsite']) != $user->ministry_website 
+		if (strip_tags($_POST['ministryWebsite']) != $user->ministry_website
 				|| strip_tags($_POST['ministryTwitter']) != $user->ministry_twitter_handle
 				|| strip_tags($_POST['ministrySkype']) != $user->ministry_skype
 				|| strip_tags($_POST['ministryFacebook']) != $user->ministry_facebook
@@ -173,11 +184,11 @@
             $employeeChanges['ministry_facebook'] = strip_tags($_POST['ministryFacebook']);
 			$employeeChanges['ministry_instagram'] = strip_tags($_POST['ministryInstagram']);
 		}
-		
-		
-		
+
+
+
 		//Personal Address
-		
+
 		//checking if anything is different
 		if ($_POST['personalAddress']['share'] != $user->share_address) {
 			$wpdb->insert( 'sync',
@@ -188,22 +199,22 @@
 						'changed_date'	=>	date('Y-m-d H-i-s'),
 						'user_login'	=> $user->user_login
 				));
-			
+
 			$employeeChanges['share_address'] = $_POST['personalAddress']['share'];
-            
+
             // Add to the changes
             $changes['Personal Address'] = array(
-                'old' => 
+                'old' =>
                     ($user->share_address == 'FULL' ? 'Shared' : 'Not shared'),
-                'new' => 
+                'new' =>
                     ($_POST['personalAddress']['share'] == 'FULL' ? "Shared" : "Not shared")
                 );
 		}
-		
+
 		//Personal Social Media
-		
+
 		//checking if anything is different
-		if (strip_tags($_POST['personalWebsite']) != $user->website 
+		if (strip_tags($_POST['personalWebsite']) != $user->website
 				|| strip_tags($_POST['personalTwitter']) != $user->twitter_handle
 				|| strip_tags($_POST['personalSkype']) != $user->skype
 				|| strip_tags($_POST['personalFacebook']) != $user->facebook
@@ -222,9 +233,10 @@
 			//						'user_login'	=> $user->user_login
 			//				));
 		}
-		
+
 		//Personal Note
 		if(substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,8000) != $user->notes){
+
 			$wpdb->insert( 'sync',
 							array(  'table_name'    => 'employee',
 									'record_id'     => $user->external_id,
@@ -233,9 +245,9 @@
 									'changed_date'	=>	date('Y-m-d H-i-s'),
 									'user_login'	=> $user->user_login
 							));
-			
-			
-			
+
+
+
 			$employeeChanges['notes'] = substr(strip_tags($_POST['notes'],"<b></b><br><br/><hr><hr/><p><p/>"),0,8000);
 		}
 
@@ -244,14 +256,14 @@
             // Update the employee table with all of the changes we have collected
 		    $wpdb->update(	'employee',
 		    				$employeeChanges,
-                            array( 'user_login' => $current_user->user_login  )
+                            array( 'user_login' => $login_of_person_being_edited  )
 		    			);
         }
 
         // Send email notification for changes
         //sendEmail($changes, "$user->first_name $user->last_name");
 		// Re-read user, in case values changed
-		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $current_user->user_login . "'");
+		$user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $login_of_person_being_edited . "'");//haha
 
 function isMinistryAddress($address) {
 	if (endsWith($address, '@powertochange.org')
@@ -353,7 +365,7 @@ function sendEmail($changes, $userName) {
         // Do the email sending
         mail($to, $subject, $message, $headers);
     }
-} 
+}
 
 // Quick function to return either the field value, or "[Field Empty]"
 function getField($field) {
@@ -369,15 +381,15 @@ function getEmailNoticeAdd($key, $ministry, $address) {
         return "<br/><br/><br/><br/><p class='orange-box' style='margin-bottom:
         -50px; background-color: rgb(229, 226, 5);'>NOTE: The address
         '$address' was recognized as a ministry address, and has been added as
-        one</p>"; 
-    } else if ($ministry == 0 && $key == -1) { // Not ministry, but added as one 
+        one</p>";
+    } else if ($ministry == 0 && $key == -1) { // Not ministry, but added as one
         return "<br/><br/><br/><br/><p class='orange-box'
         style='margin-bottom: -50px; background-color: rgb(229, 226, 5);'>NOTE:
         The address '$address' was not recognized as a ministry address, so it
         was added as a personal address</p>";
     }
     return; // Don't return anything if no changes were made
-} 
+}
 
 // A function to return a notice to the page if the email address type
 // was automatically changed

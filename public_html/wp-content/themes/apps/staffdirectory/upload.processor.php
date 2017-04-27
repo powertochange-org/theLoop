@@ -49,13 +49,26 @@ if ($_FILES[$fieldname]['error'] == 0) {
             if (saveImage($_FILES[$fieldname]['tmp_name'], $uploadFilename)) {
                 // If you got this far, everything has worked and the file has been successfully saved. 
                 // Update database fields
-                $wpdb->update( 'employee', array('photo' => $now.'-'.$filename), array('user_login' => $current_user->user_login), 
+			
+				//set the login to either the current person or who the admin wants to edit
+				$login_of_person_being_edited;
+		
+				if (isAppAdmin('admin_picture_add', 0) && isset($_GET['person'])){
+		
+					$login_of_person_being_edited = $_GET['person'];
+		
+				} else {
+		
+					$login_of_person_being_edited = $current_user->user_login;
+				}
+		
+                $wpdb->update( 'employee', array('photo' => $now.'-'.$filename), array('user_login' => $login_of_person_being_edited), 
                 	array('%s'), array('%s') );
             
 
 			    $wpdb->update( 'employee', 
 			    		array( 'share_photo' => 1	),
-			    		array( 'user_login' => $current_user->user_login  ),
+			    		array( 'user_login' => $login_of_person_being_edited  ),
 			    		array('%d')
 			    );	
             } else {
