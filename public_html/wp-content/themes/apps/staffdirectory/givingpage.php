@@ -53,8 +53,8 @@ $(document).ready(function() {
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div>
 	<div><span>Description:</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
-	<div><span>E Ack Letter:</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div>
+	<!--div><span>E Ack Letter:</span><textarea class='eAck'></textarea></div>
+	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div -->
 	<button class='save'>Save</button>
 </div>
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
