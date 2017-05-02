@@ -27,7 +27,7 @@ class Givingpage{
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		$pc = getFieldEmployee('staff_account');
 		$r = array('pc' => '');
-		if(canUse()){
+		if(self::canUse()){
 			$r = self::openProjectInfo();
 			$r['pc'] = $pc;
 			$r['gender'] = self::getGender();
