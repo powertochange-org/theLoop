@@ -129,6 +129,12 @@ init: function(host){
 	this.host = host
 	this.override();
 	this.send('GetInfo', null, function(data){
+		if("" == data.r.pc){
+			$('#input').next().remove();
+			$('#input').replaceWith("No projectcode found.");
+			$('#sample').remove();
+			return;
+		}
 		givingpage.project = givingpage.getStaffProjectBySKU(data.r.pc);
 		var p = givingpage.project;
 		if('undefined' == typeof p){
@@ -263,20 +269,20 @@ init: function(host){
 			d.closed = 0;
 			d.des = $('#input .description').val();
 			d.desFre = $('#input .description-french').val();
-			d.eAck = $('#input .eAck-french').val();
-			d.eAckFre = $('#input .eAck-french').val();
-			if('onetime' in p.data){
-				d.onetime = p.data.onetime;
-			}
-			else if('recurring' in p.data){
-				d.recurring = p.data.recurring;
-			}
 			if(null == givingpage.resize){
 				d.isPic = 0;
 			} else {
 				d.isPic = 1;
 				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
+		}
+		//d.eAck = $('#input .eAck-french').val();
+		//d.eAckFre = $('#input .eAck-french').val();
+		if('onetime' in p.data){
+			d.onetime = p.data.onetime;
+		}
+		else if('recurring' in p.data){
+			d.recurring = p.data.recurring;
 		}
 		var g = givingpage.guid ++;
 		givingpage.send('SetInfo', d, function(data){

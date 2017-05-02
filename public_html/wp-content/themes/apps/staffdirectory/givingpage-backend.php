@@ -9,9 +9,8 @@ class Givingpage{
 	static function canUse(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
-		return true;
 		return '8' == getFieldEmployee('staff_account')[0] || 
-			'9' == getFieldEmployee('staff_account');
+			'9' == getFieldEmployee('staff_account')[0];
 	}
 	
 	static function getStrings(){
@@ -26,11 +25,15 @@ class Givingpage{
 	static function getInfo(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
-		//todo $pc = getFieldEmployee('staff_account');
-		$pc = '870220';
-		$r = self::openProjectInfo();
-		$r['pc'] = $pc;
-		$r['gender'] = self::getGender();
+		$pc = getFieldEmployee('staff_account');
+		$r = array('pc' => '');
+		if(canUse()){
+			$r = self::openProjectInfo();
+			$r['pc'] = $pc;
+			$r['gender'] = self::getGender();
+		}
+		//todo eAcks
+		
 		wp_send_json(array('r' => $r));
 	}
 	
@@ -39,27 +42,9 @@ class Givingpage{
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		$extensionData = array('edited' => 1);
 		$data = array();
-		if($_POST['isPic']){
-			$info = getimagesize($_POST['pic']);
-			if(350 != $info[0] || 350 != $info[1]){
-				http_response_code(400);
-				die();
-			}
-			$data['Images'] = array(
-				'Medium' => array(
-					'@attributes' => array(
-						//yah, I know it is encode as png...
-						'Extension' => 'jpg'
-					),
-					'@value' => substr($_POST['pic'], strlen('data:image/png;base64,'))
-				),
-				'ImageFilenameOverride' => array('@value' => '')
-			);
-		}
 		$pid = self::getProductID();
 		if($_POST['closed']){
-			//todo change to db
-			$data['Name'] = array('@value' => '870220');
+			$data['Name'] = array('@value' => getFieldEmployee('staff_account'));
 			$data['Description'] = array('@value' => '');
 			$data['Mappings'] = array(
 				'@attributes' => array(
@@ -83,7 +68,23 @@ class Givingpage{
 			);
 			$extensionData['logo'] = 0;
 		} else {
-			
+			if($_POST['isPic']){
+				$info = getimagesize($_POST['pic']);
+				if(350 != $info[0] || 350 != $info[1]){
+					http_response_code(400);
+					die();
+				}
+				$data['Images'] = array(
+					'Medium' => array(
+						'@attributes' => array(
+							//yah, I know it is encode as png...
+							'Extension' => 'jpg'
+						),
+						'@value' => substr($_POST['pic'], strlen('data:image/png;base64,'))
+					),
+					'ImageFilenameOverride' => array('@value' => '')
+				);
+			}
 			$p = self::getAllItems()['project'][$pid];
 			$oi = self::openProjectInfo();
 			
@@ -206,8 +207,7 @@ class Givingpage{
 	}
 	
 	private static function getProductID(){
-		//todo $pc = getFieldEmployee('staff_account');
-		$pc = '870220';
+		$pc = getFieldEmployee('staff_account');
 		foreach(self::getAllItems()['projects'] as $id => $data){
 			if($pc == $data['sku']){
 				return $id;
