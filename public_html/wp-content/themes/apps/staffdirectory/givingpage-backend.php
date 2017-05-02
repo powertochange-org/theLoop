@@ -184,13 +184,13 @@ class Givingpage{
 		);
 		$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
-				'ministry' => 'Athletes in Action', //getFieldEmployee('ministry'),
+				'ministry' => getFieldEmployee('ministry'),
 				'department' => getFieldEmployee('department')
 			)
 		)['body']['d']);
 		
 		if (-1 != getSpouse()) { 
-			$info['cats'][] = WebService::send('http://ws.adv-01d0986.powertochange.local'.'/service.asmx', 
+			$info['cats'][] = WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
 				'GetCategoryFromMinistry', array(
 					'ministry' =>  getFieldEmployee('ministry', getSpouse()),
 					'department' => getFieldEmployee('department', getSpouse())
