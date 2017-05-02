@@ -18,12 +18,11 @@
     <a href="?page=viewsubmissions&forms=my">My Forms</a>
     <a href="?page=viewsubmissions&forms=staff">My Staff's Forms</a>
     
-    <?php 
-        if($admin) {
-    ?>
-    <a href="?page=viewsubmissions&forms=all">All Staff's Forms</a>
-    <a href="?page=roles">Roles</a>
-    <?php 
-        } 
-    ?>
+    <?php if($admin) { ?>
+        <a href="?page=viewsubmissions&forms=all">All Staff's Forms</a>
+    <?php } if($admin || Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) { ?>
+        <a href="?page=viewsubmissionsbyform">View By Form</a>
+    <?php }  if($admin) { ?>
+        <a href="?page=roles">Roles</a>
+    <?php } ?>
 </div>

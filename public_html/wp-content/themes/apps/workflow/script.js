@@ -35,6 +35,7 @@ var totalCount = 0;
 var timeout;
 var newRadioFields = 2;
 var DEFAULTNEWRADIOFIELDS = 2;
+var submissionLink = true;
 
 function test() {
     alert("HAHA");
@@ -74,7 +75,6 @@ function formValidate() {
 
 function saveSubmission(status, approver) {
     find("ns").value = status;
-    
     if(status == 10) {
         if (confirm("Are you sure you want to delete this form?") == false) {
             return;
@@ -91,9 +91,13 @@ function saveSubmission(status, approver) {
         }
     } else if(status == 0) {
         return;
+    } else if(status == 62) {
+        if (confirm("Are you sure you want to void this form submission?") == false) {
+            return;
+        }
     }
     
-    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20) {
+    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || (60 <= status && status <= 63)) {
         document.getElementById('workflowsubmission').submit();
     } else {
         document.getElementById('formsubmitbutton').click();
@@ -187,10 +191,12 @@ function toggleSearch() {
         find("submissionsearchbar1").classList.remove("hide");
         find("submissionsearchbar2").classList.remove("hide");
         find("submissionsearchbar3").classList.remove("hide");
+        find("submissionsearchbar4").classList.remove("hide");
     } else {
         find("submissionsearchbar1").classList.add("hide");
         find("submissionsearchbar2").classList.add("hide");
         find("submissionsearchbar3").classList.add("hide");
+        find("submissionsearchbar4").classList.add("hide");
     }
 }
 
@@ -360,4 +366,20 @@ function formSearch() {
 
 function closePreview() {
     find("screen-blackout").style.display = 'none';
+}
+
+function printForm() {
+    document.getElementById('hrnotes').style.height = document.getElementById('hrnotes').scrollHeight + 'px';
+    window.print();
+}
+
+function loadComments(commentid) {
+    submissionLink = false;
+    var text = '';
+    var elem = document.getElementById('comment' + commentid);
+    if(elem != null)
+        text = elem.innerHTML;
+    var text = '<h2 class="center" style="color:black;">Comments</h2><br>' + text;
+    document.getElementById('previewform').innerHTML = text;
+    document.getElementById('screen-blackout').style.display = 'inherit';
 }

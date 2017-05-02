@@ -56,6 +56,11 @@ if(Workflow::loggedInUser() != '0') {
     <?php
 
     $idsearch = $formsearch = $submittedsearch = $datesearch = '';
+    $showfiled = 2;
+    $showvoid = 0;
+    if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
+        $showfiled = 0;
+    }
     if(isset($_POST['idsearch']) && $_POST['idsearch'] != '') {
         $idsearch = $_POST['idsearch'];
     }
@@ -68,6 +73,9 @@ if(Workflow::loggedInUser() != '0') {
     if(isset($_POST['datesearch']) && $_POST['datesearch'] != '') {
         $datesearch = $_POST['datesearch'];
     }
+    if(isset($_POST['filed']) && 0 <= $_POST['filed'] && $_POST['filed'] <= 2) {
+        $showfiled = $_POST['filed'];
+    }
     
     $obj = new Workflow();
     
@@ -76,7 +84,9 @@ if(Workflow::loggedInUser() != '0') {
     else
         $formType = 'my';
     
-    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType);
+    
+    
+    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     
     ?>
     <hr>
@@ -89,6 +99,15 @@ if(Workflow::loggedInUser() != '0') {
                 <td><div class="style-1 inputfix"><input type="text" name="formsearch" id="formsearch" value="<?php echo $formsearch;?>"></div></td>
                 <td><div class="style-1 inputfix"><input type="text" name="submittedsearch" id="submittedsearch" value="<?php echo $submittedsearch;?>"></div></td>
                 <td><div class="style-1 inputfix"><input type="date" name="datesearch" id="datesearch" value="<?php echo $datesearch;?>"></div></td>
+            </tr>
+            <tr id="submissionsearchbar4" class="hide">
+                <td colspan=4>
+                <?php if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) { ?>
+                    <br><input type="radio" name="filed" value="0" <?php echo ($showfiled == 0 ? 'checked' : ''); ?>>Unfiled
+                    <input type="radio" name="filed" value="1" <?php echo ($showfiled == 1 ? 'checked' : ''); ?>>Filed
+                    <input type="radio" name="filed" value="2" <?php echo ($showfiled == 2 ? 'checked' : ''); ?>>All
+                <?php } ?>
+                </td>
             </tr>
             <tr id="submissionsearchbar3" class="hide">
                 <td colspan=4 class="center">
@@ -109,11 +128,13 @@ if(Workflow::loggedInUser() != '0') {
     
     <?php
     if($formType == 'my' || $formType == 'both')
-        echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch);
+        echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch, 0);
     if($formType == 'staff' || $formType == 'both')
-        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 0);
+        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 0,
+             $showvoid, $showfiled);
     if($formType == 'all' && Workflow::isAdmin(Workflow::loggedInUser()))
-        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 1);
+        echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 1,
+             $showvoid, $showfiled);
     
     //Display the forms that the user was in before hitting the search button
     if(isset($_GET['mode']) && isset($_GET['tag'])) {
@@ -141,7 +162,10 @@ if(Workflow::debugMode()) {
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         $(".selectedblackout").click(function () {
-            window.document.location = $(this).data("href");
+            if(submissionLink) 
+                window.document.location = $(this).data("href");
+            if(!submissionLink)
+                submissionLink = true;
         });
     });
 </script>
