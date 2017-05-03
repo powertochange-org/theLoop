@@ -89,12 +89,12 @@ class Givingpage{
 			$oi = self::openProjectInfo();
 			
 			//set name
-			if('<' != $pid['label'][0]){
-				$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US'))['body']['d'][0];
-				$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA'))['body']['d'][0];
-			
+			if('<' != $p['label'][0]){
 				$data['Name'] = array(
 					'@cdata' => $oi['name']
+				);
+				$data['SEName'] = array(
+					'@value' => $oi['sename']
 				);
 			}
 			
@@ -180,7 +180,8 @@ class Givingpage{
 		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA'))['body']['d'][0];
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
-				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>"
+				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
+				'sename' => "$minOFE $name"
 		);
 		$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
