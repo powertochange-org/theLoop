@@ -1,7 +1,7 @@
 <?php 
 class API{
 
-	private static $option_prefix = 'ptc_se_';
+	static $option_prefix = 'ptc_se_';
 
 	private $server;
 	private $login;
