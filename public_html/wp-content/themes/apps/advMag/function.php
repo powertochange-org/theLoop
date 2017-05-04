@@ -55,7 +55,6 @@ class AdvMag{
 		self::$api = new API(null, null, null, 30, true);
 		//limit who ie only CS
 		$pc = getFieldEmployee('staff_account');
-		$pc = '100400';
 		if('' == $pc || is_null($pc) || ('8' != $pc[0] && '9' != $pc[0])){
 			return array();
 		}
