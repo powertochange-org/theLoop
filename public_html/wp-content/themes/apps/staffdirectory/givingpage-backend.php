@@ -77,10 +77,9 @@ class Givingpage{
 				$data['Images'] = array(
 					'Medium' => array(
 						'@attributes' => array(
-							//yah, I know it is encode as png...
 							'Extension' => 'jpg'
 						),
-						'@value' => substr($_POST['pic'], strlen('data:image/png;base64,'))
+						'@value' => substr($_POST['pic'], strlen('data:image/jpeg;base64,'))
 					),
 					'ImageFilenameOverride' => array('@value' => '')
 				);
