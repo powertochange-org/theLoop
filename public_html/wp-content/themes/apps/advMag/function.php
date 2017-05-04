@@ -9,7 +9,7 @@ class AdvMag{
 	public static function getDonors(){
 		
 		$table = array();
-		foreach(self::getAccounts()as $a){
+		foreach(self::getAccounts() as $a){
 			$table[] = array(
 				'id' => $a['Id'],
 				'name' => $a['FormattedName'],
@@ -51,6 +51,7 @@ class AdvMag{
 	}
 	
 	private static function getAccounts(){
+		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		self::$api = new API(null, null, null, 30, true);
 		//limit who ie only CS
