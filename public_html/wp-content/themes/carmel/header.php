@@ -86,7 +86,12 @@ if (get_theme_mod('survey_active')) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>  
     <body>
-		<header>
+    <?php
+    if(get_option( 'loopstaffphotocontest' , 0 )) {
+      include 'extrafeatures/staffdirectorycontest.php';
+    }
+    ?>
+    <header>
       <div class='inner'>
   			<div class="header-logo">
           <a href="/"><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>

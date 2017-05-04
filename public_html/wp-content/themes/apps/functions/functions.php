@@ -257,4 +257,24 @@ function removeMember($appname, $member) {
 	return delete_user_meta($member, 'loopadmin_'.$appname); 
 }
 
+function needOptions($keys){
+	//make sure user is admin
+	if (current_user_can('manage_options')){
+		$s = '';
+		foreach($keys as $k){
+			if(false === get_option($k)){
+				if (array_key_exists($k, $_POST)){
+					add_option($k,  $_POST[$k], '', 'no');
+				} else {
+					$s .= "<tr><td>$k</td><td><input name='$k'/></td></tr>";
+				}
+			}
+		}
+		if($s){
+			return "This page lacks the following options: <form method='POST'><table>$s</table><input type='submit' value='save' /></form>";	
+		}
+	}
+	return '';
+}
+
 ?>

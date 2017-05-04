@@ -94,7 +94,7 @@ function parseUserValuesInput(){
 		if(isset($_GET['sbid'])) {
 			$prevSub = '&sbid='.$_GET['sbid'];
 		}
-		$completemessage = '<form action="?page=workflowentry&wfid=43'.$prevSub.'" method="post" id="allowanceform">'; //Allowance test #1 = 15 #2 = 38 #3 = 43
+		$completemessage = '<form action="?page=workflowentry&wfid=133'.$prevSub.'" method="post" id="allowanceform">'; //Allowance test #1 = 15 #2 = 38 #3 = 43
 		//echo '<form action="?page=workflowentry&wfid=15" method="post" id="allowanceform">';
 		$response = '<div style="font-family:Arial;">';
 		
