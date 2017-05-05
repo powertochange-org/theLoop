@@ -71,7 +71,7 @@ resizeImage: function(image64, x, y, w, h){
 	canvas.height = 350;
 	//350 is output size and 150 is the input size is scaled to that by css
 	canvas.getContext('2d').drawImage(image, -x * 350 / w, -y * 350 / h, 150 * 350 / w, image.naturalHeight * 150 / image.naturalWidth * 350 / h);
-	return canvas.toDataURL("image/jpeg");
+	return canvas.toDataURL("image/png");
 },
 
 getPicture: function(){
