@@ -9,4 +9,7 @@ include_once('p2cs-stats-reports/ajax-handler.php');
 include_once('workflow/workflowajax.php');
 
 include_once('staffdirectory/givingpage-backend.php');
+
+include_once('advMag/function.php');
+
 ?>
