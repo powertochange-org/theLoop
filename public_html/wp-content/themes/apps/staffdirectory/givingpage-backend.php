@@ -145,7 +145,7 @@ class Givingpage{
 		$data['ExtensionData'] = array(
 			'@value' => json_encode($extensionData)
 		);
-		wp_send_json(array('data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
+		wp_send_json(array('pid' => $pid, 'data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
 	}
 	
 	private static function getGender(){
