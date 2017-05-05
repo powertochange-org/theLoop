@@ -40,7 +40,7 @@ class Givingpage{
 	static function setInfo(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
-		$extensionData = array('edited' => 1);
+		$extensionData = array('edited' => date("Y-m-d H:i:s"));
 		$data = array();
 		$pid = self::getProductID();
 		if($_POST['closed']){
@@ -85,7 +85,7 @@ class Givingpage{
 					'ImageFilenameOverride' => array('@value' => '')
 				);
 			}
-			$p = self::getAllItems()['project'][$pid];
+			$p = self::getAllItems()['projects'][$pid];
 			$oi = self::openProjectInfo();
 			
 			//set name
@@ -93,8 +93,10 @@ class Givingpage{
 				$data['Name'] = array(
 					'@cdata' => $oi['name']
 				);
-				$data['SEName'] = array(
-					'@value' => $oi['sename']
+				$data['SE'] = array(
+					'SEName' => array(
+						'@value' => $oi['sename']
+					)
 				);
 			}
 			
