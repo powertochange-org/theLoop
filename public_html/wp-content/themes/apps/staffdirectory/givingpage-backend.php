@@ -221,7 +221,7 @@ class Givingpage{
 	private static function getAllItems(){
 		if(is_null(self::$allItems)){
 			$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
-			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false $context);
+			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false, $context);
 			$raw =  strrev(substr($raw, strlen('allItems = ')));
 			$p = strpos($raw, '// ');
 			self::$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
