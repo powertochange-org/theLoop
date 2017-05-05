@@ -77,9 +77,10 @@ class Givingpage{
 				$data['Images'] = array(
 					'Medium' => array(
 						'@attributes' => array(
+							//yah, I know it is encode as png...
 							'Extension' => 'jpg'
 						),
-						'@value' => substr($_POST['pic'], strlen('data:image/jpeg;base64,'))
+						'@value' => substr($_POST['pic'], strlen('data:image/png;base64,'))
 					),
 					'ImageFilenameOverride' => array('@value' => '')
 				);
@@ -209,20 +210,23 @@ class Givingpage{
 	private static function getProductID(){
 		$pc = getFieldEmployee('staff_account');
 		foreach(self::getAllItems()['projects'] as $id => $data){
-			if($pc == $data['sku']){
+			if('' != $data['sku'] && $pc == $data['sku']){
 				return $id;
 			}
 		}
+		http_response_code(400);
+		die();
 	}
 	
 	private static function getAllItems(){
-		if(is_null($allItems)){
-			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand());
+		if(is_null(self::$allItems)){
+			$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
+			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false $context);
 			$raw =  strrev(substr($raw, strlen('allItems = ')));
 			$p = strpos($raw, '// ');
-			$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
+			self::$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
 		}
-		return $allItems;
+		return self::$allItems;
 	}
 }
 
