@@ -126,7 +126,7 @@ var advMag = {
 	
 	printLanguageSelection: function(value){
 		return "<select data-field='DDCLANG' data-orgval='" + value + "'>" +
-			"<option value='' class='lang'>Lanuage</option>" +
+			"<option value='' class='lang'>Language</option>" +
 			"<option value='E' class='lang'" + ('E' == value ? " selected='selected'" : '') + ">English</option>" +
 			"<option value='F' class='lang'" + ('F' == value ? " selected='selected'" : '') + ">French</option>" +
 			"<option value='PF' class='lang'" + ('PF' == value ? " selected='selected'" : '') + ">Prefer French</option>" +
