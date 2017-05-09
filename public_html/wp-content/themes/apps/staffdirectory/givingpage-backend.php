@@ -40,7 +40,7 @@ class Givingpage{
 	static function setInfo(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
-		$extensionData = array('edited' => 1);
+		$extensionData = array('edited' => date("Y-m-d H:i:s"));
 		$data = array();
 		$pid = self::getProductID();
 		if($_POST['closed']){
@@ -77,14 +77,15 @@ class Givingpage{
 				$data['Images'] = array(
 					'Medium' => array(
 						'@attributes' => array(
+							//yah, I know it is encode as png...
 							'Extension' => 'jpg'
 						),
-						'@value' => substr($_POST['pic'], strlen('data:image/jpeg;base64,'))
+						'@value' => substr($_POST['pic'], strlen('data:image/png;base64,'))
 					),
 					'ImageFilenameOverride' => array('@value' => '')
 				);
 			}
-			$p = self::getAllItems()['project'][$pid];
+			$p = self::getAllItems()['projects'][$pid];
 			$oi = self::openProjectInfo();
 			
 			//set name
@@ -92,8 +93,10 @@ class Givingpage{
 				$data['Name'] = array(
 					'@cdata' => $oi['name']
 				);
-				$data['SEName'] = array(
-					'@value' => $oi['sename']
+				$data['SE'] = array(
+					'SEName' => array(
+						'@value' => $oi['sename']
+					)
 				);
 			}
 			
@@ -145,7 +148,7 @@ class Givingpage{
 		$data['ExtensionData'] = array(
 			'@value' => json_encode($extensionData)
 		);
-		wp_send_json(array('data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
+		wp_send_json(array('pid' => $pid, 'data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
 	}
 	
 	private static function getGender(){
@@ -209,20 +212,23 @@ class Givingpage{
 	private static function getProductID(){
 		$pc = getFieldEmployee('staff_account');
 		foreach(self::getAllItems()['projects'] as $id => $data){
-			if($pc == $data['sku']){
+			if('' != $data['sku'] && $pc == $data['sku']){
 				return $id;
 			}
 		}
+		http_response_code(400);
+		die();
 	}
 	
 	private static function getAllItems(){
-		if(is_null($allItems)){
-			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand());
+		if(is_null(self::$allItems)){
+			$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
+			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false, $context);
 			$raw =  strrev(substr($raw, strlen('allItems = ')));
 			$p = strpos($raw, '// ');
-			$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
+			self::$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
 		}
-		return $allItems;
+		return self::$allItems;
 	}
 }
 

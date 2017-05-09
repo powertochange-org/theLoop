@@ -21,7 +21,6 @@ require_once(get_stylesheet_directory().'/functions/functions.php');
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/jquery.Jcrop.css" type="text/css" />
 <link href="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage-sample.css" rel="stylesheet" type="text/css" />
 <link href="<?php echo get_stylesheet_directory_uri(); ?>/staffdirectory/givingpage.css" rel="stylesheet" type="text/css" />
-<!-- link rel="stylesheet" href="https://secure.powertochange.org/App_Themes/Skin_1/Q_style_25.css" type="text/css" / -->
 <link href="<?php echo get_option(Givingpage::$prefix.'soServer');?>/App_Themes/Skin_1/aspira.css" type="text/css" rel="stylesheet">
 <script>
 $(document).ready(function() {
