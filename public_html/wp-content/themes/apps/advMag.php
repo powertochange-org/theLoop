@@ -1,4 +1,6 @@
 <?php 
+
+require_once(get_stylesheet_directory().'/functions/functions.php');
 /*
 *Template Name: zAppAdvMag
 *
@@ -42,6 +44,11 @@ get_header(); ?>
 	
     <div id="content-left">
     	<div class="mobile-indent">
+		<?php  echo needOptions(array(
+			API::$option_prefix.'server',
+			API::$option_prefix.'username',
+			API::$option_prefix.'password',
+		)) ?>
 		<?php the_content(); ?>
 		<link rel='stylesheet' type='text/css' media='screen'  href="<?php echo get_stylesheet_directory_uri(); ?>/advMag/style.css" />
 		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js"></script>
