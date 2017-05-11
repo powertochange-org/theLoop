@@ -188,7 +188,7 @@
 		// if the search value changed, we've waited long enough, and we have at least the minimum characters: search!
 		maybe_search: function(e){
 			clearTimeout(this.timer);
-			if(this.last_string !== $.trim(e.currentTarget.value) && e.currentTarget.value.length >= this.config.input.min_chars){
+			if(e.currentTarget.value.length >= this.config.input.min_chars){
 				this.timer = setTimeout(
 					$.proxy(this.search, this, e),
 					this.config.input.delay
@@ -217,7 +217,7 @@
 			var self = this,
 				$form = this.form_el,
 				values = $form.serialize(),
-				action = $form.attr('action'),
+				action = $form.attr('action') ? $form.attr('action') : '',
 				$input = this.input_el,
 				$results = this.results_el;
 
