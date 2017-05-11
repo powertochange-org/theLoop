@@ -1,27 +1,47 @@
 <?php
+include(dirname(__FILE__)."/../functions/functions.php");
+
 /**
 * Profile
 * -This file is included to show another user's profile.
 *
 *
 **/
+
 $profile = $_GET['person']; //grab from URL the profile we want
 $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile . "'"); //go to DB and get 
 ?>
 
 	<p/>
 	<?php 
+		
 	$current_user = wp_get_current_user();
-	if(!isset($profile) || $current_user->user_login == $profile){
+	
+	if(!isset($profile) || $current_user->user_login == $profile ){
+			
 		echo '<h4 class="profile"><a class="profile-link" href= "?page=myprofile">EDIT MY PROFILE</a></h4>';
 		
 		if(count($_POST) > 0){
-			include('update.php');
+			include('update.php'); 
 		}
-	}
-	else{
+		
+		//we have profile provided but it is not our own
+	} else if (isset($profile) && isAppAdmin('admin_picture_add', 0)){
+		
 		echo '<h4 class="profile"><a class="profile-link" href= "?page=profile">MY PROFILE</a></h4>';
-	} ?>
+		
+		if(count($_POST) > 0){
+			include('update.php'); 
+		}
+			
+	}	else {
+
+		echo '<h4 class="profile"><a class="profile-link" href= "?page=profile">MY PROFILE</a></h4>';
+	} 
+	
+
+			
+			?>
 	
 	<BR><BR><BR><BR>
 	<hr style='margin-top:0'>
@@ -31,26 +51,42 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			<p class='orange-box'><?php	echo "<span style='font-weight:bold;color:#ffffff;font-size:16pt'>".strtoupper ("$user->first_name $user->last_name")."<span style='font-weight:normal;color:#ffffff'> | </span></span>$user->role_title, $user->ministry"; ?></p> <p></p>
 			<div class="profile-image" style='float:left'>
 			<?php if(is_null($user->photo) || $user->share_photo == 0){ //if we don't have a photo or aren't allowed to show it
+
                 // Attempt to use their public giving site photo
                 $url = "https://secure.powertochange.org/images/Product/medium/" . $user->staff_account . ".jpg";
                 // Check to see if that url is valid
                 $code = getHttpResponseCode_using_curl($url);
                 // If it's INVALID (ie, user doesn't have a giving site image)
                 // Use the standard image
-                if($code != 200)
+                if($code != 200){
                     $url = "/wp-content/uploads/staff_photos/anonymous.jpg";
+				}
 				echo '<img src="'. $url . '" width=220 />';
 			}
 			else { //we have a photo and can share it
+				
 				echo	 '<img src="/wp-content/uploads/staff_photos/' . $user->photo . '"  width=220 />';
-			} ?>
+			}
+
+	
+						//if user is an admin, create a link to that person's my profile (ignoring if they are looking at their own)
+			if (isAppAdmin('admin_picture_add', 0)) {
+
+				//create a link (?page=myprofile & person = brent or whomever)
+				echo "<br><br><a class='orange_button' style='color:white; text-align:center' href='?page=myprofile&person=" . $user->user_login . "'>Edit Staff's Profile</a>";
+			}
+		//	
+			
+			?>
 			</div>
 			<div class="profile-content">
+	
 			<h4>MINISTRY INFORMATION</h4>
 			<BR>
 			<p style='margin:0;'>
 			<?php 
 			if(!empty($user->ministry_address_line1) || !empty($user->ministry_city)){
+								
 				echo "<strong>Address:</strong> ";
                 // If we have the first line
                 if (!empty($user->ministry_address_line1))  {
@@ -89,6 +125,7 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 				}
 			}
 			if (!empty($user->ministry_website) || !empty($user->ministry_twitter_handle) || !empty($user->ministry_skype) || !empty($user->ministry_facebook)) {
+						
 				if(!empty($user->ministry_website)){
 					// a http:// in front of a website let's the browser know it's an absolute address. the user may or may not have
 					// included it. So we just make sure it's there
@@ -128,6 +165,7 @@ $user = $wpdb->get_row("SELECT * FROM employee WHERE user_login = '" . $profile 
 			<?php
 			/* Ensure user wants to share address, and has at least the first line */
 			if($user->share_address == 'FULL' && (!empty($user->address_line1))){
+				
 				echo "<strong>Address:</strong> $user->address_line1";
 				if (!empty($user->address_line2)) {
 					echo ", $user->address_line2";

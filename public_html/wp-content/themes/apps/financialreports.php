@@ -345,6 +345,16 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12Mont
 
 //%elif-block (just a label - see instructions for adding a new report at top of file)
 
+//Send an email to SQL Administrators if there is an error
+if($error) {
+  ini_set('SMTP','smtp.powertochange.org');
+  ini_set('smtp_port',25);
+  $headers = "MIME-Version: 1.0\r\n";
+  $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+  $headers .= 'From: Loop Reports Error <noreply@powertochange.org>' . "\r\n";
+  $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br><b>Error Message:</b> '.$error;
+  mail(REPORT_ERRORS_EMAIL, 'Loop Reports Error - '.$_POST['REPORT'], $msg, $headers);
+}
 
 //If there is an error with a preview, do not display the whole page
 if(isset($_POST['previewBtn']) && isset($error)){
@@ -660,8 +670,8 @@ get_header(); ?>
           <option value="No">No</option>
         </select>
       </div>
-      <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Report To Me Only</label><BR></div>
-			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show Financials</label></div>
+      <div id='reportToMe_opt' style='display:none'><input type='checkbox' id='reportToMe' name='reportToMe' <?php if($reportToMe){echo "checked";}?> ><label for='reportToMe'>Include only my direct reports (uncheck to include staff further down the reporting chain)</label><BR></div>
+			<div id='financials_opt' style='display:none'><input type='checkbox' id='financials' name='financials' <?php if($financials){echo "checked";}?> ><label for='financials'>Show financials (salaries and account balances)</label></div>
 			<div id='staffVaction_options'  style='display:none'>
 				YEAR:
 				<SELECT NAME="vac_year">
