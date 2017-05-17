@@ -19,7 +19,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 {
 	class stcr_manage {
 
-		public $current_version = '160915';
+		public $current_version = '170428';
 		public $utils = null;
 		public $upgrade = null;
 		public $db_version = null;
@@ -45,6 +45,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 				// Let us bind the schedule event with our desire action.
 				wp_schedule_event( time() + 15, 'daily', '_cron_subscribe_reloaded_purge' );
 			}
+
 		}
 
 		/**
@@ -121,17 +122,14 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 
 			$this->utils->add_user_subscriber_table( $clean_email );
 
-			$manager_link .= ( ( strpos( $manager_link, '?' ) !== false ) ? '&' : '?' ) . "sre=" . $this->utils->get_subscriber_key( $clean_email ) . "&srk=$subscriber_salt";
-			$confirm_link = "$manager_link&srp=$_post_ID&sra=c";
-
-			$headers      = "From: $from_name <$from_email>\n";
-			$content_type = ( get_option( 'subscribe_reloaded_enable_html_emails', 'no' ) == 'yes' ) ? 'text/html' : 'text/plain';
-			$headers .= "Content-Type: $content_type; charset=" . get_bloginfo( 'charset' ) . "\n";
-
 			$post           = get_post( $_post_ID );
-			$post_permalink = get_permalink( $_post_ID );
+            $post_permalink = get_permalink( $_post_ID );
 
-			// Replace tags with their actual values
+            $manager_link .= ( ( strpos( $manager_link, '?' ) !== false ) ? '&' : '?' ) . "srek=" . $this->utils->get_subscriber_key( $clean_email ) . "&srk=$subscriber_salt";
+            $confirm_link = "$manager_link&srp=$_post_ID&sra=c&srsrc=e&confirmation_email=y&post_permalink=" . $post_permalink;
+
+
+            // Replace tags with their actual values
 			$subject = str_replace( '[post_title]', $post->post_title, $subject );
 
 			$message = str_replace( '[post_permalink]', $post_permalink, $message );
@@ -147,14 +145,15 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 				$message = str_replace( '[post_title]', $post->post_title, $message );
 			}
 			$message = apply_filters( 'stcr_confirmation_email_message', $message, $_post_ID, $clean_email );
-			if ( $content_type == 'text/html' ) {
-				if ( get_option( 'subscribe_reloaded_htmlify_message_links' ) == 'yes' ) {
-					$message = $this->htmlify_message_links( $message );
-				}
-				$message = $this->utils->wrap_html_message( $message, $subject );
-			}
 
-			wp_mail( $clean_email, $subject, $message, $headers );
+			// Prepare email settings
+			$email_settings = array(
+				'subject'      => $subject,
+				'message'      => $message,
+				'toEmail'      => $clean_email,
+				'XPostId'    => $_post_ID
+			);
+			$this->utils->send_email( $email_settings );
 		}
 		// end confirmation_email
 
@@ -257,6 +256,9 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 			add_option( 'subscribe_reloaded_enable_admin_messages', 'no', '', 'yes' );
 			add_option( 'subscribe_reloaded_admin_subscribe', 'no', '', 'yes' );
 			add_option( 'subscribe_reloaded_admin_bcc', 'no', '', 'yes' );
+			add_option( 'subscribe_reloaded_enable_log_data', 'no', '', 'yes' );
+			add_option( 'subscribe_reloaded_auto_clean_log_data', 'yes', '', 'yes' );
+			add_option( 'subscribe_reloaded_auto_clean_log_frecuency', 'daily', '', 'yes' );
 
 		}
 		/**
@@ -279,10 +281,12 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 				foreach ( $blogids as $blog_id ) {
 					switch_to_blog( $blog_id );
 					wp_clear_scheduled_hook( '_cron_subscribe_reloaded_purge' );
+					wp_clear_scheduled_hook( '_cron_log_file_purge' );
 				}
 				restore_current_blog();
 			} else {
 				wp_clear_scheduled_hook( '_cron_subscribe_reloaded_purge' );
+				wp_clear_scheduled_hook( '_cron_log_file_purge' );
 			}
 		}
 
@@ -328,6 +332,22 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 			}
 		}
 
+		/**
+		 * Remove the log file created by StCR
+		 * @since 05-Apr-2017
+		 */
+		public function log_file_purge()
+		{
+			$plugin_dir   = plugin_dir_path( __DIR__ );
+			$file_name    = "log.txt";
+			$file_path    = $plugin_dir . "utils/" . $file_name;
+
+			if( file_exists( $file_path )  && is_writable( $plugin_dir ) )
+			{
+				// unlink the file
+				unlink($file_path);
+			}
+		}
 		/**
 		 * Removes old entries from the database
 		 */
@@ -791,9 +811,9 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 			), 'dt', 'DESC', 0, 1
 			);
 			if ( count( $subscription ) == 0 ) {
-				echo '<a href="options-general.php?page=subscribe-to-comments-reloaded/options/index.php&subscribepanel=1&amp;sra=add-subscription&amp;srp=' . $comment->comment_post_ID . '&amp;sre=' . urlencode( $comment->comment_author_email ) . '">' . __( 'No', 'subscribe-reloaded' ) . '</a>';
+				echo '<a href="admin.php?page=stcr_manage_subscriptions&subscribepanel=1&amp;sra=add-subscription&amp;srp=' . $comment->comment_post_ID . '&amp;sre=' . urlencode( $comment->comment_author_email ) . '">' . __( 'No', 'subscribe-reloaded' ) . '</a>';
 			} else {
-				echo '<a href="options-general.php?page=subscribe-to-comments-reloaded/options/index.php&subscribepanel=1&amp;srf=email&amp;srt=equals&amp;srv=' . urlencode( $comment->comment_author_email ) . '">' . $subscription[0]->status . '</a>';
+				echo '<a href="admin.php?page=stcr_manage_subscriptions&subscribepanel=1&amp;srf=email&amp;srt=equals&amp;srv=' . urlencode( $comment->comment_author_email ) . '">' . $subscription[0]->status . '</a>';
 			}
 		}
 		// end add_column
@@ -808,7 +828,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_manage') )
 
 			global $post;
 			load_plugin_textdomain( 'subscribe-reloaded', false, dirname( plugin_basename( __FILE__ ) ) . '/langs/' );
-			echo '<a href="options-general.php?page=subscribe-to-comments-reloaded/options/index.php&subscribepanel=1&amp;srf=post_id&amp;srt=equals&amp;srv=' . $post->ID . '">' . count( $this->get_subscriptions( 'post_id', 'equals', $post->ID ) ) . '</a>';
+			echo '<a href="admin.php?page=stcr_manage_subscriptions&subscribepanel=1&amp;srf=post_id&amp;srt=equals&amp;srv=' . $post->ID . '">' . count( $this->get_subscriptions( 'post_id', 'equals', $post->ID ) ) . '</a>';
 		}
 		// end add_column
 
