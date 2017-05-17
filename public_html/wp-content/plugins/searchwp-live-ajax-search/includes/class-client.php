@@ -50,15 +50,25 @@ class SearchWP_Live_Search_Client extends SearchWP_Live_Search {
 				);
 			} else {
 				// native WordPress search
-				$args = array(
-					's'             => $query,
-					'post_status'   => 'publish',
-					'post_type'     => get_post_types( array(
-							'public'   => true,
-							// '_builtin' => true,
-							'exclude_from_search' => false,
-						) ),
-				);
+				//The following fix is needed to restrict the search to WIKI posts only. This 
+				//needs to be fixed every time the plugin is updated. 
+				if($_SESSION['wiki']) {
+					$args = array(
+						's'             => $query,
+						'post_status'   => 'publish',
+						'post_type'     =>  'incsub_wiki'
+					);
+				} else {
+					$args = array(
+						's'             => $query,
+						'post_status'   => 'publish',
+						'post_type'     => get_post_types( array(
+								'public'   => true,
+								// '_builtin' => true,
+								'exclude_from_search' => false,
+							) ),
+					);
+				}
 			}
 			$args['posts_per_page'] = $this->get_posts_per_page();
 			$args = apply_filters( 'searchwp_live_search_query_args', $args );
