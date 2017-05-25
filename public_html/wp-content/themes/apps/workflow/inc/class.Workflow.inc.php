@@ -505,7 +505,7 @@ class Workflow {
         //Store the name of the user in history in case they ever leave staff
         $sql = "SELECT EMPID FROM workflowuserhistory WHERE EMPID = '$user'";
         $result = $wpdb->query($sql, ARRAY_A);
-        if($result->num_rows == 0) {
+        if($wpdb->num_rows == 0) {
             $sql = "INSERT INTO workflowuserhistory (EMPID, FIRSTNAME, LASTNAME) 
                     SELECT employee_number, first_name, last_name 
                     FROM employee WHERE employee_number = '$user'";
