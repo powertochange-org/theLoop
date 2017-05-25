@@ -514,9 +514,15 @@ class Workflow {
         
         $result = $wpdb->query($sql, ARRAY_A);
         
-        
-        
-        
+        //Store the name of the user in history in case they ever leave staff
+        $sql = "SELECT EMPID FROM workflowuserhistory WHERE EMPID = '$user'";
+        $result = $wpdb->query($sql, ARRAY_A);
+        if($result->num_rows == 0) {
+            $sql = "INSERT INTO workflowuserhistory (EMPID, FIRSTNAME, LASTNAME) 
+                    SELECT employee_number, first_name, last_name 
+                    FROM employee WHERE employee_number = '$user'";
+            $result = $wpdb->query($sql, ARRAY_A);
+        }
         
         return $submissionID;
     }
@@ -2326,7 +2332,10 @@ class Workflow {
             $searchFilter .= " AND (workflowform.NAME LIKE '%$formName%') ";
         }
         if($submittedby != '') {
-            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' 
+                    OR employee.last_name LIKE '%$submittedby%'
+                    OR workflowuserhistory.FIRSTNAME LIKE '%$submittedby%' 
+                    OR workflowuserhistory.LASTNAME LIKE '%$submittedby%' ) ";
         }
         if($date != '') {
             $searchFilter .= " AND (workflowformstatus.DATE_SUBMITTED = '$date') ";
@@ -2355,10 +2364,14 @@ class Workflow {
                         workflowform.PROCESSOR, 
                         '' AS PROCESSED, 
                         workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.USER, 
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '0' AS 'PROCESS',
                         CASE WHEN (workflowformstatus.STATUS_APPROVAL = '1' AND workflowform.APPROVER_ROLE = '8') THEN 'S'
@@ -2369,6 +2382,7 @@ class Workflow {
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ( 
                     ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
@@ -2429,16 +2443,21 @@ class Workflow {
                         workflowform.PROCESSOR, 
                         workflowformstatus.PROCESSED, 
                         workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.USER, 
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '1' AS 'PROCESS',
                         '' AS 'FLAG'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ((";
         
         
@@ -2830,10 +2849,14 @@ class Workflow {
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
                         workflowformstatus.COMMENT,
-                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE workflowform.FORMID = '$form' AND ( ";
         
         $roles = Workflow::getRole($userid);
@@ -3265,7 +3288,7 @@ class Workflow {
         return $values;
     }
     
-    public static function getUserName($userid) {
+    public static function getUserName($userid, $lastfirst = 0) {
         global $wpdb;
         $name = '';
             
@@ -3277,6 +3300,18 @@ class Workflow {
         
         if(count($result) == 1) {
             $name = $result[0]['name'];
+        } else {
+            //Check history as the employee may have left staff
+            $sql = "SELECT 
+                    CASE WHEN '$lastfirst' = '1'
+                        THEN CONCAT(LASTNAME, ', ', FIRSTNAME)
+                        ELSE CONCAT(FIRSTNAME, ' ', LASTNAME) 
+                    END AS name
+                    FROM workflowuserhistory
+                    WHERE EMPID = '$userid'";
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) == 1) 
+                $name = $result[0]['name'];
         }
         
         return $name;
