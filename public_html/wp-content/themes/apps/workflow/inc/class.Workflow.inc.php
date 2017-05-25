@@ -468,15 +468,9 @@ class Workflow {
         
         $result = $wpdb->query($sql, ARRAY_A);
         
-        /*if(!$result) {
-            die('Failed to update status.');
-        }*/
-        
         if($submissionID == 0) {
             $submissionID = $wpdb->insert_id;
         }
-        
-        
         
         //Update the fields
         for($i = 0; $i < count($fields); $i++) {
@@ -497,13 +491,7 @@ class Workflow {
                         AND FIELDID = '".$fields[$i][0]."'";
             }
             
-            
             $result = $wpdb->query($sql);
-            /*var_dump($result);
-            if(!$result) {
-                echo htmlspecialchars($sql);
-                echo('<br>Query failed to update the FIELDID value.<br>');
-            }*/
         }
         
         if($behalfof != '')
@@ -1647,7 +1635,7 @@ class Workflow {
                     $response .= '10, 0';
                 $response .= ');">Delete Form</button>';
                 
-                if(($id == $this->allowanceCalculatorID || $id = 43) && $submissionID != 0) {
+                if(($id == $this->allowanceCalculatorID || $id == 43) && $submissionID != 0) {
                     $response .= '<button type="button" onclick="location.href=\'/mpd/allowance-goal-calculations/allowance-calculator/?sbid='.$submissionID.'\'" 
                         class="processbutton">Re-calculate Allowance</button>';
                 }
