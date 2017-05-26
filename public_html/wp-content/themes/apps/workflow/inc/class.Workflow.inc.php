@@ -751,7 +751,7 @@ class Workflow {
                     $hasAnotherApproval = 0;
                     $configvalue = 9; 
                     echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
-                        history below.<br></span>';
+                        history below.<br>Currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.</span>';
                 } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
                     echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
                     if($status == '2' || $status == '3') {
@@ -2308,7 +2308,7 @@ class Workflow {
       *                  2 - Show all submissions
       */
     public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll, $showVoid = 1, 
-        $showFiled = 2) {
+        $showFiled = 2, $showCompleted = 2) {
         global $wpdb;
         $response = '';
         if($userid == '' || $userid == '0') {
@@ -2413,13 +2413,20 @@ class Workflow {
             $sql .= " OR 1 = 1 ";
         }
         
-        //$sql .= "OR STATUS_APPROVAL = '100' AND (";
-        
         $sql .= ") AND (workflowformstatus.STATUS != '2' 
                     AND workflowformstatus.STATUS != '3' 
                     AND workflowformstatus.STATUS != '10') ";
         $sql .= $searchFilter;
-        //        WHERE workflowformstatus.USER = '$userid'
+        
+        //Filter processed and non processed forms
+        if($showCompleted == 1) {
+            $sql .= " AND ((STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NULL) 
+                OR (STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL 
+                AND workflowformstatus.PROCESSED = '1')) ";
+        } else if($showCompleted == 0) {
+            $sql .= " AND (STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL 
+                AND workflowformstatus.PROCESSED = '0') ";
+        }
         
         $sql .= ")";
         
@@ -2465,6 +2472,13 @@ class Workflow {
         $sql .= ") ";
         
         $sql .= $searchFilter;
+        
+        //Filter processed and non processed forms
+        if($showCompleted == 1) {
+            $sql .= " AND workflowformstatus.PROCESSED = '1' ";
+        } else if($showCompleted == 0) {
+            $sql .= " AND workflowformstatus.PROCESSED = '0' ";
+        }
                 
         $sql .= "AND workflowformstatus.STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL) 
                 ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";

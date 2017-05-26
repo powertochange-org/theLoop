@@ -49,14 +49,8 @@ $debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
 
 <?php
 if(Workflow::loggedInUser() != '0') {
-    
-?>
-    
-    
-    <?php
-
     $idsearch = $formsearch = $submittedsearch = $datesearch = '';
-    $showfiled = 2;
+    $showfiled = $showCompleted = 2;
     $showvoid = 0;
     if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
         $showfiled = 0;
@@ -75,6 +69,9 @@ if(Workflow::loggedInUser() != '0') {
     }
     if(isset($_POST['filed']) && 0 <= $_POST['filed'] && $_POST['filed'] <= 2) {
         $showfiled = $_POST['filed'];
+    }
+    if(isset($_POST['showcompleted']) && 0 <= $_POST['showcompleted'] && $_POST['showcompleted'] <= 2) {
+        $showCompleted = $_POST['showcompleted'];
     }
     
     $obj = new Workflow();
@@ -103,9 +100,15 @@ if(Workflow::loggedInUser() != '0') {
             <tr id="submissionsearchbar4" class="hide">
                 <td colspan=4>
                 <?php if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) { ?>
-                    <br><input type="radio" name="filed" value="0" <?php echo ($showfiled == 0 ? 'checked' : ''); ?>>Unfiled
+                    <br><b>Filter Filed Forms</b><br>
+                    <input type="radio" name="filed" value="0" <?php echo ($showfiled == 0 ? 'checked' : ''); ?>>Unfiled
                     <input type="radio" name="filed" value="1" <?php echo ($showfiled == 1 ? 'checked' : ''); ?>>Filed
                     <input type="radio" name="filed" value="2" <?php echo ($showfiled == 2 ? 'checked' : ''); ?>>All
+                    <br>
+                    <b>Filter Approved Forms</b><br>
+                    <input type="radio" name="showcompleted" value="0" <?php echo ($showCompleted == 0 ? 'checked' : ''); ?>>To Be Processed
+                    <input type="radio" name="showcompleted" value="1" <?php echo ($showCompleted == 1 ? 'checked' : ''); ?>>Processed / Approved
+                    <input type="radio" name="showcompleted" value="2" <?php echo ($showCompleted == 2 ? 'checked' : ''); ?>>All
                 <?php } ?>
                 </td>
             </tr>
@@ -131,10 +134,10 @@ if(Workflow::loggedInUser() != '0') {
         echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch, 0);
     if($formType == 'staff' || $formType == 'both')
         echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 0,
-             $showvoid, $showfiled);
+             $showvoid, $showfiled, $showCompleted);
     if($formType == 'all' && Workflow::isAdmin(Workflow::loggedInUser()))
         echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 1,
-             $showvoid, $showfiled);
+             $showvoid, $showfiled, $showCompleted);
     
     //Display the forms that the user was in before hitting the search button
     if(isset($_GET['mode']) && isset($_GET['tag'])) {
