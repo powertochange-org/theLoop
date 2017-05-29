@@ -317,11 +317,14 @@ class Workflow {
             if(!Workflow::hasRoleAccess(Workflow::loggedInUser(), 26))
                 return 0;
             //Do not archive active submissions
-            if($oldstatus < 7) {
-                $_SESSION['ERRMSG'] = 'This submission cannot be voided or filed as it is not yet complete.';
+            if($oldstatus < 7 && ($newstatus != 62 && $newstatus != 63)) {
+                $_SESSION['ERRMSG'] = 'This submission cannot be filed as it is not yet complete.';
                 return 0;
             } else if($oldstatus == 7 && ($newstatus == 62 || $newstatus == 63)) {
                 $_SESSION['ERRMSG'] = 'An approved submission cannot be voided.';
+                return 0;
+            } else if(($newstatus == 62 || $newstatus == 63) && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
+                $_SESSION['ERRMSG'] = 'Only members of the Void Admin group can void submissions.';
                 return 0;
             }
             $hrfiled = -1;
@@ -1545,7 +1548,7 @@ class Workflow {
                 else if($hrfiled == 1)
                     $response .= '<button type="button" class="processbutton" onclick="saveSubmission(61, 0);">UnFile</button>';
             //Not approved
-            if($configuration == 8 || ($configuration == 9 && $status == 8)) 
+            if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 27))
                 if($hrvoid == 0)
                     $response .= '<button type="button" class="processbutton" onclick="saveSubmission(62, 0);">Void</button>';
                 else if($hrvoid == 1)

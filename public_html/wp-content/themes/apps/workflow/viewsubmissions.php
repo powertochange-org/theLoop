@@ -52,6 +52,7 @@ if(Workflow::loggedInUser() != '0') {
     $idsearch = $formsearch = $submittedsearch = $datesearch = '';
     $showfiled = $showCompleted = 2;
     $showvoid = 0;
+    //By default, hide filed forms for Hr Notes group
     if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
         $showfiled = 0;
     }
@@ -69,6 +70,9 @@ if(Workflow::loggedInUser() != '0') {
     }
     if(isset($_POST['filed']) && 0 <= $_POST['filed'] && $_POST['filed'] <= 2) {
         $showfiled = $_POST['filed'];
+    }
+    if(isset($_GET['void']) && 0 <= $_GET['void'] && $_GET['void'] <= 2) {
+        $showvoid = $_GET['void'];
     }
     if(isset($_POST['showcompleted']) && 0 <= $_POST['showcompleted'] && $_POST['showcompleted'] <= 2) {
         $showCompleted = $_POST['showcompleted'];
