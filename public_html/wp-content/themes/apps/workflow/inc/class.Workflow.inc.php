@@ -391,14 +391,18 @@ class Workflow {
         $newApprovalStatus = 1;
         
         if($submissionID == 0) {
-            $misc_content = str_replace("\\", "\\\\", $misc_content);//$misc_content;//str_replace("'", "\'", $misc_content);
-            $new_misc_content = str_replace("'", "\'", $misc_content);//$misc_content;//str_replace("'", "\'", $misc_content);
-        
-            //echo 'SUBMISSION ID : '.$submissionID.' not found. <br>';
+            //When submission is a draft, save it as the first approval state
+            if($newstatus == 2)
+                $newApprovalStatus = 0;
             
-            $sql = "INSERT INTO workflowformstatus (USER, STATUS, FORMID, MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
+            $misc_content = str_replace("\\", "\\\\", $misc_content);
+            $new_misc_content = str_replace("'", "\'", $misc_content);
+            
+            $sql = "INSERT INTO workflowformstatus (USER, STATUS, STATUS_APPROVAL, FORMID, 
+                                                    MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
                                                     HR_NOTES, BEHALFOF, APPROVER_DIRECT)
-                    VALUES ('$user', '$newstatus', '$formID', '$new_misc_content', '".date('Y-m-d')."', ";
+                    VALUES ('$user', '$newstatus', '$newApprovalStatus', '$formID', 
+                            '$new_misc_content', '".date('Y-m-d')."', ";
             
             if($commenttext != '') {
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
@@ -1599,15 +1603,9 @@ class Workflow {
             if($supNext && 0 < $configuration && $configuration <= 4) {
                 $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
                 $direct2 = Workflow::getDirectApprover($direct);
-                /*$response .= '<div id="supervisor-radio">';
-                $response .= '<input type="radio" name="nextsupervisor" value="0" checked>'.Workflow::getUserName($direct);
-                if($direct2 != 0)
-                    $response .= '<input type="radio" name="nextsupervisor" value="1">'.Workflow::getUserName($direct2);
-                $response .= '</div>';*/
-                
-                $response .= '<div id="supervisor-radio"><select name="directsupervisor">';
+               
+                $response .= '<div id="supervisor-radio"><select name="directsupervisor" id="directsupervisor">';
                 $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
-                //TODO: Check if we want to add the supervisors of supervisors
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
                     $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
@@ -1617,6 +1615,7 @@ class Workflow {
                 if($direct2 != 0 && !$omitDirect2)
                     $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
                 $response .= '</select></div>';
+                $response .= '<div id="warningmsg" style="color:red;"></div>';
             }
             $response .= '<div class="clear"></div>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
