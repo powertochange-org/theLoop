@@ -96,7 +96,16 @@ function saveSubmission(status, approver) {
             return;
         }
     }
-    
+    //Prevent submissions on client side
+    if(status == 4) {
+        var sup = find("directsupervisor");
+        if(sup != null) {
+            if(sup[sup.options.selectedIndex].text == "" || sup[sup.options.selectedIndex].text == null) {
+                find("warningmsg").innerHTML = "Please select a supervisor from the dropdown. If there is no supervisor available, click Save Draft and contact helpdesk@p2c.com.";
+                return;
+            }
+        }
+    }
     if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || (60 <= status && status <= 63)) {
         document.getElementById('workflowsubmission').submit();
     } else {

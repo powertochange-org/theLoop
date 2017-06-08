@@ -1098,6 +1098,15 @@ ul.sub-categories {
     margin-top: 4px;
 }
 
+.wiki-section ul.wiki-list li.more::before {
+    background-image: none;
+    width: 0;
+}
+
+.wiki-section ul.wiki-list li.more {
+    text-align: center;
+}
+
 .wiki-section li::after {
     
 }

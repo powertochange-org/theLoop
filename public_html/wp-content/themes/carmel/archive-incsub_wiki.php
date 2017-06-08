@@ -44,6 +44,7 @@
                     $wikiSectionCount = 0;
                     $parentwiki = get_option( 'parentwiki' , 0 );
                     foreach ($st_categories as $st_category) {
+                        $articleCount = 0;
                         if($wikiSectionCount % 3 == 0) {
                             if($wikiSectionCount != 0) 
                                 echo '</div><div class="wiki-section-group-gap" style="clear: both;"></div>';
@@ -131,10 +132,14 @@
                         foreach($childcats as $childwiki) {
                             //Make sure it is not a sub category
                             $catCheck = get_the_terms($childwiki->ID, 'incsub_wiki_category');
-                            if($catCheck[0]->term_id == $st_category->cat_ID)
+                            if($catCheck[0]->term_id == $st_category->cat_ID) {
                                 echo '<li> <a class="wiki-section-link" href="'.get_permalink($childwiki->ID).'">'.$childwiki->post_title.'<span class="cat-count"> (' . $childwiki->pageviews . ' views)</span></a>
                                         </li>';
+                                $articleCount++;
+                            }
                         }
+                        if($st_category->count > $articleCount)
+                            echo '<li class="more"><a href="' . get_category_link($st_category->term_id) . '" title="' . sprintf(__('View all wikis in %s', 'framework'), $st_category->name) . '" ' . '>View more . . .</a></li>';
                         echo '</ul></div>';
                         $wikiSectionCount++;
                     } //End of the loop
