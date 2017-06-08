@@ -317,11 +317,14 @@ class Workflow {
             if(!Workflow::hasRoleAccess(Workflow::loggedInUser(), 26))
                 return 0;
             //Do not archive active submissions
-            if($oldstatus < 7) {
-                $_SESSION['ERRMSG'] = 'This submission cannot be voided or filed as it is not yet complete.';
+            if($oldstatus < 7 && ($newstatus != 62 && $newstatus != 63)) {
+                $_SESSION['ERRMSG'] = 'This submission cannot be filed as it is not yet complete.';
                 return 0;
             } else if($oldstatus == 7 && ($newstatus == 62 || $newstatus == 63)) {
                 $_SESSION['ERRMSG'] = 'An approved submission cannot be voided.';
+                return 0;
+            } else if(($newstatus == 62 || $newstatus == 63) && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
+                $_SESSION['ERRMSG'] = 'Only members of the Void Admin group can void submissions.';
                 return 0;
             }
             $hrfiled = -1;
@@ -388,14 +391,18 @@ class Workflow {
         $newApprovalStatus = 1;
         
         if($submissionID == 0) {
-            $misc_content = str_replace("\\", "\\\\", $misc_content);//$misc_content;//str_replace("'", "\'", $misc_content);
-            $new_misc_content = str_replace("'", "\'", $misc_content);//$misc_content;//str_replace("'", "\'", $misc_content);
-        
-            //echo 'SUBMISSION ID : '.$submissionID.' not found. <br>';
+            //When submission is a draft, save it as the first approval state
+            if($newstatus == 2)
+                $newApprovalStatus = 0;
             
-            $sql = "INSERT INTO workflowformstatus (USER, STATUS, FORMID, MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
+            $misc_content = str_replace("\\", "\\\\", $misc_content);
+            $new_misc_content = str_replace("'", "\'", $misc_content);
+            
+            $sql = "INSERT INTO workflowformstatus (USER, STATUS, STATUS_APPROVAL, FORMID, 
+                                                    MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
                                                     HR_NOTES, BEHALFOF, APPROVER_DIRECT)
-                    VALUES ('$user', '$newstatus', '$formID', '$new_misc_content', '".date('Y-m-d')."', ";
+                    VALUES ('$user', '$newstatus', '$newApprovalStatus', '$formID', 
+                            '$new_misc_content', '".date('Y-m-d')."', ";
             
             if($commenttext != '') {
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
@@ -468,15 +475,9 @@ class Workflow {
         
         $result = $wpdb->query($sql, ARRAY_A);
         
-        /*if(!$result) {
-            die('Failed to update status.');
-        }*/
-        
         if($submissionID == 0) {
             $submissionID = $wpdb->insert_id;
         }
-        
-        
         
         //Update the fields
         for($i = 0; $i < count($fields); $i++) {
@@ -497,13 +498,7 @@ class Workflow {
                         AND FIELDID = '".$fields[$i][0]."'";
             }
             
-            
             $result = $wpdb->query($sql);
-            /*var_dump($result);
-            if(!$result) {
-                echo htmlspecialchars($sql);
-                echo('<br>Query failed to update the FIELDID value.<br>');
-            }*/
         }
         
         if($behalfof != '')
@@ -514,9 +509,15 @@ class Workflow {
         
         $result = $wpdb->query($sql, ARRAY_A);
         
-        
-        
-        
+        //Store the name of the user in history in case they ever leave staff
+        $sql = "SELECT EMPID FROM workflowuserhistory WHERE EMPID = '$user'";
+        $result = $wpdb->query($sql, ARRAY_A);
+        if($wpdb->num_rows == 0) {
+            $sql = "INSERT INTO workflowuserhistory (EMPID, FIRSTNAME, LASTNAME) 
+                    SELECT employee_number, first_name, last_name 
+                    FROM employee WHERE employee_number = '$user'";
+            $result = $wpdb->query($sql, ARRAY_A);
+        }
         
         return $submissionID;
     }
@@ -757,7 +758,7 @@ class Workflow {
                     $hasAnotherApproval = 0;
                     $configvalue = 9; 
                     echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
-                        history below.<br></span>';
+                        history below.<br>Currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.</span>';
                 } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
                     echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
                     if($status == '2' || $status == '3') {
@@ -1551,7 +1552,7 @@ class Workflow {
                 else if($hrfiled == 1)
                     $response .= '<button type="button" class="processbutton" onclick="saveSubmission(61, 0);">UnFile</button>';
             //Not approved
-            if($configuration == 8 || ($configuration == 9 && $status == 8)) 
+            if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 27))
                 if($hrvoid == 0)
                     $response .= '<button type="button" class="processbutton" onclick="saveSubmission(62, 0);">Void</button>';
                 else if($hrvoid == 1)
@@ -1602,15 +1603,9 @@ class Workflow {
             if($supNext && 0 < $configuration && $configuration <= 4) {
                 $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
                 $direct2 = Workflow::getDirectApprover($direct);
-                /*$response .= '<div id="supervisor-radio">';
-                $response .= '<input type="radio" name="nextsupervisor" value="0" checked>'.Workflow::getUserName($direct);
-                if($direct2 != 0)
-                    $response .= '<input type="radio" name="nextsupervisor" value="1">'.Workflow::getUserName($direct2);
-                $response .= '</div>';*/
-                
-                $response .= '<div id="supervisor-radio"><select name="directsupervisor">';
+               
+                $response .= '<div id="supervisor-radio"><select name="directsupervisor" id="directsupervisor">';
                 $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
-                //TODO: Check if we want to add the supervisors of supervisors
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
                     $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
@@ -1620,6 +1615,7 @@ class Workflow {
                 if($direct2 != 0 && !$omitDirect2)
                     $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
                 $response .= '</select></div>';
+                $response .= '<div id="warningmsg" style="color:red;"></div>';
             }
             $response .= '<div class="clear"></div>';
             $response .= '<input type="hidden" id="count" name="count" value="'.$count.'">';
@@ -1641,7 +1637,7 @@ class Workflow {
                     $response .= '10, 0';
                 $response .= ');">Delete Form</button>';
                 
-                if(($id == $this->allowanceCalculatorID || $id = 43) && $submissionID != 0) {
+                if(($id == $this->allowanceCalculatorID || $id == 43) && $submissionID != 0) {
                     $response .= '<button type="button" onclick="location.href=\'/mpd/allowance-goal-calculations/allowance-calculator/?sbid='.$submissionID.'\'" 
                         class="processbutton">Re-calculate Allowance</button>';
                 }
@@ -2314,7 +2310,7 @@ class Workflow {
       *                  2 - Show all submissions
       */
     public function viewAllSubmissionsAsApprover($userid, $formName, $submittedby, $date, $id, $viewAll, $showVoid = 1, 
-        $showFiled = 2) {
+        $showFiled = 2, $showCompleted = 2) {
         global $wpdb;
         $response = '';
         if($userid == '' || $userid == '0') {
@@ -2326,7 +2322,10 @@ class Workflow {
             $searchFilter .= " AND (workflowform.NAME LIKE '%$formName%') ";
         }
         if($submittedby != '') {
-            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' OR employee.last_name LIKE '%$submittedby%') ";
+            $searchFilter .= " AND (employee.first_name LIKE '%$submittedby%' 
+                    OR employee.last_name LIKE '%$submittedby%'
+                    OR workflowuserhistory.FIRSTNAME LIKE '%$submittedby%' 
+                    OR workflowuserhistory.LASTNAME LIKE '%$submittedby%' ) ";
         }
         if($date != '') {
             $searchFilter .= " AND (workflowformstatus.DATE_SUBMITTED = '$date') ";
@@ -2355,10 +2354,14 @@ class Workflow {
                         workflowform.PROCESSOR, 
                         '' AS PROCESSED, 
                         workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.USER, 
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '0' AS 'PROCESS',
                         CASE WHEN (workflowformstatus.STATUS_APPROVAL = '1' AND workflowform.APPROVER_ROLE = '8') THEN 'S'
@@ -2369,6 +2372,7 @@ class Workflow {
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ( 
                     ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
@@ -2411,13 +2415,20 @@ class Workflow {
             $sql .= " OR 1 = 1 ";
         }
         
-        //$sql .= "OR STATUS_APPROVAL = '100' AND (";
-        
         $sql .= ") AND (workflowformstatus.STATUS != '2' 
                     AND workflowformstatus.STATUS != '3' 
                     AND workflowformstatus.STATUS != '10') ";
         $sql .= $searchFilter;
-        //        WHERE workflowformstatus.USER = '$userid'
+        
+        //Filter processed and non processed forms
+        if($showCompleted == 1) {
+            $sql .= " AND ((STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NULL) 
+                OR (STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL 
+                AND workflowformstatus.PROCESSED = '1')) ";
+        } else if($showCompleted == 0) {
+            $sql .= " AND (STATUS_APPROVAL = '100' AND STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL 
+                AND workflowformstatus.PROCESSED = '0') ";
+        }
         
         $sql .= ")";
         
@@ -2429,16 +2440,21 @@ class Workflow {
                         workflowform.PROCESSOR, 
                         workflowformstatus.PROCESSED, 
                         workflowformstatus.SUBMISSIONID, 
+                        workflowformstatus.USER, 
                         workflowformstatus.STATUS,
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
-                        CONCAT(employee.last_name, ', ', employee.first_name) AS USERNAME,
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '1' AS 'PROCESS',
                         '' AS 'FLAG'
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ((";
         
         
@@ -2458,6 +2474,13 @@ class Workflow {
         $sql .= ") ";
         
         $sql .= $searchFilter;
+        
+        //Filter processed and non processed forms
+        if($showCompleted == 1) {
+            $sql .= " AND workflowformstatus.PROCESSED = '1' ";
+        } else if($showCompleted == 0) {
+            $sql .= " AND workflowformstatus.PROCESSED = '0' ";
+        }
                 
         $sql .= "AND workflowformstatus.STATUS = '7' AND workflowform.PROCESSOR IS NOT NULL) 
                 ORDER BY PROCESS, PROCESSED, STATUS, DATE_SUBMITTED DESC, NAME ASC";
@@ -2830,10 +2853,14 @@ class Workflow {
                         workflowformstatus.STATUS_APPROVAL,
                         workflowformstatus.DATE_SUBMITTED,
                         workflowformstatus.COMMENT,
-                        CONCAT(employee.first_name, ' ', employee.last_name) AS USERNAME
+                        CASE WHEN employee.first_name != '' AND employee.last_name != ''
+                            THEN CONCAT(employee.last_name, ', ', employee.first_name) 
+                            ELSE CONCAT(workflowuserhistory.LASTNAME, ', ', workflowuserhistory.FIRSTNAME)
+                        END AS USERNAME
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
+                LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE workflowform.FORMID = '$form' AND ( ";
         
         $roles = Workflow::getRole($userid);
@@ -3265,7 +3292,7 @@ class Workflow {
         return $values;
     }
     
-    public static function getUserName($userid) {
+    public static function getUserName($userid, $lastfirst = 0) {
         global $wpdb;
         $name = '';
             
@@ -3277,6 +3304,18 @@ class Workflow {
         
         if(count($result) == 1) {
             $name = $result[0]['name'];
+        } else {
+            //Check history as the employee may have left staff
+            $sql = "SELECT 
+                    CASE WHEN '$lastfirst' = '1'
+                        THEN CONCAT(LASTNAME, ', ', FIRSTNAME)
+                        ELSE CONCAT(FIRSTNAME, ' ', LASTNAME) 
+                    END AS name
+                    FROM workflowuserhistory
+                    WHERE EMPID = '$userid'";
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) == 1) 
+                $name = $result[0]['name'];
         }
         
         return $name;
