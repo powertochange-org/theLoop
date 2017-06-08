@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Subscribe to Comments Reloaded\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-27 23:22-0600\n"
+"POT-Creation-Date: 2017-06-07 20:48-0600\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Reedyseth - Israel Barragan <reedyseth@gmail.com>\n"
 "Language-Team: \n"
@@ -16,37 +16,37 @@ msgstr ""
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: options/index.php:59 utils/stcr_manage.php:230 utils/stcr_manage.php:412
-#: utils/stcr_manage.php:413
+#: options/index.php:59 utils/stcr_manage.php:230 utils/stcr_manage.php:413
+#: utils/stcr_manage.php:414
 msgid "Manage subscriptions"
 msgstr "مدیریت اشتراک ها"
 
-#: options/index.php:60 utils/stcr_manage.php:418 utils/stcr_manage.php:419
+#: options/index.php:60 utils/stcr_manage.php:419 utils/stcr_manage.php:420
 msgid "Comment Form"
 msgstr "فرم دیدگاه‌ها"
 
-#: options/index.php:61 utils/stcr_manage.php:424 utils/stcr_manage.php:425
+#: options/index.php:61 utils/stcr_manage.php:425 utils/stcr_manage.php:426
 msgid "Management Page"
 msgstr "صفحه‌ی مدیریت"
 
-#: options/index.php:62 utils/stcr_manage.php:430 utils/stcr_manage.php:431
+#: options/index.php:62 utils/stcr_manage.php:431 utils/stcr_manage.php:432
 msgid "Notifications"
 msgstr "آگاه سازی ها"
 
 #: options/index.php:63 options/panel2.php:58 options/panel3.php:82
-#: options/panel4.php:89 utils/stcr_manage.php:436 utils/stcr_manage.php:437
+#: options/panel4.php:89 utils/stcr_manage.php:437 utils/stcr_manage.php:438
 msgid "Options"
 msgstr "تنظیمات"
 
-#: options/index.php:65 utils/stcr_manage.php:452 utils/stcr_manage.php:453
+#: options/index.php:65 utils/stcr_manage.php:453 utils/stcr_manage.php:454
 msgid "You can help"
 msgstr "شما هم می توانید کمک کنید"
 
-#: options/index.php:66 utils/stcr_manage.php:458 utils/stcr_manage.php:459
+#: options/index.php:66 utils/stcr_manage.php:459 utils/stcr_manage.php:460
 msgid "Support"
 msgstr " پشتیبانی"
 
-#: options/index.php:67 utils/stcr_manage.php:464 utils/stcr_manage.php:465
+#: options/index.php:67 utils/stcr_manage.php:465 utils/stcr_manage.php:466
 msgid "Donate"
 msgstr "حمایت مالی / فنی"
 
@@ -368,30 +368,30 @@ msgid "Enable Auto clean log data"
 msgstr ""
 
 #: options/panel10.php:87 options/panel2.php:49 options/panel3.php:70
-#: options/panel4.php:78 options/panel5.php:18 options/panel5.php:67
+#: options/panel4.php:78 options/panel5.php:18 options/panel5.php:70
 msgid "Your settings have been successfully updated."
 msgstr "تنظیمات شما با موفقیت به روز شد."
 
 #: options/panel10.php:89 options/panel2.php:51 options/panel3.php:72
-#: options/panel4.php:80 options/panel5.php:20 options/panel5.php:69
+#: options/panel4.php:80 options/panel5.php:20 options/panel5.php:72
 msgid "There was an error updating the following fields:"
 msgstr "یک خطا در به روزرسانی فیلدهای زیر رخ داد:"
 
 #: options/panel10.php:106 options/panel10.php:115 options/panel2.php:66
-#: options/panel2.php:76 options/panel2.php:105 options/panel5.php:85
-#: options/panel5.php:94 options/panel5.php:111 options/panel5.php:120
-#: options/panel5.php:129 options/panel5.php:138 options/panel5.php:148
-#: options/panel5.php:157 options/panel5.php:167 options/panel5.php:176
-#: options/panel5.php:185
+#: options/panel2.php:76 options/panel2.php:105 options/panel5.php:88
+#: options/panel5.php:97 options/panel5.php:114 options/panel5.php:123
+#: options/panel5.php:132 options/panel5.php:141 options/panel5.php:151
+#: options/panel5.php:160 options/panel5.php:170 options/panel5.php:179
+#: options/panel5.php:188 options/panel5.php:197
 msgid "Yes"
 msgstr "بله"
 
 #: options/panel10.php:107 options/panel10.php:116 options/panel2.php:67
-#: options/panel2.php:77 options/panel2.php:106 options/panel5.php:86
-#: options/panel5.php:95 options/panel5.php:112 options/panel5.php:121
-#: options/panel5.php:130 options/panel5.php:139 options/panel5.php:149
-#: options/panel5.php:158 options/panel5.php:168 options/panel5.php:177
-#: options/panel5.php:186 utils/stcr_manage.php:814
+#: options/panel2.php:77 options/panel2.php:106 options/panel5.php:89
+#: options/panel5.php:98 options/panel5.php:115 options/panel5.php:124
+#: options/panel5.php:133 options/panel5.php:142 options/panel5.php:152
+#: options/panel5.php:161 options/panel5.php:171 options/panel5.php:180
+#: options/panel5.php:189 options/panel5.php:198 utils/stcr_manage.php:815
 msgid "No"
 msgstr "نه"
 
@@ -435,7 +435,7 @@ msgid "System Information"
 msgstr ""
 
 #: options/panel10.php:158 options/panel2.php:230 options/panel3.php:253
-#: options/panel4.php:283 options/panel5.php:219
+#: options/panel4.php:283 options/panel5.php:231
 msgid "Save Changes"
 msgstr "ذخیره ی تغییرات"
 
@@ -853,7 +853,7 @@ msgid ""
 "Content of the One Click confirmation. Allowed tags: [post_title], [blog_name]"
 msgstr "محتوای تأیید با یک کلیک. تگ های مجاز: [post_title]"
 
-#: options/panel5.php:29 options/panel5.php:83
+#: options/panel5.php:29 options/panel5.php:86
 msgid "Show StCR checkbox / dropdown"
 msgstr ""
 
@@ -861,24 +861,24 @@ msgstr ""
 msgid "Safetly Uninstall"
 msgstr ""
 
-#: options/panel5.php:35 options/panel5.php:100
+#: options/panel5.php:35 options/panel5.php:103
 msgid "Autopurge requests"
 msgstr ""
 "زوال خودکار درخواست های اشتراک که طی مدت معین مورد تایید کاربر قرار نگرفته"
 
-#: options/panel5.php:38 options/panel5.php:118
+#: options/panel5.php:38 options/panel5.php:121
 msgid "Enable double check"
 msgstr "حالت بررسی مضاعف را فعال کن"
 
-#: options/panel5.php:41 options/panel5.php:109
+#: options/panel5.php:41 options/panel5.php:112
 msgid "StCR Position"
 msgstr ""
 
-#: options/panel5.php:44 options/panel5.php:126
+#: options/panel5.php:44 options/panel5.php:129
 msgid "Subscribe authors"
 msgstr "اشتراک مؤلفان"
 
-#: options/panel5.php:47 options/panel5.php:136
+#: options/panel5.php:47 options/panel5.php:139
 msgid "Enable HTML emails"
 msgstr "فعال کردن ایمیل های HTML"
 
@@ -894,35 +894,39 @@ msgstr "ارسال بازآگاهی"
 msgid "Notify admin"
 msgstr "سرپرست را مطلع کن"
 
-#: options/panel5.php:59 options/panel5.php:174
+#: options/panel5.php:59 options/panel5.php:177
 msgid "Let admin subscribe"
 msgstr "به سرپرست اجازه ی مشترک شدن بده"
 
-#: options/panel5.php:62 options/panel5.php:183
+#: options/panel5.php:62 options/panel5.php:186
 msgid "BCC admin on Notifications"
 msgstr "مدیر را در BCC یادآوری ها قرار بده"
 
-#: options/panel5.php:87
+#: options/panel5.php:65 options/panel5.php:195
+msgid "Enable Font Awesome"
+msgstr ""
+
+#: options/panel5.php:90
 msgid ""
 "This option will disable the StCR checkbox or dropdown in you comment form. "
 "You should leave it to Yes always.  "
 msgstr ""
 
-#: options/panel5.php:92
+#: options/panel5.php:95
 msgid "Safely Uninstall"
 msgstr ""
 
-#: options/panel5.php:96
+#: options/panel5.php:99
 msgid ""
 "This option will allow you to delete the plugin with WordPress without "
 "loosing your subscribers. Any database table and plugin options are wipeout."
 msgstr ""
 
-#: options/panel5.php:103
+#: options/panel5.php:106
 msgid "days"
 msgstr "روز"
 
-#: options/panel5.php:104
+#: options/panel5.php:107
 msgid ""
 "Delete pending subscriptions (not confirmed) after X days. Zero disables this "
 "feature."
@@ -930,14 +934,14 @@ msgstr ""
 "اشتراک هایی که بیش از این تعداد روز منتظر تایید مانده و پاسخی نگرفته اند را "
 "حذف کن. عدد 0 به معنای عدم استفاده از این قابلیت است."
 
-#: options/panel5.php:113
+#: options/panel5.php:116
 msgid ""
 "If this option is enable the subscription box will be above the submit button "
 "in your comment form. Use this when your theme is outdated and using the "
 "incorrect WordPress Hooks and the checkbox is not displayed."
 msgstr ""
 
-#: options/panel5.php:122
+#: options/panel5.php:125
 msgid ""
 "Send a notification email to confirm the subscription (to avoid addresses "
 "misuse)."
@@ -945,13 +949,13 @@ msgstr ""
 "ارسال یک ایمیل آگاه سازی جهت تأیید مشترک ( به منظور جلوگیری از استفاده از "
 "آدرس ایمیل غیرمرتبط)"
 
-#: options/panel5.php:131
+#: options/panel5.php:134
 msgid "Automatically subscribe authors to their own articles (not retroactive)."
 msgstr ""
 "به طور خودکار نویسندگان را مشترک یادداشت هایشان کن ( شامل یادداشت های موجود "
 "از قبل نمی شود )"
 
-#: options/panel5.php:140
+#: options/panel5.php:143
 msgid ""
 "If enabled, will send email messages with content-type = text/html instead of "
 "text/plain"
@@ -959,11 +963,11 @@ msgstr ""
 "اگر فعال شود ما پیام ها را با content-type = text/html به جای text/plain "
 "ایمیل می کنیم."
 
-#: options/panel5.php:145
+#: options/panel5.php:148
 msgid "HTMLify links in emails"
 msgstr "پیوند های HTMLify در ایمیل ها"
 
-#: options/panel5.php:150
+#: options/panel5.php:153
 msgid ""
 "If enabled, will wrap all links in messages with <code>&lt;a href=\"\"&gt;"
 "&lt;/a&gt;</code> (only when HTML emails enabled)."
@@ -971,48 +975,54 @@ msgstr ""
 "اگر فعال شود ما تمام پیوند ها را با <code>&lt;a href=\"\"&gt;&lt;/a&gt;</"
 "code> احاطه می کنیم. ( فقط هنگام فعال بودن ایمیل HTML)"
 
-#: options/panel5.php:155
+#: options/panel5.php:158
 msgid "Process trackbacks"
 msgstr "بازآگاهی فرآیند"
 
-#: options/panel5.php:159
+#: options/panel5.php:162
 msgid ""
 "Notify users when a new trackback or pingback is added to the discussion."
 msgstr ""
 "کاربران را مطلع کن اگر یک بازآگاهی یا ارجاع مستقیم به دیدگاه ها اضافه شود."
 
-#: options/panel5.php:164
+#: options/panel5.php:167
 msgid "Track all subscriptions"
 msgstr "تمام اشتراک ها را رهگیری کن"
 
-#: options/panel5.php:169
+#: options/panel5.php:172
 msgid "Notify the administrator when users subscribe without commenting."
 msgstr "وقتی کاربران بدون دیدگاه گذاری مشترک می شوند سرپرست را مطلع کن."
 
-#: options/panel5.php:178
+#: options/panel5.php:181
 msgid "Let the administrator subscribe to comments when logged in."
 msgstr ""
 "وقتی سرپرست وارد سایت می گردد به او اجازه ی مشترک شدن در دیدگاه ها را بده."
 
-#: options/panel5.php:187
+#: options/panel5.php:190
 msgid "Send a copy of all Notifications to the administrator."
 msgstr "یک کپی از تمام آگاه سازی ها برای مدیر سایت بفرست."
 
-#: options/panel5.php:192
+#: options/panel5.php:199
+msgid ""
+"Let you control the inclusion of the Font Awesome into your site. Disable if "
+"you theme already add this into your site."
+msgstr ""
+
+#: options/panel5.php:204
 msgid "StCR Unique Key"
 msgstr "شناسه منحصر بفرد StCR"
 
-#: options/panel5.php:197
+#: options/panel5.php:209
 msgid "This Unique Key is not set, please click the following button to "
 msgstr ""
 "این شناسه منحصر بفرد تنظیم نشده است، برای این منظور لطفاً روی این دکمه کلیک "
 "کنید"
 
-#: options/panel5.php:201 options/panel5.php:212
+#: options/panel5.php:213 options/panel5.php:224
 msgid "Generate"
 msgstr "ایجاد"
 
-#: options/panel5.php:209
+#: options/panel5.php:221
 msgid ""
 "This Unique Key will be use to send the notification to your subscribers with "
 "more security."
@@ -1345,37 +1355,37 @@ msgstr ""
 "زیر کلیک نمایید تا به صفحه ی شخصی خود بروید: \n"
 "[manager_link]"
 
-#: utils/stcr_manage.php:470 utils/stcr_manage.php:471
+#: utils/stcr_manage.php:471 utils/stcr_manage.php:472
 msgid "StCR System"
 msgstr ""
 
-#: utils/stcr_manage.php:490 utils/stcr_manage.php:518 utils/stcr_manage.php:545
-#: utils/stcr_manage.php:572 utils/stcr_manage.php:599 utils/stcr_manage.php:626
-#: utils/stcr_manage.php:653 utils/stcr_manage.php:680 utils/stcr_manage.php:707
-#: utils/stcr_manage.php:735
+#: utils/stcr_manage.php:491 utils/stcr_manage.php:519 utils/stcr_manage.php:546
+#: utils/stcr_manage.php:573 utils/stcr_manage.php:600 utils/stcr_manage.php:627
+#: utils/stcr_manage.php:654 utils/stcr_manage.php:681 utils/stcr_manage.php:708
+#: utils/stcr_manage.php:736
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: utils/stcr_manage.php:785
+#: utils/stcr_manage.php:786
 msgid "Subscriptions"
 msgstr "اشتراک ‌ها"
 
-#: utils/stcr_manage.php:841
+#: utils/stcr_manage.php:842
 msgid ""
 "Need help on how to use Subscribe to Comments Reloaded? Visit the official"
 msgstr ""
 "آیا برای استفاده از افزونه ی «اشتراک در دیدگاه‌ها نسخه ی جدید» نیاز به کمک "
 "دارید؟  سایت رسمی را ببینید."
 
-#: utils/stcr_manage.php:841
+#: utils/stcr_manage.php:842
 msgid "support forum"
 msgstr "تالار گفتگوی پشتیبانی"
 
-#: utils/stcr_manage.php:842
+#: utils/stcr_manage.php:843
 msgid "Feeling generous?"
 msgstr "احساس دست و دلبازی می کنید؟"
 
-#: utils/stcr_manage.php:842
+#: utils/stcr_manage.php:843
 msgid "Donate a few bucks!"
 msgstr "چند دلار اهدا نمایید!"
 
@@ -1497,6 +1507,7 @@ msgid ""
 msgstr "<strong>بابت نصب Subscribe to Comments Reloaded! متشکریم! </strong>."
 
 #: utils/stcr_upgrade.php:407 utils/stcr_upgrade.php:527
+#: utils/stcr_upgrade.php:554
 msgid ""
 "If you find a bug or an issue you can report it <a href=\"https://github.com/"
 "stcr/subscribe-to-comments-reloaded/issues\" target=\"_blank\">here</a>."
@@ -1544,6 +1555,7 @@ msgstr ""
 #: utils/stcr_upgrade.php:423 utils/stcr_upgrade.php:438
 #: utils/stcr_upgrade.php:460 utils/stcr_upgrade.php:483
 #: utils/stcr_upgrade.php:504 utils/stcr_upgrade.php:532
+#: utils/stcr_upgrade.php:559
 msgid ""
 "Please visit the <a href=\"https://wordpress.org/plugins/subscribe-to-"
 "comments-reloaded/changelog/\" target=\"_blank\">Changelog</a> for a complete "
@@ -1634,6 +1646,7 @@ msgid ""
 msgstr ""
 
 #: utils/stcr_upgrade.php:498 utils/stcr_upgrade.php:519
+#: utils/stcr_upgrade.php:547
 msgid "This version includes fixes and improvements, "
 msgstr ""
 
@@ -1648,11 +1661,11 @@ msgid ""
 "<strong>Improve</strong> Email validation for empty values and using a regex."
 msgstr ""
 
-#: utils/stcr_upgrade.php:514
+#: utils/stcr_upgrade.php:514 utils/stcr_upgrade.php:542
 msgid "Log Settings"
 msgstr ""
 
-#: utils/stcr_upgrade.php:518
+#: utils/stcr_upgrade.php:518 utils/stcr_upgrade.php:546
 msgid ""
 "<strong>Subscribe to Comments Reloaded</strong> has been updated to version "
 msgstr ""
@@ -1667,7 +1680,7 @@ msgstr ""
 msgid "<strong>Improve</strong> Manage subscription page. Take a look ;)."
 msgstr ""
 
-#: utils/stcr_upgrade.php:528
+#: utils/stcr_upgrade.php:528 utils/stcr_upgrade.php:555
 msgid "The support of this plugin is given thanks to your donations."
 msgstr ""
 
@@ -1679,6 +1692,29 @@ msgid ""
 "cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft"
 "%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF"
 "%3abtn_donate_LG%2egif%3aNonHosted\" target=\"_blank\">PayPal</a>."
+msgstr ""
+
+#: utils/stcr_upgrade.php:550
+msgid ""
+"<strong>Fix Critical Bug</strong> This version fix a critical bug on fresh "
+"installation regarding a database table creation."
+msgstr ""
+
+#: utils/stcr_upgrade.php:551
+msgid ""
+"<strong>Add</strong> Option to control the inclusion of the style Font "
+"Awesome."
+msgstr ""
+
+#: utils/stcr_upgrade.php:556
+msgid ""
+"Help to keep the support alive. You can donate via <i class=\"fa fa-paypal\" "
+"aria-hidden=\"true\"></i> <a href=\"\n"
+"https://www.paypal.com/cgi-bin/webscr?"
+"cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft"
+"%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF"
+"%3abtn_donate_LG%2egif%3aNonHosted\" target=\"_blank\">PayPal</a>. Thank you "
+"for the users that have supported the plugin development."
 msgstr ""
 
 #: utils/stcr_utils.php:195
