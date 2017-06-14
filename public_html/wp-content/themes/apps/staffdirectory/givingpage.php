@@ -49,8 +49,8 @@ $(document).ready(function() {
 	<div><span>Amount:</span><input class='amount' type='text' /></div>
 	<div><span>Frequency:</span><label><input class='frequency ot' name='frequency' type='radio' value='ot' />One Time</label><label><input class='frequency m' name='frequency' type='radio' value='m' />Monthy</label></div>
 	<div><span>Picture:</span><input type="file" class="image" accept="image/png,image/gif,image/jpeg"><img /></div>
-	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div>
-	<div><span>Description:</span><textarea class='description'></textarea></div>
+	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
+	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
 	<!--div><span>E Ack Letter:</span><textarea class='eAck'></textarea></div>
 	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div -->
