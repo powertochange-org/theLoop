@@ -4,10 +4,6 @@
 *from other users that you are an approver of. 
 *
 *
-* //TODO: create better documentation
-*
-*
-*
 * author: gerald.becker
 *
 */
@@ -15,49 +11,48 @@
 <h1>View Submissions</h1>
 
 <?php
+//If reminder emails need to be sent, send them out
+$dateCheck = new DateTime(date('Y-m-d H:i:s'));
+$dateCheck->setTimezone(new DateTimeZone('America/Los_Angeles'));
+if('08:00' <= $dateCheck->format('H:i') && $dateCheck->format('H:i') <= '17:00' && $dateCheck->format('N') != '7') {
+    if($dateCheck->format('Y-m-d H:i:s') >= get_option('workflow_email_alert')) {
+        include 'emailreminder.php';
+        $date = new DateTime(date("Y-m-d H:i:s"));
+        $date->add(new DateInterval('PT2H'));
+        $date->setTimezone(new DateTimeZone('America/Los_Angeles'));
+        update_option('workflow_email_alert', $date->format('Y-m-d H:i:s'));
+    }
+}
 
 if(isset($_SESSION['ERRMSG'])) {
     echo '<span style="color:red;font-size:30px;">'.$_SESSION['ERRMSG'].'</span><br>';
     unset($_SESSION['ERRMSG']);
 }
 
-
 /*Impersonating an employee in debug mode.*/
 global $wpdb;
+$debugText = '';
+if(Workflow::debugMode()) {
+    $debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
+    if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
+        //Assign the impersonate variable to allow for impersonation. 
+        if(Workflow::actualloggedInUser() == $_POST['newuser'])
+            Workflow::stopImpersonateEmployee();
+        else 
+            Workflow::impersonateEmployee($_POST['newuser']);
+    } 
 
-$debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
-if(Workflow::debugMode() && isset($_POST['newuser']) && $_POST['newuser'] != '') {
-    //Assign the impersonate variable to allow for impersonation. 
-    if(Workflow::actualloggedInUser() == $_POST['newuser'])
-        Workflow::stopImpersonateEmployee();
-    else 
-        Workflow::impersonateEmployee($_POST['newuser']);
-    
-    
-} else if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
-    echo '<script> alert("Debug mode is turned off");</script>';
+    $debugText .= 'Currently logged in as: ';
+    $debugText .= Workflow::loggedInUser().' - '.Workflow::loggedInUserName();
+    $debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
 }
-
-$debugText .= 'Currently logged in as: ';
-$debugText .= Workflow::loggedInUser().' - '.Workflow::loggedInUserName();
-$debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
-
 /*End of impersonating an employee.*/
-?>
 
-
-
-<?php
 if(Workflow::loggedInUser() != '0') {
-    
-?>
-    
-    
-    <?php
-
     $idsearch = $formsearch = $submittedsearch = $datesearch = '';
-    $showfiled = 2;
+    $showfiled = $showCompleted = 2;
     $showvoid = 0;
+    //By default, hide filed forms for Hr Notes group
     if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) {
         $showfiled = 0;
     }
@@ -76,6 +71,12 @@ if(Workflow::loggedInUser() != '0') {
     if(isset($_POST['filed']) && 0 <= $_POST['filed'] && $_POST['filed'] <= 2) {
         $showfiled = $_POST['filed'];
     }
+    if(isset($_GET['void']) && 0 <= $_GET['void'] && $_GET['void'] <= 2) {
+        $showvoid = $_GET['void'];
+    }
+    if(isset($_POST['showcompleted']) && 0 <= $_POST['showcompleted'] && $_POST['showcompleted'] <= 2) {
+        $showCompleted = $_POST['showcompleted'];
+    }
     
     $obj = new Workflow();
     
@@ -83,8 +84,6 @@ if(Workflow::loggedInUser() != '0') {
         $formType = $_GET['forms'];
     else
         $formType = 'my';
-    
-    
     
     echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     
@@ -103,9 +102,15 @@ if(Workflow::loggedInUser() != '0') {
             <tr id="submissionsearchbar4" class="hide">
                 <td colspan=4>
                 <?php if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26)) { ?>
-                    <br><input type="radio" name="filed" value="0" <?php echo ($showfiled == 0 ? 'checked' : ''); ?>>Unfiled
+                    <br><b>Filter Filed Forms</b><br>
+                    <input type="radio" name="filed" value="0" <?php echo ($showfiled == 0 ? 'checked' : ''); ?>>Unfiled
                     <input type="radio" name="filed" value="1" <?php echo ($showfiled == 1 ? 'checked' : ''); ?>>Filed
                     <input type="radio" name="filed" value="2" <?php echo ($showfiled == 2 ? 'checked' : ''); ?>>All
+                    <br>
+                    <b>Filter Approved Forms</b><br>
+                    <input type="radio" name="showcompleted" value="0" <?php echo ($showCompleted == 0 ? 'checked' : ''); ?>>To Be Processed
+                    <input type="radio" name="showcompleted" value="1" <?php echo ($showCompleted == 1 ? 'checked' : ''); ?>>Processed / Approved
+                    <input type="radio" name="showcompleted" value="2" <?php echo ($showCompleted == 2 ? 'checked' : ''); ?>>All
                 <?php } ?>
                 </td>
             </tr>
@@ -131,10 +136,10 @@ if(Workflow::loggedInUser() != '0') {
         echo $obj->viewAllSubmissions(Workflow::loggedInUser(), $formsearch, $datesearch, $idsearch, 0);
     if($formType == 'staff' || $formType == 'both')
         echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 0,
-             $showvoid, $showfiled);
+             $showvoid, $showfiled, $showCompleted);
     if($formType == 'all' && Workflow::isAdmin(Workflow::loggedInUser()))
         echo $obj->viewAllSubmissionsAsApprover(Workflow::loggedInUser(), $formsearch, $submittedsearch, $datesearch, $idsearch, 1,
-             $showvoid, $showfiled);
+             $showvoid, $showfiled, $showCompleted);
     
     //Display the forms that the user was in before hitting the search button
     if(isset($_GET['mode']) && isset($_GET['tag'])) {
