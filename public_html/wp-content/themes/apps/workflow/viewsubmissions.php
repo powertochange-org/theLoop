@@ -4,10 +4,6 @@
 *from other users that you are an approver of. 
 *
 *
-* //TODO: create better documentation
-*
-*
-*
 * author: gerald.becker
 *
 */
@@ -15,39 +11,43 @@
 <h1>View Submissions</h1>
 
 <?php
+//If reminder emails need to be sent, send them out
+$dateCheck = new DateTime(date('Y-m-d H:i:s'));
+$dateCheck->setTimezone(new DateTimeZone('America/Los_Angeles'));
+if('08:00' <= $dateCheck->format('H:i') && $dateCheck->format('H:i') <= '17:00' && $dateCheck->format('N') != '7') {
+    if($dateCheck->format('Y-m-d H:i:s') >= get_option('workflow_email_alert')) {
+        include 'emailreminder.php';
+        $date = new DateTime(date("Y-m-d H:i:s"));
+        $date->add(new DateInterval('PT2H'));
+        $date->setTimezone(new DateTimeZone('America/Los_Angeles'));
+        update_option('workflow_email_alert', $date->format('Y-m-d H:i:s'));
+    }
+}
 
 if(isset($_SESSION['ERRMSG'])) {
     echo '<span style="color:red;font-size:30px;">'.$_SESSION['ERRMSG'].'</span><br>';
     unset($_SESSION['ERRMSG']);
 }
 
-
 /*Impersonating an employee in debug mode.*/
 global $wpdb;
+$debugText = '';
+if(Workflow::debugMode()) {
+    $debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
+    if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
+        //Assign the impersonate variable to allow for impersonation. 
+        if(Workflow::actualloggedInUser() == $_POST['newuser'])
+            Workflow::stopImpersonateEmployee();
+        else 
+            Workflow::impersonateEmployee($_POST['newuser']);
+    } 
 
-$debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
-if(Workflow::debugMode() && isset($_POST['newuser']) && $_POST['newuser'] != '') {
-    //Assign the impersonate variable to allow for impersonation. 
-    if(Workflow::actualloggedInUser() == $_POST['newuser'])
-        Workflow::stopImpersonateEmployee();
-    else 
-        Workflow::impersonateEmployee($_POST['newuser']);
-    
-    
-} else if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
-    echo '<script> alert("Debug mode is turned off");</script>';
+    $debugText .= 'Currently logged in as: ';
+    $debugText .= Workflow::loggedInUser().' - '.Workflow::loggedInUserName();
+    $debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
 }
-
-$debugText .= 'Currently logged in as: ';
-$debugText .= Workflow::loggedInUser().' - '.Workflow::loggedInUserName();
-$debugText .= '  |  ACTUAL: '.Workflow::actualloggedInUser().'<BR>';
-
 /*End of impersonating an employee.*/
-?>
 
-
-
-<?php
 if(Workflow::loggedInUser() != '0') {
     $idsearch = $formsearch = $submittedsearch = $datesearch = '';
     $showfiled = $showCompleted = 2;
@@ -84,8 +84,6 @@ if(Workflow::loggedInUser() != '0') {
         $formType = $_GET['forms'];
     else
         $formType = 'my';
-    
-    
     
     echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     

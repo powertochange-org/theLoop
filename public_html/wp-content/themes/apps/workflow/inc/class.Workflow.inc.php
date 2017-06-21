@@ -595,9 +595,6 @@ class Workflow {
                         $row['FIELDID'].'">'.$row['LABEL'].'</div>';
                 }
             }
-            
-            //file_put_contents('HAHAHA.txt', $response);
-            
         }
         
         
@@ -910,7 +907,7 @@ class Workflow {
         $result = $wpdb->get_results($sql, ARRAY_A);
         
         $lastAction = '';
-        if(count($result) == 1) {
+        if(count($result) == 1 && $submissionID != 0) {
             $lastAction = Workflow::getUserName($result[0]['USER']);
         }
         
@@ -1366,9 +1363,10 @@ class Workflow {
                 }
                 
                 $response .= '"><div class="inside-text-center">';
-                
-                $response .= '<input type="radio" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.
-                    $row['FIELDID'].'" value="'.$row['LABEL'].'" ';
+                $response .= '<input type="radio" id="workflowfieldid'.$row['FIELDID'].'" ';
+                if(!$emailMode)
+                    $response .= 'name="workflowfieldid'.$row['FIELDID'].'"';
+                $response .= ' value="'.$row['LABEL'].'" ';
                 
                 if($editableField && $row['REQUIRED'])
                     $response .= 'required ';
@@ -2680,7 +2678,6 @@ class Workflow {
             return;
         
         $emailRecepients = $wpdb->get_results($sql, ARRAY_A);
-        //var_dump($emailRecepients);
         
         $recepients = array();
         $tempRec = '';
@@ -2821,11 +2818,18 @@ class Workflow {
                     $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else
                     $mail->Subject = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
-                 
-                                                            
+                
                 $mail->Body = $body;
-                //echo 'DEBUG: Trying to send an email to : '.$recepients[$i][1].'<br>';
                 $mail->Send();
+                
+                //Update the submission reminder date
+                $date = new DateTime(date("Y-m-d H:i:s"));
+                $date->add(new DateInterval('P3D'));
+                $date->setTimezone(new DateTimeZone('America/Los_Angeles'));
+                $sql = "UPDATE workflowformstatus 
+                        SET SEND_REMINDER = '".$date->format('Y-m-d H:i:s')."'
+                        WHERE SUBMISSIONID = '$submissionID'";
+                $wpdb->query($sql, ARRAY_A);
             }
         }
     }
