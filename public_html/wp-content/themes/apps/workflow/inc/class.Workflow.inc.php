@@ -224,6 +224,10 @@ class Workflow {
         $oldcomment = '';
         $historyApprovalStage = 0;
         
+        //Store debug information to figure out any possible submission issues
+        if(Workflow::debugModeSubmission())
+            Workflow::workflowDebugTracking($user, $formID, $submissionID, $misc_content, 'New Status:'.$newstatus);
+        
         //Check to see if an update or insert is allowed
         $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED
                 FROM workflowformstatus
@@ -980,13 +984,16 @@ class Workflow {
         if($formActive)
             $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
         
+        //Debug store if misc content is expected here
+        if(Workflow::debugModeSubmission() && $id == $this->allowanceCalculatorID) 
+                Workflow::workflowDebugTracking(Workflow::loggedInUser(), $id, $submissionID, 
+                    $misc_content, 'Loading form');
+        
         //Display the misc content
         if($misc_content != '') {
             $response .= $misc_content.'<br>';
             if(!$emailMode)
                 $response .= '<textarea hidden name="misc_content" rows="1" cols="1">'.$misc_content.'</textarea>';
-        } else {
-            //echo 'No extra content<br>';
         }
         
         $sql = "SELECT *
@@ -3365,16 +3372,26 @@ class Workflow {
     public static function getMultipleDirectApprovers($userid) {
         global $wpdb;
         $approver = 0;
-        
-        $sql = "SELECT supervisor
-                FROM employee
-                WHERE employee_number = '$userid'
+        $sql = "SELECT e1.supervisor, CONCAT(e2.first_name, ' ', e2.last_name) AS supname
+                FROM employee e1
+                LEFT OUTER JOIN employee e2 ON e1.supervisor = e2.employee_number
+                WHERE e1.employee_number = '$userid' AND e1.supervisor IS NOT NULL
+                
+                UNION
+                
+                SELECT e2.supervisor, CONCAT(e3.first_name, ' ', e3.last_name) AS supname
+                FROM employee e1
+                LEFT OUTER JOIN employee e2 ON e1.supervisor = e2.employee_number
+                LEFT OUTER JOIN employee e3 ON e2.supervisor = e3.employee_number
+                WHERE e1.employee_number = '$userid' AND e1.supervisor IS NOT NULL and e2.supervisor IS NOT NULL
                 
                 UNION 
                 
-                SELECT manager_employee_number as supervisor
-                FROM employee_manager
-                WHERE employee_number = '$userid'";
+                SELECT manager_employee_number as supervisor,
+                        CONCAT(emp.first_name, ' ', emp.last_name) AS supname
+                FROM employee_manager em
+                LEFT OUTER JOIN employee emp ON em.manager_employee_number = emp.employee_number
+                WHERE em.employee_number = '$userid'";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
@@ -3555,6 +3572,11 @@ class Workflow {
         return get_option( 'workflowdebug' , 0 );
     }
     
+    /*Determines if additional diagnostics should be recorded for the workflow process for debugging.*/
+    public static function debugModeSubmission() {
+        return get_option( 'workflowdebugsubmission' , 0 );
+    }
+    
     public function escapeScriptTags($string) {
         $string = str_replace("<script", htmlentities("<script"), $string);
         $string = str_replace("</script", htmlentities("</script"), $string);
@@ -3657,6 +3679,20 @@ class Workflow {
         }
         return false;
     }
+    
+    /*Stores diagnostics information for workflow submissions. Helps for debugging issues related
+    to missing submissions or missing misc content. */
+    public function workflowDebugTracking($user, $formID, $submissionID, $content, $msg) {
+        global $wpdb;
+        date_default_timezone_set('America/Los_Angeles');
+        $content = str_replace("\\", "\\\\", $content);
+        $content = str_replace("'", "\'", $content);
+        $sql = "INSERT INTO workflowdebug (DATE_CHG, USER, FORMID, SUBMISSIONID, CONTENT, MSG)
+                VALUES ('".date('Y-m-d H:i:s')."', '$user', '$formID', '$submissionID', '$content', '$msg')";
+        $result = $wpdb->query($sql, ARRAY_A);
+        return $result;
+    }
+    
 }
     
     

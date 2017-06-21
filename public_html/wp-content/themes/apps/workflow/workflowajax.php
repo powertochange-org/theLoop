@@ -79,4 +79,26 @@ function workflow_upload_document() {
 
 add_action( 'wp_ajax_workflow_upload_document', 'workflow_upload_document' );
 
+
+function workflow_get_supervisor() {
+    require_once('inc/class.Workflow.inc.php');
+    
+    $returndata = array('ReturnCode'=>'200', 'Msg'=>'', 'Data'=>'');
+    
+    if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && 
+        strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+        $returndata['ReturnCode'] = '400';
+        $returndata['Msg'] = 'Post failed.';
+        echo json_encode($returndata);
+        die();
+    }
+    
+    $returndata['Data'] = Workflow::getMultipleDirectApprovers($_POST['employeeNum']);
+    
+    echo json_encode($returndata);
+    exit;
+}
+
+add_action( 'wp_ajax_workflow_get_supervisor', 'workflow_get_supervisor' );
+
 ?>
