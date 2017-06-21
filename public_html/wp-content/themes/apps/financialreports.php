@@ -347,13 +347,22 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12Mont
 
 //Send an email to SQL Administrators if there is an error
 if($error) {
-  ini_set('SMTP','smtp.powertochange.org');
-  ini_set('smtp_port',25);
-  $headers = "MIME-Version: 1.0\r\n";
-  $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-  $headers .= 'From: Loop Reports Error <noreply@powertochange.org>' . "\r\n";
-  $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br><b>Error Message:</b> '.$error;
-  mail(REPORT_ERRORS_EMAIL, 'Loop Reports Error - '.$_POST['REPORT'], $msg, $headers);
+  $sendErrReport = 1;
+  //Ignore error messages that are not actually errors
+  if(strpos($error, 'permission to view') !== false ||
+    strpos($error, 'be 6 digits') !== false ||
+    strpos($error, 'must enter a valid Org') !== false) {
+    $sendErrReport = 0;
+  }
+  if($sendErrReport) {
+    ini_set('SMTP','smtp.powertochange.org');
+    ini_set('smtp_port',25);
+    $headers = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= 'From: Loop Reports Error <noreply@powertochange.org>' . "\r\n";
+    $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br><b>Error Message:</b> '.$error;
+    mail(REPORT_ERRORS_EMAIL, 'Loop Reports Error - '.$_POST['REPORT'], $msg, $headers);
+  }
 }
 
 //If there is an error with a preview, do not display the whole page
