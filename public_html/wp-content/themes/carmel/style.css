@@ -1088,7 +1088,7 @@ ul.sub-categories {
 }
 
 .wiki-section ul.wiki-list li::before {
-    background-image: url("/wp-content/images/Self-Help-Wiki-Icon-no-text.png" );
+    background-image: url("/wp-content/images/Self-Help-Wiki-Icon-Bulb-no-text.png" );
     background-size: 15px 15px;
     display: inline-block;
     width: 15px; 
