@@ -53,7 +53,7 @@ function getQuestions(){
 	$sql = "SELECT * FROM `allowance_question` ORDER BY  `order` ASC";
 	$results = $wpdb->get_results($sql);
 	foreach ($results as $result){
-		echo "<div class='".printClasses(intval($result->role)).( $result->pull_data ? 'hidden' : '')."' id='tr-".$result->id."'>\n";
+		echo "<div class='".printClasses(intval($result->role))."' id='tr-".$result->id."'>\n";
 		$sql = "SELECT `first_sub` FROM `allowance_question` WHERE allowance_question.id=".$result->id;
 		$sub_result = $wpdb->get_results($sql);
 		$sub_result = $sub_result[0];
