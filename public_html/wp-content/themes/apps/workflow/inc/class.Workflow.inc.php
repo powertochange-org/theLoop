@@ -772,7 +772,7 @@ class Workflow {
                                 echo Workflow::getUserName($behalfof).' on behalf of ';
                             echo Workflow::getUserName($submittedby);
                         } else
-                            Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
+                            echo Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
                             
                         echo '</b>.</span>';
                     }
