@@ -653,6 +653,11 @@ class Workflow {
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
+                
+                if($hrvoid && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
+                    echo 'This submission is no longer available. Please contact HR if this submission was voided in error.';
+                return;
+                }
             } else {
                 echo 'That submission does not exist.';
                 return;
@@ -758,15 +763,35 @@ class Workflow {
                     $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
                     $hasAnotherApproval = 0;
                     $configvalue = 9; 
-                    echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
-                        history below.<br>Currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.</span>';
-                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
-                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    if($status != '2') {
+                        echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
+                            history below.<br>Currently being processed by: <b>';
+                            
+                        if($status == '3') {
+                            if($behalfof != '')
+                                echo Workflow::getUserName($behalfof).' on behalf of ';
+                            echo Workflow::getUserName($submittedby);
+                        } else
+                            Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
+                            
+                        echo '</b>.</span>';
+                    }
+                    //Prevent viewing of a form that is still being worked on by the submitter
                     if($status == '2' || $status == '3') {
-                        echo '<span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
+                        echo '<br><br><span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
                         return;
                     } else if($status == '10') {
-                        echo '<span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        echo '<br><br><span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        return;
+                    }
+                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    //Prevent viewing of a form that is still being worked on by the submitter
+                    if($status == '2' || $status == '3') {
+                        echo '<span style="color:red;">This submission is currently being edited by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
+                        return;
+                    } else if($status == '10') {
+                        echo '<span style="color:red;">This submission has been cancelled by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
                         return;
                     }
                     
