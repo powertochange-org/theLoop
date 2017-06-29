@@ -1784,17 +1784,17 @@ class Workflow {
                 //$temp = 'Retracted - Saved';
                 continue;
             } else if($row['ACTION'] == 3) {
-                $temp = 'Review Required';// Lvl: '.$row['APPROVAL_LEVEL'];
-            } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
+                $temp = 'Review Required';
+            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
                 $temp = 'Submitted';
             } else if($row['ACTION'] == 4) {
-                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Approved';
             } else if($row['ACTION'] == 7) {
-                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Approved';
             } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
                 $temp = 'Cancelled Submission';
             } else if($row['ACTION'] == 8) {
-                $temp = 'Denied';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Denied';
             } else if($row['ACTION'] == 20) {
                 $temp = 'Processed';
             } else {
