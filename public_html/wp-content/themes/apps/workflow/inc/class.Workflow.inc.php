@@ -211,7 +211,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes = '') {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '') {
         /*
         1) Brand new field
         2) Continue to edit
@@ -229,7 +229,7 @@ class Workflow {
             Workflow::workflowDebugTracking($user, $formID, $submissionID, $misc_content, 'New Status:'.$newstatus);
         
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED, HR_VOID
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -243,11 +243,17 @@ class Workflow {
             $oldcomment = $row['COMMENT'];
             $oldhrnotes = $row['HR_NOTES'];
             $oldDirectApprover = $row['APPROVER_DIRECT'];
+            $voided = $row['HR_VOID'];
             if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
             }
             if($uniqueToken != $row['UNIQUE_TOKEN']) {
                 $_SESSION['ERRMSG'] = 'This submission has recently changed. Reload the submission to make any required changes.';
+                header('location: ?page=viewsubmissions');
+                die();
+            }
+            if($voided == '1' && $newstatus != '63') {
+                $_SESSION['ERRMSG'] = 'This submission has been voided. To continue to use this submission, please contact HR and make sure that it is un-voided.';
                 header('location: ?page=viewsubmissions');
                 die();
             }
@@ -307,8 +313,12 @@ class Workflow {
         } else if($newstatus == 50) {
             //Update only the HR notes
             $sql = "UPDATE workflowformstatus 
-                    SET HR_NOTES = '$hrnotes'
-                    WHERE SUBMISSIONID = '$submissionID'";
+                    SET HR_NOTES = '$hrnotes'";
+            
+            if(isset($miscfields['SEND_REMINDER']))
+                $sql .= ", SEND_REMINDER = '".$miscfields['SEND_REMINDER']."'";
+            
+            $sql .= " WHERE SUBMISSIONID = '$submissionID'";
             $result = $wpdb->query($sql, ARRAY_A);
             return 0;
         } else if(60 <= $newstatus && $newstatus <= 63) {
@@ -624,6 +634,7 @@ class Workflow {
         $comments = '';
         $submittedby = '';
         $hrfiled = $hrvoid = '';
+        $miscfields = array();
         //TODO: use this class to configure the loadWorkflowEntry function
         
         $loggedInUser = Workflow::loggedInUser();
@@ -634,7 +645,8 @@ class Workflow {
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
                             APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
-                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
+                            SEND_REMINDER
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -653,6 +665,7 @@ class Workflow {
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
+                $miscfields['SEND_REMINDER'] = $row['SEND_REMINDER']; 
                 
                 if($hrvoid && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
                     echo 'This submission is no longer available. Please contact HR if this submission was voided in error.';
@@ -855,7 +868,8 @@ class Workflow {
         }
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
-            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid);
+            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
+            $miscfields);
     }
     
     
@@ -906,7 +920,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '') {
+        $hrvoid = '', $miscfields = '') {
         global $wpdb;
         $formActive = 0;
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
@@ -976,7 +990,8 @@ class Workflow {
             $response .= 'Status: Pending Resubmission by Submitter';
         else if($configuration == 9 && $status == 4)
             $response .= 'Status: Under Review by another approval group';
-        
+        if($hrvoid)
+            $response .= ' - <span style="color:red;"><b>VOIDED</b></span>';
         $response .= '</p>';
         
         if(0 <= $configuration && $configuration < 7 && $emailMode) {
@@ -1568,9 +1583,17 @@ class Workflow {
                 $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
             $response .= '<div><h3>HR / Payroll Notes</h3></div>';
             $response .= '<textarea id="hrnotes" class="hrnotes" name="hrnotes" rows="5" cols="40" style="width: 100%;">'.$hrnotes.'</textarea>';
+            //Allow changing of the reminder date
+            if($status == '4' && isset($miscfields['SEND_REMINDER'])) {
+                $remDate .= date('Y-m-d', strtotime($miscfields['SEND_REMINDER']));
+                $response .= '<br><b>Reminder Date: </b>
+                    <input type="date" name="reminderdate" value="'.$remDate.'" style="width:200px;display:inline;"/>';
+            }
+            
             $response .= '<br><br>';
+            $response .= '<button class="processbutton" onclick="saveSubmission(50, 0);">Update HR Notes</button>';
             if(!$formActive) {
-                $response .= '<button class="processbutton" onclick="saveSubmission(50, 0);">Update HR Notes</button><button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div>';
+                $response .= '<button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div>';
             }
             
             //Display Archive and Delete options

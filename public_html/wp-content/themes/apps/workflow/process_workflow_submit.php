@@ -48,6 +48,7 @@ $wfid = $_POST["wfid"];
 $sbid = $_POST["sbid"];
 $newstatus = $_POST["ns"];
 $fields = array();
+$miscfields = array();
 $misc_content = '';
 $commenttext = '';
 $hrnotes = '';
@@ -118,10 +119,13 @@ for($i = 0; $i < $numfields; $i++) {
     $fields[] = array($i, $value);
 }
 
+if(isset($_POST['reminderdate'])) {
+    $miscfields['SEND_REMINDER'] = $_POST['reminderdate'];
+}
 
 $obj = new Workflow();
 //$fields, $newstatus, $submissionID, $formID, $user
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes);
 
 if($sbid != 0)
     $obj->sendEmail($sbid); //TODO : Enable this to send emails

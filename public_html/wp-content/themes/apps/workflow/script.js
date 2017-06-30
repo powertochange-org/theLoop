@@ -37,10 +37,6 @@ var newRadioFields = 2;
 var DEFAULTNEWRADIOFIELDS = 2;
 var submissionLink = true;
 
-function test() {
-    alert("HAHA");
-}
-
 function find(elem) {
     return document.getElementById(elem);
 }
@@ -107,9 +103,13 @@ function saveSubmission(status, approver) {
         }
     }
     if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || (60 <= status && status <= 63)) {
+        processBtnToggle(0);
         document.getElementById('workflowsubmission').submit();
+        setTimeout(function(){ processBtnToggle(1); }, 5000);
     } else {
+        processBtnToggle(0);
         document.getElementById('formsubmitbutton').click();
+        setTimeout(function(){ processBtnToggle(1); }, 5000);
     }
         
     //document.getElementById('workflowsubmission').submit();
@@ -441,4 +441,15 @@ function loadComments(commentid) {
     var text = '<h2 class="center" style="color:black;">Comments</h2><br>' + text;
     document.getElementById('previewform').innerHTML = text;
     document.getElementById('screen-blackout').style.display = 'inherit';
+}
+
+/*
+ *Toggles submission buttons to prevent clicking on them repeatedly. 
+ */
+function processBtnToggle($enable) {
+    var x = findClass('processbutton');
+    for(var y = 0; y < x.length; y++) {
+        x[y].disabled = ($enable == 1 ? false : true);
+        x[y].style.cursor = ($enable == 1 ? 'pointer' : 'not-allowed');
+    }
 }
