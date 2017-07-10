@@ -102,7 +102,8 @@ function saveSubmission(status, approver) {
             }
         }
     }
-    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || (60 <= status && status <= 63)) {
+    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || 
+        status == 50 || (60 <= status && status <= 63)) {
         processBtnToggle(0);
         document.getElementById('workflowsubmission').submit();
         setTimeout(function(){ processBtnToggle(1); }, 5000);
