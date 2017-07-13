@@ -515,14 +515,6 @@ class Workflow {
             $result = $wpdb->query($sql);
         }
         
-        if($behalfof != '')
-            $user = $behalfof;
-        //Update history
-        $sql = "INSERT INTO workflowformhistory (USER, SUBMISSION_ID, APPROVAL_LEVEL, ACTION, DATE_SUBMITTED)
-                VALUES ('$user', '$submissionID', '$historyApprovalStage', '$newstatus', '".date('Y-m-d H:i:s')."')";
-        
-        $result = $wpdb->query($sql, ARRAY_A);
-        
         //Store the name of the user in history in case they ever leave staff
         $sql = "SELECT EMPID FROM workflowuserhistory WHERE EMPID = '$user'";
         $result = $wpdb->query($sql, ARRAY_A);
@@ -532,6 +524,14 @@ class Workflow {
                     FROM employee WHERE employee_number = '$user'";
             $result = $wpdb->query($sql, ARRAY_A);
         }
+        
+        if($behalfof != '')
+            $user = $behalfof;
+        //Update history
+        $sql = "INSERT INTO workflowformhistory (USER, SUBMISSION_ID, APPROVAL_LEVEL, ACTION, DATE_SUBMITTED)
+                VALUES ('$user', '$submissionID', '$historyApprovalStage', '$newstatus', '".date('Y-m-d H:i:s')."')";
+        
+        $result = $wpdb->query($sql, ARRAY_A);
         
         return $submissionID;
     }
