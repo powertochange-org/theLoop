@@ -95,6 +95,9 @@ require_once('workflow/inc/class.Workflow.inc.php');
                         case "roles":
                             include 'workflow/roles.php';
                             break;
+                        case "directors":
+                            include 'workflow/directors.php';
+                            break;
                         case "createworkflow":
                             include "workflow/createworkflow.php";
                             break;
