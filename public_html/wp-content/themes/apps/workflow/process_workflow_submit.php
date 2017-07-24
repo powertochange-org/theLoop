@@ -48,6 +48,7 @@ $wfid = $_POST["wfid"];
 $sbid = $_POST["sbid"];
 $newstatus = $_POST["ns"];
 $fields = array();
+$miscfields = array();
 $misc_content = '';
 $commenttext = '';
 $hrnotes = '';
@@ -102,29 +103,27 @@ if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
 } 
 
 
-//echo '<br>';
+
 for($i = 0; $i < $numfields; $i++) {
     if(!isset($_POST['workflowfieldid'.$i])) {
-        //echo '<span style="color:red;">workflowfieldid'.$i.' NOT SET.</span><br>';
         continue;
     }
     
-    
     $value = $_POST['workflowfieldid'.$i];
-    //echo '<span style="color:blue;">workflowfieldid'.$i.' VALUE: '.$value.'</span><br>';
-    
-    //TODO: if there is a form already created just update it
     
     $fields[] = array($i, $value);
 }
 
+if(isset($_POST['reminderdate'])) {
+    $miscfields['SEND_REMINDER'] = $_POST['reminderdate'];
+}
 
 $obj = new Workflow();
-//$fields, $newstatus, $submissionID, $formID, $user
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes);
+
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes);
 
 if($sbid != 0)
-    $obj->sendEmail($sbid); //TODO : Enable this to send emails
+    $obj->sendEmail($sbid);
 
 
 if(isset($_POST['approverredirect']))

@@ -36,7 +36,7 @@ if (get_theme_mod('survey_active')) {
         <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>" charset="<?php bloginfo('charset'); ?>" />
         <title>The Loop | An Internal Communications Blog</title>
         <?php $siteURL = get_bloginfo('url'); ?>
-        <link href="<?php bloginfo('template_url'); ?>/style.css" rel="stylesheet" type="text/css" />
+        <link href="<?php bloginfo('template_url'); ?>/style.css?ver=1.0.0" rel="stylesheet" type="text/css" />
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
         <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.ico" />
         <?php wp_head(); ?> 
