@@ -60,7 +60,6 @@ get_header(); ?>
 		<table>
 			<thead><tr>
 				<th class='lang'>Name</th>
-				<th class='lang'>Language</th>
 				<th class='lang'>Magazine</th>
 				<th><button class='lang' disabled='disabled'>Save All</button></th>
 			</tr></thead>

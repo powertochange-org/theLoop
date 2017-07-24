@@ -9,7 +9,6 @@ var advMag = {
 				for(var i = 0; i < data.r.length; i ++){
 					$('.advMag tbody').append(
 						"<tr data-id='" + data.r[i].id + "' ><td>" + data.r[i].name + "</td>" + //todo
-						"<td>" + advMag.printLanguageSelection(data.r[i].lang) + "</td>" +
 						"<td>" + advMag.printMagazineSelection(data.r[i].mag) + "</td>" +
 						"<td><button class='lang' disabled='disabled'>Save</button></td></tr>"
 					)
