@@ -13,7 +13,8 @@ class AdvMag{
 			$table[] = array(
 				'id' => $a['Id'],
 				'name' => $a['FormattedName'],
-				'lang' => self::$api->getCode($a['Id'], 'DDCLANG')
+				'lang' => self::$api->getCode($a['Id'], 'DDCLANG'),
+				'mag' => self::$api->getCode($a['Id'], 'MAGAZINE')
 			);
 		}
 		header('Content-Type: application/json');
@@ -32,14 +33,18 @@ class AdvMag{
 			http_response_code(400);
 			die();
 		}
-		if(array_key_exists('DDCLANG', $_REQUEST)){
-			if($_REQUEST['DDCLANG']){
-				self::$api->setCode($id, 'DDCLANG', $_REQUEST['DDCLANG']);
+		self::saveCode('DDCLANG', $id);
+		self::saveCode('MAGAZINE', $id);
+	}
+	
+	private function saveCode($code, $id){
+		if(array_key_exists($code, $_REQUEST)){
+			if($_REQUEST[$code]){
+				self::$api->setCode($id, $code, $_REQUEST[$code]);
 			} else {
-				self::$api->deleteCode($id, 'DDCLANG');
+				self::$api->deleteCode($id, $code);
 			}
 		}
-		
 	}
 	
 	private function getInvalid($id){
@@ -59,7 +64,7 @@ class AdvMag{
 		if('' == $pc || is_null($pc) || ('8' != $pc[0] && '9' != $pc[0])){
 			return array();
 		}
-		//https=>//seapi.powertochange.org/accounts?advancedFind=%7B%22table%22%3A%22A01%22%2C%22isDistinct%22%3Atrue%2C%22selectionCriteria%22%3A%5B%7B%22group%22%3A1%2C%22table%22%3A%22T04%22%2C%22operator%22%3A%22EQ%22%2C%22field%22%3A%22ProjectCode%22%2C%22isJoin%22%3Afalse%2C%22value%22%3A%22810550%22%7D%2C%7B%22isJoin%22%3Atrue%2C%22table%22%3A%22A01%22%2C%22value%22%3A%22T01%22%2C%22field%22%3Anull%2C%22operator%22%3Anull%7D%2C%7B%22isJoin%22%3Atrue%2C%22table%22%3A%22T01%22%2C%22field%22%3Anull%2C%22operator%22%3Anull%2C%22value%22%3A%22T04%22%7D%2C%7B%22group%22%3A1%2C%22table%22%3A%22T01%22%2C%22operator%22%3A%22ON_OR_BEFORE%22%2C%22field%22%3A%22Date%22%2C%22isJoin%22%3Afalse%2C%22value%22%3A%222016-03-15%22%7D%5D%2C%22viewId%22%3Anull%7D&offset=0&limit=9
+		// /accounts?advancedFind=%7B%22table%22%3A%22A01%22%2C%22isDistinct%22%3Atrue%2C%22selectionCriteria%22%3A%5B%7B%22group%22%3A1%2C%22table%22%3A%22T04%22%2C%22operator%22%3A%22EQ%22%2C%22field%22%3A%22ProjectCode%22%2C%22isJoin%22%3Afalse%2C%22value%22%3A%22810550%22%7D%2C%7B%22isJoin%22%3Atrue%2C%22table%22%3A%22A01%22%2C%22value%22%3A%22T01%22%2C%22field%22%3Anull%2C%22operator%22%3Anull%7D%2C%7B%22isJoin%22%3Atrue%2C%22table%22%3A%22T01%22%2C%22field%22%3Anull%2C%22operator%22%3Anull%2C%22value%22%3A%22T04%22%7D%2C%7B%22group%22%3A1%2C%22table%22%3A%22T01%22%2C%22operator%22%3A%22ON_OR_BEFORE%22%2C%22field%22%3A%22Date%22%2C%22isJoin%22%3Afalse%2C%22value%22%3A%222016-03-15%22%7D%5D%2C%22viewId%22%3Anull%7D&offset=0&limit=9
 		$af = array(
 			'table' => 'A01',
 			'isDistinct' => true,

@@ -10,6 +10,7 @@ var advMag = {
 					$('.advMag tbody').append(
 						"<tr data-id='" + data.r[i].id + "' ><td>" + data.r[i].name + "</td>" + //todo
 						"<td>" + advMag.printLanguageSelection(data.r[i].lang) + "</td>" +
+						"<td>" + advMag.printMagazineSelection(data.r[i].mag) + "</td>" +
 						"<td><button class='lang' disabled='disabled'>Save</button></td></tr>"
 					)
 				}
@@ -116,11 +117,14 @@ var advMag = {
 		
 	},
 	
-	printMethodSelection: function(value){
+	printMagazineSelection: function(value){
 		return "<select data-field='MAGAZINE' data-orgval='" + value + "'>" +
-			"<option value='' class='lang'>Method</option>" +
-			"<option value='HAND' class='lang'" + ('HAND' == value ? " selected='selected'" : '') + ">Hand</option>" +
-			"<option value='MAIL' class='lang'" + ('MAIL' == value ? " selected='selected'" : '') + ">Mailed</option>" +
+			"<option value=''></option>" +
+			"<option value='STA_EMAIL' class='lang'" + ('STA_EMAIL' == value ? " selected='selected'" : '') + ">Staff Emails</option>" +
+			"<option value='HQ_EMAIL' class='lang'" + ('HQ_EMAIL' == value ? " selected='selected'" : '') + ">HQ Emails</option>" +
+			"<option value='STA_DELIVE' class='lang'" + ('STA_DELIVE' == value ? " selected='selected'" : '') + ">Staff Delivers</option>" +
+			"<option value='HQ_DELIVE' class='lang'" + ('HQ_DELIVE' == value ? " selected='selected'" : '') + ">HQ Mails</option>" +
+			"<option value='NONE' class='lang'" + ('NONE' == value ? " selected='selected'" : '') + ">No Magazine</option>" +
 		"</select>";
 	},
 	
