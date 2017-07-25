@@ -51,7 +51,7 @@ get_header(); ?>
 		)) ?>
 		<?php the_content(); ?>
 		<link rel='stylesheet' type='text/css' media='screen'  href="<?php echo get_stylesheet_directory_uri(); ?>/advMag/style.css" />
-		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js"></script>
+		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js?v=0"></script>
 		<script>
 			var ajaxurl = '<?php echo admin_url('admin-ajax.php');?>'
 			$(document).ready(function() {advMag.init()});
@@ -59,8 +59,9 @@ get_header(); ?>
 		<div class='advMag'>
 		<table>
 			<thead><tr>
-				<th class='lang'>Name</th>
-				<th class='lang'>Magazine</th>
+				<th class='lang'>Recipient</th>
+				<th class='lang'>Digital Copy</th>
+				<th class='lang'>Print Copy</th>
 				<th><button class='lang' disabled='disabled'>Save All</button></th>
 			</tr></thead>
 			<tbody><tr><td colspan='5'>loading...</td></tr></tbody>
