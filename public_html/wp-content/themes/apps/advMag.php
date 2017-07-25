@@ -60,8 +60,8 @@ get_header(); ?>
 		<table>
 			<thead><tr>
 				<th class='lang'>Recipient</th>
-				<th class='lang'>Digital Copy</th>
 				<th class='lang'>Print Copy</th>
+				<th class='lang'>Digital Copy</th>
 				<th><button class='lang' disabled='disabled'>Save All</button></th>
 			</tr></thead>
 			<tbody><tr><td colspan='5'>loading...</td></tr></tbody>
