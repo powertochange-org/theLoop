@@ -9,8 +9,8 @@ var advMag = {
 				for(var i = 0; i < data.r.length; i ++){
 					$('.advMag tbody').append(
 						"<tr data-id='" + data.r[i].id + "' ><td>" + data.r[i].name + "</td>" + //todo
-						"<td>" + advMag.printMagazineSelection(data.r[i].magSoft, 'MAGA_SOFT') + "</td>" +
 						"<td>" + advMag.printMagazineSelection(data.r[i].magHard, 'MAGA_HARD') + "</td>" +
+						"<td>" + advMag.printMagazineSelection(data.r[i].magSoft, 'MAGA_SOFT') + "</td>" +
 						"<td><button class='lang' disabled='disabled'>Save</button></td></tr>"
 					)
 				}
