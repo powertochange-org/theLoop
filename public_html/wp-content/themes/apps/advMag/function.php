@@ -14,7 +14,8 @@ class AdvMag{
 				'id' => $a['Id'],
 				'name' => $a['FormattedName'],
 				'lang' => self::$api->getCode($a['Id'], 'DDCLANG'),
-				'mag' => self::$api->getCode($a['Id'], 'MAGAZINE')
+				'magSoft' => self::$api->getCode($a['Id'], 'MAGA_SOFT'),
+				'magHard' => self::$api->getCode($a['Id'], 'MAGA_HARD')
 			);
 		}
 		header('Content-Type: application/json');
@@ -34,7 +35,8 @@ class AdvMag{
 			die();
 		}
 		self::saveCode('DDCLANG', $id);
-		self::saveCode('MAGAZINE', $id);
+		self::saveCode('MAGA_SOFT', $id);
+		self::saveCode('MAGA_HARD', $id);
 	}
 	
 	private function saveCode($code, $id){

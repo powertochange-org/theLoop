@@ -9,7 +9,8 @@ var advMag = {
 				for(var i = 0; i < data.r.length; i ++){
 					$('.advMag tbody').append(
 						"<tr data-id='" + data.r[i].id + "' ><td>" + data.r[i].name + "</td>" + //todo
-						"<td>" + advMag.printMagazineSelection(data.r[i].mag) + "</td>" +
+						"<td>" + advMag.printMagazineSelection(data.r[i].magSoft, 'MAGA_SOFT') + "</td>" +
+						"<td>" + advMag.printMagazineSelection(data.r[i].magHard, 'MAGA_HARD') + "</td>" +
 						"<td><button class='lang' disabled='disabled'>Save</button></td></tr>"
 					)
 				}
@@ -116,13 +117,11 @@ var advMag = {
 		
 	},
 	
-	printMagazineSelection: function(value){
-		return "<select data-field='MAGAZINE' data-orgval='" + value + "'>" +
+	printMagazineSelection: function(value, code){
+		return "<select data-field='" + code + "' data-orgval='" + value + "'>" +
 			"<option value=''></option>" +
-			"<option value='STA_EMAIL' class='lang'" + ('STA_EMAIL' == value ? " selected='selected'" : '') + ">Staff Emails</option>" +
-			"<option value='HQ_EMAIL' class='lang'" + ('HQ_EMAIL' == value ? " selected='selected'" : '') + ">HQ Emails</option>" +
-			"<option value='STA_DELIVE' class='lang'" + ('STA_DELIVE' == value ? " selected='selected'" : '') + ">Staff Delivers</option>" +
-			"<option value='HQ_DELIVE' class='lang'" + ('HQ_DELIVE' == value ? " selected='selected'" : '') + ">HQ Mails</option>" +
+			"<option value='STAFF' class='lang'" + ('STAFF' == value ? " selected='selected'" : '') + ">Staff " + ('MAGA_HARD' == code ? 'Delivers' : 'Emails') + "</option>" +
+			"<option value='HQ' class='lang'" + ('HQ' == value ? " selected='selected'" : '') + ">HQ " + ('MAGA_HARD' == code ? 'Mails' : 'Emails') + "</option>" +
 			"<option value='NONE' class='lang'" + ('NONE' == value ? " selected='selected'" : '') + ">No Magazine</option>" +
 		"</select>";
 	},
