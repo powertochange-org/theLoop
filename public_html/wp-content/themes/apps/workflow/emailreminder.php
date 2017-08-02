@@ -11,9 +11,10 @@ $sql = "SELECT  SUBMISSIONID,
                 SEND_REMINDER
         FROM workflowformstatus
         WHERE SEND_REMINDER <= '".$dateCheck->format('Y-m-d H:i:s')."' 
-            AND (STATUS = 4 OR STATUS = 3)
-            AND SEND_REMINDER IS NOT NULL";
-  
+            AND (STATUS = '4' OR STATUS = '3')
+            AND SEND_REMINDER IS NOT NULL 
+            AND HR_VOID = '0'";
+
 $result = $wpdb->get_results($sql, ARRAY_A);
 
 foreach($result as $row) {

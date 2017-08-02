@@ -211,7 +211,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $hrnotes = '') {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '') {
         /*
         1) Brand new field
         2) Continue to edit
@@ -224,8 +224,12 @@ class Workflow {
         $oldcomment = '';
         $historyApprovalStage = 0;
         
+        //Store debug information to figure out any possible submission issues
+        if(Workflow::debugModeSubmission())
+            Workflow::workflowDebugTracking($user, $formID, $submissionID, $misc_content, 'New Status:'.$newstatus);
+        
         //Check to see if an update or insert is allowed
-        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED
+        $sql = "SELECT STATUS, STATUS_APPROVAL, COMMENT, USER, UNIQUE_TOKEN, APPROVER_DIRECT, HR_NOTES, PROCESSED, HR_VOID
                 FROM workflowformstatus
                 WHERE SUBMISSIONID = '$submissionID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
@@ -239,11 +243,17 @@ class Workflow {
             $oldcomment = $row['COMMENT'];
             $oldhrnotes = $row['HR_NOTES'];
             $oldDirectApprover = $row['APPROVER_DIRECT'];
+            $voided = $row['HR_VOID'];
             if($row['USER'] != $user || ($row['USER'] == $user && $newstatus != 3)) { //Grabs the correct approval level for the history
                 $historyApprovalStage = $oldApprovalStatus;
             }
             if($uniqueToken != $row['UNIQUE_TOKEN']) {
                 $_SESSION['ERRMSG'] = 'This submission has recently changed. Reload the submission to make any required changes.';
+                header('location: ?page=viewsubmissions');
+                die();
+            }
+            if($voided == '1' && $newstatus != '63') {
+                $_SESSION['ERRMSG'] = 'This submission has been voided. To continue to use this submission, please contact HR and make sure that it is un-voided.';
                 header('location: ?page=viewsubmissions');
                 die();
             }
@@ -303,8 +313,12 @@ class Workflow {
         } else if($newstatus == 50) {
             //Update only the HR notes
             $sql = "UPDATE workflowformstatus 
-                    SET HR_NOTES = '$hrnotes'
-                    WHERE SUBMISSIONID = '$submissionID'";
+                    SET HR_NOTES = '$hrnotes'";
+            
+            if(isset($miscfields['SEND_REMINDER']))
+                $sql .= ", SEND_REMINDER = '".$miscfields['SEND_REMINDER']."'";
+            
+            $sql .= " WHERE SUBMISSIONID = '$submissionID'";
             $result = $wpdb->query($sql, ARRAY_A);
             return 0;
         } else if(60 <= $newstatus && $newstatus <= 63) {
@@ -501,14 +515,6 @@ class Workflow {
             $result = $wpdb->query($sql);
         }
         
-        if($behalfof != '')
-            $user = $behalfof;
-        //Update history
-        $sql = "INSERT INTO workflowformhistory (USER, SUBMISSION_ID, APPROVAL_LEVEL, ACTION, DATE_SUBMITTED)
-                VALUES ('$user', '$submissionID', '$historyApprovalStage', '$newstatus', '".date('Y-m-d H:i:s')."')";
-        
-        $result = $wpdb->query($sql, ARRAY_A);
-        
         //Store the name of the user in history in case they ever leave staff
         $sql = "SELECT EMPID FROM workflowuserhistory WHERE EMPID = '$user'";
         $result = $wpdb->query($sql, ARRAY_A);
@@ -518,6 +524,14 @@ class Workflow {
                     FROM employee WHERE employee_number = '$user'";
             $result = $wpdb->query($sql, ARRAY_A);
         }
+        
+        if($behalfof != '')
+            $user = $behalfof;
+        //Update history
+        $sql = "INSERT INTO workflowformhistory (USER, SUBMISSION_ID, APPROVAL_LEVEL, ACTION, DATE_SUBMITTED)
+                VALUES ('$user', '$submissionID', '$historyApprovalStage', '$newstatus', '".date('Y-m-d H:i:s')."')";
+        
+        $result = $wpdb->query($sql, ARRAY_A);
         
         return $submissionID;
     }
@@ -620,17 +634,17 @@ class Workflow {
         $comments = '';
         $submittedby = '';
         $hrfiled = $hrvoid = '';
-        //TODO: use this class to configure the loadWorkflowEntry function
+        $miscfields = array();
         
         $loggedInUser = Workflow::loggedInUser();
-        //echo 'DEBUG: USER LOGGED IN:'.$loggedInUser.'<br>';
         
         if(isset($_GET['sbid']) && $_GET['sbid'] != '') {
             $sbid = $_GET['sbid'];
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
                             APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
-                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
+                            SEND_REMINDER
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
                     WHERE SUBMISSIONID = '$sbid'";
@@ -649,14 +663,18 @@ class Workflow {
                 $submittedby = $row['USER'];
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
+                $miscfields['SEND_REMINDER'] = $row['SEND_REMINDER']; 
+                
+                if($hrvoid && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
+                    echo 'This submission is no longer available. Please contact HR if this submission was voided in error.';
+                return;
+                }
             } else {
                 echo 'That submission does not exist.';
                 return;
             }
             
             
-            //Check if the person is authorized to look at this filled out form
-            //TODO: Complete authentication
             
             $currentApprovalRole = -1;
             $hasAnotherApproval = 0;
@@ -733,17 +751,19 @@ class Workflow {
                         && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
                 
+            } else if($currentApprovalRole == 4 && !$approver) {
+                //Check if they are a director
+                $approver = Workflow::ministryDirector($submittedby, $loggedInUser);
             } else if(!$approver) {
                 $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
             }
-            
             
             if($processor) {
                 //Give viewing access to the processor. If form was denied, you can prevent the processor from seeing it here
                 $configvalue = 9;
                 
                 if($row['PROCESSED'] == 0)
-                        $hasAnotherApproval = 1;
+                    $hasAnotherApproval = 1;
             } else if($configvalue == 4 && $approver) {
                 //Do nothing keep going.
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
@@ -751,18 +771,38 @@ class Workflow {
             } else if($submittedby != $loggedInUser) {
                 //Check to see if an approver will eventually have access to this submission again
                 if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
-                    $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
+                    $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'], $submittedby)) {
                     $hasAnotherApproval = 0;
                     $configvalue = 9; 
-                    echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
-                        history below.<br>Currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.</span>';
-                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
-                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    if($status != '2') {
+                        echo '<span style="color:red;">This submission has already been reviewed. You can view the submission and approval
+                            history below.<br>Currently being processed by: <b>';
+                            
+                        if($status == '3') {
+                            if($behalfof != '')
+                                echo Workflow::getUserName($behalfof).' on behalf of ';
+                            echo Workflow::getUserName($submittedby);
+                        } else
+                            echo Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
+                            
+                        echo '</b>.</span>';
+                    }
+                    //Prevent viewing of a form that is still being worked on by the submitter
                     if($status == '2' || $status == '3') {
-                        echo '<span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
+                        echo '<br><br><span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
                         return;
                     } else if($status == '10') {
-                        echo '<span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        echo '<br><br><span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
+                        return;
+                    }
+                } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
+                    echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
+                    //Prevent viewing of a form that is still being worked on by the submitter
+                    if($status == '2' || $status == '3') {
+                        echo '<span style="color:red;">This submission is currently being edited by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
+                        return;
+                    } else if($status == '10') {
+                        echo '<span style="color:red;">This submission has been cancelled by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
                         return;
                     }
                     
@@ -776,6 +816,7 @@ class Workflow {
                     return;
                 }
             } else if($configvalue == 4) {
+                //View only setting for your own form
                 $configvalue = 0;
             }
             
@@ -826,7 +867,8 @@ class Workflow {
         }
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
-            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid);
+            $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
+            $miscfields);
     }
     
     
@@ -877,7 +919,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '') {
+        $hrvoid = '', $miscfields = '') {
         global $wpdb;
         $formActive = 0;
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
@@ -947,7 +989,8 @@ class Workflow {
             $response .= 'Status: Pending Resubmission by Submitter';
         else if($configuration == 9 && $status == 4)
             $response .= 'Status: Under Review by another approval group';
-        
+        if($hrvoid)
+            $response .= ' - <span style="color:red;"><b>VOIDED</b></span>';
         $response .= '</p>';
         
         if(0 <= $configuration && $configuration < 7 && $emailMode) {
@@ -980,13 +1023,16 @@ class Workflow {
         if($formActive)
             $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
         
+        //Debug store if misc content is expected here
+        if(Workflow::debugModeSubmission() && $id == $this->allowanceCalculatorID) 
+                Workflow::workflowDebugTracking(Workflow::loggedInUser(), $id, $submissionID, 
+                    $misc_content, 'Loading form');
+        
         //Display the misc content
         if($misc_content != '') {
             $response .= $misc_content.'<br>';
             if(!$emailMode)
                 $response .= '<textarea hidden name="misc_content" rows="1" cols="1">'.$misc_content.'</textarea>';
-        } else {
-            //echo 'No extra content<br>';
         }
         
         $sql = "SELECT *
@@ -1536,9 +1582,17 @@ class Workflow {
                 $response .= '<form id="workflowsubmission" action="?page=process_workflow_submit" method="POST" autocomplete="off" onsubmit="return submissioncheck();"><input type="hidden" name="uniquetoken" value="'.$this->uniqueToken.'">';
             $response .= '<div><h3>HR / Payroll Notes</h3></div>';
             $response .= '<textarea id="hrnotes" class="hrnotes" name="hrnotes" rows="5" cols="40" style="width: 100%;">'.$hrnotes.'</textarea>';
+            //Allow changing of the reminder date
+            if($status == '4' && isset($miscfields['SEND_REMINDER'])) {
+                $remDate .= date('Y-m-d', strtotime($miscfields['SEND_REMINDER']));
+                $response .= '<br><b>Reminder Date: </b>
+                    <input type="date" name="reminderdate" value="'.$remDate.'" style="width:200px;display:inline;"/>';
+            }
+            
             $response .= '<br><br>';
+            $response .= '<button class="processbutton" onclick="saveSubmission(50, 0);">Update HR Notes</button>';
             if(!$formActive) {
-                $response .= '<button class="processbutton" onclick="saveSubmission(50, 0);">Update HR Notes</button><button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div>';
+                $response .= '<button type="button" class="processbutton" onclick="printForm();">Print</button><div style="clear:both;"></div>';
             }
             
             //Display Archive and Delete options
@@ -1752,17 +1806,17 @@ class Workflow {
                 //$temp = 'Retracted - Saved';
                 continue;
             } else if($row['ACTION'] == 3) {
-                $temp = 'Review Required';// Lvl: '.$row['APPROVAL_LEVEL'];
-            } else if($row['ACTION'] == 4 && $row['USER'] == $submittedby) {
+                $temp = 'Review Required';
+            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
                 $temp = 'Submitted';
             } else if($row['ACTION'] == 4) {
-                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Approved';
             } else if($row['ACTION'] == 7) {
-                $temp = 'Approved';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Approved';
             } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
                 $temp = 'Cancelled Submission';
             } else if($row['ACTION'] == 8) {
-                $temp = 'Denied';// Lvl: '.$row['APPROVAL_LEVEL'];
+                $temp = 'Denied';
             } else if($row['ACTION'] == 20) {
                 $temp = 'Processed';
             } else {
@@ -2011,11 +2065,21 @@ class Workflow {
                         OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                         OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                         OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                        AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
-                    
-                    
-                    //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
-                    //    //OR employee.supervisor = '$userid')) ";
+                        AND (workflowformstatus.APPROVER_DIRECT = '$userid') ) ";
+            
+            //Or director of a ministry
+            $sql .= " OR ( 
+                        (workflowform.APPROVER_ROLE = '4' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE2 = '4' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE3 = '4' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
+                        OR workflowform.APPROVER_ROLE4 = '4' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
+                        AND employee.ministry IN (
+                                    SELECT SETTINGS_KEY 
+                                    FROM workflowsettings 
+                                    WHERE NAME= 'directors' AND VALUE = '$userid'
+                                ) 
+                    ) ";
+                
             $roles = Workflow::getRole($userid);
             
             for($x = 1; $x <= 4; $x++) {
@@ -2340,10 +2404,6 @@ class Workflow {
         else if($showFiled == 1)
             $searchFilter .= " AND HR_FILED = '1' ";
         
-        
-        // if(Workflow::hasRoleAccess(Workflow::loggedInUser(), 26))
-        //     $sql .= " AND "
-        
         $sql = "("."SELECT  workflowform.NAME, 
                         workflowform.APPROVER_ROLE, 
                         workflowform.APPROVER_ROLE2, 
@@ -2376,11 +2436,21 @@ class Workflow {
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                    AND (workflowformstatus.APPROVER_DIRECT = '$userid' /*OR employee.supervisor = '$userid'*/) ) ";
-                
-                
-                //WHERE ('0' = '1' ";//((workflowform.APPROVER_ROLE = '8' AND (workflowformstatus.APPROVER_DIRECT = '$userid' 
-                //    //OR employee.supervisor = '$userid')) ";
+                    AND (workflowformstatus.APPROVER_DIRECT = '$userid') ) ";
+        
+        //Or director of a ministry
+        $sql .= " OR ( 
+                    (workflowform.APPROVER_ROLE = '4' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE2 = '4' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE3 = '4' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE4 = '4' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
+                    AND employee.ministry IN (
+                                SELECT SETTINGS_KEY 
+                                FROM workflowsettings 
+                                WHERE NAME= 'directors' AND VALUE = '$userid'
+                            ) 
+                ) ";
+        
         $roles = Workflow::getRole($userid);
         
         for($x = 1; $x <= 4; $x++) {
@@ -2648,12 +2718,27 @@ class Workflow {
         $role = $approvers[$approvalStatus - 1];
         $supNext = $approvers[$approvalStatus];
         
-        //check if this submission was rejected and needs further input
+        //Determine if an email should be sent and to whom
         if($approvalStatus == 0 && $status == 3) { 
+            //rejected and needs further input
             $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
+        } else if($role == '4') {
+            //Director email
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+                    FROM employee  
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+                    WHERE employee.employee_number = 
+                        (  
+                            SELECT workflowsettings.VALUE 
+                            FROM employee
+                            INNER JOIN workflowsettings ON employee.ministry = workflowsettings.SETTINGS_KEY 
+                                    AND workflowsettings.NAME = 'directors'
+                            WHERE employee.employee_number = '$userid'
+                            
+                        )";
         } else if($role != 8 && $role != '') {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
                     FROM workflowrolesmembers
@@ -3365,16 +3450,26 @@ class Workflow {
     public static function getMultipleDirectApprovers($userid) {
         global $wpdb;
         $approver = 0;
-        
-        $sql = "SELECT supervisor
-                FROM employee
-                WHERE employee_number = '$userid'
+        $sql = "SELECT e1.supervisor, CONCAT(e2.first_name, ' ', e2.last_name) AS supname
+                FROM employee e1
+                LEFT OUTER JOIN employee e2 ON e1.supervisor = e2.employee_number
+                WHERE e1.employee_number = '$userid' AND e1.supervisor IS NOT NULL
+                
+                UNION
+                
+                SELECT e2.supervisor, CONCAT(e3.first_name, ' ', e3.last_name) AS supname
+                FROM employee e1
+                LEFT OUTER JOIN employee e2 ON e1.supervisor = e2.employee_number
+                LEFT OUTER JOIN employee e3 ON e2.supervisor = e3.employee_number
+                WHERE e1.employee_number = '$userid' AND e1.supervisor IS NOT NULL and e2.supervisor IS NOT NULL
                 
                 UNION 
                 
-                SELECT manager_employee_number as supervisor
-                FROM employee_manager
-                WHERE employee_number = '$userid'";
+                SELECT manager_employee_number as supervisor,
+                        CONCAT(emp.first_name, ' ', emp.last_name) AS supname
+                FROM employee_manager em
+                LEFT OUTER JOIN employee emp ON em.manager_employee_number = emp.employee_number
+                WHERE em.employee_number = '$userid'";
         
         $result = $wpdb->get_results($sql, ARRAY_A);
         
@@ -3555,14 +3650,20 @@ class Workflow {
         return get_option( 'workflowdebug' , 0 );
     }
     
+    /*Determines if additional diagnostics should be recorded for the workflow process for debugging.*/
+    public static function debugModeSubmission() {
+        return get_option( 'workflowdebugsubmission' , 0 );
+    }
+    
     public function escapeScriptTags($string) {
         $string = str_replace("<script", htmlentities("<script"), $string);
         $string = str_replace("</script", htmlentities("</script"), $string);
         return $string;
     }
     
-    private function submissionApprover($sbid, $loggedInUser, $role1, $role2, $role3, $role4, $aprDirect) {
+    private function submissionApprover($sbid, $loggedInUser, $role1, $role2, $role3, $role4, $aprDirect, $submittedby) {
         global $wpdb;
+        
         if(Workflow::hasRoleAccess($loggedInUser, $role1) 
             || Workflow::hasRoleAccess($loggedInUser, $role2)
             || Workflow::hasRoleAccess($loggedInUser, $role3)
@@ -3572,6 +3673,11 @@ class Workflow {
         //If they don't have normal access check if they are a supervisor
         if($role1 == 8 || $role2 == 8 || $role3 == 8 || $role4 == 8) 
             if($aprDirect == $loggedInUser)
+                return 1;
+        
+        //Director
+        if($role1 == 4 || $role2 == 4 || $role3 == 4 || $role4 == 4)
+            if(Workflow::ministryDirector($submittedby, $loggedInUser))
                 return 1;
         
         //Give access if they were a direct approver at any time during the form process
@@ -3643,7 +3749,7 @@ class Workflow {
         
         if($submittedby != $loggedInUser) {
             if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
-                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'])) {
+                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'], $submittedby)) {
                 //The approver will eventually have access to this submission again
                 return true;
             } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
@@ -3657,6 +3763,81 @@ class Workflow {
         }
         return false;
     }
+    
+    /*Stores diagnostics information for workflow submissions. Helps for debugging issues related
+    to missing submissions or missing misc content. */
+    public function workflowDebugTracking($user, $formID, $submissionID, $content, $msg) {
+        global $wpdb;
+        date_default_timezone_set('America/Los_Angeles');
+        $content = str_replace("\\", "\\\\", $content);
+        $content = str_replace("'", "\'", $content);
+        $sql = "INSERT INTO workflowdebug (DATE_CHG, USER, FORMID, SUBMISSIONID, CONTENT, MSG)
+                VALUES ('".date('Y-m-d H:i:s')."', '$user', '$formID', '$submissionID', '$content', '$msg')";
+        $result = $wpdb->query($sql, ARRAY_A);
+        return $result;
+    }
+    
+    /*Saves a setting for the workflow system using the name of setting and
+    then a key value pair.*/
+    public function saveWorkflowSetting($name, $key, $value) {
+        global $wpdb;
+        $sql = "INSERT INTO workflowsettings (NAME, SETTINGS_KEY, VALUE) 
+                VALUES ('$name', '$key', '$value')
+                ON DUPLICATE KEY UPDATE VALUE = '$value'";
+        $result = $wpdb->query($sql, ARRAY_A);
+        return $result;
+    }
+    
+    /*Returns all the key value pairs for a given setting name.*/
+    public function getWorkflowSetting($name) {
+        global $wpdb;
+        $sql = "SELECT * 
+                FROM workflowsettings
+                WHERE NAME = '$name'
+                ORDER BY SETTINGS_KEY";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        return $result;
+    }
+    
+    /*Returns a single setting value based on the name and the key.*/
+    public function getSingleWorkflowSetting($name, $key) {
+        global $wpdb;
+        $sql = "SELECT VALUE 
+                FROM workflowsettings
+                WHERE NAME = '$name' AND SETTINGS_KEY = '$key'";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        return $result[0]['VALUE'];
+    }
+    
+    /*Returns all the available ministries currently registered in the loop.*/
+    public function getAllMinistries() {
+        global $wpdb;
+        $sql = "SELECT ministry 
+                FROM employee 
+                WHERE ministry IS NOT NULL 
+                GROUP BY ministry";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        return $result;
+    }
+    
+    /** 
+     * Returns if the logged in user is the director for a user based on their ministry.
+     * @param submittedby - The user that submitted the form
+     * @param user - The user that is currently trying to access the form
+     */
+    public function ministryDirector($submittedby, $user) {
+        global $wpdb;
+        $sql = "SELECT ministry 
+                FROM employee 
+                WHERE employee_number = '$user'";
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        
+        $director = Workflow::getSingleWorkflowSetting('directors', $result[0]['ministry']);
+        if($user == $director)
+            return 1;
+        return 0;
+    }
+    
 }
     
     

@@ -103,7 +103,10 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
         echo '<a href="?page=emailpolicy&group='.$values[$i][0].'">'.$values[$i][1].'</a><br>';
     }
     ?>
-    
+    <br><br>
+    <h2>Edit Directors of Ministries</h2>
+    <a href="?page=directors">Edit Directors</a>
+    <br><br>
     <?php
 } else { 
     echo 'You do not have access.';
