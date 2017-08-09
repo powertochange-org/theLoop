@@ -51,7 +51,7 @@ get_header(); ?>
 		)) ?>
 		<?php the_content(); ?>
 		<link rel='stylesheet' type='text/css' media='screen'  href="<?php echo get_stylesheet_directory_uri(); ?>/advMag/style.css" />
-		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js?v=0"></script>
+		<script src="<?php echo get_stylesheet_directory_uri(); ?>/advMag/script.js?v=1"></script>
 		<script>
 			var ajaxurl = '<?php echo admin_url('admin-ajax.php');?>'
 			$(document).ready(function() {advMag.init()});
