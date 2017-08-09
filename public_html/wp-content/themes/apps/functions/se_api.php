@@ -120,7 +120,7 @@ class API{
 				return $c['value'];
 			}
 		}
-		return null;
+		return '';
 	}
 	
 	function deleteCode($account, $code){

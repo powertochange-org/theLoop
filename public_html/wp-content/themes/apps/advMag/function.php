@@ -10,12 +10,15 @@ class AdvMag{
 		
 		$table = array();
 		foreach(self::getAccounts() as $a){
+			if(self::skipAccount($a['Id'])){
+				continue;
+			}
 			$table[] = array(
 				'id' => $a['Id'],
 				'name' => $a['FormattedName'],
 				'lang' => self::$api->getCode($a['Id'], 'DDCLANG'),
 				'magSoft' => self::$api->getCode($a['Id'], 'MAGA_SOFT'),
-				'magHard' => self::$api->getCode($a['Id'], 'MAGA_HARD')
+				'magHard' => (self::canHard($a['Id'], $a) ? self::$api->getCode($a['Id'], 'MAGA_HARD') : null)
 			);
 		}
 		header('Content-Type: application/json');
@@ -25,7 +28,7 @@ class AdvMag{
 	public static function sendInfo(){
 		$id = null;
 		foreach(self::getAccounts()as $a){
-			if($_REQUEST['id'] == $a['Id']){
+			if($_REQUEST['id'] == $a['Id'] && !self::skipAccount($a['Id'])){
 				$id = $a['Id'];
 				break;
 			}
@@ -36,7 +39,9 @@ class AdvMag{
 		}
 		self::saveCode('DDCLANG', $id);
 		self::saveCode('MAGA_SOFT', $id);
-		self::saveCode('MAGA_HARD', $id);
+		if(self::canHard($id)){
+			self::saveCode('MAGA_HARD', $id);
+		}
 	}
 	
 	private function saveCode($code, $id){
@@ -47,6 +52,33 @@ class AdvMag{
 				self::$api->deleteCode($id, $code);
 			}
 		}
+	}
+	
+	private function canHard($id, $account=null){
+		if(is_null($account)){
+			$account = self::$api->verifySend("/accounts/$id")['body'];
+		}
+		if(array_key_exists('A03Country', $account)){
+			return 'CA' == $account['A03Country'];
+		}
+		return 'CA' == $account['address']['country'];
+	}
+	
+	private static $exMail = array('DECEASED', 'INVALID', 'NOMAIL');
+	
+	private function skipAccount($id){
+		$c = self::$api->getCode($id, 'MAILIMIT');
+		if(in_array($c, self::$exMail)){
+			return true;
+		}
+		if(self::$api->getCode($id, 'PARTNERREP')){
+			return true;
+		}
+		if(self::$api->getCode($id, 'PTCSTAFF')){
+			return true;
+		}
+		return false;
+		//todo MKTSTAFF
 	}
 	
 	private function getInvalid($id){
@@ -99,8 +131,37 @@ class AdvMag{
 					'operator' => 'ON_OR_AFTER',
 					'field' => 'Date',
 					'isJoin'=> false,
-					'value'=> date("Y-m-d",strtotime("-24 month"))
-				)
+					'value'=> date('Y-m-d',strtotime('-24 month'))
+				)/*does not work,
+				array(
+					'isJoin' => true,
+					'table' => 'A01',
+					'value' => 'A01c',
+					'field' => null,
+					'operator' => null
+				),
+				array(
+					'group' => 1,
+					'table' => 'A01c',
+					'operator' => 'NOT_CONTAIN_DATA',
+					'field' => 'MKTSTAFF',
+					'isJoin' => false
+				),
+				array(  
+					'group' => 1,
+					'table' => 'A01c',
+					'operator' => 'NOT_IN',
+					'field' => 'MAILLIMIT',
+					'isJoin' => false,
+					'value' => 'DECEASED;INVALID;NOMAIL'
+				),
+				array(
+					'group' => 1,
+					'table' => 'A01c',
+					'operator' => 'NOT_CONTAIN_DATA',
+					'field' => 'PARTNERREP',
+					'isJoin' => false
+				)*/
 			),
 			'viewId' => null
 		);

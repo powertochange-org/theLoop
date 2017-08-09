@@ -118,6 +118,9 @@ var advMag = {
 	},
 	
 	printMagazineSelection: function(value, code){
+		if(null == value){
+			return "n/a";
+		}
 		return "<select data-field='" + code + "' data-orgval='" + value + "'>" +
 			"<option value=''></option>" +
 			"<option value='STAFF' class='lang'" + ('STAFF' == value ? " selected='selected'" : '') + ">Staff " + ('MAGA_HARD' == code ? 'Delivers' : 'Emails') + "</option>" +
