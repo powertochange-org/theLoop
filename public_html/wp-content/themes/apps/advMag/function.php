@@ -131,7 +131,7 @@ class AdvMag{
 					'operator' => 'ON_OR_AFTER',
 					'field' => 'Date',
 					'isJoin'=> false,
-					'value'=> date('Y-m-d',strtotime('-24 month'))
+					'value'=> date('Y-m-d',strtotime('-72 month'))
 				)/*does not work,
 				array(
 					'isJoin' => true,
