@@ -360,7 +360,7 @@ if($error) {
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= 'From: Loop Reports Error <noreply@powertochange.org>' . "\r\n";
-    $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br><b>Error Message:</b> '.$error;
+    $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br>Requested by: '.$user_id.'<br><b>Error Message:</b> '.$error;
     mail(REPORT_ERRORS_EMAIL, 'Loop Reports Error - '.$_POST['REPORT'], $msg, $headers);
   }
 }
