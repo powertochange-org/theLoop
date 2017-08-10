@@ -37,10 +37,6 @@ var newRadioFields = 2;
 var DEFAULTNEWRADIOFIELDS = 2;
 var submissionLink = true;
 
-function test() {
-    alert("HAHA");
-}
-
 function find(elem) {
     return document.getElementById(elem);
 }
@@ -100,16 +96,21 @@ function saveSubmission(status, approver) {
     if(status == 4) {
         var sup = find("directsupervisor");
         if(sup != null) {
-            if(sup[sup.options.selectedIndex].text == "" || sup[sup.options.selectedIndex].text == null) {
-                find("warningmsg").innerHTML = "Please select a supervisor from the dropdown. If there is no supervisor available, click Save Draft and contact helpdesk@p2c.com.";
+            if(sup.length == 0 || sup[sup.options.selectedIndex].text == "" || sup[sup.options.selectedIndex].text == null) {
+                find("warningmsg").innerHTML = 'Please select a supervisor from the dropdown. If there is no supervisor available, click Save Draft and contact <a href="mailto:helpdesk@p2c.com" target="blank">helpdesk@p2c.com</a>.';
                 return;
             }
         }
     }
-    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || (60 <= status && status <= 63)) {
+    if(status == 2 || status == 3 || status == 8 || status == 10 || status == 20 || 
+        status == 50 || (60 <= status && status <= 63)) {
+        processBtnToggle(0);
         document.getElementById('workflowsubmission').submit();
+        setTimeout(function(){ processBtnToggle(1); }, 5000);
     } else {
+        processBtnToggle(0);
         document.getElementById('formsubmitbutton').click();
+        setTimeout(function(){ processBtnToggle(1); }, 5000);
     }
         
     //document.getElementById('workflowsubmission').submit();
@@ -126,21 +127,24 @@ function submissioncheck() {
 var savedSupervisor;
 var savedSup = 0;
 var userName = '';
+var failedSupervisorLookup = '<input type="radio" name="nextsupervisor" value="1" checked>Supervisor <input type="radio" name="nextsupervisor" value="2">2nd Supervisor';
 function updateSupervisorButton() {
     if(savedSup == 0) {
         savedSupervisor = find('supervisor-radio').innerHTML;
         savedSup = 1;
-        userName = document.getElementsByClassName('autonamefill')[0].value;
+        userNameField = document.getElementsByClassName('autonamefill')[0];
+        if(userNameField != null)
+            userName = userNameField.value;
     }
     
     if(find('onbehalf').value == 'Myself') {
         find('supervisor-radio').innerHTML = savedSupervisor;
         behalfUser = userName;
     } else {
-        find('supervisor-radio').innerHTML = '<input type="radio" name="nextsupervisor" value="1" checked>Supervisor'+
-        '<input type="radio" name="nextsupervisor" value="2">2nd Supervisor';
-        
-        var behalfUser = document.getElementById("onbehalf").options[document.getElementById("onbehalf").selectedIndex ].text;
+        //Update the dropdown for the selected employee
+        var employeeSelected = document.getElementById("onbehalf").options[document.getElementById("onbehalf").selectedIndex];
+        updateSupervisorsDropdown(employeeSelected.value);
+        var behalfUser = employeeSelected.text;
     }
     /*Update all the auto fill name fields to the selected behalf of user.*/
     var elements = document.getElementsByClassName('autonamefill');
@@ -148,6 +152,53 @@ function updateSupervisorButton() {
         elements[i].value = behalfUser;
     }
 }
+
+/*
+ * Pulls the current supervisors for a given employee and changes the dropdown 
+ * select option with all the supervisors. 
+ */
+function updateSupervisorsDropdown(employeeNum) {
+    var formData = new FormData();
+    formData.append('action', 'workflow_get_supervisor');
+    formData.append('employeeNum', employeeNum);
+    
+    $.ajax({
+        url: "/wp-admin/admin-ajax.php",
+        type: "POST",
+        data: formData,
+        processData: false,  // tell jQuery not to process the data
+        contentType: false   // tell jQuery not to set contentType
+    }).done(function( data ) {
+        var obj = JSON.parse(data);
+        if(obj.ReturnCode != '200') {
+            find('warningmsg').innerHTML = 'Failed to update the supervisor list. Please use one of ' +
+                'the options above or contact helpdesk at <a href="mailto:helpdesk@p2c.com" target="blank">helpdesk@p2c.com</a>';
+            find('supervisor-radio').innerHTML = failedSupervisorLookup;
+            return;
+        } else if(find('directsupervisor') == null) {
+            find('supervisor-radio').innerHTML = '<select name="directsupervisor" id="directsupervisor"></select>';
+        }
+        find('warningmsg').innerHTML = '';
+        //Update the supervisors dropdown list
+        var dirSelect = find('directsupervisor');
+        //Remove the previous options
+        for(var x = dirSelect.length - 1; x >= 0; x--) {
+            dirSelect.remove(x);
+        }
+        //Add the new supervisor options
+        if(obj.Data.length == 0) {
+            find('warningmsg').innerHTML = 'Please select a supervisor from the dropdown. If there is no supervisor available, click Save Draft and contact <a href="mailto:helpdesk@p2c.com" target="blank">helpdesk@p2c.com</a>.';
+        }
+        for(var x = 0; x < obj.Data.length; x++) {
+            var opt = document.createElement('option');
+            opt.text = obj.Data[x]['supname'];
+            opt.value = obj.Data[x]['supervisor'];
+            if(opt.text != 'null' && opt.text != '' && opt.value != 'null' && opt.value != '')
+                dirSelect.add(opt);
+        }
+    });
+}
+
 
 var pending = 0;
 var approved = 0;
@@ -391,4 +442,15 @@ function loadComments(commentid) {
     var text = '<h2 class="center" style="color:black;">Comments</h2><br>' + text;
     document.getElementById('previewform').innerHTML = text;
     document.getElementById('screen-blackout').style.display = 'inherit';
+}
+
+/*
+ *Toggles submission buttons to prevent clicking on them repeatedly. 
+ */
+function processBtnToggle($enable) {
+    var x = findClass('processbutton');
+    for(var y = 0; y < x.length; y++) {
+        x[y].disabled = ($enable == 1 ? false : true);
+        x[y].style.cursor = ($enable == 1 ? 'pointer' : 'not-allowed');
+    }
 }
