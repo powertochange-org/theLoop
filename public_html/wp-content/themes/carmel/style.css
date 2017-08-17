@@ -969,6 +969,18 @@ img.wiki-header-img {
 	box-shadow: 0px 0px 50px -5px #888888;
 	margin-top: -20px;
 }
+
+div#wiki-page-wrapper div.incsub_wiki_top {
+    margin-bottom: 30px;
+}
+
+div#wiki-page-wrapper div.incsub_wiki_bottom {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-style: italic;
+    color: #888;
+}
+
 #searchform  {
 	margin-bottom: 30px;
 }
