@@ -981,6 +981,10 @@ div#wiki-page-wrapper div.incsub_wiki_bottom {
     color: #888;
 }
 
+div#wiki-page-wrapper div.incsub_wiki_content p {
+    padding-bottom: 0;
+}
+
 #searchform  {
 	margin-bottom: 30px;
 }
