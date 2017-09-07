@@ -768,6 +768,8 @@ class Workflow {
                 //Do nothing keep going.
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
                 $configvalue = 9;
+            } else if($configvalue == 2 && $loggedInUser == $behalfof) {
+                //Allowed to edit a draft
             } else if($submittedby != $loggedInUser) {
                 //Check to see if an approver will eventually have access to this submission again
                 if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
@@ -1659,11 +1661,23 @@ class Workflow {
                 $submissionID).'</h3>';
             //If the next submission step is to a direct approver
             if($supNext && 0 < $configuration && $configuration <= 4) {
-                $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
-                $direct2 = Workflow::getDirectApprover($direct);
+                $allowBehalfEdit = 0; //Allows for the behalf of submitter to edit drafts
+                //Check if the draft can be edited by the onbehalf of submitter
+                if($configuration == 2 && $behalfof == Workflow::loggedInUser()) {
+                    $direct = Workflow::getDirectApprover($submittedby);
+                    $direct2 = Workflow::getDirectApprover($direct);
+                    $allowBehalfEdit = 1;
+                } else {
+                    $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
+                    $direct2 = Workflow::getDirectApprover($direct);
+                }
                
                 $response .= '<div id="supervisor-radio"><select name="directsupervisor" id="directsupervisor">';
-                $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
+                //Pull the supervisors of the person the form is being submitted for
+                if($allowBehalfEdit)
+                    $directSupervisors = Workflow::getMultipleDirectApprovers($submittedby);
+                else
+                    $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
                     $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
