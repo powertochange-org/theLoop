@@ -1992,7 +1992,8 @@ class Workflow {
             $sql = "SELECT STATUS, COUNT(STATUS) AS COUNT
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
-                    WHERE workflowformstatus.USER = '$userid'";
+                    WHERE (workflowformstatus.USER = '$userid' 
+                        OR (workflowformstatus.BEHALFOF = '$userid' AND STATUS = '2'))";
             
             if($formName != '') {
                 $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
@@ -2210,7 +2211,8 @@ class Workflow {
         $sql = "SELECT SUBMISSIONID, STATUS, DATE_SUBMITTED, NAME
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
-                WHERE workflowformstatus.USER = '$userid'";
+                WHERE (workflowformstatus.USER = '$userid' 
+                    OR (workflowformstatus.BEHALFOF = '$userid' AND STATUS = '2'))";
         
         if($formName != '') {
             $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
