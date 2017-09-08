@@ -365,11 +365,25 @@ class Workflow {
             return 0;
         }
         
-        $directApprover = Workflow::getDirectApprover($user);
+        $allowBehalfEdit = 0;
+        if($oldstatus == 2 && $behalfof == Workflow::loggedInUser()) {
+            $allowBehalfEdit = 1;
+        }
+        
+        if($allowBehalfEdit)
+            $directApprover = Workflow::getDirectApprover($behalfof);
+        else
+            $directApprover = Workflow::getDirectApprover($user);
         
         if($sup) {
-            $direct = Workflow::getDirectApprover($user);
-            $direct2 = Workflow::getDirectApprover($direct);
+            if($allowBehalfEdit) {
+                $direct = Workflow::getDirectApprover($behalfof);
+                $direct2 = Workflow::getDirectApprover($direct);
+            } else {
+                $direct = Workflow::getDirectApprover($user);
+                $direct2 = Workflow::getDirectApprover($direct);
+            }
+            
             if($sup == 1) {
                 $directApprover = $direct;
             } else if($sup == 2) {
@@ -1059,7 +1073,6 @@ class Workflow {
             $savedResult = $wpdb->get_results($sql, ARRAY_A);
             $prevSubmissions = array();
             foreach($savedResult as $row) {
-                //echo $row['FIELDID'].' and '.$row['VALUE'].'<br>';
                 $prevSubmissions[] = array($row['FIELDID'], $row['VALUE']);
             }
         }
@@ -1067,8 +1080,6 @@ class Workflow {
         if($behalfofShow && $configuration == 1) {//on behalf of someone else
             $response .= '<div class="workflow workflowlabel">Submit on behalf of Employee:</div>';
             $response .= '<div class="workflow workflowright style-1" style="width:250px;">';
-            //<input type="text" id="onbehalf" name="onbehalf" placeholder="Emp Num"></div>';
-            
             
             $response .= '<select id="onbehalf" name="onbehalf" class="chosen-select" data-placeholder=" " onchange="updateSupervisorButton();"><option value="Myself">Myself</option>';
             $values = Workflow::getAllUsers();
@@ -1078,6 +1089,8 @@ class Workflow {
             }
             $response .= '</select></div>';
             $response .= '<div class="clear" style="height: 50px;"></div>';
+        } else if($configuration == 2 && $behalfof == WorkFlow::loggedInUser()) { //editing a on behalf of submission
+            $response .= '<input type="hidden" name="onbehalf" value="'.$submittedby.'"/>';
         }
         
         //For each field that is part of the form
