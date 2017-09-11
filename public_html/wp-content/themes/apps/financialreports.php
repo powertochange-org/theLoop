@@ -135,6 +135,24 @@ if (isset($_POST['REPORT']) && ($_POST['REPORT'] == 'Graph12MonthActualBudget' |
   $error = 'You must enter a valid Org Area and Ministry Code in the Ministry/Department field.';
 }
 
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "AccountDonors" 
+                              || $_POST['REPORT'] == "DetailedRangeReport" 
+                              || $_POST['REPORT'] == "SummaryReport")) {
+  if($_POST['RPTSTARTYEAR'] == '' || $_POST['RPTSTARTMONTH'] == '' || 
+    $_POST['RPTENDYEAR'] == '' || $_POST['RPTENDMONTH'] == '') {
+    $error = 'One of the report dates is blank. Please select a value from the drop down.';
+  }
+}
+
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport" 
+                              || $_POST['REPORT'] == "InvestorReport"
+                              || $_POST['REPORT'] == "Graph12MonthActualBudget"
+                              || $_POST['REPORT'] == "12MonthActuals")) {
+  if($_POST['RPTMONTH'] == '' || $_POST['RPTYEAR'] == '') {
+    $error = 'One of the report dates is blank. Please select a value from the drop down.';
+  }
+}
+
 //Code for Monthly Donation Report
 if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorReport") {
   require('financialreports/rs_functions.php');
@@ -360,7 +378,14 @@ if($error) {
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= 'From: Loop Reports Error <noreply@powertochange.org>' . "\r\n";
-    $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br>Requested by: '.$user_id.'<br><b>Error Message:</b> '.$error;
+    $params = '';
+    if(count($reportParams) > 0) {
+      foreach ($reportParams as $key => $value) {
+        $params .= 'Param: '.$key.' Value: '.$value.'<br>';
+      }
+      
+    }
+    $msg = '<b>Report:</b> '.$_POST['REPORT'].'<br><b>Requested by:</b> '.$user_id.'<br><b>Error Message:</b> '.$error.'<br><b>Parameters:</b><br>'.$params;
     mail(REPORT_ERRORS_EMAIL, 'Loop Reports Error - '.$_POST['REPORT'], $msg, $headers);
   }
 }

@@ -365,11 +365,25 @@ class Workflow {
             return 0;
         }
         
-        $directApprover = Workflow::getDirectApprover($user);
+        $allowBehalfEdit = 0;
+        if($oldstatus == 2 && $behalfof == Workflow::loggedInUser()) {
+            $allowBehalfEdit = 1;
+        }
+        
+        if($allowBehalfEdit)
+            $directApprover = Workflow::getDirectApprover($behalfof);
+        else
+            $directApprover = Workflow::getDirectApprover($user);
         
         if($sup) {
-            $direct = Workflow::getDirectApprover($user);
-            $direct2 = Workflow::getDirectApprover($direct);
+            if($allowBehalfEdit) {
+                $direct = Workflow::getDirectApprover($behalfof);
+                $direct2 = Workflow::getDirectApprover($direct);
+            } else {
+                $direct = Workflow::getDirectApprover($user);
+                $direct2 = Workflow::getDirectApprover($direct);
+            }
+            
             if($sup == 1) {
                 $directApprover = $direct;
             } else if($sup == 2) {
@@ -768,6 +782,8 @@ class Workflow {
                 //Do nothing keep going.
             } else if(($configvalue == 7 || $configvalue == 8) && $approver) {
                 $configvalue = 9;
+            } else if($configvalue == 2 && $loggedInUser == $behalfof) {
+                //Allowed to edit a draft
             } else if($submittedby != $loggedInUser) {
                 //Check to see if an approver will eventually have access to this submission again
                 if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
@@ -790,23 +806,23 @@ class Workflow {
                     //Prevent viewing of a form that is still being worked on by the submitter
                     if($status == '2' || $status == '3') {
                         echo '<br><br><span style="color:red;">This submission is currently being edited by the submitter.<br></span>';
-                        return;
+                        $displayHistoryOnly = 1;
                     } else if($status == '10') {
                         echo '<br><br><span style="color:red;">This submission has been cancelled by the submitter.<br></span>';
-                        return;
+                        $displayHistoryOnly = 1;
                     }
                 } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
                     echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
                     //Prevent viewing of a form that is still being worked on by the submitter
                     if($status == '2' || $status == '3') {
                         echo '<span style="color:red;">This submission is currently being edited by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
-                        return;
+                        $displayHistoryOnly = 1;
                     } else if($status == '10') {
                         echo '<span style="color:red;">This submission has been cancelled by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
-                        return;
+                        $displayHistoryOnly = 1;
+                    } else {
+                        echo '<span style="color:red;">This submission is currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.<br>It is being submitted to: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid).'</b></span><br><br>';
                     }
-                    
-                    echo '<span style="color:red;">This submission is currently being processed by: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1).'</b>.<br>It is being submitted to: <b>'.Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid).'</b></span><br><br>';
                     
                     //Set the flags to only view the submission
                     $hasAnotherApproval = 0;
@@ -818,6 +834,12 @@ class Workflow {
             } else if($configvalue == 4) {
                 //View only setting for your own form
                 $configvalue = 0;
+            }
+            
+            //Display history of the submission but prevent any viewing of the responses 
+            if($displayHistoryOnly) {
+                echo Workflow::getSubmissionHistory($sbid, $submittedby, 0);
+                return;
             }
             
             if($status == 7 && $row['PROCESSOR'] != NULL && $row['PROCESSOR'] != '') {
@@ -1051,7 +1073,6 @@ class Workflow {
             $savedResult = $wpdb->get_results($sql, ARRAY_A);
             $prevSubmissions = array();
             foreach($savedResult as $row) {
-                //echo $row['FIELDID'].' and '.$row['VALUE'].'<br>';
                 $prevSubmissions[] = array($row['FIELDID'], $row['VALUE']);
             }
         }
@@ -1059,8 +1080,6 @@ class Workflow {
         if($behalfofShow && $configuration == 1) {//on behalf of someone else
             $response .= '<div class="workflow workflowlabel">Submit on behalf of Employee:</div>';
             $response .= '<div class="workflow workflowright style-1" style="width:250px;">';
-            //<input type="text" id="onbehalf" name="onbehalf" placeholder="Emp Num"></div>';
-            
             
             $response .= '<select id="onbehalf" name="onbehalf" class="chosen-select" data-placeholder=" " onchange="updateSupervisorButton();"><option value="Myself">Myself</option>';
             $values = Workflow::getAllUsers();
@@ -1070,6 +1089,8 @@ class Workflow {
             }
             $response .= '</select></div>';
             $response .= '<div class="clear" style="height: 50px;"></div>';
+        } else if($configuration == 2 && $behalfof == WorkFlow::loggedInUser()) { //editing a on behalf of submission
+            $response .= '<input type="hidden" name="onbehalf" value="'.$submittedby.'"/>';
         }
         
         //For each field that is part of the form
@@ -1653,11 +1674,23 @@ class Workflow {
                 $submissionID).'</h3>';
             //If the next submission step is to a direct approver
             if($supNext && 0 < $configuration && $configuration <= 4) {
-                $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
-                $direct2 = Workflow::getDirectApprover($direct);
+                $allowBehalfEdit = 0; //Allows for the behalf of submitter to edit drafts
+                //Check if the draft can be edited by the onbehalf of submitter
+                if($configuration == 2 && $behalfof == Workflow::loggedInUser()) {
+                    $direct = Workflow::getDirectApprover($submittedby);
+                    $direct2 = Workflow::getDirectApprover($direct);
+                    $allowBehalfEdit = 1;
+                } else {
+                    $direct = Workflow::getDirectApprover(Workflow::loggedInUser());
+                    $direct2 = Workflow::getDirectApprover($direct);
+                }
                
                 $response .= '<div id="supervisor-radio"><select name="directsupervisor" id="directsupervisor">';
-                $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
+                //Pull the supervisors of the person the form is being submitted for
+                if($allowBehalfEdit)
+                    $directSupervisors = Workflow::getMultipleDirectApprovers($submittedby);
+                else
+                    $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
                     $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
@@ -1773,69 +1806,9 @@ class Workflow {
             $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(20, 1);">Processed</button>';
             $response .= '<input type="submit" value="Submit" id="formsubmitbutton" style="display: none;"></form>';
         }   
-          
         
         //Show the history of the submission
-        $sql = "SELECT *
-                FROM workflowformhistory
-                WHERE SUBMISSION_ID = '$submissionID'
-                ORDER BY DATE_SUBMITTED ASC";
-    
-        $result = $wpdb->get_results($sql, ARRAY_A);
-        if(!$emailMode)
-            $response .= '<div class="clear"></div>';
-        else
-            $response .= '<div style="clear:both;"></div>';
-        
-        if($emailMode)
-            $response .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Approval history</div>';
-        
-        $response .= '<table id="workflowhistory"><tr><td colspan=3>';
-        if(!$emailMode) 
-            $response .= '<h3>Approval History</h3></td></tr>';
-        
-        $response .= '</td></tr>';
-        $response .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
-        foreach($result as $row) {
-            
-            
-            if($row['ACTION'] == 2) {
-                //$temp .= 'Saved';
-                continue;
-            } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
-                //$temp = 'Retracted - Saved';
-                continue;
-            } else if($row['ACTION'] == 3) {
-                $temp = 'Review Required';
-            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
-                $temp = 'Submitted';
-            } else if($row['ACTION'] == 4) {
-                $temp = 'Approved';
-            } else if($row['ACTION'] == 7) {
-                $temp = 'Approved';
-            } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
-                $temp = 'Cancelled Submission';
-            } else if($row['ACTION'] == 8) {
-                $temp = 'Denied';
-            } else if($row['ACTION'] == 20) {
-                $temp = 'Processed';
-            } else {
-                continue;
-            }
-            $response .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td';
-            if($emailMode) 
-                $response .= ' style="text-align:center;padding:0 10px;"';
-            $response .= '>'.$temp;
-            $response .= '</td>';
-            $response .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
-            
-        }
-        
-        $response .= '</table>';
-        
-        
-        
-        
+        $response .= Workflow::getSubmissionHistory($submissionID, $submittedby, $emailMode);
         $response .= '<div class="clear page-break"></div>';
         
         //For processing the email click automatically
@@ -2019,7 +1992,8 @@ class Workflow {
             $sql = "SELECT STATUS, COUNT(STATUS) AS COUNT
                     FROM workflowformstatus
                     INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
-                    WHERE workflowformstatus.USER = '$userid'";
+                    WHERE (workflowformstatus.USER = '$userid' 
+                        OR (workflowformstatus.BEHALFOF = '$userid' AND STATUS = '2'))";
             
             if($formName != '') {
                 $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
@@ -2237,7 +2211,8 @@ class Workflow {
         $sql = "SELECT SUBMISSIONID, STATUS, DATE_SUBMITTED, NAME
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
-                WHERE workflowformstatus.USER = '$userid'";
+                WHERE (workflowformstatus.USER = '$userid' 
+                    OR (workflowformstatus.BEHALFOF = '$userid' AND STATUS = '2'))";
         
         if($formName != '') {
             $sql .= " AND (workflowform.NAME LIKE '%$formName%' OR workflowform.NAME LIKE '%$formName%') ";
@@ -3532,6 +3507,74 @@ class Workflow {
         
         return $values;
     }
+    
+    /** 
+     * Displays the history of a submission by providing the user, action and date.
+     * @param submissionID - The id of the submission
+     * @param submittedby - The employee id of the person who submitted the form
+     * @param emailMode - Uses inline styling for emails if set to 1
+     */
+    public function getSubmissionHistory($submissionID, $submittedby, $emailMode) {
+        global $wpdb;
+        $history = '';
+        $sql = "SELECT *
+                FROM workflowformhistory
+                WHERE SUBMISSION_ID = '$submissionID'
+                ORDER BY DATE_SUBMITTED ASC";
+    
+        $result = $wpdb->get_results($sql, ARRAY_A);
+        if(!$emailMode)
+            $history .= '<div class="clear"></div>';
+        else
+            $history .= '<div style="clear:both;"></div>';
+        
+        if($emailMode)
+            $history .= '<div style="width: 96%; background-color: #0B7086; color: white; font-size: 1.2em; margin: 30px 0 20px 0; padding: 8px 2% 10px 2%">Approval history</div>';
+        
+        $history .= '<table id="workflowhistory"><tr><td colspan=3>';
+        if(!$emailMode) 
+            $history .= '<h3>Approval History</h3></td></tr>';
+        
+        $history .= '</td></tr>';
+        $history .= '<tr><th>USER</th><th>ACTION</th><th>DATE</th></tr>';
+        foreach($result as $row) {
+            
+            
+            if($row['ACTION'] == 2) {
+                //$temp .= 'Saved';
+                continue;
+            } else if($row['ACTION'] == 3 && $row['USER'] == $submittedby) {
+                //$temp = 'Retracted - Saved';
+                continue;
+            } else if($row['ACTION'] == 3) {
+                $temp = 'Review Required';
+            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
+                $temp = 'Submitted';
+            } else if($row['ACTION'] == 4) {
+                $temp = 'Approved';
+            } else if($row['ACTION'] == 7) {
+                $temp = 'Approved';
+            } else if($row['ACTION'] == 8 && $row['USER'] == $submittedby) {
+                $temp = 'Cancelled Submission';
+            } else if($row['ACTION'] == 8) {
+                $temp = 'Denied';
+            } else if($row['ACTION'] == 20) {
+                $temp = 'Processed';
+            } else {
+                continue;
+            }
+            $history .= '<tr><td>'.Workflow::getUserName($row['USER']).'</td><td';
+            if($emailMode) 
+                $history .= ' style="text-align:center;padding:0 10px;"';
+            $history .= '>'.$temp;
+            $history .= '</td>';
+            $history .= '<td>'.$row['DATE_SUBMITTED'].'</td></tr>';
+        }
+        
+        $history .= '</table>';
+        return $history;
+    }
+    
     
     private function fieldWidth($size) {
         if($size <= 25)
