@@ -150,6 +150,12 @@ init: function(host){
 		}
 		
 		p.gender = data.r.gender;
+		
+		if(data.eAcks){
+			$('#input .eAck-french').val(ptc_op.parseXML(data.eAcks, 'en-US'));
+			$('#input .eAck-french').val(ptc_op.parseXML(data.eAcks, 'fr-CA'));
+		}
+		
 		//set inputs;
 		$('#input .projectcode').html(p.sku);
 		$('#input .link').html(p.getLink());
@@ -276,8 +282,8 @@ init: function(host){
 				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
 		}
-		//d.eAck = $('#input .eAck-french').val();
-		//d.eAckFre = $('#input .eAck-french').val();
+		d.eAck = $('#input .eAck').val();
+		d.eAckFre = $('#input .eAck-french').val();
 		if('onetime' in p.data){
 			d.onetime = p.data.onetime;
 		}
