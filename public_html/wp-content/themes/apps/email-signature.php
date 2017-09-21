@@ -199,11 +199,11 @@ get_header(); ?>
 				var socialbtn = document.getElementById('socialbtn').checked;
 				if(socialbtn) {
 					signature += '<tr><td style="padding-top:5px;">' +
-						'<a href="https://www.facebook.com/PowerToChangeCanada/" target="blank"><img src="/wp-content/images/icon-facebook.png" height="15px;"/></a>&nbsp;&nbsp;&nbsp;' +
-						'<a href="https://twitter.com/powertochange" target="blank"><img src="/wp-content/images/icon-twitter.png" height="15px;"/></a>&nbsp;&nbsp;&nbsp;' +
-						'<a href="https://www.youtube.com/c/powertochangeorgp2c/videos" target="blank"><img src="/wp-content/images/icon-youtube.png" height="15px;"/></a>&nbsp;&nbsp;&nbsp;' +
-						'<a href="https://www.instagram.com/powertochangecanada/" target="blank"><img src="/wp-content/images/icon-instagram.png" height="15px;"/></a>&nbsp;&nbsp;&nbsp;' +
-						'<a href="https://www.pinterest.ca/powertochange/" target="blank"><img src="/wp-content/images/icon-pinterest.png" height="15px;"/></a></td></tr>';
+						'<a href="https://www.facebook.com/PowerToChangeCanada/" target="blank" style="padding:5px 5px 5px 0px;"><img src="/wp-content/images/icon-facebook.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://twitter.com/powertochange" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-twitter.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.youtube.com/c/powertochangeorgp2c/videos" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-youtube.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.instagram.com/powertochangecanada/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-instagram.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.pinterest.ca/powertochange/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-pinterest.png" height="15px;"/></a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'https://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
