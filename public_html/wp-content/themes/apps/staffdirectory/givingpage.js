@@ -168,13 +168,15 @@ init: function(host){
 		}
 		$('#input .image + img').attr('src', p.getPicture());
 		$('#input .closed').prop('checked', p.getName() == p.sku);
-		givingpage_s.init('https://secure.powertochange.org');
+		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
+		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		
 		if(data.r.eAcks){
 			$('#input .eAck').val(data.r.eAcks['en-US']);
 			$('#input .eAck-french').val(data.r.eAcks['fr-CA']);
 		}
-		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
-		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		
+		givingpage_s.init('https://secure.powertochange.org');
 	});
 	
 	$('#input .amount').change(function(){
