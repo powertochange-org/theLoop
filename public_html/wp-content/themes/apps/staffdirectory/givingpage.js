@@ -151,11 +151,6 @@ init: function(host){
 		
 		p.gender = data.r.gender;
 		
-		if(data.eAcks){
-			$('#input .eAck-french').val(ptc_op.parseXML(data.eAcks, 'en-US'));
-			$('#input .eAck-french').val(ptc_op.parseXML(data.eAcks, 'fr-CA'));
-		}
-		
 		//set inputs;
 		$('#input .projectcode').html(p.sku);
 		$('#input .link').html(p.getLink());
@@ -173,9 +168,13 @@ init: function(host){
 		}
 		$('#input .image + img').attr('src', p.getPicture());
 		$('#input .closed').prop('checked', p.getName() == p.sku);
+		givingpage_s.init('https://secure.powertochange.org');
+		if(data.r.eAcks){
+			$('#input .eAck').val(data.r.eAcks['en-US']);
+			$('#input .eAck-french').val(data.r.eAcks['fr-CA']);
+		}
 		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
 		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
-		givingpage_s.init('https://secure.powertochange.org');
 	});
 	
 	$('#input .amount').change(function(){

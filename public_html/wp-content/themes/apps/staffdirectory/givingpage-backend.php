@@ -31,7 +31,7 @@ class Givingpage{
 			$r = self::openProjectInfo();
 			$r['pc'] = $pc;
 			$r['gender'] = self::getGender();
-			$r['eAck'] = SO_API::getProduct(self::getProductID())->ExtensionData2;
+			$r['eAcks'] = json_decode(SO_API::getProduct(self::getProductID())->ExtensionData2);
 		}
 		//todo eAcks
 		
@@ -150,11 +150,11 @@ class Givingpage{
 			'@value' => json_encode($extensionData)
 		);
 		$data = array('ExtensionData2' => array(
-			'@cdata' => '<ml><locale name="en-US">'.strip_tags($_POST['eAck']).'</locale>'.
-				'<locale name="fr-CA">'.strip_tags($_POST['eAckFre']).'</locale></ml>'
+			'@value' => json_encode(array(
+				"en-US" => strip_tags($_POST['eAck']),
+				"fr-CA" => strip_tags($_POST['eAckFre'])
+			))	
 		));
-		/*$data = array();
-		$pid = 138;*/
 		wp_send_json(array('pid' => $pid, 'data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
 	}
 	
