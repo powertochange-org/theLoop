@@ -154,7 +154,7 @@ class Givingpage{
 				"en-US" => strip_tags($_POST['eAck']),
 				"fr-CA" => strip_tags($_POST['eAckFre'])
 			))	
-		));
+		);
 		wp_send_json(array('pid' => $pid, 'data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
 	}
 	
