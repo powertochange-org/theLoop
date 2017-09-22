@@ -149,7 +149,7 @@ class Givingpage{
 		$data['ExtensionData'] = array(
 			'@value' => json_encode($extensionData)
 		);
-		$data = array('ExtensionData2' => array(
+		$data['ExtensionData2'] = array(
 			'@value' => json_encode(array(
 				"en-US" => strip_tags($_POST['eAck']),
 				"fr-CA" => strip_tags($_POST['eAckFre'])
