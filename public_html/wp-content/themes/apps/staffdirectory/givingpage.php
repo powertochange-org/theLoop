@@ -26,7 +26,6 @@ require_once(get_stylesheet_directory().'/functions/functions.php');
 $(document).ready(function() {
 	givingpage.ajaxurl = '<?php echo admin_url('admin-ajax.php');?>';
 	givingpage.init('<?php echo get_option(Givingpage::$prefix.'soServer');?>');
-	//givingpage_s.init('http://secure.adv-01d0986.powertochange.local');
 });
 
 </script>
@@ -52,8 +51,8 @@ $(document).ready(function() {
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
 	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
-	<div><span>E Ack Letter (English):</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div>
+	<div><span>E Ack Letter (English):<br /><br />(Use {0} for donor's first name)</span><textarea class='eAck'></textarea></div>
+	<div><span>E Ack Letter (French):<br /><br />(Use {0} for donor's first name)</span><textarea class='eAck-french'></textarea></div>
 	<button class='save'>Save</button>
 </div>
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
