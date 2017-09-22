@@ -150,6 +150,7 @@ init: function(host){
 		}
 		
 		p.gender = data.r.gender;
+		
 		//set inputs;
 		$('#input .projectcode').html(p.sku);
 		$('#input .link').html(p.getLink());
@@ -167,9 +168,13 @@ init: function(host){
 		}
 		$('#input .image + img').attr('src', p.getPicture());
 		$('#input .closed').prop('checked', p.getName() == p.sku);
+		givingpage_s.init('https://secure.powertochange.org');
+		if(data.r.eAcks){
+			$('#input .eAck').val(data.r.eAcks['en-US']);
+			$('#input .eAck-french').val(data.r.eAcks['fr-CA']);
+		}
 		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
 		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
-		givingpage_s.init('https://secure.powertochange.org');
 	});
 	
 	$('#input .amount').change(function(){
@@ -276,8 +281,8 @@ init: function(host){
 				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
 		}
-		//d.eAck = $('#input .eAck-french').val();
-		//d.eAckFre = $('#input .eAck-french').val();
+		d.eAck = $('#input .eAck').val();
+		d.eAckFre = $('#input .eAck-french').val();
 		if('onetime' in p.data){
 			d.onetime = p.data.onetime;
 		}
