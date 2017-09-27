@@ -10,8 +10,10 @@ override: function(){
 	//extending display function
 	(function(display) {
 		ptc_op.Project.prototype.display = function () {
+			givingpage_s.translate();
 			display.call(this);
 			ptc_op.displaying = null;
+			givingpage.updateLetter();
 		};
 	}(ptc_op.Project.prototype.display));
 	
@@ -93,6 +95,13 @@ setDescription: function(){
 	}
 },
 
+setEAck: function(){
+	var p = givingpage.project;
+	p.eAck = '<ml><locale name="en-US">' + $('#input .eAck').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
+		'<locale name="fr-CA">' + $('#input .eAck-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
+	givingpage.updateLetter();
+},
+
 send: function(fun, data, success, fail){
 	if ('undefined' == typeof fail){
 		fail = function(){};
@@ -121,6 +130,16 @@ getStaffProjectBySKU: function(sku){
 			return all[i].p;
 		}
 	}
+},
+
+updateLetter: function(){
+	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
+	$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />'));
+	//$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace('a' ,'<br />'));
+	$('#letter .merge').each(function(){
+		var t = $(this).html();
+		$(this).html(ptc.strFormat(t, $('#donor_fn').val()));
+	});
 },
 
 init: function(host){
@@ -174,6 +193,7 @@ init: function(host){
 		if(data.r.eAcks){
 			$('#input .eAck').val(data.r.eAcks['en-US']);
 			$('#input .eAck-french').val(data.r.eAcks['fr-CA']);
+			givingpage.setEAck();
 		}
 		
 		givingpage_s.init('https://secure.powertochange.org');
@@ -267,6 +287,7 @@ init: function(host){
 		givingpage.project.display();
 	});
 	$('#input .description, #input .description-french').change(givingpage.setDescription);
+	$('#input .eAck, #input .eAck-french').change(givingpage.setEAck);
 	$('#input .save').click(function(){
 		var d = {};
 		var p = givingpage.project;
@@ -301,6 +322,9 @@ init: function(host){
 	});
 	$('.preview').change(function(){
 		ptc_currentLocale = $('.preview:checked').val();
+		givingpage.project.display();
+	});
+	$('#donor_fn').change(function(){
 		givingpage.project.display();
 	});
 }
