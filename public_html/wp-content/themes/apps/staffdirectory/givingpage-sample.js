@@ -10,7 +10,7 @@ translate: function(){
 		if(locale in givingpage_s.tranCache && word in givingpage_s.tranCache[locale]){
 			r = givingpage_s.tranCache[locale][word];
 			if($(this).hasClass('merge')){
-				r = ptc.strFormat(r, "<firstName>");
+				r = ptc.strFormat(r, "&lt;firstName&gt;");
 			}
 		} else{
 			if($(this).hasClass('merge')){
@@ -21,7 +21,8 @@ translate: function(){
 						givingpage_s.tranCache[locale] = {};
 					}
 					givingpage_s.tranCache[locale][word] = data.d;
-					$('#tranGUID_' + guid).replaceWith(data.d);
+					$('#tranGUID_' + guid).replaceWith(r = ptc.strFormat(data.d, "&lt;firstName&gt;"));
+					
 				});
 			} else {
 				r = ptc.getTranslation(word);
