@@ -185,7 +185,7 @@ init: function(host){
 			$('#input .frequency.m').prop('checked', true);
 			$('#input .amount').val('60');
 		}
-		$('#input .image + img').attr('src', p.getPicture());
+		$('#input .image + img').attr('src', p.getPicture() + "?r=" + Math.random());
 		$('#input .closed').prop('checked', p.getName() == p.sku);
 		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
 		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
