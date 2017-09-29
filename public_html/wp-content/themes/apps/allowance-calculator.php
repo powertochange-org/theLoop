@@ -672,13 +672,14 @@ include('functions/js_functions.php');
 					<input type='button' value='Download/Print' onclick='download();'>
 				</div>
 				<hr>
+				<h2>Submitting a New Allowance</h2>
 				<p>Please click next and fill out your new allowance and then click the submit button and this will automatically submit the form to your supervisor for approval.</p>
 				<?php if(isset($_GET['sbid'])){echo '<span style="color:red;">You are currently editing a workflow submission. Clicking on the workflow submit button will edit your previous submission. Be sure to save or submit the form if you would like to keep your changes.</span><br><br>';}?>
 				<table class='button'><tr>
 					<td class='button'><input type='button' value='Restart' onclick='reset();showSection("whichWay");'></td>
 					<td class='button'><input type='button' id='buttonSave' value='Save' onclick='saveUserValues();'></td>
 					<td class='button'><input type='button' value='Back' onclick='backTo("whichWay");'></td>
-					<td class='button'><input type='button' value='Next' onclick='download1();'></td>
+					<td class='button'><input type='button' style="font-size: 25px;background-color: #F58220;border-radius: 10px;padding: 10px;" value='Next' onclick='download1();'></td>
 				</tr></table>
 				<?php if(isAppAdmin('support_calculator_admin', 0)){ ?>
 					<input type='button' value='More Info' onclick='$("#t").toggle();'>
