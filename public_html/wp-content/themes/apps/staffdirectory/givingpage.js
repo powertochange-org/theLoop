@@ -229,6 +229,12 @@ init: function(host){
 		var input = $(this)[0];
 		$(this).css('cursor', 'wait');
 		file = input.files[0];
+		
+		//if the user cancels
+		if('undefined' == typeof file){
+			$('#input .image').css('cursor', '');
+			return;
+		}
 		var fr = new FileReader();
 		fr.onload = function(){
 			$('#input .image').css('cursor', '');
