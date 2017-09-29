@@ -136,10 +136,6 @@ updateLetter: function(){
 	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
 	$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />'));
 	//$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace('a' ,'<br />'));
-	$('#letter .merge').each(function(){
-		var t = $(this).html();
-		$(this).html(ptc.strFormat(t, $('#donor_fn').val()));
-	});
 },
 
 init: function(host){
@@ -322,9 +318,6 @@ init: function(host){
 	});
 	$('.preview').change(function(){
 		ptc_currentLocale = $('.preview:checked').val();
-		givingpage.project.display();
-	});
-	$('#donor_fn').change(function(){
 		givingpage.project.display();
 	});
 }
