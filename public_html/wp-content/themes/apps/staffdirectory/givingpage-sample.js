@@ -10,7 +10,7 @@ translate: function(){
 		if(locale in givingpage_s.tranCache && word in givingpage_s.tranCache[locale]){
 			r = givingpage_s.tranCache[locale][word];
 			if($(this).hasClass('merge')){
-				r = ptc.strFormat(r, $('#donor_fn').val());
+				r = ptc.strFormat(r, "<firstName>");
 			}
 		} else{
 			if($(this).hasClass('merge')){

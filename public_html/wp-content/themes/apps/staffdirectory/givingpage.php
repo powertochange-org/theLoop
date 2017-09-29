@@ -51,8 +51,8 @@ $(document).ready(function() {
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
 	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
-	<div><span>E Ack Letter (English):<br /><br />(Do not include the salutation of the letter.  You can use {0} for donor's first name)</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):<br /><br />(Do not include the salutation of the letter.  You can use {0} for donor's first name)</span><textarea class='eAck-french'></textarea></div>
+	<div><span>E Ack Letter (English):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck'></textarea></div>
+	<div><span>E Ack Letter (French):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck-french'></textarea></div>
 	<button class='save'>Save</button>
 </div>
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
@@ -101,7 +101,6 @@ $(document).ready(function() {
 		</div>
 	</div>
 </div>
-Donor First name: <input id='donor_fn' type='text' />
 <div id="letter" style="font-family: Calibri, Arial, sans-serif;color:#000000; margin:0">
 	<div style="width:630px">
 		<img class="staffPic" style='height: 210px;' />
