@@ -144,6 +144,7 @@ get_header(); ?>
 		<tr><td><label for='ministry'>Ministry/ Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='sec_ministry'> Second Ministry/ Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='socialbtn'>Social Media Links:</label></td><td><input type='checkbox' id='socialbtn' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -194,8 +195,17 @@ get_header(); ?>
 				else {
 					signature += 'C.&nbsp;<a style="text-decoration:none;color:#444444;">' + cell;
 				}
-				signature += '</a></td></tr>' +
-					'<tr style="font-family:verdana,sans-serif;">' +
+				signature += '</a></td></tr>';
+				var socialbtn = document.getElementById('socialbtn').checked;
+				if(socialbtn) {
+					signature += '<tr><td style="padding-top:5px;">' +
+						'<a href="https://www.facebook.com/PowerToChangeCanada/" target="blank" style="padding:5px 5px 5px 0px;"><img src="/wp-content/images/icon-facebook.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://twitter.com/powertochange" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-twitter.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.youtube.com/c/powertochangeorgp2c/videos" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-youtube.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.instagram.com/powertochangecanada/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-instagram.png" height="15px;"/></a>&nbsp;' +
+						'<a href="https://www.pinterest.ca/powertochange/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-pinterest.png" height="15px;"/></a></td></tr>';
+				}
+				signature += '<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'https://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
 					'<?php
 						if(array_key_exists($current_user->user_login, $division)){ //special people

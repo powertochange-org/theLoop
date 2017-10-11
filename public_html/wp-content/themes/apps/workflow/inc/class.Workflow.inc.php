@@ -1282,20 +1282,13 @@ class Workflow {
                 
                 $response .= '"><div class="inside-text-center">';
                 
-                if($editableField) { //TODO: check approval level
-                    $response .= '<input type="text" placeholder="'.$row['LABEL'].'" value="';
-                    if($emailMode)
-                        $response .= '%EMAILNAME%';
-                    else 
-                        $response .= Workflow::loggedInUserName();
-                    $response .= '" disabled class="autonamefill">';
+                if($editableField) {
+                    //For saved onbehalfof submissions, use autofill names for the person the form is being submitted for
+                    $autoName = ($emailMode ? '%EMAILNAME%' : ($configuration == 2 && $behalfof == Workflow::loggedInUser() ? Workflow::getUserName($submittedby) : Workflow::loggedInUserName()));
+                    
+                    $response .= '<input type="text" placeholder="'.$row['LABEL'].'" value="'.$autoName.'" disabled class="autonamefill">';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
-                        '" value="';
-                    if($emailMode)
-                        $response .= '%EMAILNAME%';
-                    else 
-                        $response .= Workflow::loggedInUserName();
-                    $response .= '" class="autonamefill">';
+                        '" value="'.$autoName.'" class="autonamefill">';
                 } else {
                     $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
                 }
@@ -1321,7 +1314,7 @@ class Workflow {
                 
                 $response .= '"><div class="inside-text-center">';
                 
-                if($editableField) { //TODO: check approval level
+                if($editableField) {
                     $response .= '<input type="date" value="'.date('Y-m-d').'" disabled>';
                     $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" value="'.date('Y-m-d').'">';
@@ -2639,11 +2632,8 @@ class Workflow {
     
     public function sendEmail($submissionID) {
         require_once("PHPMailer-master/PHPMailerAutoload.php");
-        //$uniqueId = WorkFlow::workflowEmailToken($submissionID);//DEBUG
-        
-        $workflow = new Workflow();
-        
         global $wpdb;
+        $workflow = new Workflow();
         $response = '';
         
         $sql = "SELECT STATUS, APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
@@ -2829,7 +2819,6 @@ class Workflow {
             $templateFinished .= '<h3>Email List</h3> '.$tempRec.'<br>';
             $processedTemplate .= '<h3>Email List</h3> '.$tempRec.'<br>';
         }
-        
         
         for($i = 0; $i < count($recepients); $i++) {
             if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
