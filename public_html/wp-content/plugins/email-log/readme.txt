@@ -1,9 +1,10 @@
 === Email Log ===
 Contributors: sudar  
 Tags: email, log, log email, resend email, multisite  
+Requires PHP: 5.3  
 Requires at least: 4.0  
-Tested up to: 4.8  
-Stable tag: 2.0.2  
+Tested up to: 4.9  
+Stable tag: 2.2.0  
 
 Log and view all outgoing emails from WordPress. Works with WordPress Multisite as well.
 
@@ -113,6 +114,18 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v2.2.0 - (2017-10-09) =
+- New: Dashboard Widget that display summary about email logs.
+- Tweak: Performance improvements in add-on license code.
+
+= v2.1.0 - (2017-09-21) =
+- New: GUI option to choose the user roles that can access email logs.
+- New: GUI option to delete email log table when the plugin is uninstalled.
+- Tweak: Performance improvements.
+- Tweak: Delete all traces of the plugin from DB if the user chooses to destroy data during uninstall.
+- Fix: Handle cases where there is a quote in front of email address.
+- Fix: Handle cases where array passed to `wp_mail` may not contain all the required fields.
 
 = v2.0.2 - (2017-08-07) =
 - Fix: Renamed include/util directory to correct case. This caused issues in some install.
@@ -260,6 +273,12 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+Added a Dashboard Widget that display summary information about email logs.
+
+= 2.1.0 =
+GUI option to choose who can access email logs and performance improvements.
 
 = 2.0.2 =
 Fixed the case of the Util directory. This caused issues in some install.
