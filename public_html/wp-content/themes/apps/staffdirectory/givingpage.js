@@ -10,8 +10,10 @@ override: function(){
 	//extending display function
 	(function(display) {
 		ptc_op.Project.prototype.display = function () {
+			givingpage_s.translate();
 			display.call(this);
 			ptc_op.displaying = null;
+			givingpage.updateLetter();
 		};
 	}(ptc_op.Project.prototype.display));
 	
@@ -93,6 +95,13 @@ setDescription: function(){
 	}
 },
 
+setEAck: function(){
+	var p = givingpage.project;
+	p.eAck = '<ml><locale name="en-US">' + $('#input .eAck').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
+		'<locale name="fr-CA">' + $('#input .eAck-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
+	givingpage.updateLetter();
+},
+
 send: function(fun, data, success, fail){
 	if ('undefined' == typeof fail){
 		fail = function(){};
@@ -123,6 +132,12 @@ getStaffProjectBySKU: function(sku){
 	}
 },
 
+updateLetter: function(){
+	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
+	$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />'));
+	//$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace('a' ,'<br />'));
+},
+
 init: function(host){
 	ptc_op.initProjectMethods();
 	ptc_op.initCategoryMethods();
@@ -150,6 +165,7 @@ init: function(host){
 		}
 		
 		p.gender = data.r.gender;
+		
 		//set inputs;
 		$('#input .projectcode').html(p.sku);
 		$('#input .link').html(p.getLink());
@@ -165,10 +181,17 @@ init: function(host){
 			$('#input .frequency.m').prop('checked', true);
 			$('#input .amount').val('60');
 		}
-		$('#input .image + img').attr('src', p.getPicture());
+		$('#input .image + img').attr('src', p.getPicture() + "?r=" + Math.random());
 		$('#input .closed').prop('checked', p.getName() == p.sku);
 		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
 		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		
+		if(data.r.eAcks){
+			$('#input .eAck').val(data.r.eAcks['en-US']);
+			$('#input .eAck-french').val(data.r.eAcks['fr-CA']);
+			givingpage.setEAck();
+		}
+		
 		givingpage_s.init('https://secure.powertochange.org');
 	});
 	
@@ -206,6 +229,12 @@ init: function(host){
 		var input = $(this)[0];
 		$(this).css('cursor', 'wait');
 		file = input.files[0];
+		
+		//if the user cancels
+		if('undefined' == typeof file){
+			$('#input .image').css('cursor', '');
+			return;
+		}
 		var fr = new FileReader();
 		fr.onload = function(){
 			$('#input .image').css('cursor', '');
@@ -260,6 +289,7 @@ init: function(host){
 		givingpage.project.display();
 	});
 	$('#input .description, #input .description-french').change(givingpage.setDescription);
+	$('#input .eAck, #input .eAck-french').change(givingpage.setEAck);
 	$('#input .save').click(function(){
 		var d = {};
 		var p = givingpage.project;
@@ -276,8 +306,8 @@ init: function(host){
 				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
 		}
-		//d.eAck = $('#input .eAck-french').val();
-		//d.eAckFre = $('#input .eAck-french').val();
+		d.eAck = $('#input .eAck').val();
+		d.eAckFre = $('#input .eAck-french').val();
 		if('onetime' in p.data){
 			d.onetime = p.data.onetime;
 		}

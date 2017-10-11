@@ -299,7 +299,8 @@ class WPP_Admin {
     public function chart_query_table( $table, $options ){
 
         if ( 'comments' == $options['order_by'] ) {
-            return "`wp_comments` c";
+            global $wpdb;
+            return "`{$wpdb->prefix}comments` c";
         }
 
         return $table;
@@ -309,7 +310,8 @@ class WPP_Admin {
     public function chart_query_join( $join, $options ){
 
         if ( 'comments' == $options['order_by'] ) {
-            return "INNER JOIN `wp_posts` p ON c.comment_post_ID = p.ID";
+            global $wpdb;
+            return "INNER JOIN `{$wpdb->prefix}posts` p ON c.comment_post_ID = p.ID";
         }
 
         return $table;
@@ -653,8 +655,8 @@ class WPP_Admin {
 
                 jQuery("#<?php echo $containter_id; ?> p").remove();
 
-                var wpp_chart_views_color = '<?php echo $color_scheme->colors[2]; ?>';
-                var wpp_chart_comments_color = '<?php echo $color_scheme->colors[3]; ?>';
+                var wpp_chart_views_color = '<?php echo $color_scheme[2]; ?>';
+                var wpp_chart_comments_color = '<?php echo $color_scheme[3]; ?>';
 
                 var wpp_chart_data = {
                     labels: [ <?php foreach( $data['dates'] as $date => $date_data ) : echo "'" . date_i18n( 'D d', strtotime( $date ) ) . "', "; endforeach; ?>],
@@ -745,7 +747,7 @@ class WPP_Admin {
             foreach ( $posts as $post ) { ?>
             <li>
                 <p>
-                    <a href="<?php echo get_permalink( $post->id ); ?>"><?php echo $post->title; ?></a>
+                    <a href="<?php echo get_permalink( $post->id ); ?>"><?php echo sanitize_text_field( $post->title ); ?></a>
                     <br />
                     <span><?php printf( _n( '1 view', '%s views', $post->pageviews, 'wordpress-popular-posts' ), number_format_i18n( $post->pageviews ) ); ?></span>
                     <small> &mdash; <a href="<?php echo get_permalink( $post->id ); ?>"><?php _e("View"); ?></a> | <a href="<?php echo get_edit_post_link( $post->id ); ?>"><?php _e("Edit"); ?></a></small>
@@ -800,7 +802,7 @@ class WPP_Admin {
             foreach ( $posts as $post ) { ?>
             <li>
                 <p>
-                    <a href="<?php echo get_permalink( $post->id ); ?>"><?php echo $post->title; ?></a>
+                    <a href="<?php echo get_permalink( $post->id ); ?>"><?php echo sanitize_text_field( $post->title ); ?></a>
                     <br />
                     <span><?php printf( _n( '1 comment', '%s comments', $post->comment_count, 'wordpress-popular-posts' ), number_format_i18n( $post->comment_count ) ); ?></span>
                     <small> &mdash; <a href="<?php echo get_permalink( $post->id ); ?>"><?php _e("View"); ?></a> | <a href="<?php echo get_edit_post_link( $post->id ); ?>"><?php _e("Edit"); ?></a></small>
@@ -846,18 +848,14 @@ class WPP_Admin {
                 $color_scheme = 'fresh';
             }
 
-            if ( isset($_wp_admin_css_colors[ $color_scheme ]) ) {
-                return $_wp_admin_css_colors[ $color_scheme ];
+            if ( isset($_wp_admin_css_colors[ $color_scheme ]) && isset($_wp_admin_css_colors[ $color_scheme ]->colors) ) {
+                return $_wp_admin_css_colors[ $color_scheme ]->colors;
             }
 
         }
 
         // Fallback, just in case
-
-        $theme = new stdClass;
-        $theme->colors = ['#333', '#999', '#881111', '#a80000'];
-
-        return $theme;
+        return array( '#333', '#999', '#881111', '#a80000' );
 
     }
     
