@@ -53,6 +53,8 @@ class UILoader implements Loadie {
 	 */
 	protected function initialize_components() {
 		$this->components['admin_ui_enhancer'] = new Component\AdminUIEnhancer();
+		$this->components['core_settings'] = new Setting\CoreSetting();
+		$this->components['dashboard_widget'] = new Component\DashboardWidget();
 	}
 
 	/**
@@ -64,7 +66,7 @@ class UILoader implements Loadie {
 	 */
 	protected function initialize_pages() {
 		$this->pages['log_list_page']   = new Page\LogListPage();
-		$this->pages['addon_list_page'] = new Page\AddonListPage();
 		$this->pages['settings_page']   = new Page\SettingsPage();
+		$this->pages['addon_list_page'] = new Page\AddonListPage();
 	}
 }
