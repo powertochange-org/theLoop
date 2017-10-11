@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=hcabr
 Tags: popular, posts, widget, popularity, top
 Requires at least: 4.1
 Tested up to: 4.8.2
-Stable tag: 4.0.0
+Stable tag: 4.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,6 +82,28 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 4. WordPress Popular Posts Stats panel.
 
 == Changelog ==
+= 4.0.3 =
+
+**This is a hotfix release.**
+
+- Dashboard: escapes post titles to prevent potential XSS (props Delta!)
+- Restores ability to use a custom default thumbnail.
+
+= 4.0.2 =
+
+**This is a hotfix release.**
+
+- Dashboard: fixes thumbnail picker on HTTPS.
+- Adds the wpp_custom_html filter back.
+
+= 4.0.1 =
+
+**This is a hotfix release.**
+
+- Fixes a warning message triggered on old PHP versions.
+- Fixes undefined default_thumbnail_sizes warning message.
+- Removes a hardcoded table prefix causing issues on sites that uses a different prefix than the stock one.
+
 = 4.0.0 =
 
 **If you're using a caching plugin, flushing its cache after installing / upgrading to this version is highly recommended.**
@@ -92,7 +114,7 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 - Adds ability to pick a Custom Time Range!
 - Adds ability to filter posts by other taxonomies than just categories!
 - Adds Relative Date Format.
-- Fixes error caused by changeset 41508 https://core.trac.wordpress.org/changeset/41508
+- Fixes error caused by changeset 41508 https://core.trac.wordpress.org/changeset/41508 (props hykw!)
 - Improves PHP7+ compatibility.
 - Improves compatibility with WP-SpamShield, WooCommerce, Polylang and WPML.
 - Drops qTranslate support (that plugin has been long removed from WordPress.org anyways.)
@@ -100,6 +122,8 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 - New filters: wpp_post_class, wpp_post_exclude_terms.
 - French and German translation files became too outdated and so support has been dropped for now (want to help? Contact me!)
 - Tons of minor bug fixes and improvements.
+
+Also, see [Release notes](https://cabrerahector.com/development/wordpress-popular-posts-4-0-is-finally-out/).
 
 = 3.3.4 =
 - Attempt to convert tables to InnoDB during upgrade if other engine is being used.
