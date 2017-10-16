@@ -52,4 +52,12 @@ class SO_API{
 		$result = $request->DoItUsernamePwd($parameters);
 		return simplexml_load_string($result->DoItUsernamePwdResult);
 	}
+	
+	static function xmlEncodeSpecial($str){
+		return str_replace(
+			array('&', '<', '>', '\''), 
+			array('&#38;', '&#60;' , '&#62;', '&#38;'), 
+			$str
+		);
+	}
 }
