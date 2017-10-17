@@ -42,7 +42,8 @@ $(document).ready(function() {
 	Givingpage::$prefix.'soServer_User',
 	Givingpage::$prefix.'soServer_Pass'
 )) ?>
-<div id='input'>
+<h2>Staff Donation Page</h2>
+<div class='input'>
 	<div><span>ProjectCode:</span><span class='projectcode'>loading...</span></div>
 	<div><span>Link:</span><span class='link'></span></div>
 	<div><span>Amount:</span><input class='amount' type='text' /></div>
@@ -51,56 +52,66 @@ $(document).ready(function() {
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
 	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
-	<div><span>E Ack Letter (English):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck-french'></textarea></div>
-	<button class='save'>Save</button>
 </div>
+<br />
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
 <div id="sample">
 	<div id='don-box'>
-	<div class='max-width'>
-		<div id='logo'></div>
-		<h1 id='title'></h1>
-		<div class='box'><!-- donation box -->
-			<img id="project_pic" class="round" />
-			<div id='tab1'>
-				<label class='amount'>
-					<label for='txtDonationAmount'>$</label>
-					<input id="txtDonationAmount" onfocus='if("none" != $(this).siblings("span").css("display"))$(this).val("");$(this).siblings("span").hide();' name="txtDonationAmount" type="text" value="0.00" onblur="givingpage_s.balanceAmount(this);" maxlength="10" size="10" />
-					<span>(<span class='lang-tran' data-tran-word='ptc.clickToChange'></span>)</span>
-				</label>
-				<div class='frequency border'>
-					<input id="onetime" name="donationFrequency" onclick="givingpage_s.adjustDateView(false);" type="radio" value="O"  />
-					<label for='onetime' class='lang-tran' data-tran-word='SO.DonationFrequency.OneTime'></label>
-					<input id="monthly" name="donationFrequency" onclick="givingpage_s.adjustDateView(true);" type="radio" value="M" checked="checked"/>
-					<label for='monthly' class='lang-tran' data-tran-word='SO.DonationFrequency.Monthly'></label>
-				</div>
+		<div class='max-width'>
+			<div id='logo'></div>
+			<h1 id='title'></h1>
+			<div class='box'><!-- donation box -->
+				<img id="project_pic" class="round" />
+				<div id='tab1'>
+					<label class='amount'>
+						<label for='txtDonationAmount'>$</label>
+						<input id="txtDonationAmount" onfocus='if("none" != $(this).siblings("span").css("display"))$(this).val("");$(this).siblings("span").hide();' name="txtDonationAmount" type="text" value="0.00" onblur="givingpage_s.balanceAmount(this);" maxlength="10" size="10" />
+						<span>(<span class='lang-tran' data-tran-word='ptc.clickToChange'></span>)</span>
+					</label>
+					<div class='frequency border'>
+						<input id="onetime" name="donationFrequency" onclick="givingpage_s.adjustDateView(false);" type="radio" value="O"  />
+						<label for='onetime' class='lang-tran' data-tran-word='SO.DonationFrequency.OneTime'></label>
+						<input id="monthly" name="donationFrequency" onclick="givingpage_s.adjustDateView(true);" type="radio" value="M" checked="checked"/>
+						<label for='monthly' class='lang-tran' data-tran-word='SO.DonationFrequency.Monthly'></label>
+					</div>
 
-				<div class='recurring border'><!-- recurring info -->
-					<span class='lang-tran' data-tran-word='DS.DateLabel'></span>
-					<input id="month1" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="1" checked="checked"  />
-					<label id='lmonth1' for='month1' class='lang-tran' data-tran-word='1ofMonth'>1ofMonth</label>
-					<input id="month15" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="15" />
-					<label for='month15' class='lang-tran' data-tran-word='15ofMonth'></label><br />
-					<span class='lang-tran' data-tran-word='orders.aspx.StartDate'></span>
-					<input id="txtStartDate" name="txtStartDate" type="text" value="" maxlength="10" size="10" />
+					<div class='recurring border'><!-- recurring info -->
+						<span class='lang-tran' data-tran-word='DS.DateLabel'></span>
+						<input id="month1" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="1" checked="checked"  />
+						<label id='lmonth1' for='month1' class='lang-tran' data-tran-word='1ofMonth'>1ofMonth</label>
+						<input id="month15" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="15" />
+						<label for='month15' class='lang-tran' data-tran-word='15ofMonth'></label><br />
+						<span class='lang-tran' data-tran-word='orders.aspx.StartDate'></span>
+						<input id="txtStartDate" name="txtStartDate" type="text" value="" maxlength="10" size="10" />
+					</div>
+					<div class='options border'>
+						<div class='lang-tran' data-tran-word='ptc.selectOption'></div>
+						<select id='options' onchange='ptc_op.changeSelected($(this).val());'></select>
+					</div>
+					<div class='recurring'>
+						<input type="checkbox" id="perm" />
+						<label for="perm" class='lang-tran' data-tran-word='Permission'></label>
+					</div>
+					<a class="button5L lang-tran" data-tran-word='DS.BtnProject'></a>
+					<div class='clear'></div>
 				</div>
-				<div class='options border'>
-					<div class='lang-tran' data-tran-word='ptc.selectOption'></div>
-					<select id='options' onchange='ptc_op.changeSelected($(this).val());'></select>
-				</div>
-				<div class='recurring'>
-					<input type="checkbox" id="perm" />
-					<label for="perm" class='lang-tran' data-tran-word='Permission'></label>
-				</div>
-				<a class="button5L lang-tran" data-tran-word='DS.BtnProject'></a>
-				<div class='clear'></div>
 			</div>
-		</div>
-		<div id='description'>
+			<div id='description'></div>
 		</div>
 	</div>
 </div>
+<br />
+<div class='input'>
+	<button class='save'>Save</button>
+</div>
+<br />
+<h2>Staff Email Acknowledgement Letter to Donor</h2>
+<div class='input'>
+	<div><span>E Ack Letter (English):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck'></textarea></div>
+	<div><span>E Ack Letter (French):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck-french'></textarea></div>
+</div>
+<br />
+<div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
 <div id="letter" style="font-family: Calibri, Arial, sans-serif;color:#000000; margin:0">
 	<div style="width:630px">
 		<img class="staffPic" style='height: 210px;' />
@@ -111,4 +122,8 @@ $(document).ready(function() {
 			<div style='clear:both;'></div>
 		</div>
 	</div>
+</div>
+<br />
+<div class='input'>
+	<button class='save'>Save</button>
 </div>
