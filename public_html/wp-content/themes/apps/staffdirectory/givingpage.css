@@ -1,19 +1,19 @@
-#input span:first-child{
+.input span:first-child{
 	width: 179px;
 	display: inline-block;
 	vertical-align: top;
 }
 
-#input .image{
+.input .image{
 	vertical-align: top;
 }
 
-#input textarea{
+.input textarea{
 	width: 500px;
 	height: 150px;
 }
 
-#input .image + img{
+.input .image + img{
 	/* if you change this, you will need to change resizeImage function in givingpage.js */
 	width: 150px;
 }
