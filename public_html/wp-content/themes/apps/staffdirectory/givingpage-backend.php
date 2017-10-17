@@ -134,8 +134,8 @@ class Givingpage{
 			}
 			
 			$data['Description'] = array(
-				'@cdata' => '<ml><locale name="en-US">'.strip_tags($_POST['des']).'</locale>'.
-					'<locale name="fr-CA">'.strip_tags($_POST['desFre']).'</locale></ml>'
+				'@cdata' => '<ml><locale name="en-US">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['des'])).'</locale>'.
+					'<locale name="fr-CA">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['desFre'])).'</locale></ml>'
 			);
 		}
 		
