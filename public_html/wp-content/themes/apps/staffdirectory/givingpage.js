@@ -80,7 +80,7 @@ getPicture: function(){
 	if($('.input .closed').is(':checked')){
 		return givingpage.getURL("/images/product/medium/" + this.gender + ".jpg");
 	} else if(null == givingpage.resize){
-		return givingpage.getURL("/images/product/medium/" + this.filename + ".jpg");
+		return givingpage.getURL("/images/product/medium/" + this.filename + ".jpg" + "?r=" + Math.random());
 	} else{
 		return givingpage.resizeImage($('.input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 	}
@@ -192,7 +192,7 @@ init: function(host){
 			$('.input .frequency.m').prop('checked', true);
 			$('.input .amount').val('60');
 		}
-		$('.input .image + img').attr('src', p.getPicture() + "?r=" + Math.random());
+		$('.input .image + img').attr('src', p.getPicture());
 		$('.input .closed').prop('checked', p.getName() == p.sku);
 		$('.input .description').val(ptc_op.parseXML(p.description, 'en-US'));
 		$('.input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
