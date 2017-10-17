@@ -115,7 +115,7 @@ $(document).ready(function() {
 <div id="letter" style="font-family: Calibri, Arial, sans-serif;color:#000000; margin:0">
 	<div style="width:630px">
 		<img class="staffPic" style='height: 210px;' />
-		<img src="<?php echo get_option(Givingpage::$prefix.'soServer');?>/images/email/sty.png" style="width:420px; height: 210px; margin-left: -5px;" />
+		<img style="width:420px; height: 210px; margin-left: -5px;" />
 		<div style="padding-bottom:3px;	border-bottom:1px solid #adafb2;margin-bottom:3px;">
 			<p class='lang-tran merge' data-tran-word='ptc.salutation'></p>
 			<span id='staffLetter' class='merge'></span>

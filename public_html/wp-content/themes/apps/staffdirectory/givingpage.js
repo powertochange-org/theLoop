@@ -135,7 +135,18 @@ getStaffProjectBySKU: function(sku){
 updateLetter: function(){
 	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
 	$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />'));
-	//$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace('a' ,'<br />'));
+	var thankyouURL = givingpage.getURL('/images/email/sty.png');
+	$('#letter .staffPic + img').attr('src', thankyouURL);
+	if('en-US' != ptc.getLocale()){
+		thankyouURL = givingpage.getURL('/images/email/sty.' + ptc.getLocale() + '.png');;
+		ptc_op.urlExists(thankyouURL, function(){
+			//success (image exists in current locale);
+			$('#letter .staffPic + img').attr("src", thankyouURL);
+		}, function(){
+			//fail (image does not exists in current locale)
+			//do nothing
+		});
+	}
 },
 
 init: function(host){
