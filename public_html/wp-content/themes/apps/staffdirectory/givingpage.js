@@ -180,6 +180,7 @@ init: function(host){
 		//set inputs;
 		$('.input .projectcode').html(p.sku);
 		$('.input .link').html(p.getLink());
+		$('.input .link').attr('href', p.getLink());
 		if('onetime' in p.data){
 			$('.input .frequency.ot').prop('checked', true);
 			$('.input .amount').val(p.data.onetime);
