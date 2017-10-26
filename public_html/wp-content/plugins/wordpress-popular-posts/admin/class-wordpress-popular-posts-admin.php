@@ -429,10 +429,10 @@ class WPP_Admin {
         }
 
         if ( $dates ) {
-            return $where . " AND v.last_viewed BETWEEN '{$dates[0]} 00:00:00' AND '{$dates[1]} 23:59:59' AND p.post_password = '' AND p.post_status = 'publish' ";
+            return $where . " AND v.view_datetime BETWEEN '{$dates[0]} 00:00:00' AND '{$dates[1]} 23:59:59' AND p.post_password = '' AND p.post_status = 'publish' ";
         }
 
-        return $where . " AND v.last_viewed  > DATE_SUB('{$now}', INTERVAL {$interval}) AND p.post_password = '' AND p.post_status = 'publish' ";
+        return $where . " AND v.view_datetime  > DATE_SUB('{$now}', INTERVAL {$interval}) AND p.post_password = '' AND p.post_status = 'publish' ";
 
     }
 
@@ -703,7 +703,7 @@ class WPP_Admin {
             $admin_options['stats']['time_unit'] = $time_unit;
             $this->options = $admin_options;
 
-            update_site_option( 'wpp_settings_config', $this->options );
+            update_option( 'wpp_settings_config', $this->options );
 
             $response = array(
                 'status' => 'ok',
@@ -960,7 +960,7 @@ class WPP_Admin {
             if ( is_array($wpp_uploads_dir) && !empty($wpp_uploads_dir) ) {
                 
                 $token = isset( $_POST['token'] ) ? $_POST['token'] : null;
-                $key = get_site_option( "wpp_rand" );				
+                $key = get_option( "wpp_rand" );				
                 
                 if (
                     current_user_can( 'manage_options' ) 
@@ -1013,7 +1013,7 @@ class WPP_Admin {
 
         $token = $_POST['token'];
         $clear = isset( $_POST['clear'] ) ? $_POST['clear'] : null;
-        $key = get_site_option( "wpp_rand" );
+        $key = get_option( "wpp_rand" );
 
         if (
             current_user_can( 'manage_options' ) 
@@ -1072,14 +1072,14 @@ class WPP_Admin {
      */
     private function flush_transients() {
 
-        $wpp_transients = get_site_option( 'wpp_transients' );
+        $wpp_transients = get_option( 'wpp_transients' );
 
         if ( $wpp_transients && is_array( $wpp_transients ) && !empty( $wpp_transients ) ) {
             
             for ( $t=0; $t < count( $wpp_transients ); $t++ )
                 delete_transient( $wpp_transients[$t] );
 
-            update_site_option( 'wpp_transients', array() );
+            update_option( 'wpp_transients', array() );
             
         }
 
@@ -1138,16 +1138,44 @@ class WPP_Admin {
      */
     public function upgrade_check(){
 
-        // Get WPP version
-        $wpp_ver = get_site_option( 'wpp_ver' );
+        // Multisite setup, upgrade all sites
+        if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+            global $wpdb;
 
-        if ( !$wpp_ver ) {
-            add_site_option( 'wpp_ver', $this->version );
-        } elseif ( version_compare( $wpp_ver, $this->version, '<' ) ) {
-            $this->upgrade();
+            $original_blog_id = get_current_blog_id();
+            $blogs_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
+
+            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+            foreach( $blogs_ids as $blog_id ) {
+                switch_to_blog( $blog_id );
+                $this->upgrade_site();
+            }
+
+            // Switch back to current blog
+            switch_to_blog( $original_blog_id );
+        }
+        else {
+            $this->upgrade_site();
         }
 
     } // end upgrade_check
+
+    /**
+     * Upgrades single site.
+     *
+     * @since 4.0.7
+     */
+    private function upgrade_site() {
+        // Get WPP version
+        $wpp_ver = get_option( 'wpp_ver' );
+
+        if ( !$wpp_ver ) {
+            add_option( 'wpp_ver', $this->version );
+        } elseif ( version_compare( $wpp_ver, $this->version, '<' ) ) {
+            $this->upgrade();
+        }
+    }
 
     /**
      * On plugin upgrade, performs a number of actions: update WPP database tables structures (if needed),
@@ -1160,10 +1188,10 @@ class WPP_Admin {
     private function upgrade() {
 
         // Keep the upgrade process from running too many times
-        if ( get_site_option('wpp_update') )
+        if ( get_option('wpp_update') )
             return;
         
-        add_site_option( 'wpp_update', '1' );
+        add_option( 'wpp_update', '1' );
 
         global $wpdb;
 
@@ -1173,27 +1201,21 @@ class WPP_Admin {
         // Validate the structure of the tables, create missing tables / fields if necessary
         WPP_Activator::track_new_site();
 
-        // If summary is empty, import data from popularpostsdatacache
-        if ( !$wpdb->get_var( "SELECT COUNT(*) FROM {$prefix}summary" ) ) {
-
-            // popularpostsdatacache table is still there
-            if ( $wpdb->get_var( "SHOW TABLES LIKE '{$prefix}datacache'" ) ) {
-
-                $sql = "
-                INSERT INTO {$prefix}summary (postid, pageviews, view_date, last_viewed)
-                SELECT id, pageviews, day_no_time, day
-                FROM {$prefix}datacache
-                GROUP BY day_no_time, id
-                ORDER BY day_no_time DESC";
-
-                $result = $wpdb->query( $sql );
-
+        // Update summary table structure and indexes
+        $summaryFields = $wpdb->get_results( "SHOW FIELDS FROM {$prefix}summary;" );
+        foreach ( $summaryFields as $column ) {
+            if ( "last_viewed" == $column->Field ) {
+                $wpdb->query( "ALTER TABLE {$prefix}summary CHANGE last_viewed view_datetime datetime NOT NULL DEFAULT '0000-00-00 00:00:00', ADD KEY view_datetime (view_datetime);" );
             }
-
         }
-        
-        // Deletes old caching tables, if found
-        $wpdb->query( "DROP TABLE IF EXISTS {$prefix}datacache, {$prefix}datacache_backup;" );
+
+        $summaryIndexes = $wpdb->get_results( "SHOW INDEX FROM {$prefix}summary;" );
+        foreach( $summaryIndexes as $index ) {
+            if ( 'ID_date' == $index->Key_name ) {
+                $wpdb->query( "ALTER TABLE {$prefix}summary DROP INDEX ID_date, DROP INDEX last_viewed;" );
+                break;
+            }
+        }
 
         // Check storage engine
         $storage_engine_data = $wpdb->get_var( "SELECT `ENGINE` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA`='{$wpdb->dbname}' AND `TABLE_NAME`='{$prefix}data';" );
@@ -1209,10 +1231,10 @@ class WPP_Admin {
         }
 
         // Update WPP version
-        update_site_option( 'wpp_ver', $this->version );
+        update_option( 'wpp_ver', $this->version );
         
         // Remove upgrade flag
-        delete_site_option( 'wpp_update' );
+        delete_option( 'wpp_update' );
 
     } // end __upgrade
     
@@ -1268,7 +1290,7 @@ class WPP_Admin {
             unset($_GET['activate']);
 
         printf(
-            __('<div class="error"><p>%1$s</p><p><i>%2$s</i> has been <strong>deactivated</strong>.</p></div>', 'wordpress-popular-posts'),
+            __('<div class="notice notice-error"><p>%1$s</p><p><i>%2$s</i> has been <strong>deactivated</strong>.</p></div>', 'wordpress-popular-posts'),
             join( '</p><p>', $errors ),
             'WordPress Popular Posts'
         );

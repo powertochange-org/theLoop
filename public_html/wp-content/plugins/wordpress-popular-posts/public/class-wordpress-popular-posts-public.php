@@ -69,8 +69,16 @@ class WPP_Public {
      * @since    4.0.0
      */
     public function enqueue_styles() {
-        if ( $this->admin_options['tools']['css'] )
-            wp_enqueue_style( 'wordpress-popular-posts-css', plugin_dir_url( __FILE__ ) . 'css/wpp.css', array(), $this->version, 'all' );
+        if ( $this->admin_options['tools']['css'] ) {
+            $theme_file = get_stylesheet_directory() . '/wpp.css';
+
+            if ( @is_file( $theme_file ) ) {
+                wp_enqueue_style( 'wordpress-popular-posts-css', get_stylesheet_directory_uri() . "/wpp.css", array(), $this->version, 'all' );
+            } // Load stock stylesheet
+            else {
+                wp_enqueue_style( 'wordpress-popular-posts-css', plugin_dir_url( __FILE__ ) . 'css/wpp.css', array(), $this->version, 'all' );
+            }
+        }
     }
 
     /**
@@ -201,8 +209,8 @@ class WPP_Public {
         // Update range (summary) table
         $result2 = $wpdb->query( $wpdb->prepare(
             "INSERT INTO {$table}summary
-            (postid, pageviews, view_date, last_viewed) VALUES (%d, %d, %s, %s)
-            ON DUPLICATE KEY UPDATE pageviews = pageviews + %d, last_viewed = %s;",
+            (postid, pageviews, view_date, view_datetime) VALUES (%d, %d, %s, %s)
+            ON DUPLICATE KEY UPDATE pageviews = pageviews + %d, view_datetime = %s;",
             $post_ID,
             $views,
             $curdate,
@@ -438,24 +446,28 @@ class WPP_Public {
                         $time = 60 * 60 * 24 * 365;
                     break;
 
-                    $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
+                    default:
+                        $time = 60 * 60;
+                    break;
 
-                    // Store transient
-                    set_transient( $transient_name, $popular_posts, $expiration );
+                }
 
-                    // Store transient in WPP transients array for garbage collection
-                    $wpp_transients = get_site_option('wpp_transients');
+                $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
 
-                    if ( !$wpp_transients ) {
-                        $wpp_transients = array( $transient_name );
-                        add_site_option( 'wpp_transients', $wpp_transients );
-                    } else {
-                        if ( !in_array($transient_name, $wpp_transients) ) {
-                            $wpp_transients[] = $transient_name;
-                            update_site_option( 'wpp_transients', $wpp_transients );
-                        }
+                // Store transient
+                set_transient( $transient_name, $popular_posts, $expiration );
+
+                // Store transient in WPP transients array for garbage collection
+                $wpp_transients = get_option('wpp_transients');
+
+                if ( !$wpp_transients ) {
+                    $wpp_transients = array( $transient_name );
+                    add_option( 'wpp_transients', $wpp_transients );
+                } else {
+                    if ( !in_array($transient_name, $wpp_transients) ) {
+                        $wpp_transients[] = $transient_name;
+                        update_option( 'wpp_transients', $wpp_transients );
                     }
-
                 }
 
             }
