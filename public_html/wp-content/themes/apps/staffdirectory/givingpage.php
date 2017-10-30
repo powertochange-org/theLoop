@@ -50,6 +50,10 @@ $(document).ready(function() {
 	<div><span>Frequency:</span><label><input class='frequency ot' name='frequency' type='radio' value='ot' />One Time</label><label><input class='frequency m' name='frequency' type='radio' value='m' />Monthy</label></div>
 	<div><span>Picture:</span><input type="file" class="image" accept="image/png,image/gif,image/jpeg"><img /></div>
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
+</div>
+<h2>'About' Text</h2>
+<div class='input'>
+	<div id= 'content-right'>Write a brief description about your ministry.<br />If this section is left blank the default text will be used.</div>
 	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
 </div>
@@ -105,10 +109,11 @@ $(document).ready(function() {
 	<button class='save'>Save</button>
 </div>
 <br />
-<h2>Staff Email Acknowledgement Letter to Donor</h2>
+<h2>Thank You/Confirmation Email to Donrs</h2>
 <div class='input'>
-	<div><span>E Ack Letter (English):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):<br /><br />(Do not include the salutation of the letter.)</span><textarea class='eAck-french'></textarea></div>
+	<div id='content-right'>Write a short thank-you message to be included in the confirmation email.<br />Do not include a salutation, but do include your name.<br />If this section is left blank the default text will be used.</div>
+	<div><span>Thank you Message (English):</span><textarea class='eAck'></textarea></div>
+	<div><span>Thank you Message (French):</span><textarea class='eAck-french'></textarea></div>
 </div>
 <br />
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
