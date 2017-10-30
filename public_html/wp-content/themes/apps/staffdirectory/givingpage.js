@@ -134,7 +134,22 @@ getStaffProjectBySKU: function(sku){
 
 updateLetter: function(){
 	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
-	$('#letter #staffLetter').html(ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />'));
+	var letter = ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />');
+	if(letter){
+		$('#letter #staffLetter').html(letter);
+	} else {
+		$('#letter #staffLetter').html(
+			"<p><span class='lang-tran' data-tran-word='ptc.letterBodyStart'></span>" +
+			"<span class='lang-tran' data-tran-word='ptc.letterBodyDonation'></span>" +
+			"<span class='lang-tran' data-tran-word='ptc.letterBodyEnd'></span></p>" +
+			"<p class='lang-tran' data-tran-word='ptc.taxReceiptIssue'></p>" +
+			"<p class='lang-tran' data-tran-word='ptc.signature'></p>" +
+			"<p><span class='lang-tran' data-tran-word='ptc.letter.sigName'></span><br />" +
+			"<span class='lang-tran' data-tran-word='ptc.president'></span></p>"
+		);
+		givingpage_s.translate();
+	}
+
 	var thankyouURL = givingpage.getURL('/images/email/sty.png');
 	$('#letter .staffPic + img').attr('src', thankyouURL);
 	if('en-US' != ptc.getLocale()){
