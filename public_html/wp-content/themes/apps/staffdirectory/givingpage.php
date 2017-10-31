@@ -109,7 +109,7 @@ $(document).ready(function() {
 	<button class='save'>Save</button>
 </div>
 <br />
-<h2>Thank You/Confirmation Email to Donrs</h2>
+<h2>Thank You/Confirmation Email to Donors</h2>
 <div class='input'>
 	<div id='content-right'>Write a short thank-you message to be included in the confirmation email.<br />Do not include a salutation, but do include your name.<br />If this section is left blank the default text will be used.</div>
 	<div><span>Thank you Message (English):</span><textarea class='eAck'></textarea></div>
