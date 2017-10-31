@@ -10,8 +10,10 @@ override: function(){
 	//extending display function
 	(function(display) {
 		ptc_op.Project.prototype.display = function () {
+			givingpage_s.translate();
 			display.call(this);
 			ptc_op.displaying = null;
+			givingpage.updateLetter();
 		};
 	}(ptc_op.Project.prototype.display));
 	
@@ -75,22 +77,29 @@ resizeImage: function(image64, x, y, w, h){
 },
 
 getPicture: function(){
-	if($('#input .closed').is(':checked')){
+	if($('.input .closed').is(':checked')){
 		return givingpage.getURL("/images/product/medium/" + this.gender + ".jpg");
 	} else if(null == givingpage.resize){
-		return givingpage.getURL("/images/product/medium/" + this.filename + ".jpg");
+		return givingpage.getURL("/images/product/medium/" + this.filename + ".jpg" + "?r=" + Math.random());
 	} else{
-		return givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
+		return givingpage.resizeImage($('.input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 	}
 },
 
 setDescription: function(){
-	if(!$('#input .closed').is(':checked')){
+	if(!$('.input .closed').is(':checked')){
 		var p = givingpage.project;
-		p.description = '<ml><locale name="en-US">' + $('#input .description').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
-			'<locale name="fr-CA">' + $('#input .description-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
+		p.description = '<ml><locale name="en-US">' + $('.input .description').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
+			'<locale name="fr-CA">' + $('.input .description-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
 		p.display();
 	}
+},
+
+setEAck: function(){
+	var p = givingpage.project;
+	p.eAck = '<ml><locale name="en-US">' + $('.input .eAck').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
+		'<locale name="fr-CA">' + $('.input .eAck-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
+	givingpage.updateLetter();
 },
 
 send: function(fun, data, success, fail){
@@ -123,6 +132,38 @@ getStaffProjectBySKU: function(sku){
 	}
 },
 
+updateLetter: function(){
+	$('#letter .staffPic').attr("src", $('#project_pic').attr("src"));
+	var letter = ptc_op.parseXML(this.project.eAck).replace(/(?:\r\n|\r|\n)/g, '<br />');
+	if(letter){
+		$('#letter #staffLetter').html(letter);
+	} else {
+		$('#letter #staffLetter').html(
+			"<p><span class='lang-tran' data-tran-word='ptc.letterBodyStart'></span>" +
+			"<span class='lang-tran' data-tran-word='ptc.letterBodyDonation'></span>" +
+			"<span class='lang-tran' data-tran-word='ptc.letterBodyEnd'></span></p>" +
+			"<p class='lang-tran' data-tran-word='ptc.taxReceiptIssue'></p>" +
+			"<p class='lang-tran' data-tran-word='ptc.signature'></p>" +
+			"<p><span class='lang-tran' data-tran-word='ptc.letter.sigName'></span><br />" +
+			"<span class='lang-tran' data-tran-word='ptc.president'></span></p>"
+		);
+		givingpage_s.translate();
+	}
+
+	var thankyouURL = givingpage.getURL('/images/email/sty.png');
+	$('#letter .staffPic + img').attr('src', thankyouURL);
+	if('en-US' != ptc.getLocale()){
+		thankyouURL = givingpage.getURL('/images/email/sty.' + ptc.getLocale() + '.png');;
+		ptc_op.urlExists(thankyouURL, function(){
+			//success (image exists in current locale);
+			$('#letter .staffPic + img').attr("src", thankyouURL);
+		}, function(){
+			//fail (image does not exists in current locale)
+			//do nothing
+		});
+	}
+},
+
 init: function(host){
 	ptc_op.initProjectMethods();
 	ptc_op.initCategoryMethods();
@@ -130,16 +171,16 @@ init: function(host){
 	this.override();
 	this.send('GetInfo', null, function(data){
 		if("" == data.r.pc){
-			$('#input').next().remove();
-			$('#input').replaceWith("No projectcode found.");
+			$('.input').next().remove();
+			$('.input').replaceWith("No projectcode found.");
 			$('#sample').remove();
 			return;
 		}
 		givingpage.project = givingpage.getStaffProjectBySKU(data.r.pc);
 		var p = givingpage.project;
 		if('undefined' == typeof p){
-			$('#input').next().remove();
-			$('#input').replaceWith("Error: No giving page found or something is not set up correctly.  If you do have a giving page, please contact: <a href='mailto:helpdesk@p2c.com?subject=Loop-Givingpage&body=Name:" + ptc_op.parseXML(data.r.name) + ",%20Projectcode:" + data.r.pc  +"'>helpdesk@p2c.com</a><br /><br />");
+			$('.input').next().remove();
+			$('.input').replaceWith("Error: No giving page found or something is not set up correctly.  If you do have a giving page, please contact: <a href='mailto:helpdesk@p2c.com?subject=Loop-Givingpage&body=Name:" + ptc_op.parseXML(data.r.name) + ",%20Projectcode:" + data.r.pc  +"'>helpdesk@p2c.com</a><br /><br />");
 			$('#sample').remove();
 			return;
 		}
@@ -150,29 +191,38 @@ init: function(host){
 		}
 		
 		p.gender = data.r.gender;
+		
 		//set inputs;
-		$('#input .projectcode').html(p.sku);
-		$('#input .link').html(p.getLink());
+		$('.input .projectcode').html(p.sku);
+		$('.input .link').html(p.getLink());
+		$('.input .link').attr('href', p.getLink());
 		if('onetime' in p.data){
-			$('#input .frequency.ot').prop('checked', true);
-			$('#input .amount').val(p.data.onetime);
+			$('.input .frequency.ot').prop('checked', true);
+			$('.input .amount').val(p.data.onetime);
 		}
 		else if('recurring' in p.data){
-			$('#input .frequency.m').prop('checked', true);
-			$('#input .amount').val(p.data.recurring);
+			$('.input .frequency.m').prop('checked', true);
+			$('.input .amount').val(p.data.recurring);
 		} else {
 			//default
-			$('#input .frequency.m').prop('checked', true);
-			$('#input .amount').val('60');
+			$('.input .frequency.m').prop('checked', true);
+			$('.input .amount').val('60');
 		}
-		$('#input .image + img').attr('src', p.getPicture());
-		$('#input .closed').prop('checked', p.getName() == p.sku);
-		$('#input .description').val(ptc_op.parseXML(p.description, 'en-US'));
-		$('#input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		$('.input .image + img').attr('src', p.getPicture());
+		$('.input .closed').prop('checked', p.getName() == p.sku);
+		$('.input .description').val(ptc_op.parseXML(p.description, 'en-US'));
+		$('.input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		
+		if(data.r.eAcks){
+			$('.input .eAck').val(data.r.eAcks['en-US']);
+			$('.input .eAck-french').val(data.r.eAcks['fr-CA']);
+			givingpage.setEAck();
+		}
+		
 		givingpage_s.init('https://secure.powertochange.org');
 	});
 	
-	$('#input .amount').change(function(){
+	$('.input .amount').change(function(){
 		var p = givingpage.project;
 		if('onetime' in p.data){
 			p.data.onetime = $(this).val();
@@ -185,16 +235,16 @@ init: function(host){
 		}
 		p.display();
 	});
-	$('#input .frequency').change(function(){
+	$('.input .frequency').change(function(){
 		var p = givingpage.project;
-		var v = $('#input .frequency:checked').val();
+		var v = $('.input .frequency:checked').val();
 		if('ot' == v){
 			delete p.data.recurring;
-			p.data.onetime = $('#input .amount').val();
+			p.data.onetime = $('.input .amount').val();
 		}
 		else if('m' == v){
 			delete p.data.onetime;
-			p.data.recurring = $('#input .amount').val();
+			p.data.recurring = $('.input .amount').val();
 		} else {
 			//default
 			delete p.data.onetime;
@@ -202,16 +252,22 @@ init: function(host){
 		}
 		p.display();
 	});
-	$('#input .image').change(function(){
+	$('.input .image').change(function(){
 		var input = $(this)[0];
 		$(this).css('cursor', 'wait');
 		file = input.files[0];
+		
+		//if the user cancels
+		if('undefined' == typeof file){
+			$('.input .image').css('cursor', '');
+			return;
+		}
 		var fr = new FileReader();
 		fr.onload = function(){
-			$('#input .image').css('cursor', '');
-			$('#input .image + img').attr('src', fr.result);
+			$('.input .image').css('cursor', '');
+			$('.input .image + img').attr('src', fr.result);
 			jQuery(function($) {
-				$('#input .image + img').Jcrop({
+				$('.input .image + img').Jcrop({
 					aspectRatio: 1,
 					setSelect: [0, 0, 150, 150],
 					onSelect: function(c){
@@ -224,7 +280,7 @@ init: function(host){
 		};
 		fr.readAsDataURL(file);
 	});
-	$('#input .closed').change(function(){
+	$('.input .closed').change(function(){
 		var p = givingpage.project;
 		if($(this).is(':checked')){
 			p.label_old = p.label;
@@ -259,25 +315,26 @@ init: function(host){
 		}
 		givingpage.project.display();
 	});
-	$('#input .description, #input .description-french').change(givingpage.setDescription);
-	$('#input .save').click(function(){
+	$('.input .description, .input .description-french').change(givingpage.setDescription);
+	$('.input .eAck, .input .eAck-french').change(givingpage.setEAck);
+	$('.input .save').click(function(){
 		var d = {};
 		var p = givingpage.project;
-		if($('#input .closed').is(':checked')){
+		if($('.input .closed').is(':checked')){
 			d.closed = 1;
 		} else {
 			d.closed = 0;
-			d.des = $('#input .description').val();
-			d.desFre = $('#input .description-french').val();
+			d.des = $('.input .description').val();
+			d.desFre = $('.input .description-french').val();
 			if(null == givingpage.resize){
 				d.isPic = 0;
 			} else {
 				d.isPic = 1;
-				d.pic = givingpage.resizeImage($('#input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
+				d.pic = givingpage.resizeImage($('.input .image + img').attr('src'), givingpage.resize.x, givingpage.resize.y, givingpage.resize.w, givingpage.resize.h)
 			}
 		}
-		//d.eAck = $('#input .eAck-french').val();
-		//d.eAckFre = $('#input .eAck-french').val();
+		d.eAck = $('.input .eAck').val();
+		d.eAckFre = $('.input .eAck-french').val();
 		if('onetime' in p.data){
 			d.onetime = p.data.onetime;
 		}
@@ -286,11 +343,11 @@ init: function(host){
 		}
 		var g = givingpage.guid ++;
 		givingpage.send('SetInfo', d, function(data){
-			$('#input #msg_' + g).html("Changes Saved!");
+			$('.input #msg_' + g).html("Changes Saved!");
 		}, function(){
-			$('#input #msg_' + g).html("An error occurred");
+			$('.input #msg_' + g).html("An error occurred");
 		});
-		$('#input .save').after("<div id='msg_" + g + "'>Saving...</div>");
+		$(this).after("<div id='msg_" + g + "'>Saving...</div>");
 	});
 	$('.preview').change(function(){
 		ptc_currentLocale = $('.preview:checked').val();

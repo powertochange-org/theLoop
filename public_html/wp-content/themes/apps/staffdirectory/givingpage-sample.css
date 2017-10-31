@@ -218,7 +218,7 @@ body:not(.picture) #sample #project_pic{
 	}
 }
 
-#sample .amount span{
+#sample .amount > span{
 	color: #908c89;
 	position: absolute;
 	font-size: 15px;

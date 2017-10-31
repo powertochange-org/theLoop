@@ -1,8 +1,40 @@
 var givingpage_s = {
 
+tranCache: {},
+
 translate: function(){
 	$('.lang-tran').each(function(){
-		$(this).replaceWith(ptc.getTranslation($(this).html()));
+		var word = $(this).data('tranWord');
+		var locale = ptc.getLocale();
+		var r;
+		if(locale in givingpage_s.tranCache && word in givingpage_s.tranCache[locale]){
+			r = givingpage_s.tranCache[locale][word];
+			if($(this).hasClass('merge')){
+				r = ptc.strFormat(r, "&lt;firstName&gt;");
+			}
+		} else{
+			if($(this).hasClass('merge')){
+				var guid = ptc.tranGUID ++;
+				r = "<span id='tranGUID_" + guid + "'>" + word + "</span>";
+				ptc.getTranslation(word, function(data){
+					if(!(locale in givingpage_s.tranCache)){
+						givingpage_s.tranCache[locale] = {};
+					}
+					givingpage_s.tranCache[locale][word] = data.d;
+					$('#tranGUID_' + guid).replaceWith(r = ptc.strFormat(data.d, "&lt;firstName&gt;"));
+					
+				});
+			} else {
+				r = ptc.getTranslation(word);
+				ptc.getTranslation(word, function(data){
+					if(!(locale in givingpage_s.tranCache)){
+						givingpage_s.tranCache[locale] = {};
+					}
+					givingpage_s.tranCache[locale][word] = data.d;
+				});
+			}
+		}
+		$(this).html(r);
 	});
 },
 
@@ -50,7 +82,6 @@ changeDateRange: function(day) {
 },
 
 init: function(){
-	this.translate();
 	givingpage.project.display();
 }
 }

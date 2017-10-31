@@ -26,7 +26,6 @@ require_once(get_stylesheet_directory().'/functions/functions.php');
 $(document).ready(function() {
 	givingpage.ajaxurl = '<?php echo admin_url('admin-ajax.php');?>';
 	givingpage.init('<?php echo get_option(Givingpage::$prefix.'soServer');?>');
-	//givingpage_s.init('http://secure.adv-01d0986.powertochange.local');
 });
 
 </script>
@@ -43,63 +42,93 @@ $(document).ready(function() {
 	Givingpage::$prefix.'soServer_User',
 	Givingpage::$prefix.'soServer_Pass'
 )) ?>
-<div id='input'>
+<h2>Staff Donation Page</h2>
+<div class='input'>
 	<div><span>ProjectCode:</span><span class='projectcode'>loading...</span></div>
-	<div><span>Link:</span><span class='link'></span></div>
+	<div><span>Link:</span><a target='_blank' class='link'></a></div>
 	<div><span>Amount:</span><input class='amount' type='text' /></div>
 	<div><span>Frequency:</span><label><input class='frequency ot' name='frequency' type='radio' value='ot' />One Time</label><label><input class='frequency m' name='frequency' type='radio' value='m' />Monthy</label></div>
 	<div><span>Picture:</span><input type="file" class="image" accept="image/png,image/gif,image/jpeg"><img /></div>
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
+</div>
+<h2>'About' Text</h2>
+<div class='input'>
+	<div id= 'content-right'>Write a brief description about your ministry.<br />If this section is left blank the default text will be used.</div>
 	<div><span>Description (English):</span><textarea class='description'></textarea></div>
 	<div><span>Description (French):</span><textarea class='description-french'></textarea></div>
-	<!--div><span>E Ack Letter:</span><textarea class='eAck'></textarea></div>
-	<div><span>E Ack Letter (French):</span><textarea class='eAck-french'></textarea></div -->
-	<button class='save'>Save</button>
 </div>
+<br />
 <div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
 <div id="sample">
 	<div id='don-box'>
-	<div class='max-width'>
-		<div id='logo'></div>
-		<h1 id='title'></h1>
-		<div class='box'><!-- donation box -->
-			<img id="project_pic" class="round" />
-			<div id='tab1'>
-				<label class='amount'>
-					<label for='txtDonationAmount'>$</label>
-					<input id="txtDonationAmount" onfocus='if("none" != $(this).siblings("span").css("display"))$(this).val("");$(this).siblings("span").hide();' name="txtDonationAmount" type="text" value="0.00" onblur="givingpage_s.balanceAmount(this);" maxlength="10" size="10" />
-					<span>(<span class='lang-tran'>ptc.clickToChange</span>)</span>
-				</label>
-				<div class='frequency border'>
-					<input id="onetime" name="donationFrequency" onclick="givingpage_s.adjustDateView(false);" type="radio" value="O"  />
-					<label for='onetime'>  <span class='lang-tran'>SO.DonationFrequency.OneTime</span></label>
-					<input id="monthly" name="donationFrequency" onclick="givingpage_s.adjustDateView(true);" type="radio" value="M" checked="checked"/>
-					<label for='monthly'><span class='lang-tran'>SO.DonationFrequency.Monthly</span></label>
-				</div>
+		<div class='max-width'>
+			<div id='logo'></div>
+			<h1 id='title'></h1>
+			<div class='box'><!-- donation box -->
+				<img id="project_pic" class="round" />
+				<div id='tab1'>
+					<label class='amount'>
+						<label for='txtDonationAmount'>$</label>
+						<input id="txtDonationAmount" onfocus='if("none" != $(this).siblings("span").css("display"))$(this).val("");$(this).siblings("span").hide();' name="txtDonationAmount" type="text" value="0.00" onblur="givingpage_s.balanceAmount(this);" maxlength="10" size="10" />
+						<span>(<span class='lang-tran' data-tran-word='ptc.clickToChange'></span>)</span>
+					</label>
+					<div class='frequency border'>
+						<input id="onetime" name="donationFrequency" onclick="givingpage_s.adjustDateView(false);" type="radio" value="O"  />
+						<label for='onetime' class='lang-tran' data-tran-word='SO.DonationFrequency.OneTime'></label>
+						<input id="monthly" name="donationFrequency" onclick="givingpage_s.adjustDateView(true);" type="radio" value="M" checked="checked"/>
+						<label for='monthly' class='lang-tran' data-tran-word='SO.DonationFrequency.Monthly'></label>
+					</div>
 
-				<div class='recurring border'><!-- recurring info -->
-					<span><span class='lang-tran'>DS.DateLabel</span></span>
-					<input id="month1" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="1" checked="checked"  />
-					<label id='lmonth1' for='month1'>  <span class='lang-tran'>1ofMonth</span></label>
-					<input id="month15" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="15" />
-					<label for='month15'><span class='lang-tran'>15ofMonth</span></label><br />
-					<span><span class='lang-tran'>orders.aspx.StartDate</span></span>
-					<input id="txtStartDate" name="txtStartDate" type="text" value="" maxlength="10" size="10" />
+					<div class='recurring border'><!-- recurring info -->
+						<span class='lang-tran' data-tran-word='DS.DateLabel'></span>
+						<input id="month1" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="1" checked="checked"  />
+						<label id='lmonth1' for='month1' class='lang-tran' data-tran-word='1ofMonth'>1ofMonth</label>
+						<input id="month15" name="donationDayOfMonth" type="radio" onchange="givingpage_s.changeDateRange(this.value)" value="15" />
+						<label for='month15' class='lang-tran' data-tran-word='15ofMonth'></label><br />
+						<span class='lang-tran' data-tran-word='orders.aspx.StartDate'></span>
+						<input id="txtStartDate" name="txtStartDate" type="text" value="" maxlength="10" size="10" />
+					</div>
+					<div class='options border'>
+						<div class='lang-tran' data-tran-word='ptc.selectOption'></div>
+						<select id='options' onchange='ptc_op.changeSelected($(this).val());'></select>
+					</div>
+					<div class='recurring'>
+						<input type="checkbox" id="perm" />
+						<label for="perm" class='lang-tran' data-tran-word='Permission'></label>
+					</div>
+					<a class="button5L lang-tran" data-tran-word='DS.BtnProject'></a>
+					<div class='clear'></div>
 				</div>
-				<div class='options border'>
-					<div><span class='lang-tran'>ptc.selectOption</span></div>
-					<select id='options' onchange='ptc_op.changeSelected($(this).val());'></select>
-				</div>
-				<div class='recurring'>
-					<input type="checkbox" id="perm" />
-					<label for="perm"><span class='lang-tran'>Permission</span></label>
-				</div>
-				<a class="button5L"><span class='lang-tran'>DS.BtnProject</span></a>
-				<div class='clear'></div>
 			</div>
-		</div>
-		<div id='description'>
+			<div id='description'></div>
 		</div>
 	</div>
 </div>
+<br />
+<div class='input'>
+	<button class='save'>Save</button>
+</div>
+<br />
+<h2>Thank You/Confirmation Email to Donors</h2>
+<div class='input'>
+	<div id='content-right'>Write a short thank-you message to be included in the confirmation email.<br />Do not include a salutation, but do include your name.<br />If this section is left blank the default text will be used.</div>
+	<div><span>Thank you Message (English):</span><textarea class='eAck'></textarea></div>
+	<div><span>Thank you Message (French):</span><textarea class='eAck-french'></textarea></div>
+</div>
+<br />
+<div><span>Preview:</span><label><input class='preview' name='preview' type='radio' value='en-US' />English</label><label><input class='preview' name='preview' type='radio' value='fr-CA' />French</label></div>
+<div id="letter" style="font-family: Calibri, Arial, sans-serif;color:#000000; margin:0">
+	<div style="width:630px">
+		<img class="staffPic" style='height: 210px;' />
+		<img style="width:420px; height: 210px; margin-left: -5px;" />
+		<div style="padding-bottom:3px;	border-bottom:1px solid #adafb2;margin-bottom:3px;">
+			<p class='lang-tran merge' data-tran-word='ptc.salutation'></p>
+			<span id='staffLetter' class='merge'></span>
+			<div style='clear:both;'></div>
+		</div>
+	</div>
+</div>
+<br />
+<div class='input'>
+	<button class='save'>Save</button>
 </div>
