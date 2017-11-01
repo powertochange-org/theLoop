@@ -55,8 +55,16 @@ class SO_API{
 	
 	static function xmlEncodeSpecial($str){
 		return str_replace(
+			array('&', '<', '>', '\\\'', '\''), 
+			array('&#38;', '&#60;' , '&#62;', '&#39;', '&#39;'), 
+			$str
+		);
+	}
+	
+	static function xmlDecodeSpecial($str){
+		return str_replace(
+			array('&#38;', '&#60;' , '&#62;', '&#39;'), 
 			array('&', '<', '>', '\''), 
-			array('&#38;', '&#60;' , '&#62;', '&#38;'), 
 			$str
 		);
 	}
