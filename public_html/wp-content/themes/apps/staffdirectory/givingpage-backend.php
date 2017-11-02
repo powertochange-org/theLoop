@@ -31,7 +31,7 @@ class Givingpage{
 			$r = self::openProjectInfo();
 			$r['pc'] = $pc;
 			$r['gender'] = self::getGender();
-			$r['eAcks'] = json_decode(SO_API::xmlDecodeSpecial(htmlspecialchars_decode(SO_API::getProduct(self::getProductID())->ExtensionData2)));
+			$r['eAcks'] = json_decode(SO_API::xmlDecodeSpecial(SO_API::getProduct(self::getProductID())->ExtensionData2));
 		}
 		//todo eAcks
 		
@@ -150,7 +150,7 @@ class Givingpage{
 			'@value' => json_encode($extensionData)
 		);
 		$data['ExtensionData2'] = array(
-			'@value' => json_encode(array(
+			'@cdata' => json_encode(array(
 				"en-US" => SO_API::xmlEncodeSpecial(strip_tags($_POST['eAck'])),
 				"fr-CA" => SO_API::xmlEncodeSpecial(strip_tags($_POST['eAckFre']))
 			))	
