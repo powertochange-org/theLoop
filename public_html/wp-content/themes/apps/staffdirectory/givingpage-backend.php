@@ -18,7 +18,7 @@ class Givingpage{
 		if (array_key_exists('locale', $_POST)){
 			$locale = $_POST['locale'];
 		}
-		$r = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale));
+		$r = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale, 'store' => ''));
 		wp_send_json($r['body']);
 	}
 	
@@ -185,8 +185,8 @@ class Givingpage{
 	
 	private static function openProjectInfo(){
 		$name = getName(null, true);
-		$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US'))['body']['d'][0];
-		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA'))['body']['d'][0];
+		$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US', 'store' => ''))['body']['d'][0];
+		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA', 'store' => ''))['body']['d'][0];
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
 				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
