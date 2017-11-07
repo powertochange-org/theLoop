@@ -89,8 +89,8 @@ getPicture: function(){
 setDescription: function(){
 	if(!$('.input .closed').is(':checked')){
 		var p = givingpage.project;
-		p.description = '<ml><locale name="en-US">' + $('.input .description').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale>' + 
-			'<locale name="fr-CA">' + $('.input .description-french').val().replace(/<(?:.|\n)*?>/gm, '') + '</locale></ml>';
+		p.description = '<ml><locale name="en-US">' + $('.input .description').val().replace(/<(?:.|\n)*?>/gm, '').replace('\n', '&lt;br /&gt;') + '</locale>' + 
+			'<locale name="fr-CA">' + $('.input .description-french').val().replace(/<(?:.|\n)*?>/gm, '').replace('\n', '&lt;br /&gt;') + '</locale></ml>';
 		p.display();
 	}
 },
@@ -210,8 +210,8 @@ init: function(host){
 		}
 		$('.input .image + img').attr('src', p.getPicture());
 		$('.input .closed').prop('checked', p.getName() == p.sku);
-		$('.input .description').val(ptc_op.parseXML(p.description, 'en-US'));
-		$('.input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA'));
+		$('.input .description').val(ptc_op.parseXML(p.description, 'en-US').replace('<br />', String.fromCharCode(10)));
+		$('.input .description-french').val(ptc_op.parseXML(p.description, 'fr-CA').replace('<br />', String.fromCharCode(10)));
 		
 		if(data.r.eAcks){
 			$('.input .eAck').val(data.r.eAcks['en-US']);
