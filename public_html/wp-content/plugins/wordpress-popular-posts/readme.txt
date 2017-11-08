@@ -3,8 +3,8 @@ Contributors: hcabrera
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=hcabrerab%40gmail%2ecom&lc=GB&item_name=WordPress%20Popular%20Posts%20Plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG_global%2egif%3aNonHosted
 Tags: popular, posts, widget, popularity, top
 Requires at least: 4.1
-Tested up to: 4.8.2
-Stable tag: 4.0.9
+Tested up to: 4.8.3
+Stable tag: 4.0.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +23,7 @@ WordPress Popular Posts is a highly customizable widget that displays your most 
 * **Sorting options** - Order your popular list by comments, views (default) or average views per day!
 * **Use your own layout!** - WPP is flexible enough to let you customize the look and feel of your popular posts! (see [customizing WPP's HTML markup](https://github.com/cabrerahector/wordpress-popular-posts/wiki/5.-FAQ#how-can-i-use-my-own-html-markup-with-your-plugin) and [How to style WordPress Popular Posts](https://github.com/cabrerahector/wordpress-popular-posts/wiki/6.-Styling-the-list) for more.)
 * **Disqus support** - Sort your popular posts by Disqus comments count!
-* **Polylang & WPML support!**
+* **Polylang & WPML 3.2+ support!**
 * **WordPress Multisite support** - Each site on the network can have its own popular posts!
 
 = Other Features =
@@ -82,6 +82,27 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 4. WordPress Popular Posts Stats panel.
 
 == Changelog ==
+= 4.0.12 =
+
+- Fixes bug where WPP didn't return the right URL when using Polylang / WPML.
+- Fixes a compatibility issue with Yoast SEO (and potentially other plugins as well).
+- Improves compatibility with MySQL 5.7+.
+- Other minor fixes and improvements.
+
+= 4.0.11 =
+
+**If you're using a caching plugin, flushing its cache after installing / upgrading to this version is highly recommended.**
+
+- Fixes reference to tracking script.
+
+= 4.0.10 =
+
+**If you're using a caching plugin, flushing its cache after installing / upgrading to this version is highly recommended.**
+
+- Renames tracking script to prevent issues with ad blockers (props @Damienov).
+- Widget: fixes caching (props @zu2).
+- Exposes offset parameter to wpp shortcode / `wpp_get_mostpopular` template tag.
+
 = 4.0.9 =
 - Widget: fixes Author ID field not saving/updating.
 - Fixes WPP data caching (props @zu2).
@@ -161,33 +182,6 @@ Also, see [Release notes](https://cabrerahector.com/development/wordpress-popula
 - Minor improvements and bug fixes.
 - Documentation updated.
 
-= 3.3.3 =
-- Fixes potential XSS exploit in WPP's admin dashboard.
-- Adds filter to set which post types should be tracked by WPP ([details](https://github.com/cabrerahector/wordpress-popular-posts/wiki/3.-Filters#wpp_trackable_post_types)).
-- Adds ability to select first attached image as thumbnail source (thanks, [@serglopatin](https://github.com/serglopatin)!)
-
-= 3.3.2 =
-- Fixes warning message: 'stream does not support seeking in...'
-- Removes excerpt HTML encoding.
-- Passes widget ID to the instance variable for customization.
-- Adds CSS class current.
-- Documentation cleanup.
-- Other minor bug fixes / improvements.
-
-= 3.3.1 =
-- Fixes undefined index notice.
-- Makes sure legacy tables are deleted on plugin upgrade.
-
-= 3.3.0 =
-- Adds the ability to limit the amount of data logged by WPP (see Settings > WordPress Popular Posts > Tools for more).
-- Adds Polylang support (thanks, [@Chouby](https://github.com/Chouby)!)
-- Removes post data from DB on deletion.
-- Fixes whitespaces from post_type argument (thanks, [@getdave](https://github.com/getdave)!)
-- WPP now handles SSL detection for images.
-- Removes legacy datacache and datacache_backup tables.
-- Adds Settings page advertisement support.
-- FAQ section has been moved over to Github.
-
 See [full changelog](https://github.com/cabrerahector/wordpress-popular-posts/blob/master/changelog.md).
 
 == Credits ==
@@ -195,5 +189,5 @@ See [full changelog](https://github.com/cabrerahector/wordpress-popular-posts/bl
 * Flame graphic by freevector/Vecteezy.com.
 
 == Upgrade Notice ==
-= 4.0.9 =
-If you're using a caching plugin, flush its cache before upgrading to this version.
+= 4.0.11 =
+If you're using a caching plugin, flushing its cache after upgrading to this version is highly recommended.
