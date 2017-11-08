@@ -26,3 +26,8 @@
 	border-radius: 50%;
 	border: 1px white dashed;
 }
+
+.rotate{
+	vertical-align: top;
+	margin-left: 20px;
+}

@@ -42,13 +42,13 @@ $(document).ready(function() {
 	Givingpage::$prefix.'soServer_User',
 	Givingpage::$prefix.'soServer_Pass'
 )) ?>
-<h2>Staff Donation Page</h2>
+<h2>Staff Donation Page</h2><a class='right' href='/kb/articles/editing-your-donation-giving-page/'>Help</a>
 <div class='input'>
 	<div><span>ProjectCode:</span><span class='projectcode'>loading...</span></div>
 	<div><span>Link:</span><a target='_blank' class='link'></a></div>
 	<div><span>Amount:</span><input class='amount' type='text' /></div>
 	<div><span>Frequency:</span><label><input class='frequency ot' name='frequency' type='radio' value='ot' />One Time</label><label><input class='frequency m' name='frequency' type='radio' value='m' />Monthy</label></div>
-	<div><span>Picture:</span><input type="file" class="image" accept="image/png,image/gif,image/jpeg"><img /></div>
+	<div><span>Picture:</span><input type="file" class="image" accept="image/png,image/gif,image/jpeg"><img /><button class='rotate' style='display:none;'>Rotate</button></div>
 	<div><span>Closed Country:</span><input class='closed' type='checkbox' /></div><br />
 </div>
 <h2>'About' Text</h2>
