@@ -53,9 +53,9 @@ class SO_API{
 		return simplexml_load_string($result->DoItUsernamePwdResult);
 	}
 	
-	static function xmlEncodeSpecial($str){
+	static function xmlEncodeSpecial($str, $newline=false){
 		return str_replace(
-			array('&', '<', '>', '\\\'', '\'', chr(10)), 
+			array('&', '<', '>', '\\\'', '\'', ($newline ? chr(10) : '')), 
 			array('&#38;', '&#60;' , '&#62;', '&#39;', '&#39;', '&lt;br /&gt;'), 
 			$str
 		);
