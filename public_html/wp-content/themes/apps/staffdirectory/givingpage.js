@@ -4,6 +4,7 @@ project: null,
 host: '',
 resize: null,
 guid: 0,
+jCrop: null,
 
 override: function(){
 
@@ -71,7 +72,7 @@ resizeImage: function(image64, x, y, w, h){
 	//fix the size to square 350px
 	canvas.width = 350;
 	canvas.height = 350;
-	//350 is output size and 150 is the input size is scaled to that by css
+	//350 is output size and 150 is the input size (for the width) is scaled to that by css
 	canvas.getContext('2d').drawImage(image, -x * 350 / w, -y * 350 / h, 150 * 350 / w, image.naturalHeight * 150 / image.naturalWidth * 350 / h);
 	return canvas.toDataURL("image/png");
 },
@@ -162,6 +163,30 @@ updateLetter: function(){
 			//do nothing
 		});
 	}
+},
+
+setImage(image64){
+	$('.input .image + img').attr('src', image64);
+	jQuery(function($) {
+		if(null != givingpage.jCrop){
+			givingpage.jCrop.destroy();
+			$('.input .image + img').css('display', '');
+			$('.input .image + img').css('height', '');
+		}
+		//givingpage.jCrop = $.Jcrop('.input .image + img', {
+		$('.input .image + img').Jcrop(
+			{
+				aspectRatio: 1,
+				setSelect: [0, 0, 150, 150],
+				onSelect: function(c){
+					console.log('select');
+					givingpage.resize = c;
+					givingpage.project.display();
+				}
+			},
+			function(){ givingpage.jCrop = this}
+		);
+	});
 },
 
 init: function(host){
@@ -262,21 +287,11 @@ init: function(host){
 			$('.input .image').css('cursor', '');
 			return;
 		}
+		$('.rotate').show();
 		var fr = new FileReader();
 		fr.onload = function(){
 			$('.input .image').css('cursor', '');
-			$('.input .image + img').attr('src', fr.result);
-			jQuery(function($) {
-				$('.input .image + img').Jcrop({
-					aspectRatio: 1,
-					setSelect: [0, 0, 150, 150],
-					onSelect: function(c){
-						console.log('select');
-						givingpage.resize = c;
-						givingpage.project.display();
-					}
-				});
-			});
+			givingpage.setImage(fr.result);
 		};
 		fr.readAsDataURL(file);
 	});
@@ -317,6 +332,29 @@ init: function(host){
 	});
 	$('.input .description, .input .description-french').change(givingpage.setDescription);
 	$('.input .eAck, .input .eAck-french').change(givingpage.setEAck);
+	$('.input .rotate').click(function(){
+		var rot = $(this);
+		rot.css('cursor', 'wait');
+		rot.attr('disabled', 'disabled');
+		rot.html("Rotating");
+		setTimeout(function(){
+			var canvas = $('<canvas></canvas>')[0];
+			var image = $('.input .image + img')[0];
+			canvas.width = image.naturalHeight;
+			canvas.height = image.naturalWidth;
+			
+			var context = canvas.getContext('2d');
+			context.translate(image.naturalHeight, 0);
+			context.rotate(Math.PI / 2);
+			context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight);
+			context.rotate(-Math.PI / 2);
+			context.translate(image.naturalHeight, 0);
+			givingpage.setImage(canvas.toDataURL("image/png"));
+			rot.css('cursor', '');
+			rot.removeAttr('disabled');
+			rot.html("Rotate");
+		}, 0);
+	});
 	$('.input .save').click(function(){
 		var d = {};
 		var p = givingpage.project;
