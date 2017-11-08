@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=hcabr
 Tags: popular, posts, widget, popularity, top
 Requires at least: 4.1
 Tested up to: 4.8.2
-Stable tag: 4.0.3
+Stable tag: 4.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +23,7 @@ WordPress Popular Posts is a highly customizable widget that displays your most 
 * **Sorting options** - Order your popular list by comments, views (default) or average views per day!
 * **Use your own layout!** - WPP is flexible enough to let you customize the look and feel of your popular posts! (see [customizing WPP's HTML markup](https://github.com/cabrerahector/wordpress-popular-posts/wiki/5.-FAQ#how-can-i-use-my-own-html-markup-with-your-plugin) and [How to style WordPress Popular Posts](https://github.com/cabrerahector/wordpress-popular-posts/wiki/6.-Styling-the-list) for more.)
 * **Disqus support** - Sort your popular posts by Disqus comments count!
-* **WPML support!**
+* **Polylang & WPML support!**
 * **WordPress Multisite support** - Each site on the network can have its own popular posts!
 
 = Other Features =
@@ -82,6 +82,36 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 4. WordPress Popular Posts Stats panel.
 
 == Changelog ==
+= 4.0.9 =
+- Widget: fixes Author ID field not saving/updating.
+- Fixes WPP data caching (props @zu2).
+- Dashboard: updates Content Tags' documentation.
+- Main POT file updated.
+- Other minor bug fixes & improvements.
+
+= 4.0.8 =
+- Multisite: plugin can now be installed individually on each site.
+- Multisite: improved upgrade process.
+- Dashboard: adds multisite check to Debug screen.
+- Dashboard: have the Debug screen display active plugins only.
+- Improves compatibility with Beaver Builder.
+- Adds onload event to ajax widget (props @cawa-93).
+- Other minor bug fixes.
+
+= 4.0.6 =
+
+- Improves compatibility with Multisite.
+- Fixes a bug that prevented upgrade process from running on MU (props Greg Sullivan!)
+- Improves compatibility with Beaver Builder.
+
+= 4.0.5 =
+
+- Fixes the taxonomy filter for Custom Post Types.
+- Updates summary table structure and indexes.
+- Adds back ability to use custom wpp.css from theme.
+- Dashboard: adds a Debug screen to help with support inquiries.
+- Other minor bug fixes and improvements.
+
 = 4.0.3 =
 
 **This is a hotfix release.**
@@ -114,7 +144,7 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 - Adds ability to pick a Custom Time Range!
 - Adds ability to filter posts by other taxonomies than just categories!
 - Adds Relative Date Format.
-- Fixes error caused by changeset 41508 https://core.trac.wordpress.org/changeset/41508 (props hykw!)
+- Fixes broken views tracking caused by changeset 41508 https://core.trac.wordpress.org/changeset/41508 (props hykw!)
 - Improves PHP7+ compatibility.
 - Improves compatibility with WP-SpamShield, WooCommerce, Polylang and WPML.
 - Drops qTranslate support (that plugin has been long removed from WordPress.org anyways.)
@@ -165,5 +195,5 @@ See [full changelog](https://github.com/cabrerahector/wordpress-popular-posts/bl
 * Flame graphic by freevector/Vecteezy.com.
 
 == Upgrade Notice ==
-= 4.0 =
-If you're using a caching plugin, flush its cache before upgrading to v4.0.
+= 4.0.9 =
+If you're using a caching plugin, flush its cache before upgrading to this version.
