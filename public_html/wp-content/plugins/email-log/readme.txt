@@ -4,7 +4,7 @@ Tags: email, log, log email, resend email, multisite
 Requires PHP: 5.3  
 Requires at least: 4.0  
 Tested up to: 4.9  
-Stable tag: 2.2.2  
+Stable tag: 2.2.3  
 
 Log and view all outgoing emails from WordPress. Works with WordPress Multisite as well.
 
@@ -119,6 +119,9 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v2.2.3 - (2017-11-09) =
+- Fix: Escaped all the fields while displaying email details in popup.
 
 = v2.2.2 - (2017-11-07) =
 - Tweak: Improved the way nonce checks are performed.
@@ -285,6 +288,9 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 2.2.3 =
+Improved the security of the plugin by escaping all the fields before displaying them.
 
 = 2.2.2 =
 Improved the way nonce checks are done. No visible changes from functionality perspective.
