@@ -39,7 +39,7 @@ class WPP_Admin {
      * @var      string    $version    The current version of this plugin.
      */
     private $version;
-    
+
     /**
      * Administrative settings.
      *
@@ -47,7 +47,7 @@ class WPP_Admin {
      * @var		array
      */
     private $options = array();
-    
+
     /**
      * Slug of the plugin screen.
      *
@@ -68,10 +68,10 @@ class WPP_Admin {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
         $this->options = WPP_Settings::get( 'admin_options' );
-        
+
         // Delete old data on demand
         if ( 1 == $this->options['tools']['log']['limit'] ) {
-            
+
             if ( !wp_next_scheduled( 'wpp_cache_event' ) ) {
                 $tomorrow = time() + 86400;
                 $midnight  = mktime(
@@ -84,20 +84,20 @@ class WPP_Admin {
                 );
                 wp_schedule_event( $midnight, 'daily', 'wpp_cache_event' );
             }
-            
+
         } else {
             // Remove the scheduled event if exists
             if ( $timestamp = wp_next_scheduled( 'wpp_cache_event' ) ) {
                 wp_unschedule_event( $timestamp, 'wpp_cache_event' );
             }
-            
+
         }
-        
+
         // Allow WP themers / coders to override data sampling status (active/inactive)
         $this->options['tools']['sampling']['active'] = apply_filters( 'wpp_data_sampling', $this->options['tools']['sampling']['active'] );
 
     }
-    
+
     /**
      * Fired when a new blog is activated on WP Multisite.
      *
@@ -117,7 +117,7 @@ class WPP_Admin {
         restore_current_blog();
 
     } // end activate_new_site
-    
+
     /**
      * Fired when a blog is deleted on WP Multisite.
      *
@@ -129,10 +129,10 @@ class WPP_Admin {
     public function delete_site_data( $tables, $blog_id ){
 
         global $wpdb;
-        
+
         $tables[] = $wpdb->prefix . 'popularpostsdata';
         $tables[] = $wpdb->prefix . 'popularpostssummary';
-        
+
         return $tables;
 
     } // end delete_site_data
@@ -143,19 +143,19 @@ class WPP_Admin {
      * @since    4.0.0
      */
     public function enqueue_styles() {
-        
+
         if ( !isset( $this->plugin_screen_hook_suffix ) ) {
             return;
         }
 
         $screen = get_current_screen();
-        
+
         if ( isset( $screen->id ) && $screen->id == $this->plugin_screen_hook_suffix ) {
             wp_enqueue_style( 'font-awesome', plugin_dir_url( __FILE__ ) . 'css/vendor/font-awesome.min.css', array(), '4.7.0', 'all' );
             wp_enqueue_style( 'wpp-datepicker-theme', plugin_dir_url( __FILE__ ) . 'css/datepicker.css', array(), $this->version, 'all' );
             wp_enqueue_style( 'wordpress-popular-posts-admin-styles', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
         }
-        
+
     }
 
     /**
@@ -164,15 +164,15 @@ class WPP_Admin {
      * @since    4.0.0
      */
     public function enqueue_scripts() {
-        
+
         if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
             return;
         }
 
         $screen = get_current_screen();
-        
+
         if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-            
+
             wp_enqueue_script( 'thickbox' );
             wp_enqueue_style( 'thickbox' );
             wp_enqueue_script( 'media-upload' );
@@ -184,11 +184,11 @@ class WPP_Admin {
                 'nonce' => wp_create_nonce( "wpp_admin_nonce" )
             ));
             wp_enqueue_script( 'wordpress-popular-posts-admin-script' );
-            
+
         }
-        
+
     }
-    
+
     /**
      * Hooks into getttext to change upload button text when uploader is called by WPP.
      *
@@ -197,7 +197,7 @@ class WPP_Admin {
     public function thickbox_setup() {
 
         global $pagenow;
-        
+
         if ( 'media-upload.php' == $pagenow || 'async-upload.php' == $pagenow ) {
             add_filter( 'gettext', array( $this, 'replace_thickbox_text' ), 1, 3 );
         }
@@ -608,7 +608,7 @@ class WPP_Admin {
         remove_filter( 'wpp_query_limit', array( $this, 'chart_query_limit' ), 1 );
 
         if (
-            ( is_array($views_data) && !empty($views_data) ) 
+            ( is_array($views_data) && !empty($views_data) )
             || ( is_array($comments_data) && !empty($comments_data) )
         ) {
 
@@ -842,7 +842,7 @@ class WPP_Admin {
             $color_scheme = get_user_option( 'admin_color', $current_user->ID );
 
             if (
-                empty( $color_scheme ) 
+                empty( $color_scheme )
                 || !isset( $_wp_admin_css_colors[ $color_scheme ] )
             ) {
                 $color_scheme = 'fresh';
@@ -858,7 +858,7 @@ class WPP_Admin {
         return array( '#333', '#999', '#881111', '#a80000' );
 
     }
-    
+
     /**
      * Render the settings page for this plugin.
      *
@@ -867,7 +867,7 @@ class WPP_Admin {
     public function display_plugin_admin_page() {
         include_once( plugin_dir_path(__FILE__) . 'partials/admin.php' );
     }
-    
+
     /**
      * Registers Settings link on plugin description.
      *
@@ -881,7 +881,7 @@ class WPP_Admin {
         $plugin_file = 'wordpress-popular-posts/wordpress-popular-posts.php';
 
         if (
-            is_plugin_active( $plugin_file ) 
+            is_plugin_active( $plugin_file )
             && $plugin_file == $file
         ) {
             $links[] = '<a href="' . admin_url( 'options-general.php?page=wordpress-popular-posts' ) . '">' . __( 'Settings' ) . '</a>';
@@ -890,7 +890,7 @@ class WPP_Admin {
         return $links;
 
     }
-    
+
     /**
      * Register the WPP widget.
      *
@@ -899,7 +899,7 @@ class WPP_Admin {
     public function register_widget() {
         register_widget( 'WPP_Widget' );
     }
-    
+
     /**
      * Flushes post's cached thumbnail(s) when the image is changed.
      *
@@ -918,13 +918,13 @@ class WPP_Admin {
             $wpp_image = WPP_Image::get_instance();
 
             if ( $wpp_image->can_create_thumbnails() ) {
-            
+
                 $wpp_uploads_dir = $wpp_image->get_plugin_uploads_dir();
-                
+
                 if ( is_array($wpp_uploads_dir) && !empty($wpp_uploads_dir) ) {
-            
+
                     $files = glob( "{$wpp_uploads_dir['basedir']}/{$object_id}-featured-*.*" ); // get all related images
-                    
+
                     if ( is_array($files) && !empty($files) ) {
 
                         foreach( $files as $file ){ // iterate files
@@ -942,7 +942,7 @@ class WPP_Admin {
         }
 
     }
-    
+
     /**
      * Truncates thumbnails cache on demand.
      *
@@ -950,51 +950,51 @@ class WPP_Admin {
      * @global	object	wpdb
      */
     public function clear_thumbnails() {
-        
+
         $wpp_image = WPP_Image::get_instance();
 
         if ( $wpp_image->can_create_thumbnails() ) {
-        
+
             $wpp_uploads_dir = $wpp_image->get_plugin_uploads_dir();
-            
+
             if ( is_array($wpp_uploads_dir) && !empty($wpp_uploads_dir) ) {
-                
+
                 $token = isset( $_POST['token'] ) ? $_POST['token'] : null;
-                $key = get_option( "wpp_rand" );				
-                
+                $key = get_option( "wpp_rand" );
+
                 if (
-                    current_user_can( 'manage_options' ) 
+                    current_user_can( 'manage_options' )
                     && ( $token === $key )
                 ) {
-                    
+
                     if ( is_dir( $wpp_uploads_dir['basedir'] ) ) {
-                        
+
                         $files = glob( "{$wpp_uploads_dir['basedir']}/*" ); // get all related images
-                    
+
                         if ( is_array($files) && !empty($files) ) {
-    
+
                             foreach( $files as $file ){ // iterate files
                                 if ( is_file( $file ) ) {
                                     @unlink( $file ); // delete file
                                 }
                             }
-                            
+
                             echo 1;
-    
+
                         } else {
                             echo 2;
                         }
-                        
+
                     } else {
                         echo 3;
                     }
-                
+
                 } else {
                     echo 4;
                 }
-                
+
             }
-            
+
         } else {
             echo 3;
         }
@@ -1002,7 +1002,7 @@ class WPP_Admin {
         wp_die();
 
     }
-    
+
     /**
      * Truncates data and cache on demand.
      *
@@ -1016,43 +1016,43 @@ class WPP_Admin {
         $key = get_option( "wpp_rand" );
 
         if (
-            current_user_can( 'manage_options' ) 
-            && ( $token === $key ) 
+            current_user_can( 'manage_options' )
+            && ( $token === $key )
             && $clear
         ) {
-            
+
             global $wpdb;
 
             // set table name
             $prefix = $wpdb->prefix . "popularposts";
 
             if ( $clear == 'cache' ) {
-                
+
                 if ( $wpdb->get_var("SHOW TABLES LIKE '{$prefix}summary'") ) {
-                    
+
                     $wpdb->query("TRUNCATE TABLE {$prefix}summary;");
                     $this->flush_transients();
-                    
+
                     echo 1;
-                    
+
                 } else {
                     echo 2;
                 }
-                
+
             } elseif ( $clear == 'all' ) {
-                
+
                 if ( $wpdb->get_var("SHOW TABLES LIKE '{$prefix}data'") && $wpdb->get_var("SHOW TABLES LIKE '{$prefix}summary'") ) {
-                    
+
                     $wpdb->query("TRUNCATE TABLE {$prefix}data;");
                     $wpdb->query("TRUNCATE TABLE {$prefix}summary;");
                     $this->flush_transients();
-                    
+
                     echo 1;
-                    
+
                 } else {
                     echo 2;
                 }
-                
+
             } else {
                 echo 3;
             }
@@ -1063,7 +1063,7 @@ class WPP_Admin {
         wp_die();
 
     }
-    
+
     /**
      * Deletes cached (transient) data.
      *
@@ -1075,16 +1075,16 @@ class WPP_Admin {
         $wpp_transients = get_option( 'wpp_transients' );
 
         if ( $wpp_transients && is_array( $wpp_transients ) && !empty( $wpp_transients ) ) {
-            
+
             for ( $t=0; $t < count( $wpp_transients ); $t++ )
                 delete_transient( $wpp_transients[$t] );
 
             update_option( 'wpp_transients', array() );
-            
+
         }
 
     }
-    
+
     /**
      * Purges post from data/summary tables.
      *
@@ -1112,11 +1112,11 @@ class WPP_Admin {
             // Delete from data table
             $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}popularpostsdata WHERE postid = %d;", $post_ID ) );
             // Delete from summary table
-            $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}popularpostssummary WHERE postid = %d;", $post_ID ) );				
+            $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}popularpostssummary WHERE postid = %d;", $post_ID ) );
         }
 
     }
-    
+
     /**
      * Purges old post data from summary table.
      *
@@ -1130,35 +1130,14 @@ class WPP_Admin {
         $wpdb->query( "DELETE FROM {$wpdb->prefix}popularpostssummary WHERE view_date < DATE_SUB('" . WPP_Helper::curdate() . "', INTERVAL {$this->options['tools']['log']['expires_after']} DAY);" );
 
     } // end purge_data
-    
+
     /**
      * Checks if an upgrade procedure is required.
      *
      * @since	2.4.0
      */
     public function upgrade_check(){
-
-        // Multisite setup, upgrade all sites
-        if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-            global $wpdb;
-
-            $original_blog_id = get_current_blog_id();
-            $blogs_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-
-            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-            foreach( $blogs_ids as $blog_id ) {
-                switch_to_blog( $blog_id );
-                $this->upgrade_site();
-            }
-
-            // Switch back to current blog
-            switch_to_blog( $original_blog_id );
-        }
-        else {
-            $this->upgrade_site();
-        }
-
+        $this->upgrade_site();
     } // end upgrade_check
 
     /**
@@ -1187,19 +1166,30 @@ class WPP_Admin {
      */
     private function upgrade() {
 
+        $now = WPP_Helper::now();
+
         // Keep the upgrade process from running too many times
-        if ( get_option('wpp_update') )
-            return;
-        
-        add_option( 'wpp_update', '1' );
+        if ( $wpp_update = get_option('wpp_update') ) {
+
+            $from_time = strtotime( $wpp_update );
+            $to_time = strtotime( $now );
+            $difference_in_minutes = round( abs( $to_time - $from_time ) / 60, 2 );
+
+            // Upgrade flag is still valid, abort
+            if ( $difference_in_minutes <= 15 )
+                return;
+
+            // Upgrade flag expired, delete it and continue
+            delete_option( 'wpp_update' );
+
+        }
+
+        add_option( 'wpp_update', $now );
 
         global $wpdb;
 
         // Set table name
         $prefix = $wpdb->prefix . "popularposts";
-
-        // Validate the structure of the tables, create missing tables / fields if necessary
-        WPP_Activator::track_new_site();
 
         // Update data table structure and indexes
         $dataFields = $wpdb->get_results( "SHOW FIELDS FROM {$prefix}data;" );
@@ -1232,32 +1222,38 @@ class WPP_Admin {
         $summaryIndexes = $wpdb->get_results( "SHOW INDEX FROM {$prefix}summary;" );
         foreach( $summaryIndexes as $index ) {
             if ( 'ID_date' == $index->Key_name ) {
-                $wpdb->query( "ALTER TABLE {$prefix}summary DROP INDEX ID_date, DROP INDEX last_viewed;" );
-                break;
+                $wpdb->query( "ALTER TABLE {$prefix}summary DROP INDEX ID_date;" );
+            }
+
+            if ( 'last_viewed' == $index->Key_name ) {
+                $wpdb->query( "ALTER TABLE {$prefix}summary DROP INDEX last_viewed;" );
             }
         }
 
+        // Validate the structure of the tables, create missing tables / fields if necessary
+        WPP_Activator::track_new_site();
+
         // Check storage engine
         $storage_engine_data = $wpdb->get_var( "SELECT `ENGINE` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA`='{$wpdb->dbname}' AND `TABLE_NAME`='{$prefix}data';" );
-        
+
         if ( 'InnoDB' != $storage_engine_data ) {
             $wpdb->query( "ALTER TABLE {$prefix}data ENGINE=InnoDB;" );
         }
-        
+
         $storage_engine_summary = $wpdb->get_var( "SELECT `ENGINE` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA`='{$wpdb->dbname}' AND `TABLE_NAME`='{$prefix}summary';" );
-        
+
         if ( 'InnoDB' != $storage_engine_summary ) {
             $wpdb->query( "ALTER TABLE {$prefix}summary ENGINE=InnoDB;" );
         }
 
         // Update WPP version
         update_option( 'wpp_ver', $this->version );
-        
+
         // Remove upgrade flag
         delete_option( 'wpp_update' );
 
     } // end __upgrade
-    
+
     /**
      * Checks if the technical requirements are met.
      *
@@ -1293,7 +1289,7 @@ class WPP_Admin {
         return $errors;
 
     } // end check_requirements
-    
+
     /**
      * Outputs error messages to wp-admin.
      *
