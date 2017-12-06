@@ -28,7 +28,7 @@ class WordPressPopularPosts {
     public function __construct(){
 
         $this->plugin_name = 'wordpress-popular-posts';
-        $this->version = '4.0.12';
+        $this->version = WPP_VER;
 
         $this->load_dependencies();
         $this->set_locale();
@@ -125,7 +125,7 @@ class WordPressPopularPosts {
         // Check admin notices
         $this->loader->add_action( 'admin_notices', $plugin_admin, 'check_admin_notices' );
         // Upgrade check
-        $this->loader->add_action( 'admin_head', $plugin_admin, 'upgrade_check' );
+        $this->loader->add_action( 'init', $plugin_admin, 'upgrade_check' );
         // Hook fired when a new blog is activated on WP Multisite
         $this->loader->add_action( 'wpmu_new_blog', $plugin_admin, 'activate_new_site' );
         // Hook fired when a blog is deleted on WP Multisite
