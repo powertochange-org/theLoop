@@ -53,10 +53,18 @@ class SO_API{
 		return simplexml_load_string($result->DoItUsernamePwdResult);
 	}
 	
-	static function xmlEncodeSpecial($str){
+	static function xmlEncodeSpecial($str, $newline=false){
 		return str_replace(
-			array('&', '<', '>', '\''), 
-			array('&#38;', '&#60;' , '&#62;', '&#38;'), 
+			array('&', '<', '>', '\\\'', '\'', '\\\"', '\"', ($newline ? chr(10) : '')), 
+			array('&#38;', '&#60;' , '&#62;', '&#39;', '&#39;', '&#34;', '&#34;', '&lt;br /&gt;'), 
+			$str
+		);
+	}
+	
+	static function xmlDecodeSpecial($str){
+		return str_replace(
+			array('&#38;', '&#60;' , '&#62;', '&#39;', '&#34;'), 
+			array('&', '<', '>', '\'', '\"'), 
 			$str
 		);
 	}

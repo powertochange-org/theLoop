@@ -69,8 +69,16 @@ class WPP_Public {
      * @since    4.0.0
      */
     public function enqueue_styles() {
-        if ( $this->admin_options['tools']['css'] )
-            wp_enqueue_style( 'wordpress-popular-posts-css', plugin_dir_url( __FILE__ ) . 'css/wpp.css', array(), $this->version, 'all' );
+        if ( $this->admin_options['tools']['css'] ) {
+            $theme_file = get_stylesheet_directory() . '/wpp.css';
+
+            if ( @is_file( $theme_file ) ) {
+                wp_enqueue_style( 'wordpress-popular-posts-css', get_stylesheet_directory_uri() . "/wpp.css", array(), $this->version, 'all' );
+            } // Load stock stylesheet
+            else {
+                wp_enqueue_style( 'wordpress-popular-posts-css', plugin_dir_url( __FILE__ ) . 'css/wpp.css', array(), $this->version, 'all' );
+            }
+        }
     }
 
     /**
@@ -94,7 +102,7 @@ class WPP_Public {
                 || ( 2 == $this->admin_options['tools']['log']['level'] && is_user_logged_in() )
             ) {
 
-                wp_register_script( 'wpp-tracking', plugin_dir_url( __FILE__ ) . 'js/tracking.js', array(), $this->version, false );
+                wp_register_script( 'wpp-js', plugin_dir_url( __FILE__ ) . 'js/wpp.js', array(), $this->version, false );
 
                 $params = array(
                     'sampling_active' => $this->admin_options['tools']['sampling']['active'],
@@ -104,9 +112,9 @@ class WPP_Public {
                     'ID' => $is_single,
                     'token' => wp_create_nonce( 'wpp-token' )
                 );
-                wp_localize_script( 'wpp-tracking', 'wpp_params', $params );
+                wp_localize_script( 'wpp-js', 'wpp_params', $params );
 
-                wp_enqueue_script( 'wpp-tracking' );
+                wp_enqueue_script( 'wpp-js' );
 
             }
 
@@ -201,8 +209,8 @@ class WPP_Public {
         // Update range (summary) table
         $result2 = $wpdb->query( $wpdb->prepare(
             "INSERT INTO {$table}summary
-            (postid, pageviews, view_date, last_viewed) VALUES (%d, %d, %s, %s)
-            ON DUPLICATE KEY UPDATE pageviews = pageviews + %d, last_viewed = %s;",
+            (postid, pageviews, view_date, view_datetime) VALUES (%d, %d, %s, %s)
+            ON DUPLICATE KEY UPDATE pageviews = pageviews + %d, view_datetime = %s;",
             $post_ID,
             $views,
             $curdate,
@@ -234,6 +242,7 @@ class WPP_Public {
         /**
         * @var string $header
         * @var int $limit
+        * @var int $offset
         * @var string $range
         * @var bool $freshness
         * @var string $order_by
@@ -265,6 +274,7 @@ class WPP_Public {
         extract( shortcode_atts( array(
             'header' => '',
             'limit' => 10,
+            'offset' => 0,
             'range' => 'daily',
             'time_unit' => 'hour',
             'time_quantity' => 24,
@@ -307,6 +317,7 @@ class WPP_Public {
         $shortcode_ops = array(
             'title' => strip_tags( $header ),
             'limit' => ( !empty( $limit ) && WPP_Helper::is_number( $limit ) && $limit > 0 ) ? $limit : 10,
+            'offset' => ( !empty( $offset ) && WPP_Helper::is_number( $offset ) && $offset >= 0 ) ? $offset : 0,
             'range' => ( in_array($range, $range_values) ) ? $range : 'daily',
             'time_quantity' => ( !empty( $time_quantity ) && WPP_Helper::is_number( $time_quantity ) && $time_quantity > 0 ) ? $time_quantity : 24,
             'time_unit' => ( in_array($time_unit, $time_units) ) ? $time_unit : 'hour',
@@ -438,24 +449,28 @@ class WPP_Public {
                         $time = 60 * 60 * 24 * 365;
                     break;
 
-                    $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
+                    default:
+                        $time = 60 * 60;
+                    break;
 
-                    // Store transient
-                    set_transient( $transient_name, $popular_posts, $expiration );
+                }
 
-                    // Store transient in WPP transients array for garbage collection
-                    $wpp_transients = get_site_option('wpp_transients');
+                $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
 
-                    if ( !$wpp_transients ) {
-                        $wpp_transients = array( $transient_name );
-                        add_site_option( 'wpp_transients', $wpp_transients );
-                    } else {
-                        if ( !in_array($transient_name, $wpp_transients) ) {
-                            $wpp_transients[] = $transient_name;
-                            update_site_option( 'wpp_transients', $wpp_transients );
-                        }
+                // Store transient
+                set_transient( $transient_name, $popular_posts, $expiration );
+
+                // Store transient in WPP transients array for garbage collection
+                $wpp_transients = get_option('wpp_transients');
+
+                if ( !$wpp_transients ) {
+                    $wpp_transients = array( $transient_name );
+                    add_option( 'wpp_transients', $wpp_transients );
+                } else {
+                    if ( !in_array($transient_name, $wpp_transients) ) {
+                        $wpp_transients[] = $transient_name;
+                        update_option( 'wpp_transients', $wpp_transients );
                     }
-
                 }
 
             }

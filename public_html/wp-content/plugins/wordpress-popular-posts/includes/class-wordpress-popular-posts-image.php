@@ -239,7 +239,7 @@ class WPP_Image {
 
         // ELSE
         // image file path is invalid
-        return $this->render_image($this->default_thumbnail, $size, 'wpp-thumbnail wpp_imgeditor_error wpp_' . $image_meta['source'], null, $image->get_error_message());
+        return $this->render_image( $this->default_thumbnail, array( $image_meta['width'], $image_meta['height'] ), 'wpp-thumbnail wpp_imgeditor_error wpp_' . $image_meta['source'], null, $image->get_error_message() );
 
     } // end image_resize
 
@@ -346,7 +346,7 @@ class WPP_Image {
             $img_tag = '<!-- ' . $error . ' --> ';
         }
 
-        $img_tag .= '<img src="' . ( is_ssl() ? str_ireplace( "http://", "https://", $src ) : $src ) . '" width="' . $size[0] . '" height="' . $size[1] . '" alt="' . ( ($post_object instanceof stdClass && !isset($post_object->id) ? esc_attr( wp_strip_all_tags($post_object->title) ) : '' ) ) . '" class="' . $class . '" />';
+        $img_tag .= '<img src="' . ( is_ssl() ? str_ireplace( "http://", "https://", $src ) : $src ) . '" width="' . $size[0] . '" height="' . $size[1] . '" alt="' . ( ($post_object instanceof stdClass && isset($post_object->title) ? esc_attr( wp_strip_all_tags($post_object->title) ) : '' ) ) . '" class="' . $class . '" />';
 
         return apply_filters( 'wpp_render_image', $img_tag );
 

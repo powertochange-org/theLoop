@@ -18,7 +18,7 @@ class Givingpage{
 		if (array_key_exists('locale', $_POST)){
 			$locale = $_POST['locale'];
 		}
-		$r = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale));
+		$r = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale, 'store' => ''));
 		wp_send_json($r['body']);
 	}
 	
@@ -31,9 +31,8 @@ class Givingpage{
 			$r = self::openProjectInfo();
 			$r['pc'] = $pc;
 			$r['gender'] = self::getGender();
+			$r['eAcks'] = json_decode(SO_API::xmlDecodeSpecial(SO_API::getProduct(self::getProductID())->ExtensionData2));
 		}
-		//todo eAcks
-		
 		wp_send_json(array('r' => $r));
 	}
 	
@@ -133,12 +132,10 @@ class Givingpage{
 			}
 			
 			$data['Description'] = array(
-				'@cdata' => '<ml><locale name="en-US">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['des'])).'</locale>'.
-					'<locale name="fr-CA">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['desFre'])).'</locale></ml>'
+				'@cdata' => '<ml><locale name="en-US">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['des']), true).'</locale>'.
+					'<locale name="fr-CA">'.SO_API::xmlEncodeSpecial(strip_tags($_POST['desFre']), true).'</locale></ml>'
 			);
 		}
-		
-		//todo eAcks
 		
 		if(array_key_exists('onetime', $_POST)){
 			$extensionData['onetime'] = $_POST['onetime'];
@@ -147,6 +144,12 @@ class Givingpage{
 		}
 		$data['ExtensionData'] = array(
 			'@value' => json_encode($extensionData)
+		);
+		$data['ExtensionData2'] = array(
+			'@cdata' => json_encode(array(
+				"en-US" => SO_API::xmlEncodeSpecial(strip_tags($_POST['eAck'])),
+				"fr-CA" => SO_API::xmlEncodeSpecial(strip_tags($_POST['eAckFre']))
+			))	
 		);
 		wp_send_json(array('pid' => $pid, 'data' => $data, 'return' => SO_API::updateProduct($pid, $data)));
 	}
@@ -178,8 +181,8 @@ class Givingpage{
 	
 	private static function openProjectInfo(){
 		$name = getName(null, true);
-		$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US'))['body']['d'][0];
-		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA'))['body']['d'][0];
+		$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US', 'store' => ''))['body']['d'][0];
+		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA', 'store' => ''))['body']['d'][0];
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
 				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
@@ -217,7 +220,7 @@ class Givingpage{
 			}
 		}
 		http_response_code(400);
-		die();
+		die('Product not found!');
 	}
 	
 	private static function getAllItems(){

@@ -54,6 +54,11 @@ class WPP_Widget extends WP_Widget {
          */
         extract( $args, EXTR_SKIP );
 
+        $instance = WPP_Helper::merge_array_r(
+            WPP_Settings::$defaults[ 'widget_options' ],
+            (array) $instance
+        );
+
         $markup = ( $instance['markup']['custom_html'] || has_filter('wpp_custom_html') || has_filter('wpp_post') )
               ? 'custom'
               : 'regular';
@@ -107,6 +112,7 @@ class WPP_Widget extends WP_Widget {
                             }, function( response ){
                                 widget_container.children("p.wpp-loader").remove();
                                 widget_container.append(response);
+                                widget_container.trigger('wpp-onload');
                             }
                         );
 
@@ -207,10 +213,10 @@ class WPP_Widget extends WP_Widget {
         $ids = array_filter( explode( ",", rtrim(preg_replace( '|[^0-9,]|', '', $new_instance['uid'] ), ",") ), 'is_numeric' );
         // Got no valid IDs, clear
         if ( empty( $ids ) ) {
-            $instance['uid'] = '';
+            $instance['author'] = '';
         }
         else {
-            $instance['uid'] = implode( ",", $ids );
+            $instance['author'] = implode( ",", $ids );
         }
 
         $instance['shorten_title']['words'] = $new_instance['shorten_title-words'];
@@ -359,24 +365,28 @@ class WPP_Widget extends WP_Widget {
                             $time = 60 * 60 * 24 * 365;
                         break;
 
-                        $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
+                        default:
+                            $time = 60 * 60;
+                        break;
 
-                        // Store transient
-                        set_transient( $transient_name, $popular_posts, $expiration );
+                    }
 
-                        // Store transient in WPP transients array for garbage collection
-                        $wpp_transients = get_site_option('wpp_transients');
+                    $expiration = $time * $this->admin_options['tools']['cache']['interval']['value'];
 
-                        if ( !$wpp_transients ) {
-                            $wpp_transients = array( $transient_name );
-                            add_site_option( 'wpp_transients', $wpp_transients );
-                        } else {
-                            if ( !in_array($transient_name, $wpp_transients) ) {
-                                $wpp_transients[] = $transient_name;
-                                update_site_option( 'wpp_transients', $wpp_transients );
-                            }
+                    // Store transient
+                    set_transient( $transient_name, $popular_posts, $expiration );
+
+                    // Store transient in WPP transients array for garbage collection
+                    $wpp_transients = get_option('wpp_transients');
+
+                    if ( !$wpp_transients ) {
+                        $wpp_transients = array( $transient_name );
+                        add_option( 'wpp_transients', $wpp_transients );
+                    } else {
+                        if ( !in_array($transient_name, $wpp_transients) ) {
+                            $wpp_transients[] = $transient_name;
+                            update_option( 'wpp_transients', $wpp_transients );
                         }
-
                     }
 
                 }
@@ -393,8 +403,13 @@ class WPP_Widget extends WP_Widget {
 
         }
 
-        if ( defined('DOING_AJAX') && DOING_AJAX )
+        if (
+            defined('DOING_AJAX') 
+            && DOING_AJAX && !is_preview() 
+            && !( is_singular() && isset( $_GET['fl_builder'] ) )
+        ) {
             wp_die();
+        }
 
     }
 

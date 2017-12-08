@@ -27,10 +27,11 @@ if ( function_exists( 'is_multisite' ) && is_multisite() ) {
         switch_to_blog( $blog_id );
 
         // Delete plugin's options
-        delete_site_option( 'wpp_ver' );
-        delete_site_option( 'wpp_settings_config' );
-        delete_site_option( 'wpp_rand' );
-        delete_site_option( 'wpp_transients' );
+        delete_option( 'wpp_ver' );
+        delete_option( 'wpp_update' );
+        delete_option( 'wpp_settings_config' );
+        delete_option( 'wpp_rand' );
+        delete_option( 'wpp_transients' );
 
         // delete tables
         uninstall();
@@ -47,6 +48,7 @@ if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 
     // Delete plugin's options
     delete_option( 'wpp_ver' );
+    delete_option( 'wpp_update' );
     delete_option( 'wpp_settings_config' );
     delete_option( 'wpp_rand' );
     delete_option( 'wpp_transients' );

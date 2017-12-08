@@ -5,6 +5,7 @@
  *
  * @since 2.0
  */
+defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
  * Load an Email Log add-on.
@@ -24,7 +25,7 @@ function load_email_log_addon( $addon_class, $addon_file ) {
 
 	$addon_updater = null;
 
-	if ( ! \EmailLog\Util\is_admin_non_ajax_request() ) {
+	if ( \EmailLog\Util\is_admin_non_ajax_request() ) {
 		$addon_updater = new \EmailLog\Addon\AddonUpdater( $addon_file );
 	}
 
