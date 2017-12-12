@@ -1906,3 +1906,28 @@ div.update-profile h3 {
 	}
 	
 }
+
+#staff-apps-quadrant{
+	text-align: center;
+}
+
+#staff-apps-quadrant table{
+	margin: auto;
+}
+
+#staff-apps-quadrant td a{
+	display: block;
+	width: 63px;
+	padding-top: 65px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: top center;
+	color: black;
+	font-size: 12px;
+}
+
+#staff-apps-quadrant td{
+	border: none;
+	padding: 5px;
+	vertical-align: top;
+}
