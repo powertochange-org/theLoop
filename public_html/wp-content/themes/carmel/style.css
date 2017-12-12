@@ -156,11 +156,13 @@ header .popupMenu:hover{
 }
 
 header .button.related{
-	background:#f58220;
-	border:1px solid #eb8528;
-	cursor:default;
 	z-index:2;
-	position:relative;
+}
+
+@media (min-width: 768px){
+	header .button.related {
+		position: relative;
+	}
 }
 
 .menu-item a {
@@ -1239,7 +1241,7 @@ ul.sub-categories {
 	position:relative;
 	top:22px;
 	border-top:thin solid #218ac9;
-	z-index: 10;
+	z-index: 1;
 }
 #main-nav-full-screen .menu{
 	padding: 0;
@@ -1429,6 +1431,27 @@ div.update-profile h3 {
 
 #staff-apps-quadrant div.staff-app-button-styling {
 	padding: 5px 20px;
+}
+
+#staff-app-container {
+    display: inline-block;
+    position: static;
+    float: right;
+    margin-top: 0px;
+	margin-left: 10px;
+}
+
+@media (max-width: 767px){
+	#staff-app-container {
+		display: inline-block;
+		position: static;
+		float: none;
+		min-width: 0px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 0px;
+		margin-bottom: 10px;
+	}
 }
 
 /*
@@ -1882,4 +1905,29 @@ div.update-profile h3 {
 		width: 0px;
 	}
 	
+}
+
+#staff-apps-quadrant{
+	text-align: center;
+}
+
+#staff-apps-quadrant table{
+	margin: auto;
+}
+
+#staff-apps-quadrant td a{
+	display: block;
+	width: 63px;
+	padding-top: 65px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: top center;
+	color: black;
+	font-size: 12px;
+}
+
+#staff-apps-quadrant td{
+	border: none;
+	padding: 5px;
+	vertical-align: top;
 }
