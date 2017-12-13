@@ -139,7 +139,7 @@
                             }
                         }
                         if($st_category->count > $articleCount)
-                            echo '<li class="more"><a href="' . get_category_link($st_category->term_id) . '" title="' . sprintf(__('View all wikis in %s', 'framework'), $st_category->name) . '" ' . '>View more . . .</a></li>';
+                            echo '<li class="more"><a href="' . get_category_link($st_category) . '" title="' . sprintf(__('View all wikis in %s', 'framework'), $st_category->name) . '" ' . '>View more . . .</a></li>';
                         echo '</ul></div>';
                         $wikiSectionCount++;
                     } //End of the loop
