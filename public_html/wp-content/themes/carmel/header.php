@@ -60,19 +60,6 @@ if (get_theme_mod('survey_active')) {
                 // Close out of dialog
                 dismissSurvey();
             }
-			
-			
-        jQuery(document).ready(function(){
-          $.ajax({
-            type: "POST",
-            // use apps.powertochange.org for master,
-            // use ptcstaff.powertochange.local for dev 
-            url: "https://staffappsbutton.powertochange.org",
-            success: function (data) {
-                $('#staffAppButtonPlaceholder').replaceWith(data);
-            }
-          });           
-        });
         </script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -98,7 +85,10 @@ if (get_theme_mod('survey_active')) {
     			<a href="/"><img class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
         </div>
         <div class="header-right">
-          <div id="staffAppButtonPlaceholder" class="staff-app-position"></div>
+          <div id='staff-app-container'>
+          <a id="staffAppsButton" class="button related">Staff Apps</a>
+		  <script src="https://staffappsbutton.powertochange.org/script.js"></script>
+		  </div>
           <div class="search-position">
             <form method="get" id="sb_searchform" action="<?php bloginfo('home'); ?>/">
               <div class='search-box'>
