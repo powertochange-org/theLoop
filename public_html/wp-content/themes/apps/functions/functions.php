@@ -22,7 +22,7 @@ function getSpouse(){
 		global $current_user_id, $wpdb;
 		$ID = $current_user_id;
 		$user_login =  wp_get_current_user()->user_login;
-		$sql = 'SELECT `ID` FROM `wp_users` JOIN `employee` AS user ON wp_users.user_login = user.user_login JOIN `employee` AS spouse ON user.external_id = spouse.spouse_id WHERE `ID`!='.$ID.' AND spouse.user_login="'.$user_login.'"';	
+		$sql = "SELECT `ID` FROM `wp_users` JOIN `employee` AS user ON wp_users.user_login = user.user_login JOIN `employee` AS spouse ON (user.external_id = spouse.spouse_id or user.employee_number = spouse.spouse_employee_number) WHERE `ID`!= $ID AND spouse.user_login='$user_login'";	
 		$id = $wpdb->get_row($sql)->ID;
 		if ($id == "" || is_null($id)){
 			$function_spouse = -1;
