@@ -9,6 +9,7 @@ class Givingpage{
 	static function canUse(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
+		return true;
 		return '8' == getFieldEmployee('staff_account')[0] || 
 			'9' == getFieldEmployee('staff_account')[0];
 	}
@@ -26,6 +27,7 @@ class Givingpage{
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		$pc = getFieldEmployee('staff_account');
+		$pc = 819790;
 		$r = array('pc' => '');
 		if(self::canUse()){
 			$r = self::openProjectInfo();
@@ -186,14 +188,15 @@ class Givingpage{
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
 				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
-				'sename' => "$minOFE $name"
+				'sename' => "$minOFE $name",
+				'cats' => array(68)
 		);
-		$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
+		/*$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
 				'ministry' => getFieldEmployee('ministry'),
 				'department' => getFieldEmployee('department')
 			)
-		)['body']['d']);
+		)['body']['d']);*/
 		
 		if (-1 != getSpouse()) { 
 			$info['cats'][] = WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
@@ -214,6 +217,7 @@ class Givingpage{
 	
 	private static function getProductID(){
 		$pc = getFieldEmployee('staff_account');
+		$pc = 819790;
 		foreach(self::getAllItems()['projects'] as $id => $data){
 			if('' != $data['sku'] && $pc == $data['sku']){
 				return $id;
