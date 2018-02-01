@@ -8,14 +8,14 @@
 */
 
 
-//require('/wp-content/themes/apps/functions/functions.php');
+require_once('/wp-content/themes/apps/functions/functions.php');
 
 echo '<div id="screen-blackout" style="display:initial;">
 	<div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
     border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
     font-size:25px;">Creating a submission. Please wait. </div></div>';
 
-function getStringConstant($field, $e=null){
+/*function getStringConstant($field, $e=null){
 	global $wpdb;
 	$sql = "SELECT `value` FROM `string_store` WHERE `key` = '". $field. "'";
 	$result = $wpdb->get_row($sql)->value;
@@ -28,10 +28,10 @@ function getStringConstant($field, $e=null){
 	}
 	return str_replace ($e , "\\$e" ,$result);
 	
-}	
+}*/	
 
 //get a field from the employee table of the current user
-function getFieldEmployee($field, $id=null){
+/*function getFieldEmployee($field, $id=null){
 	global $current_user_id, $wpdb;
 	if ($id == null){
 		$id = $current_user_id;
@@ -39,7 +39,7 @@ function getFieldEmployee($field, $id=null){
 	$sql = "SELECT `".$field."` FROM `employee` JOIN wp_users ON employee.user_login = wp_users.user_login WHERE wp_users.id = ". $id;
 	$result = $wpdb->get_row($sql)->$field;
 	return $result;
-}
+}*/
 
 $allowance_constant = array(
 	'noAccess' => 0,
