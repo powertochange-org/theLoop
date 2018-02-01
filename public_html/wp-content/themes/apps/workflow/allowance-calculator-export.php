@@ -8,14 +8,14 @@
 */
 
 
-require_once('/wp-content/themes/apps/functions/functions.php');
+//require_once('/wp-content/themes/apps/functions/functions.php');
 
 echo '<div id="screen-blackout" style="display:initial;">
 	<div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
     border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
     font-size:25px;">Creating a submission. Please wait. </div></div>';
 
-/*function getStringConstant($field, $e=null){
+function getStringConstant($field, $e=null){
 	global $wpdb;
 	$sql = "SELECT `value` FROM `string_store` WHERE `key` = '". $field. "'";
 	$result = $wpdb->get_row($sql)->value;
@@ -28,10 +28,10 @@ echo '<div id="screen-blackout" style="display:initial;">
 	}
 	return str_replace ($e , "\\$e" ,$result);
 	
-}*/	
+}	
 
 //get a field from the employee table of the current user
-/*function getFieldEmployee($field, $id=null){
+function getFieldEmployee($field, $id=null){
 	global $current_user_id, $wpdb;
 	if ($id == null){
 		$id = $current_user_id;
@@ -39,7 +39,29 @@ echo '<div id="screen-blackout" style="display:initial;">
 	$sql = "SELECT `".$field."` FROM `employee` JOIN wp_users ON employee.user_login = wp_users.user_login WHERE wp_users.id = ". $id;
 	$result = $wpdb->get_row($sql)->$field;
 	return $result;
-}*/
+}
+
+function getSpouse(){
+	//gets spouse's wb id 
+	// if no spouse return -1
+	global $function_spouse;
+	
+	
+	if (is_null($function_spouse)){
+		global $current_user_id, $wpdb;
+		$ID = $current_user_id;
+		$user_login =  wp_get_current_user()->user_login;
+		$sql = "SELECT `ID` FROM `wp_users` JOIN `employee` AS user ON wp_users.user_login = user.user_login JOIN `employee` AS spouse ON (user.external_id = spouse.spouse_id or user.employee_number = spouse.spouse_employee_number) WHERE `ID`!= $ID AND spouse.user_login='$user_login'";	
+		$id = $wpdb->get_row($sql)->ID;
+		if ($id == "" || is_null($id)){
+			$function_spouse = -1;
+		}
+		else {
+			$function_spouse = $id;
+		}
+	}
+	return $function_spouse;
+}
 
 $allowance_constant = array(
 	'noAccess' => 0,
