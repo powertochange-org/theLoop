@@ -8,7 +8,7 @@
 */
 
 
-//require('/wp-content/themes/apps/functions/functions.php');
+//require_once('/wp-content/themes/apps/functions/functions.php');
 
 echo '<div id="screen-blackout" style="display:initial;">
 	<div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
@@ -39,6 +39,28 @@ function getFieldEmployee($field, $id=null){
 	$sql = "SELECT `".$field."` FROM `employee` JOIN wp_users ON employee.user_login = wp_users.user_login WHERE wp_users.id = ". $id;
 	$result = $wpdb->get_row($sql)->$field;
 	return $result;
+}
+
+function getSpouse(){
+	//gets spouse's wb id 
+	// if no spouse return -1
+	global $function_spouse;
+	
+	
+	if (is_null($function_spouse)){
+		global $current_user_id, $wpdb;
+		$ID = $current_user_id;
+		$user_login =  wp_get_current_user()->user_login;
+		$sql = "SELECT `ID` FROM `wp_users` JOIN `employee` AS user ON wp_users.user_login = user.user_login JOIN `employee` AS spouse ON (user.external_id = spouse.spouse_id or user.employee_number = spouse.spouse_employee_number) WHERE `ID`!= $ID AND spouse.user_login='$user_login'";	
+		$id = $wpdb->get_row($sql)->ID;
+		if ($id == "" || is_null($id)){
+			$function_spouse = -1;
+		}
+		else {
+			$function_spouse = $id;
+		}
+	}
+	return $function_spouse;
 }
 
 $allowance_constant = array(
