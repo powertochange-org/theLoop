@@ -48,7 +48,7 @@ global $SERVER_SQL2012;
   
   // Use reportPath to create a more descriptive filename
   $customfilename = "";
-  if (isset($reportParams['ProjectCode'])){
+  if (isset($reportParams['ProjectCode']) && $reportParams['ProjectCode'] != ""){
 	$customfilename .= $reportParams['ProjectCode']. "_";
   }
   $customfilename .=preg_replace("#/.*?/#","",$reportPath);
