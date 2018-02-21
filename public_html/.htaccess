@@ -2,11 +2,11 @@ AddHandler php5-script .php
 
 # WP-AVOID-SLOW Begin
 # Add Expires headers
-ExpiresActive On
-ExpiresDefault "access plus 5 days"
-ExpiresByType text/css "modification plus 2 minutes"
+##ExpiresActive On
+##ExpiresDefault "access plus 5 days"
+##ExpiresByType text/css "modification plus 2 minutes"
 # ETags
-FileETag none
+##FileETag none
 # WP-AVOID-SLOW END
 
 ## The following will ensure the site uses https://
@@ -35,3 +35,9 @@ RewriteRule . /index.php [L]
 </IfModule>
 
 # END WordPress
+
+# BEGIN Shibboleth
+AuthType shibboleth
+Require shibboleth
+# END Shibboleth
+
