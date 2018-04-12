@@ -3,12 +3,12 @@
 Plugin Name: SearchWP Live Ajax Search
 Plugin URI: https://searchwp.com/
 Description: Enhance your search forms with live search, powered by SearchWP (if installed)
-Version: 1.2.0
+Version: 1.3.1
 Author: Jonathan Christopher
 Author URI: https://searchwp.com/
 Text Domain: swplas
 
-Copyright 2014-2017 Jonathan Christopher
+Copyright 2014-2018 Jonathan Christopher
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ class SearchWP_Live_Search {
 
 	public $dir;
 	public $url;
-	public $version = '1.2.0';
+	public $version = '1.3.1';
 	public $results = array();
 
 	function __construct() {
@@ -59,6 +59,8 @@ class SearchWP_Live_Search {
  * @since 1.0
  */
 function searchwp_live_search_init() {
+	load_plugin_textdomain( 'swplas', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
 	// if an AJAX request is taking place, it's potentially a search so we'll want to prepare for that
 	// else we'll prep the environment for the search form itself
 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
