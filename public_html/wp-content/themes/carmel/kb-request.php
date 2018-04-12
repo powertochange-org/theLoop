@@ -91,7 +91,7 @@ if(isset($_POST['newkbrequest']) && $_POST['newkbrequest'] != '') {
                 VALUES ('$insert_id', '$user')";
         $result2 = $wpdb->query($sql, ARRAY_A);
         
-        $msg = 'A new KB article has been requested at: '.$_SERVER['SERVER_NAME'].'/kb-request/>KB Requests \r\n Request : '.$request;
+        $msg = 'A new KB article has been requested at: '.$_SERVER['SERVER_NAME'].'/kb-request '."\r\n ".'Request : '.$request;
         ini_set('SMTP','smtp.powertochange.org');
         mail("helpdesk@p2c.com","New KB Article Request", $msg);
         $_SESSION['kbmsg'] = 'Your Knowledge Base Article request has been received successfully!';
