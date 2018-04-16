@@ -53,7 +53,8 @@ if (isset($_POST['REPORT']) && ($_POST['REPORT'] == 'Graph12MonthActualBudget' |
   $error = 'You must enter a valid Org Area and Ministry Code in the Ministry/Department field.';
 }
 // Check for missing start/end dates
-if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "AccountDonors" 
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport" 
+                              || $_POST['REPORT'] == "AccountDonors" 
                               || $_POST['REPORT'] == "DetailedRangeReport" 
                               || $_POST['REPORT'] == "SummaryReport")) {
   if($_POST['RPTSTARTYEARMONTH'] == '' || $_POST['RPTENDYEARMONTH'] == '') {
@@ -61,8 +62,7 @@ if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "AccountDonors"
   }
 }
 // Check for missing report date
-if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport" 
-                              || $_POST['REPORT'] == "InvestorReport"
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "InvestorReport"
                               || $_POST['REPORT'] == "Graph12MonthActualBudget"
                               || $_POST['REPORT'] == "12MonthActuals")) {
   if($_POST['RPTYEARMONTH'] == '') {
@@ -75,16 +75,16 @@ if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport"
 if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorReport") {
   require('financialreports/rs_functions.php');
 
-  $year = substr($_POST['RPTYEARMONTH'], 0, 4);
-  $month = substr($_POST['RPTYEARMONTH'], 5, 2);
+  $endYear = substr($_POST['RPTENDYEARMONTH'], 0, 4);
+  $endMonth = substr($_POST['RPTENDYEARMONTH'], 5, 2);
 	
   $lastday=31;
-  while (!checkdate(intval($month),$lastday,$year)) {
+  while (!checkdate(intval($endMonth),$lastday,$endYear)) {
     $lastday = $lastday-1;
   }
 
-  $reportParams['StartDate']= $year."-".$month."-01";
-  $reportParams['EndDate'] = $year."-".$month."-".$lastday;
+  $reportParams['StartDate']= $_POST['RPTSTARTYEARMONTH'].'-01';
+  $reportParams['EndDate'] = $endYear."-".$endMonth."-".$lastday;
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
   $reportParams['ExecuteAsUser'] = $user_id;
 
@@ -110,7 +110,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Invest
   }
   $error = $errorMsg;
 }
-//Code for Monthly Donors Report
+//Code for Recurring Monthly Donors Report
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "MonthlyDonors") {
   require('financialreports/rs_functions.php');
 
@@ -168,7 +168,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Accoun
 	$reportResult = $reportReturn;
   }
 }
-//Code for Account Donors Report
+//Code for Account Donors (with address, email, phone)
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "AccountDonors") {
   require('financialreports/rs_functions.php');
 
@@ -411,7 +411,7 @@ get_header(); ?>
                   <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected='selected'");}?>>Monthly Donation Report</OPTION>
                   <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected='selected'");}?>>13 Month Donor Report</OPTION>
                   <OPTION VALUE="MonthlyDonors" <?php if($REPORT == 'MonthlyDonors'){echo("selected='selected'");}?>>Recurring Monthly Donors</OPTION>
-				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected='selected'");}?>>Account Donors</OPTION>
+				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected='selected'");}?>>Account Donors (with address, email, phone)</OPTION>
 	              <OPTION VALUE="">--FINANCIAL REPORTS--</OPTION>
                   <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected='selected'");}?>>Detailed Income and Expense</OPTION>
                   <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected='selected'");}?>>Summary Income and Expense</OPTION>
@@ -631,7 +631,7 @@ get_header(); ?>
 			$("#repchoice option:selected").each(function () {
 				/* Form fields */
 				if($(this).val() == "DonorReport"){
-					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
+					showHideFields(["#staffaccount","#daterange","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "InvestorReport"){
 					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "MonthlyDonors"){
