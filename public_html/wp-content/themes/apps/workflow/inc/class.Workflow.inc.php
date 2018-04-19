@@ -211,7 +211,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '') {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -464,12 +464,22 @@ class Workflow {
                 $newApprovalStatus = 100;
             } else if($newstatus == 2 || $newstatus == 3) {
                 $newApprovalStatus = 0;
+                //If a specific level was selected for a request change
+                if($statuslevel > 0) {
+                    $newstatus = 4;
+                    $newApprovalStatus = $statuslevel;
+                }
             }
             
             $sql = "UPDATE workflowformstatus 
                     SET STATUS = '$newstatus',
                         STATUS_APPROVAL = '$newApprovalStatus',
                         DATE_SUBMITTED = '".date('Y-m-d')."' ";
+                        
+            if($statuslevel > 0) {
+                $newstatus = 3; //Set it back for the history
+            }
+            
             if($foundSupervisor) {
                 $sql .= ", APPROVER_DIRECT = '$directApprover'";
                 
@@ -1726,8 +1736,31 @@ class Workflow {
                 } else {
                     $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(7, 1);">Approve</button>';
                 }
-                $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                if($submittingStatus == 1) {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                } else {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="showPreview(2);">Request Change</button>';
+                }
+                
                 $response .= '<button type="button" id="denylink" class="processbutton" onclick="saveSubmission(8, 1);">Not Approved</button>';
+                //Create a request to level screen that allows an approval to go to any level
+                if($submittingStatus > 1) {
+                    $response .= '<div id="screen-blackout2" onclick="" style="display:none;">
+                        <div style="width: 500px;height:250px;margin-top: 200px;margin-left: auto; margin-right: auto;
+                        border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
+                        font-size:25px;">';
+                    $response .= 'Request a submission change to:';
+                    $response .= '<div><select name="statuslevel">';
+                    $response .= '<option value="0">'.Workflow::getUserName($submittedby).'</option>';
+                    for($r = 0; $r < $submittingStatus - 1; $r++) {
+                        $tempName = Workflow::getNextRoleName($r, true, $id, true, $submissionID);
+                        $response .= '<option value="'.($r + 1).'">'.$tempName.'</option>';
+                    }
+                    $response .= '</select></div>';
+                    $response .= '<button type="button" id="changelink" class="processbutton" style="float:none;" onclick="saveSubmission(3, 1);">Request Change</button>';
+                    $response .= '<br><button type="button" class="processbutton" style="float:none;" onclick="closePreview(2);">Close</button>';
+                    $response .= '</div></div>';
+                }
             } else if($configuration == 0) {
                 $response .= '<button type="button" id="retractlink" class="processbutton" onclick="saveSubmission(3, 0);">Retract Submission</button>';
             }
