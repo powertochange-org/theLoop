@@ -1167,6 +1167,7 @@ class Workflow {
             * 13 - Radio Boxes
             * 14 - File Upload
             * 15 - Text Area
+            * 16 - Name Select
             */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1597,6 +1598,45 @@ class Workflow {
                     $response .= '>'.$fieldvalue.'</textarea>';
                 } else {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
+                }
+                $response .= '</div></div>';
+            } else if($row['TYPE'] == 16) { //Name select
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                $response .= ' outside-text-center" style="';
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                $response .= '"><div class="inside-text-center">';
+                if($editableField) {
+                    $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'" class="chosen-select" data-placeholder=" " ';
+                    if($row['REQUIRED']) {
+                        $response .= ' required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
+                    if($emailMode)
+                        $response .= ' disabled';
+                    $response .= '><option value="">Select a name</option>';
+                    $values = Workflow::getAllUsers();
+                    for($i = 0; $i < count($values); $i++) {
+                        $response .= '<option value="'.$values[$i][1].'" ';
+                        if($values[$i][1] == $fieldvalue)
+                            $response .= 'selected';
+                        $response .= '>'.$values[$i][1].'</option>';
+                    }
+                    $response .= '</select>';
+                } else {
+                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
                 $response .= '</div></div>';
             }
