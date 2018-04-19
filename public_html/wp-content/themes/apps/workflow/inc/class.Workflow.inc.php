@@ -1539,6 +1539,8 @@ class Workflow {
                         value="" ';
                     if($row['REQUIRED'] && $fieldvalue == '')
                         $response .= ' required';
+                    if($emailMode)
+                        $response .= ' disabled';
                     $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
                     if($fieldvalue != '')
