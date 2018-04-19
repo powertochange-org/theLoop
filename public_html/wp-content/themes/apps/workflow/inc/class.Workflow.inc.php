@@ -1881,7 +1881,7 @@ class Workflow {
                     $response .= 'Denying submission # '.$submissionID;
                 /*else if($_GET['response'] == 'change')
                     $response .= 'Changing submission # '.$submissionID;*/
-                $response .= '</div></div>';
+                $response .= '<br><span style="font-size:12px;">Click here if the submission is not automatically reviewed.</span></div></div>';
             }
         }
         $response = str_replace('%EMAILCLICK%', $emailclick, $response);
