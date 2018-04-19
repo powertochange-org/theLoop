@@ -326,6 +326,11 @@ function fieldTypeContent(selectedValue) {
     } else {
         response += '<option value="14">File Upload</option>';
     }
+    if(selectedValue == 16) {
+        response += '<option value="16" selected>Employee Drop-down List</option>';
+    } else {
+        response += '<option value="16">Employee Drop-down List</option>';
+    }
     return response;
 }
 
@@ -706,6 +711,24 @@ function preview() {
             updateText += '><div class="inside-text-center" style="text-align:left;">';
             updateText += '<input type="file" disabled>';
             updateText += '</div></div>';
+        } else if(find("fieldtype"+i).value == 16) { //Name Select
+            if(find("approvallevel"+i).value != 0) {
+                updateText += '<div class="workflow workflowlabel approval"';
+            } else {
+                updateText += '<div class="workflow workflowlabel"';
+            }
+            if(find("workflowsize"+i).value != "") {
+                updateText += ' style="width:' + find("workflowsize"+i).value + 'px;"';
+            }
+            
+            updateText += '>';
+            
+            updateText += '<select>';
+            updateText += '<option>Select a name</option>';
+            for(x = 1; x <= 5; x++) {
+                updateText += '<option>Name ' + x + '</option>'; 
+            }
+            updateText += '</select></div>';
         }
     }
     
