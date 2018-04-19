@@ -1627,6 +1627,8 @@ class Workflow {
                     if($emailMode)
                         $response .= ' disabled';
                     $response .= '><option value="">Select a name</option>';
+                    if($fieldvalue != '')
+                        $response .= '<option value="'.$fieldvalue.'">'.$fieldvalue.'</option>';
                     $values = Workflow::getAllUsers();
                     for($i = 0; $i < count($values); $i++) {
                         $response .= '<option value="'.$values[$i][1].'" ';
