@@ -211,7 +211,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '') {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -464,12 +464,22 @@ class Workflow {
                 $newApprovalStatus = 100;
             } else if($newstatus == 2 || $newstatus == 3) {
                 $newApprovalStatus = 0;
+                //If a specific level was selected for a request change
+                if($statuslevel > 0) {
+                    $newstatus = 4;
+                    $newApprovalStatus = $statuslevel;
+                }
             }
             
             $sql = "UPDATE workflowformstatus 
                     SET STATUS = '$newstatus',
                         STATUS_APPROVAL = '$newApprovalStatus',
                         DATE_SUBMITTED = '".date('Y-m-d')."' ";
+                        
+            if($statuslevel > 0) {
+                $newstatus = 3; //Set it back for the history
+            }
+            
             if($foundSupervisor) {
                 $sql .= ", APPROVER_DIRECT = '$directApprover'";
                 
@@ -944,6 +954,7 @@ class Workflow {
         $hrvoid = '', $miscfields = '') {
         global $wpdb;
         $formActive = 0;
+        $ignoreQuickReply = false;
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
             $formActive = 1;
         
@@ -1156,6 +1167,7 @@ class Workflow {
             * 13 - Radio Boxes
             * 14 - File Upload
             * 15 - Text Area
+            * 16 - Name Select
             */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1204,8 +1216,11 @@ class Workflow {
                 if($editableField) {
                     $response .= '<input type="text" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" placeholder="'.$row['LABEL'].'" value="'.$fieldvalue.'" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED']) {
                         $response .= 'required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
                     if($emailMode)
                         $response .= ' disabled';
                     $response .= '>';
@@ -1428,8 +1443,10 @@ class Workflow {
                     $response .= 'name="workflowfieldid'.$row['FIELDID'].'"';
                 $response .= ' value="'.$row['LABEL'].'" ';
                 
-                if($editableField && $row['REQUIRED'])
+                if($editableField && $row['REQUIRED']) {
                     $response .= 'required ';
+                    $ignoreQuickReply = true; //There may be forms that have the radio button selected already so this may be requested to be turned off
+                }
                 
                 
                 if(!$editableField || $emailMode) {
@@ -1527,8 +1544,12 @@ class Workflow {
                     $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
                         onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
                         value="" ';
-                    if($row['REQUIRED'] && $fieldvalue == '')
+                    if($row['REQUIRED'] && $fieldvalue == '') {
                         $response .= ' required';
+                        $ignoreQuickReply = true;
+                    }
+                    if($emailMode)
+                        $response .= ' disabled';
                     $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
                     if($fieldvalue != '')
@@ -1567,13 +1588,57 @@ class Workflow {
                 if($editableField) {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED']) {
                         $response .= ' required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
                     if($emailMode)
                         $response .= ' disabled';
                     $response .= '>'.$fieldvalue.'</textarea>';
                 } else {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
+                }
+                $response .= '</div></div>';
+            } else if($row['TYPE'] == 16) { //Name select
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                $response .= ' outside-text-center" style="';
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                $response .= '"><div class="inside-text-center">';
+                if($editableField) {
+                    $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'" class="chosen-select" data-placeholder=" " ';
+                    if($row['REQUIRED']) {
+                        $response .= ' required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
+                    if($emailMode)
+                        $response .= ' disabled';
+                    $response .= '><option value="">Select a name</option>';
+                    if($fieldvalue != '')
+                        $response .= '<option value="'.$fieldvalue.'">'.$fieldvalue.'</option>';
+                    $values = Workflow::getAllUsers();
+                    for($i = 0; $i < count($values); $i++) {
+                        $response .= '<option value="'.$values[$i][1].'" ';
+                        if($values[$i][1] == $fieldvalue)
+                            $response .= 'selected';
+                        $response .= '>'.$values[$i][1].'</option>';
+                    }
+                    $response .= '</select>';
+                } else {
+                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
                 $response .= '</div></div>';
             }
@@ -1726,8 +1791,31 @@ class Workflow {
                 } else {
                     $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(7, 1);">Approve</button>';
                 }
-                $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                if($submittingStatus == 1) {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                } else {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="showPreview(2);">Request Change</button>';
+                }
+                
                 $response .= '<button type="button" id="denylink" class="processbutton" onclick="saveSubmission(8, 1);">Not Approved</button>';
+                //Create a request to level screen that allows an approval to go to any level
+                if($submittingStatus > 1) {
+                    $response .= '<div id="screen-blackout2" onclick="" style="display:none;">
+                        <div style="width: 500px;height:250px;margin-top: 200px;margin-left: auto; margin-right: auto;
+                        border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
+                        font-size:25px;">';
+                    $response .= 'Request a submission change to:';
+                    $response .= '<div><select name="statuslevel">';
+                    $response .= '<option value="0">'.Workflow::getUserName($submittedby).'</option>';
+                    for($r = 0; $r < $submittingStatus - 1; $r++) {
+                        $tempName = Workflow::getNextRoleName($r, true, $id, true, $submissionID);
+                        $response .= '<option value="'.($r + 1).'">'.$tempName.'</option>';
+                    }
+                    $response .= '</select></div>';
+                    $response .= '<button type="button" id="changelink" class="processbutton" style="float:none;" onclick="saveSubmission(3, 1);">Request Change</button>';
+                    $response .= '<br><button type="button" class="processbutton" style="float:none;" onclick="closePreview(2);">Close</button>';
+                    $response .= '</div></div>';
+                }
             } else if($configuration == 0) {
                 $response .= '<button type="button" id="retractlink" class="processbutton" onclick="saveSubmission(3, 0);">Retract Submission</button>';
             }
@@ -1807,22 +1895,24 @@ class Workflow {
         //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
             $tokenSuccess = (isset($_GET['tk']) && Workflow::workflowEmailTokenDecode($_GET['tk'], $submissionID));
-            if(!$tokenSuccess)
+            if(!$tokenSuccess) {
                 $emailclick = '<br><span style="color:red;font-weight:bold;">The email you tried using to review this form is out of date. Please review the below submission in detail.</span><br><br>';
-            else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus) {
-                $_SESSION['ERRMSG'] = 'approve';
-                echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
-            } else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
+            } else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus) {
                 echo '<script>window.onload = function() {
                     /*document.getElementById("changelink").click();*/
                     document.getElementById("add-comments").scrollIntoView();};</script>';
-            else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus) {
+            } else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus) {
                 $_SESSION['ERRMSG'] = 'deny';
                 echo '<script>window.onload = function() {document.getElementById("denylink").click();};</script>';
+            } else if($ignoreQuickReply) {
+                $emailclick = '<br><span style="color:red;font-weight:bold;">This form has required fields that have not been completed. Please review the below submission in detail.</span><br><br>';
+            } else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus) {
+                $_SESSION['ERRMSG'] = 'approve';
+                echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
             }
             
             //Draw a background to prevent someone from clicking while it auto clicks.
-            if($_GET['response'] == 'approve' || $_GET['response'] == 'deny') {
+            if(($_GET['response'] == 'approve' && !$ignoreQuickReply) || $_GET['response'] == 'deny') {
                 $response .= '<div id="screen-blackout" onclick="closePreview();" style="display:initial;">
                     <div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
                     border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
@@ -1833,7 +1923,7 @@ class Workflow {
                     $response .= 'Denying submission # '.$submissionID;
                 /*else if($_GET['response'] == 'change')
                     $response .= 'Changing submission # '.$submissionID;*/
-                $response .= '</div></div>';
+                $response .= '<br><span style="font-size:12px;">Click here if the submission is not automatically reviewed.</span></div></div>';
             }
         }
         $response = str_replace('%EMAILCLICK%', $emailclick, $response);

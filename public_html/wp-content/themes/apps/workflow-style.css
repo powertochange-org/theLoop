@@ -469,7 +469,7 @@ div.field951to1000 {
 }
 
 
-#screen-blackout {
+#screen-blackout, #screen-blackout2 {
     display: none;
     position: fixed;
     left: 0;
