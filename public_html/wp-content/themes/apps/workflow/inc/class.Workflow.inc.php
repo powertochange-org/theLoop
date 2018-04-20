@@ -223,6 +223,13 @@ class Workflow {
         $oldstatus = 1;
         $oldcomment = '';
         $historyApprovalStage = 0;
+        //Check if they have editing permission or not
+        if(!Workflow::hasSubmissionEditAccess($submissionID, $newstatus)) {
+            $_SESSION['ERRMSG'] .= '<br>An edit access error has occurred. Contact Helpdesk if you require more assistance.';
+            Workflow::workflowDebugTracking($user, $formID, $submissionID, '', 'User tried to update the submission but did not have permission. Status:'.$newstatus);
+            header('location: ?page=viewsubmissions');
+            die();
+        }
         
         //Store debug information to figure out any possible submission issues
         if(Workflow::debugModeSubmission())
@@ -637,6 +644,106 @@ class Workflow {
         
         
         return 'DEBUG: You attempted to load ID: '.$id.' : '.$response;
+    }
+    
+    public function hasSubmissionEditAccess($submissionID, $newStatus) {
+        global $wpdb;
+        $approver = 0;
+        $loggedInUser = Workflow::loggedInUser();
+        if($loggedInUser == '0') {
+            return 0;
+        }
+        $status = 1;
+        $sbid = $submissionID;
+        $submittedby = '';
+        $hrvoid = '';
+        
+        if(isset($sbid) && $sbid != '' && $sbid != 0) {
+            $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
+                            SEND_REMINDER
+                    FROM workflowformstatus
+                    INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                    WHERE SUBMISSIONID = '$sbid'";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) == 1) {
+                $row = $result[0];
+                $wfid = $row['FORMID'];
+                $status = $row['STATUS'];
+                $approvalStatus = $row['STATUS_APPROVAL'];
+                $hrvoid = $row['HR_VOID'];
+                $submittedby = $row['USER'];
+                $behalfof = $row['BEHALFOF'];
+                
+                if($hrvoid && !Workflow::hasRoleAccess($loggedInUser, 27)) {
+                    $_SESSION['ERRMSG'] = 'This submission is no longer available. Please contact HR if this submission was voided in error.';
+                    return 0;
+                }
+            } else {
+                $_SESSION['ERRMSG'] = 'That submission does not exist.';
+                return 0;
+            }
+            
+            $currentApprovalRole = -1;
+            if($approvalStatus == 0) { //the user is editing his own
+            } else if($approvalStatus == 1) {
+                $currentApprovalRole = $row['APPROVER_ROLE'];
+            } else if($approvalStatus == 2) {
+                $currentApprovalRole = $row['APPROVER_ROLE2'];
+            } else if($approvalStatus == 3) {
+                $currentApprovalRole = $row['APPROVER_ROLE3'];
+            } else if($approvalStatus == 4) {
+                $currentApprovalRole = $row['APPROVER_ROLE4'];
+            }
+            
+            if($approvalStatus == 100) { //When the submission is complete
+                //Check if they just need to process the form
+                if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
+                    if ($row['PROCESSED'] == 0)
+                        return 1;
+                }
+            }
+            if(Workflow::hasRoleAccess($loggedInUser, 26) && (60 <= $newStatus && $newStatus <= 63 || $newStatus == 50)) {
+                /* 50 - HR Notes
+                 * 60 - File (Archive) the submission
+                 * 61 - Un-file submission
+                 * 62 - Void submission
+                 * 63 - Unvoid submission
+                 */
+                return 1;
+            }
+            if($currentApprovalRole == 8 && !$approver) {
+                //Decided to still allow the direct supervisor to be able to edit the submission even though
+                //it wasn't directed to them. See ** below.
+                $approver = ($row['APPROVER_DIRECT'] == $loggedInUser 
+                    || (Workflow::getDirectApprover($submittedby) == $loggedInUser 
+                        && $approvalStatus == 1)//**If this gets changed, remove this line
+                    || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
+                
+            } else if($currentApprovalRole == 4 && !$approver) {
+                //Check if they are a director
+                $approver = Workflow::ministryDirector($submittedby, $loggedInUser);
+            } else if(!$approver) {
+                $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
+            }
+            
+            if($status == 4 && $approver) {
+                return 1;
+            } else if(($status == 7 || $status == 8) && $approver) {
+                return 0;
+            } else if(($status == 2 || $status == 3) && $loggedInUser == $behalfof) {
+                //Allowed to edit a draft
+                return 1;
+            } else if($submittedby == $loggedInUser && $approvalStatus != 100) {
+                if($status == 1 || $status == 2 || $status == 3 || $status == 4)
+                    return 1;
+            }
+        } else if($sbid == 0) { //New submission
+            return 1;
+        }
+        return 0;
     }
     
     /*
