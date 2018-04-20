@@ -3735,7 +3735,7 @@ class Workflow {
                 continue;
             } else if($row['ACTION'] == 3) {
                 $temp = 'Review Required';
-            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
+            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby && $row['APPROVAL_LEVEL'] == '0')) {
                 $temp = 'Submitted';
             } else if($row['ACTION'] == 4) {
                 $temp = 'Approved';
