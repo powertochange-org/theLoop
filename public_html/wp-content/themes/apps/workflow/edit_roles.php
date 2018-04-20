@@ -87,21 +87,22 @@ if($mode == 1) {
         
 } else if($mode == 4) {
     foreach ($_POST as $key => $value) {
-        //echo 'DEBUG:'.$key . ' has the value of ' . $value.'<br>';
+        if(stripos($key, 'REMINDER') != 0)
+            continue;
         
         if(stripos($key, 'USER') != 0) {
             $length = strlen($key);
             $endVal = stripos($key, 'USER');
             
-            
             $role = substr($key, 4, $endVal - 4);
             $user = substr($key, $endVal + 4, $length - $endVal + 4);
             
             $checked = ($value == 'on') ? 1 : 0;
+            $reminder = ($_POST[$key.'REMINDER'] == 'on') ? 1 : 0;
             
-            //echo 'DEBUG: ROLE:'.$role.' USER:'.$user.' CHECKED: '.$checked.'<br><br>';
+            //echo 'DEBUG: ROLE:'.$role.' USER:'.$user.' CHECKED: '.$checked.' REMINDER: '.$reminder.'<br><br>';
             
-            $workflow->updateMemberEmail($role, $user, $checked);
+            $workflow->updateMemberEmail($role, $user, $checked, $reminder);
         }
     }
     

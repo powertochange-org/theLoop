@@ -2720,7 +2720,7 @@ class Workflow {
         return $response;
     }
     
-    public function sendEmail($submissionID) {
+    public function sendEmail($submissionID, $reminder = 0) {
         require_once("PHPMailer-master/PHPMailerAutoload.php");
         global $wpdb;
         $workflow = new Workflow();
@@ -2776,13 +2776,13 @@ class Workflow {
         //Determine if an email should be sent and to whom
         if($approvalStatus == 0 && $status == 3) { 
             //rejected and needs further input
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
         } else if($role == '4') {
             //Director email
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login
                     WHERE employee.employee_number = 
@@ -2795,7 +2795,7 @@ class Workflow {
                             
                         )";
         } else if($role != 8 && $role != '') {
-            $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
+            $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON, REMINDER_ON
                     FROM workflowrolesmembers
                     INNER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login
@@ -2803,13 +2803,13 @@ class Workflow {
                     ORDER BY MEMBER";
             
         } else if($role != '') {
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$directApprover' 
                     ORDER BY MEMBER";
         } else if($approvalStatus == 100) {
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
@@ -2823,8 +2823,8 @@ class Workflow {
         $tempRec = '';
         foreach($emailRecepients as $row) {
             if($row['user_email'] != '') {
-                $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].'<br>';
-                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0);
+                $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].' REMINDER: '.$row['REMINDER_ON'].'<br>';
+                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0, $row['REMINDER_ON']);
             }
         }
         
@@ -2839,7 +2839,7 @@ class Workflow {
             foreach($emailRecepients as $row) {
                 if($row['user_email'] != '') {
                     $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].' PROCESSOR: ON<br>';
-                    $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 1);
+                    $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 1, $row['REMINDER_ON']);
                 }
             }
         }
@@ -2911,7 +2911,7 @@ class Workflow {
         }
         
         for($i = 0; $i < count($recepients); $i++) {
-            if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
+            if(!$reminder && $recepients[$i][2] == 1 || $reminder && $recepients[$i][4]) { //if sending of emails is checked in the email settings
                 if($status == 4) {
                     $modifiedTemplate = $template;
                     $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
@@ -3380,10 +3380,11 @@ class Workflow {
         return $result;
     }
     
-    public function updateMemberEmail($roleid, $member, $sendEmail) {
+    public function updateMemberEmail($roleid, $member, $sendEmail, $reminderEmail) {
         global $wpdb;
         $sql = "UPDATE workflowrolesmembers 
-                SET EMAIL_ON = '$sendEmail'
+                SET EMAIL_ON = '$sendEmail',
+                    REMINDER_ON = '$reminderEmail'
                 WHERE (ROLEID, MEMBER) = ('$roleid', '$member')";
         
         $wpdb->query($sql, ARRAY_A);
@@ -3419,7 +3420,7 @@ class Workflow {
         global $wpdb;
         $values = array();
         
-        $sql = "SELECT MEMBER, workflowrolesmembers.ROLEID, NAME, CONCAT(first_name, ' ', last_name) AS FULLNAME, EMAIL_ON
+        $sql = "SELECT MEMBER, workflowrolesmembers.ROLEID, NAME, CONCAT(first_name, ' ', last_name) AS FULLNAME, EMAIL_ON, REMINDER_ON
                 FROM workflowrolesmembers
                 INNER JOIN workflowroles ON workflowrolesmembers.ROLEID = workflowroles.ROLEID
                 LEFT OUTER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
@@ -3429,7 +3430,7 @@ class Workflow {
         
         foreach($result as $row) {
             $values[] = array('ROLE'.$row['ROLEID'].'USER'.$row['MEMBER'], $row['MEMBER'], $row['FULLNAME'], $row['NAME'], 
-                $row['EMAIL_ON'], $row['ROLEID']);
+                $row['EMAIL_ON'], $row['ROLEID'], $row['REMINDER_ON']);
         }
         
         return $values;
