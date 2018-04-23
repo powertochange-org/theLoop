@@ -1274,6 +1274,8 @@ function hideSettings(setting, fieldType) {
         if( fieldType == 3 || //create new line
             fieldType == 5 || //autofill name
             fieldType == 6 || //autofill date
+            fieldType == 7 || //date
+            fieldType == 16 || //name select
             fieldType == 9 || //horizontal line
             fieldType == 15 || //Text Area
             fieldType == 14 //File Upload
