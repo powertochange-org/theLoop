@@ -34,10 +34,9 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     <h2>Edit Email Sending</h2>
     <form id="changeemail" action="?page=edit_roles" method="POST" autocomplete="off">
         <table id="emailsettings">
-            <tr><th>ID</th><th>Emp Num</th><th>Name</th><th>Role</th><th>Email</th></tr>
+            <tr><th>ID</th><th>Emp Num</th><th>Name</th><th>Role</th><th>Email</th><th>Reminder<br>Email</th></tr>
         <?php
         $values = $workflow->getMemberRoles();
-        
         for($i = 0; $i < count($values); $i++) {
             if($values[$i][5] == $group) {?>
             <tr>
@@ -45,13 +44,20 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <td><?php echo $values[$i][1];?></td>
                 <td><?php echo $values[$i][2];?></td>
                 <td><?php echo $values[$i][3];?></td>
-                <td><input type="hidden" id="<?php echo $values[$i][0];?>" name="<?php echo $values[$i][0];?>" value="0">
+                <td>
+                    <input type="hidden" id="<?php echo $values[$i][0];?>" name="<?php echo $values[$i][0];?>" value="0">
                     <input type="checkbox" id="<?php echo $values[$i][0];?>" name="<?php echo $values[$i][0];?>" 
-                        <?php if($values[$i][4])echo 'checked';?>></td>
+                        <?php if($values[$i][4])echo 'checked';?>>
+                </td>
+                <td>
+                    <input type="hidden" id="<?php echo $values[$i][0];?>" name="<?php echo $values[$i][0];?>REMINDER" value="0">
+                    <input type="checkbox" id="<?php echo $values[$i][0];?>" name="<?php echo $values[$i][0];?>REMINDER" 
+                        <?php if($values[$i][6])echo 'checked';?>>
+                </td>
             </tr>
             
             <?php
-            } //echo '<option value="'.$values[$i][0].'">'.$values[$i][3].' - '.$values[$i][1].' - '.$values[$i][2].'</option>';
+            }
         }
         ?>
         </table>
