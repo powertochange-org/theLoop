@@ -18,7 +18,7 @@ $sql = "SELECT  SUBMISSIONID,
 $result = $wpdb->get_results($sql, ARRAY_A);
 
 foreach($result as $row) {
-    Workflow::sendEmail($row['SUBMISSIONID']);
+    Workflow::sendEmail($row['SUBMISSIONID'], 1);
 }
 
 ?>

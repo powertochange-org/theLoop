@@ -211,7 +211,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '') {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -223,6 +223,13 @@ class Workflow {
         $oldstatus = 1;
         $oldcomment = '';
         $historyApprovalStage = 0;
+        //Check if they have editing permission or not
+        if(!Workflow::hasSubmissionEditAccess($submissionID, $newstatus)) {
+            $_SESSION['ERRMSG'] .= '<br>An edit access error has occurred. Contact Helpdesk if you require more assistance.';
+            Workflow::workflowDebugTracking($user, $formID, $submissionID, '', 'User tried to update the submission but did not have permission. Status:'.$newstatus);
+            header('location: ?page=viewsubmissions');
+            die();
+        }
         
         //Store debug information to figure out any possible submission issues
         if(Workflow::debugModeSubmission())
@@ -464,12 +471,22 @@ class Workflow {
                 $newApprovalStatus = 100;
             } else if($newstatus == 2 || $newstatus == 3) {
                 $newApprovalStatus = 0;
+                //If a specific level was selected for a request change
+                if($statuslevel > 0) {
+                    $newstatus = 4;
+                    $newApprovalStatus = $statuslevel;
+                }
             }
             
             $sql = "UPDATE workflowformstatus 
                     SET STATUS = '$newstatus',
                         STATUS_APPROVAL = '$newApprovalStatus',
                         DATE_SUBMITTED = '".date('Y-m-d')."' ";
+                        
+            if($statuslevel > 0) {
+                $newstatus = 3; //Set it back for the history
+            }
+            
             if($foundSupervisor) {
                 $sql .= ", APPROVER_DIRECT = '$directApprover'";
                 
@@ -627,6 +644,106 @@ class Workflow {
         
         
         return 'DEBUG: You attempted to load ID: '.$id.' : '.$response;
+    }
+    
+    public function hasSubmissionEditAccess($submissionID, $newStatus) {
+        global $wpdb;
+        $approver = 0;
+        $loggedInUser = Workflow::loggedInUser();
+        if($loggedInUser == '0') {
+            return 0;
+        }
+        $status = 1;
+        $sbid = $submissionID;
+        $submittedby = '';
+        $hrvoid = '';
+        
+        if(isset($sbid) && $sbid != '' && $sbid != 0) {
+            $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                            BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
+                            SEND_REMINDER
+                    FROM workflowformstatus
+                    INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
+                    WHERE SUBMISSIONID = '$sbid'";
+            
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) == 1) {
+                $row = $result[0];
+                $wfid = $row['FORMID'];
+                $status = $row['STATUS'];
+                $approvalStatus = $row['STATUS_APPROVAL'];
+                $hrvoid = $row['HR_VOID'];
+                $submittedby = $row['USER'];
+                $behalfof = $row['BEHALFOF'];
+                
+                if($hrvoid && !Workflow::hasRoleAccess($loggedInUser, 27)) {
+                    $_SESSION['ERRMSG'] = 'This submission is no longer available. Please contact HR if this submission was voided in error.';
+                    return 0;
+                }
+            } else {
+                $_SESSION['ERRMSG'] = 'That submission does not exist.';
+                return 0;
+            }
+            
+            $currentApprovalRole = -1;
+            if($approvalStatus == 0) { //the user is editing his own
+            } else if($approvalStatus == 1) {
+                $currentApprovalRole = $row['APPROVER_ROLE'];
+            } else if($approvalStatus == 2) {
+                $currentApprovalRole = $row['APPROVER_ROLE2'];
+            } else if($approvalStatus == 3) {
+                $currentApprovalRole = $row['APPROVER_ROLE3'];
+            } else if($approvalStatus == 4) {
+                $currentApprovalRole = $row['APPROVER_ROLE4'];
+            }
+            
+            if($approvalStatus == 100) { //When the submission is complete
+                //Check if they just need to process the form
+                if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
+                    if ($row['PROCESSED'] == 0)
+                        return 1;
+                }
+            }
+            if(Workflow::hasRoleAccess($loggedInUser, 26) && (60 <= $newStatus && $newStatus <= 63 || $newStatus == 50)) {
+                /* 50 - HR Notes
+                 * 60 - File (Archive) the submission
+                 * 61 - Un-file submission
+                 * 62 - Void submission
+                 * 63 - Unvoid submission
+                 */
+                return 1;
+            }
+            if($currentApprovalRole == 8 && !$approver) {
+                //Decided to still allow the direct supervisor to be able to edit the submission even though
+                //it wasn't directed to them. See ** below.
+                $approver = ($row['APPROVER_DIRECT'] == $loggedInUser 
+                    || (Workflow::getDirectApprover($submittedby) == $loggedInUser 
+                        && $approvalStatus == 1)//**If this gets changed, remove this line
+                    || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
+                
+            } else if($currentApprovalRole == 4 && !$approver) {
+                //Check if they are a director
+                $approver = Workflow::ministryDirector($submittedby, $loggedInUser);
+            } else if(!$approver) {
+                $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
+            }
+            
+            if($status == 4 && $approver) {
+                return 1;
+            } else if(($status == 7 || $status == 8) && $approver) {
+                return 0;
+            } else if(($status == 2 || $status == 3) && $loggedInUser == $behalfof) {
+                //Allowed to edit a draft
+                return 1;
+            } else if($submittedby == $loggedInUser && $approvalStatus != 100) {
+                if($status == 1 || $status == 2 || $status == 3 || $status == 4)
+                    return 1;
+            }
+        } else if($sbid == 0) { //New submission
+            return 1;
+        }
+        return 0;
     }
     
     /*
@@ -944,6 +1061,7 @@ class Workflow {
         $hrvoid = '', $miscfields = '') {
         global $wpdb;
         $formActive = 0;
+        $ignoreQuickReply = false;
         if(0 <= $configuration && $configuration < 7 && !$emailMode || $configuration == 9 && $hasAnotherApproval)
             $formActive = 1;
         
@@ -1156,6 +1274,7 @@ class Workflow {
             * 13 - Radio Boxes
             * 14 - File Upload
             * 15 - Text Area
+            * 16 - Name Select
             */
             if($row['TYPE'] == 1) { //Label
                 if($row['APPROVAL_ONLY'] == 1) {
@@ -1204,8 +1323,11 @@ class Workflow {
                 if($editableField) {
                     $response .= '<input type="text" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" placeholder="'.$row['LABEL'].'" value="'.$fieldvalue.'" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED']) {
                         $response .= 'required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
                     if($emailMode)
                         $response .= ' disabled';
                     $response .= '>';
@@ -1428,8 +1550,10 @@ class Workflow {
                     $response .= 'name="workflowfieldid'.$row['FIELDID'].'"';
                 $response .= ' value="'.$row['LABEL'].'" ';
                 
-                if($editableField && $row['REQUIRED'])
+                if($editableField && $row['REQUIRED']) {
                     $response .= 'required ';
+                    $ignoreQuickReply = true; //There may be forms that have the radio button selected already so this may be requested to be turned off
+                }
                 
                 
                 if(!$editableField || $emailMode) {
@@ -1527,8 +1651,12 @@ class Workflow {
                     $response .= '<input type="file" id="file'.$row['FIELDID'].'" name="documents[]" size="70"  
                         onchange="submitFileAJAX('.$row['FIELDID'].');" accept="image/gif, image/jpeg, image/png,.xls,.xlsx,.doc,.docx, application/pdf,.txt" 
                         value="" ';
-                    if($row['REQUIRED'] && $fieldvalue == '')
+                    if($row['REQUIRED'] && $fieldvalue == '') {
                         $response .= ' required';
+                        $ignoreQuickReply = true;
+                    }
+                    if($emailMode)
+                        $response .= ' disabled';
                     $response .= '>(Max: '.ini_get('upload_max_filesize').')';
                     
                     if($fieldvalue != '')
@@ -1567,13 +1695,57 @@ class Workflow {
                 if($editableField) {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
                         '" ';
-                    if($row['REQUIRED'])
+                    if($row['REQUIRED']) {
                         $response .= ' required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
                     if($emailMode)
                         $response .= ' disabled';
                     $response .= '>'.$fieldvalue.'</textarea>';
                 } else {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
+                }
+                $response .= '</div></div>';
+            } else if($row['TYPE'] == 16) { //Name select
+                if($row['APPROVAL_ONLY'] == 1)
+                    if($configuration == 4 && $appLvlAccess || $approval_show)
+                        $response .= '<div class="workflow workflowright style-1 approval mobile ';
+                    else
+                        continue;
+                else
+                    $response .= '<div class="workflow workflowright style-1 mobile ';
+                
+                if($row['FIELD_WIDTH'] != NULL) {
+                    $response .= Workflow::fieldWidth($row['FIELD_WIDTH']);
+                }
+                $response .= ' outside-text-center" style="';
+                if($emailMode) {
+                    $response .= 'float: left; margin-right:10px;';
+                }
+                $response .= '"><div class="inside-text-center">';
+                if($editableField) {
+                    $response .= '<select id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'" class="chosen-select" data-placeholder=" " ';
+                    if($row['REQUIRED']) {
+                        $response .= ' required';
+                        if($fieldvalue == '')
+                            $ignoreQuickReply = true;
+                    }
+                    if($emailMode)
+                        $response .= ' disabled';
+                    $response .= '><option value="">Select a name</option>';
+                    if($fieldvalue != '')
+                        $response .= '<option value="'.$fieldvalue.'">'.$fieldvalue.'</option>';
+                    $values = Workflow::getAllUsers();
+                    for($i = 0; $i < count($values); $i++) {
+                        $response .= '<option value="'.$values[$i][1].'" ';
+                        if($values[$i][1] == $fieldvalue)
+                            $response .= 'selected';
+                        $response .= '>'.$values[$i][1].'</option>';
+                    }
+                    $response .= '</select>';
+                } else {
+                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
                 }
                 $response .= '</div></div>';
             }
@@ -1726,8 +1898,31 @@ class Workflow {
                 } else {
                     $response .= '<button type="button" id="approvelink" class="processbutton" onclick="saveSubmission(7, 1);">Approve</button>';
                 }
-                $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                if($submittingStatus == 1) {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="saveSubmission(3, 1);">Request Change</button>';
+                } else {
+                    $response .= '<button type="button" id="changelink" class="processbutton" onclick="showPreview(2);">Request Change</button>';
+                }
+                
                 $response .= '<button type="button" id="denylink" class="processbutton" onclick="saveSubmission(8, 1);">Not Approved</button>';
+                //Create a request to level screen that allows an approval to go to any level
+                if($submittingStatus > 1) {
+                    $response .= '<div id="screen-blackout2" onclick="" style="display:none;">
+                        <div style="width: 500px;height:250px;margin-top: 200px;margin-left: auto; margin-right: auto;
+                        border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
+                        font-size:25px;">';
+                    $response .= 'Request a submission change to:';
+                    $response .= '<div><select name="statuslevel">';
+                    $response .= '<option value="0">'.Workflow::getUserName($submittedby).'</option>';
+                    for($r = 0; $r < $submittingStatus - 1; $r++) {
+                        $tempName = Workflow::getNextRoleName($r, true, $id, true, $submissionID);
+                        $response .= '<option value="'.($r + 1).'">'.$tempName.'</option>';
+                    }
+                    $response .= '</select></div>';
+                    $response .= '<button type="button" id="changelink" class="processbutton" style="float:none;" onclick="saveSubmission(3, 1);">Request Change</button>';
+                    $response .= '<br><button type="button" class="processbutton" style="float:none;" onclick="closePreview(2);">Close</button>';
+                    $response .= '</div></div>';
+                }
             } else if($configuration == 0) {
                 $response .= '<button type="button" id="retractlink" class="processbutton" onclick="saveSubmission(3, 0);">Retract Submission</button>';
             }
@@ -1807,22 +2002,24 @@ class Workflow {
         //For processing the email click automatically
         if(isset($_GET['response']) && isset($_GET['lvl']) && $configuration == 4) {
             $tokenSuccess = (isset($_GET['tk']) && Workflow::workflowEmailTokenDecode($_GET['tk'], $submissionID));
-            if(!$tokenSuccess)
+            if(!$tokenSuccess) {
                 $emailclick = '<br><span style="color:red;font-weight:bold;">The email you tried using to review this form is out of date. Please review the below submission in detail.</span><br><br>';
-            else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus) {
-                $_SESSION['ERRMSG'] = 'approve';
-                echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
-            } else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus)
+            } else if($_GET['response'] == 'change' && $_GET['lvl'] == $approvalStatus) {
                 echo '<script>window.onload = function() {
                     /*document.getElementById("changelink").click();*/
                     document.getElementById("add-comments").scrollIntoView();};</script>';
-            else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus) {
+            } else if($_GET['response'] == 'deny' && $_GET['lvl'] == $approvalStatus) {
                 $_SESSION['ERRMSG'] = 'deny';
                 echo '<script>window.onload = function() {document.getElementById("denylink").click();};</script>';
+            } else if($ignoreQuickReply) {
+                $emailclick = '<br><span style="color:red;font-weight:bold;">This form has required fields that have not been completed. Please review the below submission in detail.</span><br><br>';
+            } else if($_GET['response'] == 'approve' && $_GET['lvl'] == $approvalStatus) {
+                $_SESSION['ERRMSG'] = 'approve';
+                echo '<script>window.onload = function() {document.getElementById("approvelink").click();};</script>';
             }
             
             //Draw a background to prevent someone from clicking while it auto clicks.
-            if($_GET['response'] == 'approve' || $_GET['response'] == 'deny') {
+            if(($_GET['response'] == 'approve' && !$ignoreQuickReply) || $_GET['response'] == 'deny') {
                 $response .= '<div id="screen-blackout" onclick="closePreview();" style="display:initial;">
                     <div style="width: 500px;margin-top: 200px;margin-left: auto; margin-right: auto;
                     border: 3px solid black;background-color: rgba(220, 220, 220, 1);text-align: center;
@@ -1833,7 +2030,7 @@ class Workflow {
                     $response .= 'Denying submission # '.$submissionID;
                 /*else if($_GET['response'] == 'change')
                     $response .= 'Changing submission # '.$submissionID;*/
-                $response .= '</div></div>';
+                $response .= '<br><span style="font-size:12px;">Click here if the submission is not automatically reviewed.</span></div></div>';
             }
         }
         $response = str_replace('%EMAILCLICK%', $emailclick, $response);
@@ -2630,7 +2827,7 @@ class Workflow {
         return $response;
     }
     
-    public function sendEmail($submissionID) {
+    public function sendEmail($submissionID, $reminder = 0) {
         require_once("PHPMailer-master/PHPMailerAutoload.php");
         global $wpdb;
         $workflow = new Workflow();
@@ -2686,13 +2883,13 @@ class Workflow {
         //Determine if an email should be sent and to whom
         if($approvalStatus == 0 && $status == 3) { 
             //rejected and needs further input
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
         } else if($role == '4') {
             //Director email
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login
                     WHERE employee.employee_number = 
@@ -2705,7 +2902,7 @@ class Workflow {
                             
                         )";
         } else if($role != 8 && $role != '') {
-            $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
+            $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON, REMINDER_ON
                     FROM workflowrolesmembers
                     INNER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login
@@ -2713,13 +2910,13 @@ class Workflow {
                     ORDER BY MEMBER";
             
         } else if($role != '') {
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$directApprover' 
                     ORDER BY MEMBER";
         } else if($approvalStatus == 100) {
-            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
                     FROM employee  
                     INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
                     WHERE employee.employee_number = '$userid'";
@@ -2733,8 +2930,8 @@ class Workflow {
         $tempRec = '';
         foreach($emailRecepients as $row) {
             if($row['user_email'] != '') {
-                $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].'<br>';
-                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0);
+                $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].' REMINDER: '.$row['REMINDER_ON'].'<br>';
+                $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0, $row['REMINDER_ON']);
             }
         }
         
@@ -2749,7 +2946,7 @@ class Workflow {
             foreach($emailRecepients as $row) {
                 if($row['user_email'] != '') {
                     $tempRec .= $row['user_email'].' SEND EMAIL: '.$row['EMAIL_ON'].' PROCESSOR: ON<br>';
-                    $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 1);
+                    $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 1, $row['REMINDER_ON']);
                 }
             }
         }
@@ -2821,7 +3018,7 @@ class Workflow {
         }
         
         for($i = 0; $i < count($recepients); $i++) {
-            if($recepients[$i][2] == 1) { //if sending of emails is checked in the email settings
+            if(!$reminder && $recepients[$i][2] == 1 || $reminder && $recepients[$i][4]) { //if sending of emails is checked in the email settings
                 if($status == 4) {
                     $modifiedTemplate = $template;
                     $modifiedTemplate = str_replace('%EMAILNAME%', Workflow::getUserName($recepients[$i][0]), $modifiedTemplate);
@@ -3290,10 +3487,11 @@ class Workflow {
         return $result;
     }
     
-    public function updateMemberEmail($roleid, $member, $sendEmail) {
+    public function updateMemberEmail($roleid, $member, $sendEmail, $reminderEmail) {
         global $wpdb;
         $sql = "UPDATE workflowrolesmembers 
-                SET EMAIL_ON = '$sendEmail'
+                SET EMAIL_ON = '$sendEmail',
+                    REMINDER_ON = '$reminderEmail'
                 WHERE (ROLEID, MEMBER) = ('$roleid', '$member')";
         
         $wpdb->query($sql, ARRAY_A);
@@ -3329,7 +3527,7 @@ class Workflow {
         global $wpdb;
         $values = array();
         
-        $sql = "SELECT MEMBER, workflowrolesmembers.ROLEID, NAME, CONCAT(first_name, ' ', last_name) AS FULLNAME, EMAIL_ON
+        $sql = "SELECT MEMBER, workflowrolesmembers.ROLEID, NAME, CONCAT(first_name, ' ', last_name) AS FULLNAME, EMAIL_ON, REMINDER_ON
                 FROM workflowrolesmembers
                 INNER JOIN workflowroles ON workflowrolesmembers.ROLEID = workflowroles.ROLEID
                 LEFT OUTER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
@@ -3339,7 +3537,7 @@ class Workflow {
         
         foreach($result as $row) {
             $values[] = array('ROLE'.$row['ROLEID'].'USER'.$row['MEMBER'], $row['MEMBER'], $row['FULLNAME'], $row['NAME'], 
-                $row['EMAIL_ON'], $row['ROLEID']);
+                $row['EMAIL_ON'], $row['ROLEID'], $row['REMINDER_ON']);
         }
         
         return $values;
@@ -3537,7 +3735,7 @@ class Workflow {
                 continue;
             } else if($row['ACTION'] == 3) {
                 $temp = 'Review Required';
-            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby || $row['APPROVAL_LEVEL'] == '0')) {
+            } else if($row['ACTION'] == 4 && ($row['USER'] == $submittedby && $row['APPROVAL_LEVEL'] == '0')) {
                 $temp = 'Submitted';
             } else if($row['ACTION'] == 4) {
                 $temp = 'Approved';

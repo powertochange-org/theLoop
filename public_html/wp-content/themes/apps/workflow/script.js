@@ -424,8 +424,18 @@ function formSearch() {
     document.searchform.action += "&mode=" + savedMode + "&tag=" + (savedMode == 0 ? savedTag0 : savedTag1);
 }
 
-function closePreview() {
-    find("screen-blackout").style.display = 'none';
+function closePreview(num) {
+    if(num == undefined) {
+        num = '';
+    }
+    find("screen-blackout" + num).style.display = 'none';
+}
+
+function showPreview(num) {
+    if(num == undefined) {
+        num = '';
+    }
+    find("screen-blackout" + num).style.display = 'block';
 }
 
 function printForm() {
