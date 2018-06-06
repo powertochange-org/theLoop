@@ -66,7 +66,6 @@ if ( isset($_POST['section']) ) {
                 $this->options['tools']['thumbnail']['field'] = ( !empty( $_POST['thumb_field']) ) ? $_POST['thumb_field'] : "wpp_thumbnail";
                 $this->options['tools']['thumbnail']['default'] = ( !empty( $_POST['upload_thumb_src']) ) ? $_POST['upload_thumb_src'] : "";
                 $this->options['tools']['thumbnail']['resize'] = $_POST['thumb_field_resize'];
-                $this->options['tools']['thumbnail']['responsive'] = $_POST['thumb_responsive'];
 
                 update_option( 'wpp_settings_config', $this->options );
                 echo "<div class=\"notice notice-success is-dismissible\"><p><strong>" . __( 'Settings saved.', 'wordpress-popular-posts' ) . "</strong></p></div>";
@@ -344,10 +343,11 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
         <h5><?php echo $chart_data['totals']['label_date_range']; ?></h5>
 
         <ul class="wpp-header-nav" id="wpp-time-ranges">
-            <li <?php echo ( 'daily' == $this->options['stats']['range'] || 'last24hours' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last24hours" title="Last 24 hours">24h</a></li>
-            <li <?php echo ( 'weekly' == $this->options['stats']['range'] || 'last7days' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last7days" title="Last 7 days">7d</a></li>
-            <li <?php echo ( 'monthly' == $this->options['stats']['range'] || 'last30days' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last30days" title="Last 30 days">30d</a></li>
-            <li <?php echo ( 'custom' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#"  data-range="custom" title="Custom">Custom</a></li>
+            <li <?php echo ( 'daily' == $this->options['stats']['range'] || 'today' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="today" title="<?php esc_attr_e( 'Today', 'wordpress-popular-posts' ); ?>"><?php _e( 'Today', 'wordpress-popular-posts' ); ?></a></li>
+            <li <?php echo ( 'daily' == $this->options['stats']['range'] || 'last24hours' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last24hours" title="<?php esc_attr_e( 'Last 24 hours', 'wordpress-popular-posts' ); ?>">24h</a></li>
+            <li <?php echo ( 'weekly' == $this->options['stats']['range'] || 'last7days' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last7days" title="<?php esc_attr_e( 'Last 7 days', 'wordpress-popular-posts' ); ?>">7d</a></li>
+            <li <?php echo ( 'monthly' == $this->options['stats']['range'] || 'last30days' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#" data-range="last30days" title="<?php esc_attr_e( 'Last 30 days', 'wordpress-popular-posts' ); ?>">30d</a></li>
+            <li <?php echo ( 'custom' == $this->options['stats']['range'] ) ? ' class="current"' : ''; ?>><a href="#"  data-range="custom" title="<?php esc_attr_e( 'Custom', 'wordpress-popular-posts' ); ?>"><?php _e( 'Custom', 'wordpress-popular-posts' ); ?></a></li>
         </ul>
 
         <div id="wpp-chart">
@@ -362,10 +362,10 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
 
     <div id="wpp-listing" class="wpp-content"<?php echo ( 'stats' == $current ) ? '' : ' style="display: none;"'; ?>>
         <ul class="wpp-tabbed-nav">
-            <li class="active"><a href="#" title="Most viewed"><span class="fa fa-eye"></span><span>Most viewed</span></a></li>
-            <li><a href="#" title="Most commented"><span class="fa fa-comment-o"></span><span>Most commented</span></a></li>
-            <li><a href="#" title="Trending now"><span class="fa fa-rocket"></span><span>Trending now</span></a></li>
-            <li><a href="#" title="Hall of Fame"><span class="fa fa-trophy"></span><span>Hall of Fame</span></a></li>
+            <li class="active"><a href="#" title="<?php esc_attr_e( 'Most viewed', 'wordpress-popular-posts' ); ?>"><span class="fa fa-eye"></span><span><?php _e( 'Most viewed', 'wordpress-popular-posts' ); ?></span></a></li>
+            <li><a href="#" title="<?php esc_attr_e( 'Most commented', 'wordpress-popular-posts' ); ?>"><span class="fa fa-comment-o"></span><span><?php _e( 'Most commented', 'wordpress-popular-posts' ); ?></span></a></li>
+            <li><a href="#" title="<?php esc_attr_e( 'Trending now', 'wordpress-popular-posts' ); ?>"><span class="fa fa-rocket"></span><span><?php _e( 'Trending now', 'wordpress-popular-posts' ); ?></span></a></li>
+            <li><a href="#" title="<?php esc_attr_e( 'Hall of Fame', 'wordpress-popular-posts' ); ?>"><span class="fa fa-trophy"></span><span><?php _e( 'Hall of Fame', 'wordpress-popular-posts' ); ?></span></a></li>
         </ul>
 
         <div class="wpp-tab-content wpp-tab-content-active">
@@ -487,9 +487,9 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
                             <div id="thumb-review">
                                 <img src="<?php echo ( $this->options['tools']['thumbnail']['default'] ) ? str_replace( parse_url( $this->options['tools']['thumbnail']['default'], PHP_URL_SCHEME ) . ':', '', $this->options['tools']['thumbnail']['default'] ) : plugins_url() . '/wordpress-popular-posts/public/images/no_thumb.jpg'; ?>" alt="" border="0" />
                             </div>
-                            <input id="upload_thumb_button" type="button" class="button" value="<?php _e( "Upload thumbnail", 'wordpress-popular-posts' ); ?>" />
+                            <input id="upload_thumb_button" type="button" class="button" value="<?php _e( "Change thumbnail", 'wordpress-popular-posts' ); ?>" />
                             <input type="hidden" id="upload_thumb_src" name="upload_thumb_src" value="" />
-                            <p class="description"><?php _e("How-to: upload (or select) an image, set Size to Full and click on Upload. After it's done, hit on Apply to save changes", 'wordpress-popular-posts'); ?>.</p>
+                            <p class="description"><?php _e("This image will be displayed when no thumbnail is available", 'wordpress-popular-posts'); ?>.</p>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -520,19 +520,8 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
                             </select>
                         </td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row"><label for="thumb_responsive"><?php _e("Responsive support", 'wordpress-popular-posts'); ?>:</label></th>
-                        <td>
-                            <select name="thumb_responsive" id="thumb_responsive">
-                                <option <?php if ($this->options['tools']['thumbnail']['responsive']) {?>selected="selected"<?php } ?> value="1"><?php _e("Enabled", 'wordpress-popular-posts'); ?></option>
-                                <option <?php if (!$this->options['tools']['thumbnail']['responsive']) {?>selected="selected"<?php } ?> value="0"><?php _e("Disabled", 'wordpress-popular-posts'); ?></option>
-                            </select>
-                            <br />
-                            <p class="description"><?php _e("If enabled, WordPress Popular Posts will strip height and width attributes out of thumbnails' image tags", 'wordpress-popular-posts'); ?>.</p>
-                        </td>
-                    </tr>
                     <?php
-                    $wp_upload_dir = wp_upload_dir();
+                    $wp_upload_dir = wp_get_upload_dir();
                     if ( is_dir( $wp_upload_dir['basedir'] . "/" . 'wordpress-popular-posts' ) ) :
                     ?>
                     <tr valign="top">
@@ -548,7 +537,7 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
                     <tr valign="top">
                         <td colspan="2">
                             <input type="hidden" name="section" value="thumb" />
-                            <input type="submit" class="button-secondary action" id="btn_th_ops" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
+                            <input type="submit" class="button-primary action" id="btn_th_ops" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
                         </td>
                     </tr>
                 </tbody>
@@ -652,7 +641,7 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
                     <tr valign="top">
                         <td colspan="2">
                             <input type="hidden" name="section" value="data" />
-                            <input type="submit" class="button-secondary action" id="btn_ajax_ops" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
+                            <input type="submit" class="button-primary action" id="btn_ajax_ops" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
                         </td>
                     </tr>
                 </tbody>
@@ -691,7 +680,7 @@ if ( !$wpp_rand = get_option("wpp_rand") ) {
                     <tr valign="top">
                         <td colspan="2">
                             <input type="hidden" name="section" value="misc" />
-                            <input type="submit" class="button-secondary action" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
+                            <input type="submit" class="button-primary action" value="<?php _e("Apply", 'wordpress-popular-posts'); ?>" name="" />
                         </td>
                     </tr>
                 </tbody>

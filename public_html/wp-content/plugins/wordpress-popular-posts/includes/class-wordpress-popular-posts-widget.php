@@ -63,8 +63,6 @@ class WPP_Widget extends WP_Widget {
               ? 'custom'
               : 'regular';
 
-        echo "\n". "<!-- WordPress Popular Posts Plugin [W] [{$instance['range']}] [{$instance['order_by']}] [{$markup}]" . ( !empty($instance['pid']) ? " [PID]" : "" ) . ( !empty($instance['cat']) ? " [CAT]" : "" ) . ( !empty($instance['author']) ? " [UID]" : "" ) . " -->" . "\n";
-
         echo "\n" . $before_widget . "\n";
 
         // Has user set a title?
@@ -87,7 +85,7 @@ class WPP_Widget extends WP_Widget {
         $instance['widget_id'] = $widget_id;
 
         // Get posts
-        if ( $this->admin_options['tools']['ajax'] ) {
+        if ( $this->admin_options['tools']['ajax'] && !is_customize_preview() ) {
 
             if ( empty( $before_widget ) || !preg_match( '/id="[^"]*"/', $before_widget ) ) {
             ?>
@@ -96,34 +94,35 @@ class WPP_Widget extends WP_Widget {
             } else {
             ?>
             <script type="text/javascript">
-                /* jQuery is available, so proceed */
-                if ( window.jQuery ) {
+                window.addEventListener('DOMContentLoaded', function() {
+                    var wpp_widget_container = document.getElementById('<?php echo $widget_id; ?>');
 
-                    jQuery(document).ready(function($){
+                    if ( 'undefined' != typeof WordPressPopularPosts ) {
+                        WordPressPopularPosts.get(
+                            wpp_params.ajax_url + ( wpp_params.rest_api && 1 == wpp_params.rest_api ? 'widget' : '' ),
+                            'action=wpp_get_popular&id=<?php echo $this->number; ?>',
+                            function( response ){
+                                wpp_widget_container.innerHTML += ( wpp_params.rest_api && 1 == wpp_params.rest_api ) ? JSON.parse( response ).widget : response;
 
-                        var widget_container = $('#<?php echo $widget_id; ?>');
-                        widget_container.append('<p class="wpp-loader"><span><?php _e( "Loading...", "wordpress-popular-posts" ); ?></span></p>');
+                                var event = null;
 
-                        $.get(
-                            '<?php echo admin_url('admin-ajax.php'); ?>',
-                            {
-                                action: 'wpp_get_popular',
-                                id: '<?php echo $this->number; ?>'
-                            }, function( response ){
-                                widget_container.children("p.wpp-loader").remove();
-                                widget_container.append(response);
-                                widget_container.trigger('wpp-onload');
+                                if ( 'function' === typeof(Event) ) {
+                                    event = new Event( "wpp-onload", {"bubbles": true, "cancelable": false} );
+                                } /* Fallback for older browsers */
+                                else {
+                                    if ( document.createEvent ) {
+                                        event = document.createEvent('Event');
+                                        event.initEvent( "wpp-onload", true, false );
+                                    }
+                                }
+
+                                if ( event ) {
+                                    wpp_widget_container.dispatchEvent( event );
+                                }
                             }
                         );
-
-                    });
-
-                } /* jQuery is not defined */
-                else {
-                    if ( window.console && window.console.log ) {
-                        window.console.log( 'WordPress Popular Posts: jQuery is not defined!' );
                     }
-                }
+                });
             </script>
             <?php
             }
