@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://cabrerahector.com/
+ * @link       https://cabrerahector.com/
  * @since      4.0.0
  *
  * @package    WordPressPopularPosts
@@ -89,36 +89,36 @@ class WPP_Public {
     public function enqueue_scripts() {
 
         /**
-         * Enqueue WPP's tracking code.
+         * Enqueue WPP's library.
          */
 
-        $is_single = WPP_Helper::is_single();
+        $is_single = 0;
 
-        if ( $is_single ) {
-
-            if (
-                ( 0 == $this->admin_options['tools']['log']['level'] && !is_user_logged_in() )
-                || ( 1 == $this->admin_options['tools']['log']['level'] )
-                || ( 2 == $this->admin_options['tools']['log']['level'] && is_user_logged_in() )
-            ) {
-
-                wp_register_script( 'wpp-js', plugin_dir_url( __FILE__ ) . 'js/wpp.js', array(), $this->version, false );
-
-                $params = array(
-                    'sampling_active' => $this->admin_options['tools']['sampling']['active'],
-                    'sampling_rate' => $this->admin_options['tools']['sampling']['rate'],
-                    'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
-                    'action' => 'update_views_ajax',
-                    'ID' => $is_single,
-                    'token' => wp_create_nonce( 'wpp-token' )
-                );
-                wp_localize_script( 'wpp-js', 'wpp_params', $params );
-
-                wp_enqueue_script( 'wpp-js' );
-
-            }
-
+        if (
+            ( 0 == $this->admin_options['tools']['log']['level'] && !is_user_logged_in() )
+            || ( 1 == $this->admin_options['tools']['log']['level'] )
+            || ( 2 == $this->admin_options['tools']['log']['level'] && is_user_logged_in() )
+        ) {
+            $is_single = WPP_Helper::is_single();
         }
+
+        wp_register_script( 'wpp-js', plugin_dir_url( __FILE__ ) . 'js/wpp-4.1.0.min.js', array(), $this->version, false );
+
+        $wp_rest_api = class_exists( 'WP_REST_Controller', false );
+
+        $params = array(
+            'rest_api' => (int) $wp_rest_api,
+            'sampling_active' => (int) $this->admin_options['tools']['sampling']['active'],
+            'sampling_rate' => $this->admin_options['tools']['sampling']['rate'],
+            'ajax_url' => ( $wp_rest_api ) ? esc_url_raw( rest_url( 'wordpress-popular-posts/v1/popular-posts/' ) ) : admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
+            'action' => 'update_views_ajax',
+            'ID' => $is_single,
+            'token' => ( $wp_rest_api ) ? wp_create_nonce( 'wp_rest' ) : wp_create_nonce( 'wpp-token' ),
+            'debug' => WP_DEBUG
+        );
+        wp_localize_script( 'wpp-js', 'wpp_params', $params );
+
+        wp_enqueue_script( 'wpp-js' );
 
     }
 
@@ -280,7 +280,7 @@ class WPP_Public {
             'time_quantity' => 24,
             'freshness' => false,
             'order_by' => 'views',
-            'post_type' => 'post,page',
+            'post_type' => 'post',
             'pid' => '',
             'cat' => '',
             'taxonomy' => 'category',
@@ -400,7 +400,7 @@ class WPP_Public {
             $instance['author'] = implode( ",", $ids );
         }
 
-        $shortcode_content = "\n". "<!-- WordPress Popular Posts Plugin v". $this->version ." [" . ( $php ? "PHP" : "SC" ) . "] [".$shortcode_ops['range']."] [".$shortcode_ops['order_by']."] [custom]" . ( !empty($shortcode_ops['pid']) ? " [PID]" : "" ) . ( !empty($shortcode_ops['cat']) ? " [CAT]" : "" ) . ( !empty($shortcode_ops['author']) ? " [UID]" : "" ) . " -->"."\n";
+        $shortcode_content = '';
 
         // is there a title defined by user?
         if (
@@ -485,10 +485,19 @@ class WPP_Public {
         $output = new WPP_Output( $popular_posts->get_posts(), $shortcode_ops );
 
         $shortcode_content .= $output->get_output();
-        $shortcode_content .= "\n" . "<!-- End WordPress Popular Posts Plugin v" . $this->version . " -->" . ( $cached ? '<!-- cached -->' : '' ) . "\n";
 
         return $shortcode_content;
 
+    }
+
+	/**
+     * Initiates the popular posts REST controller class.
+     *
+     * @since    4.0.13
+     */
+    public function init_rest_route() {
+        $rest_controller = new WP_REST_Popular_Posts_Controller();
+        $rest_controller->register_routes();
     }
 
 } // End WPP_Public class
