@@ -36,7 +36,7 @@ class WPP_Settings {
             'time_quantity' => 24,
             'freshness' => false,
             'order_by' => 'views',
-            'post_type' => 'post,page',
+            'post_type' => 'post',
             'pid' => '',
             'author' => '',
             'cat' => '',
@@ -105,8 +105,7 @@ class WPP_Settings {
                     'source' => 'featured',
                     'field' => '',
                     'resize' => false,
-                    'default' => '',
-                    'responsive' => false
+                    'default' => ''
                 ),
                 'log' => array(
                     'level' => 1,

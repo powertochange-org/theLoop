@@ -2,9 +2,10 @@
 Contributors: hcabrera
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=hcabrerab%40gmail%2ecom&lc=GB&item_name=WordPress%20Popular%20Posts%20Plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG_global%2egif%3aNonHosted
 Tags: popular, posts, widget, popularity, top
-Requires at least: 4.1
-Tested up to: 4.9.1
-Stable tag: 4.0.13
+Requires at least: 4.7
+Tested up to: 4.9.6
+Requires PHP: 5.2
+Stable tag: 4.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +24,7 @@ WordPress Popular Posts is a highly customizable widget that displays your most 
 * **Sorting options** - Order your popular list by comments, views (default) or average views per day!
 * **Use your own layout!** - WPP is flexible enough to let you customize the look and feel of your popular posts! (see [customizing WPP's HTML markup](https://github.com/cabrerahector/wordpress-popular-posts/wiki/5.-FAQ#how-can-i-use-my-own-html-markup-with-your-plugin) and [How to style WordPress Popular Posts](https://github.com/cabrerahector/wordpress-popular-posts/wiki/6.-Styling-the-list) for more.)
 * **Disqus support** - Sort your popular posts by Disqus comments count!
-* **Polylang & WPML 3.2+ support!**
+* **Polylang & WPML 3.2+ support** - Show the translated version of your popular posts!
 * **WordPress Multisite support** - Each site on the network can have its own popular posts!
 
 = Other Features =
@@ -33,6 +34,8 @@ WordPress Popular Posts is a highly customizable widget that displays your most 
 * **[WP-PostRatings](http://wordpress.org/extend/plugins/wp-postratings/) support** - Show your visitors how your readers are rating your posts!
 
 **WordPress Popular Posts** is now also on [GitHub](https://github.com/cabrerahector/wordpress-popular-posts)!
+
+Looking for a Recent Posts widget just as featured-packed as WordPress Popular Posts? **Try [Recently](https://wordpress.org/plugins/recently/)**!
 
 == Installation ==
 
@@ -82,6 +85,19 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 4. WordPress Popular Posts Stats panel.
 
 == Changelog ==
+= 4.1.0 =
+
+**If you're using a caching plugin, flushing its cache right after installing / upgrading to this version is highly recommended.**
+
+- Adds support for the REST API.
+- Adds At-a-Glance stats.
+- Adds Today time range to Stats section.
+- Drops jQuery dependency on front-end (faster loading times!)
+- The plugin will no longer display debugging information unless WP_DEBUG is set to true.
+- Many minor bug fixes and improvements.
+
+See the [Release notes](https://cabrerahector.com/wordpress/wordpress-popular-posts-4-1-is-here/) for more details!
+
 = 4.0.13 =
 
 - Improvements to WPP's upgrade process.
@@ -93,12 +109,6 @@ The FAQ section has been moved [here](https://github.com/cabrerahector/wordpress
 - Fixes a compatibility issue with Yoast SEO (and potentially other plugins as well).
 - Improves compatibility with MySQL 5.7+.
 - Other minor fixes and improvements.
-
-= 4.0.11 =
-
-**If you're using a caching plugin, flushing its cache after installing / upgrading to this version is highly recommended.**
-
-- Fixes reference to tracking script.
 
 See [full changelog](https://github.com/cabrerahector/wordpress-popular-posts/blob/master/changelog.md).
 
