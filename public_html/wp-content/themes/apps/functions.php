@@ -24,7 +24,7 @@ function my_replace_mail( $args ) {
     $result = $wpdb->query($sql, ARRAY_A);
     
     //Append image to message body
-    $imgLink = '<img src="http://'.$_SERVER['HTTP_HOST'].'/custom-pages/emailsurvey.php?uid='.$guid.'" alt="" width="1px" height="1px">';
+    $imgLink = '<img src="https://'.$_SERVER['HTTP_HOST'].'/custom-pages/emailsurvey.php?uid='.$guid.'" alt="" width="1px" height="1px">';
     $args['message'] = str_replace('</body>', $imgLink.'</body>', $args['message']);
     return $args;
 }
