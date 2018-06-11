@@ -53,7 +53,7 @@ class WPP_Image {
             $this->default_thumbnail = $this->get_plugin_dir_url() . "public/images/no_thumb.jpg";
 
             // Set uploads folder
-            $wp_upload_dir = ( function_exists('wp_get_upload_dir') ) ? wp_get_upload_dir() : wp_upload_dir(); // wp_get_upload_dir() was introduced in WP 4.5!
+            $wp_upload_dir = wp_get_upload_dir();
             $this->uploads_dir['basedir'] = $wp_upload_dir['basedir'] . "/" . 'wordpress-popular-posts';
             $this->uploads_dir['baseurl'] = $wp_upload_dir['baseurl'] . "/" . 'wordpress-popular-posts';
 
@@ -346,7 +346,7 @@ class WPP_Image {
             $img_tag = '<!-- ' . $error . ' --> ';
         }
 
-        $img_tag .= '<img src="' . ( is_ssl() ? str_ireplace( "http://", "https://", $src ) : $src ) . '" width="' . $size[0] . '" height="' . $size[1] . '" alt="' . ( ($post_object instanceof stdClass && !isset($post_object->id) ? esc_attr( wp_strip_all_tags($post_object->title) ) : '' ) ) . '" class="' . $class . '" />';
+        $img_tag .= '<img src="' . ( is_ssl() ? str_ireplace( "http://", "https://", $src ) : $src ) . '" width="' . $size[0] . '" height="' . $size[1] . '" alt="' . ( ($post_object instanceof stdClass && isset($post_object->title) ? esc_attr( wp_strip_all_tags($post_object->title) ) : '' ) ) . '" class="' . $class . '" />';
 
         return apply_filters( 'wpp_render_image', $img_tag );
 

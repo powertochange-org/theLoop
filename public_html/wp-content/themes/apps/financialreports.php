@@ -18,107 +18,24 @@ to an another report you need to:
 	> modify check form if necessary
 */
 
+require('functions/functions.php');
+require('financialreports/report_page_functions.php');
+
+
 $current_user = wp_get_current_user();
 $user_id = $current_user->user_login;
 
 
-//Admin for financial health report
-include('functions/functions.php');
-$admin = 0;
-if(isAppAdmin('staffhealth', 0)) {
-	$admin = 1;
-	$reportsToMeResults = $wpdb->get_results(
-		$wpdb->prepare( 
-		/* Get Everyone instead of the people that really report to the user*/
-		"SELECT e.employee_number, e.user_login, CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
-		FROM employee e
-		WHERE e.staff_account IS NOT NULL   
-		ORDER BY CASE WHEN user_login = %s THEN 1 ELSE 2 END, full_name", $user_id));
-} else {
-	/* For the Staff List report, we need the current user's employee number, and also a list
-	 * of the staff who report to the current user */
-	$reportsToMeResults = $wpdb->get_results(
-		$wpdb->prepare( 
-		/* First select is for the current user; next is for everyone who reports to the current user */
-		"SELECT e.employee_number, e.user_login, '                           ' AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
-		FROM employee e
-		WHERE e.user_login = %s
-		  AND e.staff_account IS NOT NULL
-		  
-		UNION
-		
-		SELECT e.employee_number, e.user_login, s1.user_login AS 'supervisor_login', CONCAT(e.first_name,' ',e.last_name) AS 'full_name'
-		FROM employee e
-		LEFT JOIN employee s1 ON s1.employee_number = e.supervisor
-		LEFT JOIN employee s2 ON s2.employee_number = s1.supervisor
-		LEFT JOIN employee s3 ON s3.employee_number = s2.supervisor
-		LEFT JOIN employee s4 ON s4.employee_number = s3.supervisor
-		LEFT JOIN employee s5 ON s5.employee_number = s4.supervisor
-		LEFT JOIN employee s6 ON s6.employee_number = s5.supervisor
-		LEFT JOIN employee s7 ON s7.employee_number = s6.supervisor
-		WHERE %s IN (s1.user_login, s2.user_login, s3.user_login, s4.user_login, s5.user_login, s6.user_login, s7.user_login)
-		  AND e.staff_account IS NOT NULL		
-
-		ORDER BY CASE WHEN user_login = %s THEN 1
-				      WHEN supervisor_login = %s THEN 2
-					  ELSE 3 END,
-			full_name", /* Order by current user first, then direct reports, then everyone else */
-		$user_id, $user_id, $user_id, $user_id));	
-  
-  //Add on the extra entries from the employee manager table
-  for($z = 0; $z < 7; $z++) { //Up to 7 levels
-    if($z == 0) {
-      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare( 
-        "SELECT 
-        employee_manager.employee_number, 
-        employee.user_login,
-        s1.user_login AS 'supervisor_login',
-        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
-        FROM employee_manager
-        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
-        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
-        WHERE s1.user_login = %s AND employee.staff_account IS NOT NULL", $user_id));
-    } else {
-      $sql = "SELECT 
-        employee_manager.employee_number, 
-        employee.user_login,
-        s1.user_login AS 'supervisor_login',
-        CONCAT(employee.first_name,' ', employee.last_name  ) AS full_name
-        FROM employee_manager
-        LEFT OUTER JOIN employee ON employee.employee_number = employee_manager.employee_number
-        LEFT OUTER JOIN employee s1 ON s1.employee_number = employee_manager.manager_employee_number
-        WHERE s1.employee_number IN( %s ) AND employee.staff_account IS NOT NULL";
-        
-        $params = '';
-        foreach($extrareportsToMeResults as $extra) {
-          if(!empty($params))
-            $params .= ', ';
-          $params .= $extra->employee_number;
-        }
-      $extrareportsToMeResults = $wpdb->get_results($wpdb->prepare($sql, $params));
-    }
-    //Check for duplicates
-    foreach($extrareportsToMeResults as $extra) {
-      $duplicate = 0;
-      foreach($reportsToMeResults as $duplicateCheck) {
-        if($duplicateCheck->employee_number == $extra->employee_number) {
-          $duplicate = 1;
-          break;
-        }
-      }
-      //Add the person if they are not a duplicate
-      if(!$duplicate)
-        array_push($reportsToMeResults, $extra);
-    }
-  }
-}
-
+//Get list of employees for the staff financial health report
+$admin = isAppAdmin('staffhealth', 0);
+$reportsToMeResults = getEmployeesWhoReportToUser($user_id, $admin);
 
 //Set proper output format for preview
 if(isset($_POST['previewBtn'])){
 	$_POST['OutputFormat'] = "HTML4.0";
 }
 
+//////////////// VALIDATION CHECKS ////////////////
 //Check for proper account number length
 unset($error);
 if (isset($_POST['REPORT']) 
@@ -130,43 +47,44 @@ if (isset($_POST['REPORT'])
 	{
 	$error = "Your account number must be 6 digits in length\n";
 } 
+// Check for missing Org/Min code
 if (isset($_POST['REPORT']) && ($_POST['REPORT'] == 'Graph12MonthActualBudget' || $_POST['REPORT'] == '12MonthActuals') 
   && $_POST['ORGMINCODE'] == '' && $_POST['DESGCODE'] == '') {
   $error = 'You must enter a valid Org Area and Ministry Code in the Ministry/Department field.';
 }
-
-if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "AccountDonors" 
+// Check for missing start/end dates
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport" 
+                              || $_POST['REPORT'] == "AccountDonors" 
                               || $_POST['REPORT'] == "DetailedRangeReport" 
                               || $_POST['REPORT'] == "SummaryReport")) {
-  if($_POST['RPTSTARTYEAR'] == '' || $_POST['RPTSTARTMONTH'] == '' || 
-    $_POST['RPTENDYEAR'] == '' || $_POST['RPTENDMONTH'] == '') {
+  if($_POST['RPTSTARTYEARMONTH'] == '' || $_POST['RPTENDYEARMONTH'] == '') {
     $error = 'One of the report dates is blank. Please select a value from the drop down.';
   }
 }
-
-if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "DonorReport" 
-                              || $_POST['REPORT'] == "InvestorReport"
+// Check for missing report date
+if(isset($_POST['REPORT']) && ($_POST['REPORT'] == "InvestorReport"
                               || $_POST['REPORT'] == "Graph12MonthActualBudget"
                               || $_POST['REPORT'] == "12MonthActuals")) {
-  if($_POST['RPTMONTH'] == '' || $_POST['RPTYEAR'] == '') {
-    $error = 'One of the report dates is blank. Please select a value from the drop down.';
+  if($_POST['RPTYEARMONTH'] == '') {
+    $error = 'The report date is blank. Please select a value from the drop down.';
   }
 }
 
+//////////////// GENERATE REPORTS ////////////////
 //Code for Monthly Donation Report
 if (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "DonorReport") {
   require('financialreports/rs_functions.php');
 
-  $month = $_POST['RPTMONTH'];
-  $year = $_POST['RPTYEAR'];
+  $endYear = substr($_POST['RPTENDYEARMONTH'], 0, 4);
+  $endMonth = substr($_POST['RPTENDYEARMONTH'], 5, 2);
 	
   $lastday=31;
-  while (!checkdate(intval($month),$lastday,$year)) {
+  while (!checkdate(intval($endMonth),$lastday,$endYear)) {
     $lastday = $lastday-1;
   }
 
-  $reportParams['StartDate']= $year."-".$month."-01";
-  $reportParams['EndDate'] = $year."-".$month."-".$lastday;
+  $reportParams['StartDate']= $_POST['RPTSTARTYEARMONTH'].'-01';
+  $reportParams['EndDate'] = $endYear."-".$endMonth."-".$lastday;
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
   $reportParams['ExecuteAsUser'] = $user_id;
 
@@ -182,7 +100,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Invest
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
-  $reportParams['SelectMonthYear']=$_POST['RPTYEAR']."-".$_POST['RPTMONTH']."-01";
+  $reportParams['SelectMonthYear']=$_POST['RPTYEARMONTH']."-01";
   $reportParams['ExecuteAsUser'] = $user_id;
 
   //Check for returned error message
@@ -192,7 +110,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Invest
   }
   $error = $errorMsg;
 }
-//Code for Monthly Donors Report
+//Code for Recurring Monthly Donors Report
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "MonthlyDonors") {
   require('financialreports/rs_functions.php');
 
@@ -211,8 +129,8 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Detail
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE']; 
-  $reportParams['StartDate'] = $_POST['RPTSTARTYEAR'].'-'.$_POST['RPTSTARTMONTH'].'-01';
-  $reportParams['EndDate'] = $_POST['RPTENDYEAR'].'-'.$_POST['RPTENDMONTH'].'-10';
+  $reportParams['StartDate'] = $_POST['RPTSTARTYEARMONTH'].'-01';
+  $reportParams['EndDate'] = $_POST['RPTENDYEARMONTH'].'-10';
   $reportParams['ExecuteAsUser'] = $user_id;
 
   //Check for returned error message  
@@ -227,8 +145,8 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Summar
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
-  $reportParams['StartDate'] = $_POST['RPTSTARTYEAR'].'-'.$_POST['RPTSTARTMONTH'].'-01';
-  $reportParams['EndDate'] = $_POST['RPTENDYEAR'].'-'.$_POST['RPTENDMONTH'].'-10';
+  $reportParams['StartDate'] = $_POST['RPTSTARTYEARMONTH'].'-01';
+  $reportParams['EndDate'] = $_POST['RPTENDYEARMONTH'].'-10';
   $reportParams['ExecuteAsUser'] = $user_id;
 
   //Check for returned error message
@@ -250,14 +168,14 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Accoun
 	$reportResult = $reportReturn;
   }
 }
-//Code for Account Donors Report
+//Code for Account Donors (with address, email, phone)
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "AccountDonors") {
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE']; 
-  $reportParams['StartDate'] = $_POST['RPTSTARTYEAR'].'-'.$_POST['RPTSTARTMONTH'].'-01';
-  $LastDay = date('t',strtotime($_POST['RPTENDYEAR'].'-'.$_POST['RPTENDMONTH'].'-01'));
-  $reportParams['EndDate'] = $_POST['RPTENDYEAR'].'-'.$_POST['RPTENDMONTH'].'-'.$LastDay;
+  $reportParams['StartDate'] = $_POST['RPTSTARTYEARMONTH'].'-01';
+  $LastDay = date('t',strtotime($_POST['RPTENDYEARMONTH'].'-01'));
+  $reportParams['EndDate'] = $_POST['RPTENDYEARMONTH'].'-'.$LastDay;
   $reportParams['ExecuteAsUser'] = $user_id;
 
   //Check for returned error message  
@@ -314,7 +232,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffF
   if ($hasAccess) {
 	  produceSQLReport( 'StaffFinancialHealth', 
 						$_POST['employee_number'], 
-						$_POST['RPTYEAR'].'-'.$_POST['RPTMONTH'].'-01' );
+						$_POST['RPTYEARMONTH'].'-01' );
   } else {
 	  echo "You don't have access to run this report for this staff member.";
   }
@@ -325,8 +243,8 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Graph1
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
-  $reportParams['ReportYear'] = $_POST['RPTYEAR'];
-  $reportParams['ReportMonth'] = $_POST['RPTMONTH'];
+  $reportParams['ReportYear'] = substr($_POST['RPTYEARMONTH'], 0, 4);
+  $reportParams['ReportMonth'] = substr($_POST['RPTYEARMONTH'], 5, 2);
   if($_POST['DESGCODE'] == '')
     $reportParams['OrgAndMinistry'] = $_POST['ORGMINCODE'];
   $reportParams['Cumulative'] = $_POST['RPTCUMULATIVE'];
@@ -343,7 +261,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12Mont
   require('financialreports/rs_functions.php');
 
   $reportParams['ProjectCode'] = $_POST['DESGCODE'];
-  $reportParams['EndMonth'] = $_POST['RPTMONTH'].'/'.'1/'.$_POST['RPTYEAR'];
+  $reportParams['EndMonth'] = $_POST['RPTYEARMONTH'].'-01';//$_POST['RPTMONTH'].'/'.'1/'.$_POST['RPTYEAR'];
   $parts = explode('-', $_POST['ORGMINCODE']);
   $reportParams['OrgArea'] = $parts[0];
   $reportParams['ExecuteAsUser'] = $user_id;
@@ -403,12 +321,9 @@ if(isset($_POST['previewBtn']) && isset($error)){
 
 //Values used to set the selected options
 $REPORT = $_POST["REPORT"]; 
-$RPTMONTH = isset($_POST["RPTMONTH"]) ? $_POST["RPTMONTH"] : date("m");
-$RPTYEAR = isset($_POST["RPTYEAR"]) ? $_POST["RPTYEAR"] : date("Y");
-$RPTSTARTMONTH = $_POST["RPTSTARTMONTH"] ? $_POST["RPTSTARTMONTH"] : date("m");
-$RPTSTARTYEAR = $_POST["RPTSTARTYEAR"] ? $_POST["RPTSTARTYEAR"] : date("Y");
-$RPTENDMONTH = $_POST["RPTENDMONTH"] ? $_POST["RPTENDMONTH"] : date("m");
-$RPTENDYEAR = $_POST["RPTENDYEAR"] ? $_POST["RPTENDYEAR"] : date("Y");
+$RPTYEARMONTH = isset($_POST["RPTYEARMONTH"]) ? $_POST["RPTYEARMONTH"] : date('Y').'-'.date('m');
+$RPTSTARTYEARMONTH = isset($_POST["RPTSTARTYEARMONTH"]) ? $_POST["RPTSTARTYEARMONTH"] : date('Y').'-'.date('m');
+$RPTENDYEARMONTH = isset($_POST["RPTENDYEARMONTH"]) ? $_POST["RPTENDYEARMONTH"] : date('Y').'-'.date('m');
 $RPTPERIOD = $_POST["RPTPERIOD"] ? $_POST["RPTPERIOD"] : 'MONTH';
 $RPTCUMULATIVE = isset($_POST['RPTCUMULATIVE']) ? $_POST['RPTCUMULATIVE'] : '';
 $reportToMe = 1; // Default to yes
@@ -445,20 +360,16 @@ if(isset($_GET["reportlink"])) {
     
     if($report == "mdr") {
         $REPORT = "DonorReport";
-        $RPTMONTH = substr($reportlink, 9, 2);
-        $RPTYEAR = substr($reportlink, 11, 4);
+		$RPTYEARMONTH = substr($reportlink, 11, 4).'-'.substr($reportlink, 9, 2);
     } else if($report == "rmd") {
         $REPORT = "MonthlyDonors";
     } else if($report == "13m") {// reports/?reportlink=13m823457201506
         $REPORT = "InvestorReport";
-        $RPTMONTH = substr($reportlink, 9, 2);
-        $RPTYEAR = substr($reportlink, 11, 4);
+		$RPTYEARMONTH = substr($reportlink, 11, 4).'-'.substr($reportlink, 9, 2);
     } else if($report == "die") {
         $REPORT = "DetailedRangeReport";
-        $RPTSTARTMONTH = substr($reportlink, 9, 2);
-        $RPTSTARTYEAR = substr($reportlink, 11, 4);
-        $RPTENDMONTH = substr($reportlink, 15, 2);
-        $RPTENDYEAR = substr($reportlink, 17, 4);
+		$RPTSTARTYEARMONTH = substr($reportlink, 11, 4).'-'.substr($reportlink, 9, 2);
+		$RPTENDYEARMONTH = substr($reportlink, 17, 4).'-'.substr($reportlink, 15, 2);
     } else if ($report == "stl") {
 		$REPORT = "StaffList";
 		$reportToMe = substr($reportlink, 3, 1);
@@ -500,7 +411,7 @@ get_header(); ?>
                   <OPTION VALUE="DonorReport" <?php if($REPORT == 'DonorReport'){echo("selected='selected'");}?>>Monthly Donation Report</OPTION>
                   <OPTION VALUE="InvestorReport" <?php if($REPORT == 'InvestorReport'){echo("selected='selected'");}?>>13 Month Donor Report</OPTION>
                   <OPTION VALUE="MonthlyDonors" <?php if($REPORT == 'MonthlyDonors'){echo("selected='selected'");}?>>Recurring Monthly Donors</OPTION>
-				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected='selected'");}?>>Account Donors</OPTION>
+				  <OPTION VALUE="AccountDonors" <?php if($REPORT == 'AccountDonors'){echo("selected='selected'");}?>>Account Donors (with address, email, phone)</OPTION>
 	              <OPTION VALUE="">--FINANCIAL REPORTS--</OPTION>
                   <OPTION VALUE="DetailedRangeReport" <?php if($REPORT == 'DetailedRangeReport'){echo("selected='selected'");}?>>Detailed Income and Expense</OPTION>
                   <OPTION VALUE="SummaryReport" <?php if($REPORT == 'SummaryReport'){echo("selected='selected'");}?>>Summary Income and Expense</OPTION>
@@ -544,7 +455,6 @@ get_header(); ?>
             <option value="40-416">Ministry - FamilyLife</option>
             <option value="40-469">Ministry - GAiN</option>
             <option value="40-426">Ministry - Jesus Film Project</option>
-            <option value="40-428">Ministry - Kidz Alive</option>
             <option value="40-430">Ministry - LeaderImpact</option>
             <option value="40-460">Ministry - Other Ministry</option>
             <option value="40-436">Ministry - Students Division</option>
@@ -569,7 +479,6 @@ get_header(); ?>
             <option value="80-802">Staff - International</option>
             <option value="80-208">Staff - IT</option>
             <option value="80-426">Staff - Jesus Film Project</option>
-            <option value="80-428">Staff - Kidz Alive</option>
             <option value="80-430">Staff - LeaderImpact</option>
             <option value="80-302">Staff - Major Gifts</option>
             <option value="80-308">Staff - Marketing</option>
@@ -611,90 +520,17 @@ get_header(); ?>
 			</DIV>
 			<DIV ID="monthyear" STYLE="display:none">
 				<P>Choose the month and year to report on.<BR>
-				<SELECT NAME="RPTMONTH" ID="RPTMONTH">
-            <OPTION VALUE="">--Month--</OPTION>
-            <?php
-              for($i = 1; $i <= 12; $i++) {
-                $dateObj   = DateTime::createFromFormat('!m', $i);
-                $monthName = $dateObj->format('F'); 
-                echo '<option value="'.$i.'" '.($RPTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
-              }
-            ?>
-        </SELECT>
-				<SELECT NAME="RPTYEAR" ID="RPTYEAR">
-					  <OPTION VALUE="">--Year--</OPTION>
-					  <?php $CurrYear = date("Y");
-					     $x = -1;
-						 WHILE ($CurrYear-$x >= 1989){
-						 ?>
-						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
-									 <?php echo $CurrYear-$x;?></OPTION>
-						 <?php
-						 $x++;
-						 }
-						 ?>
-				</SELECT>			
+				<?php generateYearMonthDropDown("RPTYEARMONTH", $RPTYEARMONTH);	?>
 				<BR>
 				</P>
 			</DIV>
 			<DIV ID="daterange" STYLE="display:none">
 				<P>
 				<SPAN STYLE="width:50px; float:left">START:</SPAN>
-				<SELECT NAME="RPTSTARTMONTH">
-					  <OPTION VALUE="">--Month--</OPTION>
-            <?php
-              for($i = 1; $i <= 12; $i++) {
-                $dateObj   = DateTime::createFromFormat('!m', $i);
-                $monthName = $dateObj->format('F'); 
-                echo '<option value="'.$i.'" '.($RPTSTARTMONTH == $i ? 'selected' : '').'>'.$monthName.'</option>';
-              }
-            ?>
-				</SELECT>
-				<SELECT NAME="RPTSTARTYEAR">
-					  <OPTION VALUE="">--Year--</OPTION>
-					  <?php $CurrYear = date("Y");
-					     $x = 0;
-						 WHILE ($CurrYear-$x >= 1989){
-						 ?>
-						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTSTARTYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
-									 <?php echo $CurrYear-$x;?></OPTION>
-						 <?php
-						 $x++;
-						 }
-						 ?>
-				</SELECT>
-				<BR><SPAN STYLE="width:50px; float:left">END:</SPAN>
-				<SELECT NAME="RPTENDMONTH">
-					  <OPTION VALUE="">--Month--</OPTION>
-					  <OPTION VALUE="01" <?php if($RPTENDMONTH == '01'){echo("selected='selected'");}?>>January</OPTION>
-					  <OPTION VALUE="02" <?php if($RPTENDMONTH == '02'){echo("selected='selected'");}?>>February</OPTION>
-					  <OPTION VALUE="03" <?php if($RPTENDMONTH == '03'){echo("selected='selected'");}?>>March</OPTION>
-					  <OPTION VALUE="04" <?php if($RPTENDMONTH == '04'){echo("selected='selected'");}?>>April</OPTION>
-					  <OPTION VALUE="05" <?php if($RPTENDMONTH == '05'){echo("selected='selected'");}?>>May</OPTION>
-					  <OPTION VALUE="06" <?php if($RPTENDMONTH == '06'){echo("selected='selected'");}?>>June</OPTION>
-					  <OPTION VALUE="07" <?php if($RPTENDMONTH == '07'){echo("selected='selected'");}?>>July</OPTION>
-					  <OPTION VALUE="08" <?php if($RPTENDMONTH == '08'){echo("selected='selected'");}?>>August</OPTION>
-					  <OPTION VALUE="09" <?php if($RPTENDMONTH == '09'){echo("selected='selected'");}?>>September</OPTION>
-					  <OPTION VALUE="10" <?php if($RPTENDMONTH == '10'){echo("selected='selected'");}?>>October</OPTION>
-					  <OPTION VALUE="11" <?php if($RPTENDMONTH == '11'){echo("selected='selected'");}?>>November</OPTION>
-					  <OPTION VALUE="12" <?php if($RPTENDMONTH == '12'){echo("selected='selected'");}?>>December</OPTION>
-				</SELECT>
-				<SELECT NAME="RPTENDYEAR">
-					  <OPTION VALUE="">--Year--</OPTION>
-					  <?php $CurrYear = date("Y");
-					     $x = 0;
-						 WHILE ($CurrYear-$x >= 1989){
-						 ?>
-						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTENDYEAR == $CurrYear-$x){echo("selected='selected'");}?>>
-									 <?php echo $CurrYear-$x;?></OPTION>
-						 <?php
-						 $x++;
-						 }
-						 ?>
-				</SELECT>
+				<?php generateYearMonthDropDown("RPTSTARTYEARMONTH", $RPTSTARTYEARMONTH); ?>
+				<BR>
+				<SPAN STYLE="width:50px; float:left">END:</SPAN>
+				<?php generateYearMonthDropDown("RPTENDYEARMONTH", $RPTENDYEARMONTH); ?>
 				</P>
 			</DIV>
       <div id="cumulative" style="display:none;">
@@ -715,7 +551,7 @@ get_header(); ?>
 						 WHILE ($x < 3){
 						 ?>
 						 <OPTION VALUE='<?php echo $CurrYear-$x;?>' 
-								     <?php if($RPTYEAR == $CurrYear-$x){echo("selected");}?>>
+								     <?php if($vac_year == $CurrYear-$x){echo("selected");}?>>
 									 <?php echo $CurrYear-$x;?></OPTION>
 						 <?php
 						 $x++;
@@ -795,7 +631,7 @@ get_header(); ?>
 			$("#repchoice option:selected").each(function () {
 				/* Form fields */
 				if($(this).val() == "DonorReport"){
-					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
+					showHideFields(["#staffaccount","#daterange","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "InvestorReport"){
 					showHideFields(["#staffaccount","#monthyear","#output","#buttonsDownload","#buttonsPreview"]);
 				} else if($(this).val() == "MonthlyDonors"){
@@ -869,8 +705,7 @@ get_header(); ?>
         return;
       }
       
-      document.getElementById("RPTYEAR").value = year;
-      document.getElementById("RPTMONTH").value = month;
+      document.getElementById("RPTYEARMONTH").value = year + "-" + (month < 10 ? "0" : "") + month;
     }
 		
     $(document).ready(function() {

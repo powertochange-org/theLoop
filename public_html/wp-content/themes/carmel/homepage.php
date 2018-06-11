@@ -250,17 +250,16 @@
                 <div id='staff-apps-quadrant'><br/>Loading...
                     <script type="text/javascript">
                         jQuery(document).ready(function(){
-                            $.ajax({
-                              type: "POST",
-                              url: "https://staffappsbutton.powertochange.org/index.php",
-                              success: function (data) {
-                                  data = String(data).replace(/trackClick/g, 'trackHomePageAppsClick');
-                                  $('#staff-apps-quadrant').empty().append(data);
-                                  var ul = $('#staff-apps-quadrant #staff-apps-popup-menu').clone();
-                                  $('#staff-apps-quadrant').empty().append(ul);
-                              }
-                            });           
+							copyButtons();
                         });
+						
+						function copyButtons(){
+							if($('#staffAppsButton table').length){
+								$('#staff-apps-quadrant').empty().append($('#staffAppsButton table').clone());
+								return;
+							}
+							setTimeout(copyButtons, 100);
+						}
                     </script>
                 </div>
                 <script type="text/javascript">
