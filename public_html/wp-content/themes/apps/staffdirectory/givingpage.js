@@ -103,7 +103,7 @@ setEAck: function(){
 	givingpage.updateLetter();
 },
 
-send: function(fun, data, success, fail){
+send: function(method, fun, data, success, fail){
 	if ('undefined' == typeof fail){
 		fail = function(){};
 	}
@@ -193,8 +193,9 @@ init: function(host){
 	ptc_op.initProjectMethods();
 	ptc_op.initCategoryMethods();
 	this.host = host
+	//ptc.domain = host;
 	this.override();
-	this.send('GetInfo', null, function(data){
+	this.send('POST', 'GetInfo', null, function(data){
 		if("" == data.r.pc){
 			$('.input').next().remove();
 			$('.input').replaceWith("No projectcode found.");
@@ -380,7 +381,7 @@ init: function(host){
 			d.recurring = p.data.recurring;
 		}
 		var g = givingpage.guid ++;
-		givingpage.send('SetInfo', d, function(data){
+		givingpage.send('POST', 'SetInfo', d, function(data){
 			$('.input #msg_' + g).html("Changes Saved!");
 		}, function(){
 			$('.input #msg_' + g).html("An error occurred");
@@ -393,3 +394,5 @@ init: function(host){
 	});
 }
 }
+
+function postTopics(){ /* dummy function */}
