@@ -1,19 +1,36 @@
 <?php 
 class WebService{
 
-	static function send($server, $function, $dat){
-		$handle = curl_init("$server/$function");
+	static function send($method, $server, $function, $dat){
+		$handle = curl_init();
 		curl_setopt($handle, CURLOPT_ENCODING,  '');
 		curl_setopt($handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		curl_setopt($handle, CURLOPT_HEADER, true);
 		curl_setopt($handle, CURLOPT_TIMEOUT, 120); //seconds todo change?
 		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($handle, CURLOPT_POST, true);
-		curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($dat));
+		$headers = array();
 		$headers[] = 'Content-Type: application/json';
-		$headers[] = 'Content-Length: '.strlen(json_encode($dat));
-		curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'POST');
+		if('POST' == $method){
+			curl_setopt($handle, CURLOPT_POST, true);
+			curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($dat));
+			$headers[] = 'Content-Length: '.strlen(json_encode($dat));
+		} else {
+			curl_setopt($handle, CURLOPT_POST, false);
+			curl_setopt($handle, CURLOPT_POSTFIELDS, null);
+			$function .= '?';
+			$f = true;
+			foreach($dat as $k => $v){
+				if($f){
+					$f = false;
+				}else{
+					$function .= '&';
+				}
+				$function .= "$k=".json_encode($v);
+			}
+		}
+		curl_setopt($handle, CURLOPT_URL, "$server/$function");
+		curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $method);
 		curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
 	
 		$result = curl_exec($handle);
