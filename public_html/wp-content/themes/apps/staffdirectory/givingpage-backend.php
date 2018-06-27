@@ -9,7 +9,6 @@ class Givingpage{
 	static function canUse(){
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
-		return true;
 		return '8' == getFieldEmployee('staff_account')[0] || 
 			'9' == getFieldEmployee('staff_account')[0];
 	}
@@ -19,7 +18,7 @@ class Givingpage{
 		if (array_key_exists('locale', $_POST)){
 			$locale = $_POST['locale'];
 		}
-		$r = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale, 'store' => ''));
+		$r = WebService::send('GET', get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => $_POST['keys'], 'locale' => $locale, 'store' => ''));
 		wp_send_json($r['body']);
 	}
 	
@@ -27,7 +26,6 @@ class Givingpage{
 		global $current_user_id;
 		require_once(get_stylesheet_directory().'/functions/functions.php');
 		$pc = getFieldEmployee('staff_account');
-		$pc = 819790;
 		$r = array('pc' => '');
 		if(self::canUse()){
 			$r = self::openProjectInfo();
@@ -183,23 +181,22 @@ class Givingpage{
 	
 	private static function openProjectInfo(){
 		$name = getName(null, true);
-		$minOFE = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US', 'store' => ''))['body']['d'][0];
-		$minOFF = WebService::send(get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA', 'store' => ''))['body']['d'][0];
+		$minOFE = WebService::send('GET', get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'en-US', 'store' => ''))['body']['d'][0];
+		$minOFF = WebService::send('GET', get_option(self::$prefix.'soServer').'/PTC_ClientScriptHelper.asmx', 'GetStrings', array('keys' => array('ptc.minOf'), 'locale' => 'fr-CA', 'store' => ''))['body']['d'][0];
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
 				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
-				'sename' => "$minOFE $name",
-				'cats' => array(68)
+				'sename' => "$minOFE $name"
 		);
-		/*$info['cats'] = array(WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
+		$info['cats'] = array(WebService::send('POST', get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
 				'ministry' => getFieldEmployee('ministry'),
 				'department' => getFieldEmployee('department')
 			)
-		)['body']['d']);*/
+		)['body']['d']);
 		
 		if (-1 != getSpouse()) { 
-			$info['cats'][] = WebService::send(get_option(self::$prefix.'seWebService').'/service.asmx', 
+			$info['cats'][] = WebService::send('POST', get_option(self::$prefix.'seWebService').'/service.asmx', 
 				'GetCategoryFromMinistry', array(
 					'ministry' =>  getFieldEmployee('ministry', getSpouse()),
 					'department' => getFieldEmployee('department', getSpouse())
@@ -217,7 +214,6 @@ class Givingpage{
 	
 	private static function getProductID(){
 		$pc = getFieldEmployee('staff_account');
-		$pc = 819790;
 		foreach(self::getAllItems()['projects'] as $id => $data){
 			if('' != $data['sku'] && $pc == $data['sku']){
 				return $id;
@@ -230,7 +226,7 @@ class Givingpage{
 	private static function getAllItems(){
 		if(is_null(self::$allItems)){
 			$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
-			$raw = file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false, $context);
+			$raw = gzdecode(file_get_contents(get_option(self::$prefix.'soServer').'/jscripts/list.aspx?r='.rand(), false, $context));
 			$raw =  strrev(substr($raw, strlen('allItems = ')));
 			$p = strpos($raw, '// ');
 			self::$allItems = json_decode(strrev(substr($raw, $p + 3)), true);
