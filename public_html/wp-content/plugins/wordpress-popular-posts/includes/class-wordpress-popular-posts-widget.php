@@ -94,15 +94,15 @@ class WPP_Widget extends WP_Widget {
             } else {
             ?>
             <script type="text/javascript">
-                window.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function() {
                     var wpp_widget_container = document.getElementById('<?php echo $widget_id; ?>');
 
                     if ( 'undefined' != typeof WordPressPopularPosts ) {
                         WordPressPopularPosts.get(
-                            wpp_params.ajax_url + ( wpp_params.rest_api && 1 == wpp_params.rest_api ? 'widget' : '' ),
+                            wpp_params.ajax_url + 'widget',
                             'action=wpp_get_popular&id=<?php echo $this->number; ?>',
                             function( response ){
-                                wpp_widget_container.innerHTML += ( wpp_params.rest_api && 1 == wpp_params.rest_api ) ? JSON.parse( response ).widget : response;
+                                wpp_widget_container.innerHTML += JSON.parse( response ).widget;
 
                                 var event = null;
 
@@ -301,30 +301,11 @@ class WPP_Widget extends WP_Widget {
     }
 
     /**
-     * Returns HTML list via AJAX
+     * Returns HTML list.
      *
      * @since	2.3.3
      */
     public function get_popular( $instance = null ) {
-
-        if ( defined('DOING_AJAX') && DOING_AJAX ) {
-
-            if ( isset( $_GET['id'] ) && WPP_helper::is_number( $_GET['id'] ) ) {
-
-                $id = $_GET['id'];
-                $widget_instances = $this->get_settings();
-
-                if ( isset( $widget_instances[$id] ) ) {
-                    $instance = $widget_instances[$id];
-
-                    if ( !isset( $instance['widget_id'] ) ) {
-                        $instance['widget_id'] = $this->id;
-                    }
-                }
-
-            }
-
-        }
 
         if ( is_array( $instance ) && !empty( $instance ) ) {
 
@@ -400,14 +381,6 @@ class WPP_Widget extends WP_Widget {
             echo ( $this->admin_options['tools']['cache']['active'] ? '<!-- cached -->' : '' );
             $output->output();
 
-        }
-
-        if (
-            defined('DOING_AJAX') 
-            && DOING_AJAX && !is_preview() 
-            && !( is_singular() && isset( $_GET['fl_builder'] ) )
-        ) {
-            wp_die();
         }
 
     }

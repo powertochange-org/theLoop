@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WordPress Popular Posts\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wordpress-popular-posts\n"
-"POT-Creation-Date: 2018-04-25 15:35-0400\n"
-"PO-Revision-Date: 2018-04-25 15:41-0400\n"
+"POT-Creation-Date: 2018-06-25 18:07-0400\n"
+"PO-Revision-Date: 2018-06-25 18:08-0400\n"
 "Last-Translator: \n"
 "Language-Team: Héctor Cabrera <me@cabrerahector.com>\n"
 "Language: es_ES\n"
@@ -493,8 +493,8 @@ msgstr ""
 "populares sea guardada en cach&eacute;"
 
 #: ../admin/partials/admin.php:594
-msgid "WPP Cache Expiry Policy"
-msgstr "WPP Pol&iacute;tica de Expiraci&oacute;n del Cache"
+msgid "Data Caching"
+msgstr "Caché de Datos"
 
 #: ../admin/partials/admin.php:594 ../admin/partials/admin.php:622
 #: ../includes/widget-form.php:3 ../includes/widget-form.php:50
@@ -513,13 +513,12 @@ msgstr "Habilitar cach&eacute;"
 
 #: ../admin/partials/admin.php:602
 msgid ""
-"Sets WPP's cache expiration time. WPP can cache the popular list for a "
-"specified amount of time. Recommended for large / high traffic sites"
+"WPP can cache the popular list for a specified amount of time. Recommended "
+"for large / high traffic sites"
 msgstr ""
-"Configura lel tiempo de expiraci&oacute;n del cache de WPP. WPP puede "
-"almacenar en cach&eacute; el listado de entradas populares por una cantidad "
-"de tiempo especificada. Recomendado para sitios web grandes / de alto "
-"tr&aacute;fico"
+"WPP puede almacenar en cach&eacute; el listado de entradas populares por una "
+"cantidad de tiempo especificada. Recomendado para sitios web grandes / de "
+"alto tr&aacute;fico"
 
 #: ../admin/partials/admin.php:606
 msgid "Refresh cache every"
@@ -1113,76 +1112,76 @@ msgstr "publicado el %s"
 msgid "under %s"
 msgstr "bajo %s"
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:305
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:309
 msgid "Return popular posts from specified custom post type(s)."
 msgstr ""
 "Devuelve entradas populares de los custom post type(s) especificado(s)."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:312
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:316
 msgid "The maximum number of popular posts to return."
 msgstr "El m&aacute;ximo n&uacute;mero de entradas populares a devolver."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:320
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:324
 msgid ""
 "Retrieve the most popular entries published within the specified time range."
 msgstr ""
 "Devuelve las entradas m&aacute;s populares publicadas en el rango de tiempo "
 "especificado."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:328
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:332
 msgid "An offset point for the collection."
 msgstr "Punto de offset para la colecci&oacute;n."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:336
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:340
 msgid "Set the sorting option of the popular posts."
 msgstr "Configura el ordenado de las entradas populares."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:344
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:348
 msgid "Return posts from a specified time range."
 msgstr "Devuelve entradas de un rango de tiempo especificado."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:352
-msgid "Especifies the time unit of the custom time range."
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:356
+msgid "Specifies the time unit of the custom time range."
 msgstr "Especifica la unidad de tiempo del rango de tiempo personalizado."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:360
-msgid "Especifies the number of time units of the custom time range."
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:364
+msgid "Specifies the number of time units of the custom time range."
 msgstr ""
 "Especifica el n&uacute;mero de unidades de tiempo del rango de tiempo "
 "personalizado."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:368
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:372
 msgid "Post IDs to exclude."
 msgstr "ID(s) de Entrada(s) a excluir."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:376
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:380
 msgid "Include posts in a specified taxonomy."
 msgstr "Incluye entradas de una taxonom&iacute;a espec&iacute;fica."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:384
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:388
 msgid "Taxonomy IDs, separated by comma (prefix a minus sign to exclude)."
 msgstr ""
 "IDs de taxonom&iacute;a separados por comma (agrega un s&iacute;mbolo "
 "negativo para excluir)."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:392
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:396
 msgid "Author ID(s)."
 msgstr "ID(s) de Autor(es)."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:412
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:416
 msgid "Security nonce."
 msgstr "Nonce de seguridad."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:418
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:451
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:422
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:455
 msgid "The post / page ID."
 msgstr "El ID de la entrada / p&aacute;gina."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:425
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:429
 msgid "Enables Data Sampling."
 msgstr "Habilita el Sampleo de Datos."
 
-#: ../includes/class-wordpress-popular-posts-rest-controller.php:432
+#: ../includes/class-wordpress-popular-posts-rest-controller.php:436
 msgid "Sets the Sampling Rate."
 msgstr "Configura la rata de sampleo."
 
@@ -1370,6 +1369,9 @@ msgstr "Antes / despu&eacute;s de las entradas populares"
 #: ../includes/widget-form.php:186
 msgid "Post HTML Markup"
 msgstr "Markup HTML de la entrada"
+
+#~ msgid "WPP Cache Expiry Policy"
+#~ msgstr "WPP Pol&iacute;tica de Expiraci&oacute;n del Cache"
 
 #~ msgid "Upload"
 #~ msgstr "Subir"
