@@ -23,6 +23,10 @@ th {
     text-align: center;
 }
 
+#content.staff-d td.left-align {
+    text-align: left;
+}
+
 </style>
 <?php get_header(); ?>
     <div id="content" class='staff-d'>
@@ -71,7 +75,7 @@ th {
                                 </tr>';
                         foreach($result as $key=>$row) {
                             echo '<tr>
-                                    <td>'.$row['email_subject'].'</td>
+                                    <td class="left-align">'.$row['email_subject'].'</td>
                                     <td>'.$row['SENDDATE'].'</td>
                                     <td>'.$row['EMAILSSENT'].'</td>
                                     <td>'.$row['OPENED'].'</td>
