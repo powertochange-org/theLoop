@@ -50,14 +50,15 @@ th {
                     <div>
                         <?php
                         $sql = "SELECT email_subject, 
+                                sender,
                                 COUNT(*) AS 'EMAILSSENT', 
                                 SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS 'OPENED',
                                 SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS 'NOTOPENED',
                                 AVG(CASE WHEN status = 1 THEN TIMESTAMPDIFF(SECOND, date_sent, date_opened) END) AS 'OPENAVERAGETIME',
                                 MIN(date_sent) AS 'SENDDATE'
                                 FROM `email_open_tracking` eot
-                                WHERE email_subject <> '' AND email_subject IS NOT NULL
-                                GROUP BY email_subject
+                                WHERE email_subject <> '' AND email_subject IS NOT NULL AND email_subject <> 'UNKNOWN'
+                                GROUP BY email_subject, sender
                                 ORDER BY date_sent DESC
                                 ".($showAll == 0 ? 'LIMIT 10' : ($showAll == 1 ? '' : 'LIMIT '.$showAll));
                         
@@ -66,6 +67,7 @@ th {
                         echo '<table>
                                 <tr>
                                     <th>Loop Post</th>
+                                    <th>Sender</th>
                                     <th>Date Sent</th>
                                     <th>Emails Sent</th>
                                     <th>Opened</th>
@@ -76,6 +78,7 @@ th {
                         foreach($result as $key=>$row) {
                             echo '<tr>
                                     <td class="left-align">'.$row['email_subject'].'</td>
+                                    <td class="left-align">'.$row['sender'].'</td>
                                     <td>'.$row['SENDDATE'].'</td>
                                     <td>'.$row['EMAILSSENT'].'</td>
                                     <td>'.$row['OPENED'].'</td>
