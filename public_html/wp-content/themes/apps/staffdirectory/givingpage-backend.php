@@ -170,7 +170,7 @@ class Givingpage{
 		$ai = self::getAllItems();
 		$staffC = $ai[$ai['staff']];
 		foreach($staffC['cats'] as $c){
-			foreach($c['cats'] as $p){
+			foreach($ai[$c]['items'] as $p){
 				if($p == $pid){
 					$cats[] = $p;
 				}
