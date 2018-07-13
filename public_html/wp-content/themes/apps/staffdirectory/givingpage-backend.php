@@ -101,7 +101,7 @@ class Givingpage{
 			
 			//set cats
 			//first checks to see if changes need to be done;
-			$cats = self::getAllCategories();
+			$cats = self::getAllCategories($pid);
 			$d = false;
 			foreach($cats as $c){
 				if(!in_array($c, $oi['cats'])){
@@ -170,7 +170,7 @@ class Givingpage{
 		$ai = self::getAllItems();
 		$staffC = $ai[$ai['staff']];
 		foreach($staffC['cats'] as $c){
-			foreach($c['cats'] as $p){
+			foreach($ai[$c]['items'] as $p){
 				if($p == $pid){
 					$cats[] = $p;
 				}

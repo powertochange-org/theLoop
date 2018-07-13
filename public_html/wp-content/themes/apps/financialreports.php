@@ -230,13 +230,16 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "StaffF
   }
   
   if ($hasAccess) {
-	  produceSQLReport( 'StaffFinancialHealth', 
+	  $errorMsg = produceSQLReport( 'StaffFinancialHealth', 
 						$_POST['employee_number'], 
 						$_POST['RPTYEARMONTH'].'-01' );
   } else {
 	  echo "You don't have access to run this report for this staff member.";
   }
-  exit;
+  if(!isset($errorMsg)){
+    exit;
+  }
+  $error = $errorMsg;
 }
 //Code for Graph 12 Month Actual vs Budget Report
 elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Graph12MonthActualBudget") {
@@ -252,7 +255,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "Graph1
   //Check for returned error message  
   $errorMsg = produceRSReport('/Financial/Graph 12 Month Actual vs Budget', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
   if(!isset($errorMsg)){
-  exit;
+    exit;
   }
   $error = $errorMsg;
 }
@@ -274,7 +277,7 @@ elseif (!isset($error) && isset($_POST['REPORT']) && $_POST['REPORT'] == "12Mont
   //Check for returned error message  
   $errorMsg = produceRSReport('/Financial/Organization/12 Month (by Month) Actuals by Ministry', $_POST['OutputFormat'], $reportParams, true, $SERVER_SQL2012);
   if(!isset($errorMsg)){
-  exit;
+    exit;
   }
   $error = $errorMsg;
 }
