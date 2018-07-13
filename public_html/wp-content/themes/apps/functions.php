@@ -12,4 +12,25 @@ include_once('staffdirectory/givingpage-backend.php');
 
 include_once('advMag/function.php');
 
+
+add_filter( 'wp_mail', 'my_replace_mail' );
+function my_replace_mail( $args ) {
+    global $wpdb;
+    $subject = $args['subject'];
+    $var = strip_tags($args['headers']);
+    $start = strpos($var, 'From: ');
+    $end = strpos($var, 'Reply-To');
+    $from = substr($var, ($start + 6), $end - ($start + 6));
+    $guid = bin2hex(openssl_random_pseudo_bytes(16));
+    $date_sent = date('Y-m-d H:i:s');
+    $sql = "INSERT INTO email_open_tracking (trackingid, email_subject, status, date_sent, sender)
+            VALUES ('$guid', '$subject', '0', '$date_sent', '$from')";
+    $result = $wpdb->query($sql, ARRAY_A);
+    
+    //Append image to message body
+    $imgLink = '<img src="https://'.$_SERVER['HTTP_HOST'].'/custom-pages/emailsurvey.php?uid='.$guid.'" alt="" width="1px" height="1px">';
+    $args['message'] = str_replace('</body>', $imgLink.'</body>', $args['message']);
+    return $args;
+}
+
 ?>
