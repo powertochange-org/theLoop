@@ -101,7 +101,7 @@ class Givingpage{
 			
 			//set cats
 			//first checks to see if changes need to be done;
-			$cats = self::getAllCategories();
+			$cats = self::getAllCategories($pid);
 			$d = false;
 			foreach($cats as $c){
 				if(!in_array($c, $oi['cats'])){
