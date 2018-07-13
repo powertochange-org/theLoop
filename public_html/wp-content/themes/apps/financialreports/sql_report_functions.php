@@ -20,7 +20,7 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 	}
 
 	// Handle an error on the SQL side, embedded in the response we receive
-	$response = $request->getResponseBody()
+	$response = $request->getResponseBody();
 	if(substr($response, 0, 5) == "ERROR"){
 		return $response;
 	}	
