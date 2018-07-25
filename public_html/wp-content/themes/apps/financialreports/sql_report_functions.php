@@ -11,12 +11,21 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 
 	// Send the request
 	$result = $request->sendRequest();
+	
+	// Handle an error in the process of sending the HTTP request
 	if (PEAR::isError($result)) {
-		echo "Error: " . $result->getMessage();
+		echo "ERROR: " . $result->getMessage();
+		return "ERROR: " . $result->getMessage();
 		exit;
+	}
+
+	// Handle an error on the SQL side, embedded in the response we receive
+	$response = $request->getResponseBody();
+	if(substr($response, 0, 5) == "ERROR"){
+		return $response;
 	}	
 
-	echo $request->getResponseBody();
+	echo $response;
 }
 
 ?>
