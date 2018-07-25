@@ -84,7 +84,7 @@
 						if (count($errors) == 0) {
 							// Create a time-limited signature token used to call the Yourls API
 							$timestamp = time();
-							$signature = md5( $timestamp . constant('YOURLS')[$domain]['SECRET']);
+							$signature = md5( $timestamp . unserialize(constant('YOURLS'))[$domain]['SECRET']);
 
 							// Set up CURL to call the API
 							$post_fields = array(     // Data to POST
@@ -103,7 +103,7 @@
 								$post_fields['title'] = $title;
 							} 
 							$ch = curl_init();
-							curl_setopt($ch, CURLOPT_URL, constant('YOURLS')[$domain]['API_URL']);
+							curl_setopt($ch, CURLOPT_URL, unserialize(constant('YOURLS'))[$domain]['API_URL']);
 							curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
 							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
 							curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
