@@ -44,7 +44,7 @@
 
 					// Check if we are processing a form submission
 					if (isset($_POST['submit'])) {
-						
+						$domain = $_POST['domain'] == 'aia' ? 'aia' : 'p2c';
 						// Ensure the long URL required field was filled out
 						if (!isset($_POST['longurl']) || !$_POST['longurl']) {
 							$errors[] = 'Long URL is required';
@@ -84,7 +84,7 @@
 						if (count($errors) == 0) {
 							// Create a time-limited signature token used to call the Yourls API
 							$timestamp = time();
-							$signature = md5( $timestamp . constant('YOURLS_SECRET') );
+							$signature = md5( $timestamp . unserialize(constant('YOURLS'))[$domain]['SECRET']);
 
 							// Set up CURL to call the API
 							$post_fields = array(     // Data to POST
@@ -103,7 +103,7 @@
 								$post_fields['title'] = $title;
 							} 
 							$ch = curl_init();
-							curl_setopt($ch, CURLOPT_URL, constant('YOURLS_API_URL'));
+							curl_setopt($ch, CURLOPT_URL, unserialize(constant('YOURLS'))[$domain]['API_URL']);
 							curl_setopt($ch, CURLOPT_HEADER, 0);            // No header in the result
 							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return, do not echo result
 							curl_setopt($ch, CURLOPT_POST, 1);              // This is a POST request
@@ -151,11 +151,13 @@
 					
 					<div class="form">
 					<form name="shortener" method="POST">
+						<label><input name='domain' value='p2c' type='radio' checked='checked' onchange="$('.domain').text('p2c')" />p2c.sh</label>
+						<label><input name='domain' value='aia' type='radio' onchange="$('.domain').text('aia')" />aia.sh</label>
 					  <label for="longurl" style="font-weight: bold">Long URL:</label>
 					  <input type="text" name="longurl" size="50" value="<?php if (isset($longurl)) { print $longurl; } ?>" /> <br />
 					  
 					  <label for="keyword" style="font-weight: bold">Short URL:</label>
-					  p2c.sh/<input type="text" name="keyword" style="text-transform:lowercase;" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (use only numbers, lowercase letters, and dashes, or leave blank to have a short link auto-generated) <br /><br />
+					  <span class='domain'>p2c</span>.sh/<input type="text" name="keyword" style="text-transform:lowercase;" value="<?php if (isset($_POST['keyword'])) { print $_POST['keyword']; } ?>"/> (use only numbers, lowercase letters, and dashes, or leave blank to have a short link auto-generated) <br /><br />
 					  <input type="submit" name="submit" value="Create Short Link" />
 					</form>
 					</div>
