@@ -3,7 +3,7 @@
 /**
  * The admin-facing functionality of the plugin.
  *
- * @link       http://cabrerahector.com/
+ * @link       https://cabrerahector.com/
  * @since      4.0.0
  *
  * @package    WordPressPopularPosts
@@ -138,6 +138,63 @@ class WPP_Admin {
     } // end delete_site_data
 
     /**
+     * Display some statistics at the "At a Glance" box from the Dashboard.
+     *
+     * @since    4.1.0
+     */
+    public function at_a_glance_stats(){
+
+        global $wpdb;
+
+        $glances = array();
+        $args = array( 'post', 'page' );
+        $post_type_placeholders = '%s, %s';
+
+        if (
+            isset( $this->options['stats']['post_type'] ) 
+            && !empty( $this->options['stats']['post_type'] )
+        ) {
+            $args = array_map( 'trim', explode( ',', $this->options['stats']['post_type'] ) );
+            $post_type_placeholders = implode( ', ', array_fill( 0, count( $args ), '%s' ) );
+        }
+
+        $args[] = WPP_Helper::now();
+
+        $query = $wpdb->prepare(
+            "SELECT SUM(pageviews) AS total 
+            FROM `{$wpdb->prefix}popularpostssummary` v LEFT JOIN `{$wpdb->prefix}posts` p ON v.postid = p.ID 
+            WHERE p.post_type IN( {$post_type_placeholders} ) AND p.post_status = 'publish' AND p.post_password = '' AND v.view_datetime > DATE_SUB( %s, INTERVAL 1 HOUR );"
+            , $args
+        );
+
+        $total_views = $wpdb->get_var( $query );
+
+        $pageviews = sprintf(
+            _n( '1 view in the last hour', '%s views in the last hour', $total_views, 'wordpress-popular-posts' ),
+            number_format_i18n( $total_views )
+        );
+
+        if ( current_user_can('manage_options') ) {
+            $glances[] = '<a class="wpp-views-count" href="' . admin_url( 'options-general.php?page=wordpress-popular-posts' ) .'">' . $pageviews . '</a>';
+        }
+        else {
+            $glances[] = '<span class="wpp-views-count">' . $pageviews . '</a>';
+        }
+
+        return $glances;
+
+    }
+
+    /**
+     * Add custom inline CSS styles for At a Glance stats.
+     *
+     * @since    4.1.0
+     */
+    public function at_a_glance_stats_css(){
+        echo '<style>#dashboard_right_now a.wpp-views-count:before, #dashboard_right_now span.wpp-views-count:before { content: "\f177"; }</style>';
+    }
+
+    /**
      * Register the stylesheets for the public-facing side of the site.
      *
      * @since    4.0.0
@@ -173,14 +230,13 @@ class WPP_Admin {
 
         if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 
-            wp_enqueue_script( 'thickbox' );
-            wp_enqueue_style( 'thickbox' );
-            wp_enqueue_script( 'media-upload' );
+            wp_enqueue_media();
             wp_enqueue_script( 'jquery-ui-datepicker' );
             wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/vendor/Chart.min.js', array(), $this->version );
             wp_enqueue_script( 'wpp-chart', plugin_dir_url( __FILE__ ) . 'js/chart.js', array('chartjs'), $this->version );
             wp_register_script( 'wordpress-popular-posts-admin-script', plugin_dir_url( __FILE__ ) . 'js/admin.js', array('jquery'), $this->version, true );
             wp_localize_script( 'wordpress-popular-posts-admin-script', 'wpp_admin_params', array(
+                'label_media_upload_button' => __( "Use this image", "wordpress-popular-posts" ),
                 'nonce' => wp_create_nonce( "wpp_admin_nonce" )
             ));
             wp_enqueue_script( 'wordpress-popular-posts-admin-script' );
@@ -188,43 +244,6 @@ class WPP_Admin {
         }
 
     }
-
-    /**
-     * Hooks into getttext to change upload button text when uploader is called by WPP.
-     *
-     * @since	2.3.4
-     */
-    public function thickbox_setup() {
-
-        global $pagenow;
-
-        if ( 'media-upload.php' == $pagenow || 'async-upload.php' == $pagenow ) {
-            add_filter( 'gettext', array( $this, 'replace_thickbox_text' ), 1, 3 );
-        }
-
-    } // end thickbox_setup
-
-    /**
-     * Replaces upload button text when uploader is called by WPP.
-     *
-     * @since	2.3.4
-     * @param	string	translated_text
-     * @param	string	text
-     * @param	string	domain
-     * @return	string
-     */
-    public function replace_thickbox_text( $translated_text, $text, $domain ) {
-
-        if ( 'Insert into Post' == $text ) {
-            $referer = strpos( wp_get_referer(), 'wpp_admin' );
-            if ( $referer != '' ) {
-                return __( 'Upload', 'wordpress-popular-posts' );
-            }
-        }
-
-        return $translated_text;
-
-    } // end replace_thickbox_text
 
     public function add_contextual_help(){
 
@@ -314,7 +333,7 @@ class WPP_Admin {
             return "INNER JOIN `{$wpdb->prefix}posts` p ON c.comment_post_ID = p.ID";
         }
 
-        return $table;
+        return $join;
 
     }
 
@@ -357,6 +376,12 @@ class WPP_Admin {
             case "last24hours":
             case "daily":
                 $interval = "24 HOUR";
+                break;
+
+            case "today":
+                $hours = date( 'H', strtotime($now) );
+                $minutes = $hours * 60 + (int) date( 'i', strtotime($now) );
+                $interval = "{$minutes} MINUTE";
                 break;
 
             case "last7days":
@@ -690,7 +715,7 @@ class WPP_Admin {
 
         if ( wp_verify_nonce( $nonce, 'wpp_admin_nonce' ) ) {
 
-            $valid_ranges = array( 'daily', 'last24hours', 'weekly', 'last7days', 'monthly', 'last30days', 'all', 'custom' );
+            $valid_ranges = array( 'today', 'daily', 'last24hours', 'weekly', 'last7days', 'monthly', 'last30days', 'all', 'custom' );
             $time_units = array( "MINUTE", "HOUR", "DAY" );
 
             $range = ( isset( $_GET['range'] ) && in_array( $_GET['range'], $valid_ranges ) ) ? $_GET['range'] : 'last7days';
@@ -1267,8 +1292,8 @@ class WPP_Admin {
 
         global $wp_version;
 
-        $php_min_version = '5.2';
-        $wp_min_version = '4.1';
+        $php_min_version = '5.3';
+        $wp_min_version = '4.7';
         $php_current_version = phpversion();
         $errors = array();
 

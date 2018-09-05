@@ -47,6 +47,9 @@ $numfields = $_POST['count'];
 $wfid = $_POST["wfid"];
 $sbid = $_POST["sbid"];
 $newstatus = $_POST["ns"];
+$statuslevel = 0;
+if(isset($_POST["statuslevel"]))
+    $statuslevel = $_POST["statuslevel"];
 $fields = array();
 $miscfields = array();
 $misc_content = '';
@@ -120,7 +123,7 @@ if(isset($_POST['reminderdate'])) {
 
 $obj = new Workflow();
 
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes, $statuslevel);
 
 if($sbid != 0)
     $obj->sendEmail($sbid);
