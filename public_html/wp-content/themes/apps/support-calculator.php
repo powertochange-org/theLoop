@@ -316,32 +316,32 @@ include('functions/js_functions.php'); ?>
 		var FAMILY = 2;
 		
 		//constants for calculations the original value are beside the description of the variable
-		var cpp_rate = <?php echo getConstant("cpp_rate") ?> //0.0495; //Canada Pension Plan rate
-		var cpp_rate_QC = <?php echo getConstant("cpp_rate_QC") ?> //?; //Canada Pension Plan rate
+		var cpp_rate = <?php echo (getConstant("cpp_rate")== '' ? 0 : getConstant("cpp_rate")); ?>; //0.0495; //Canada Pension Plan rate
+		var cpp_rate_QC = <?php echo (getConstant("cpp_rate_QC") == '' ? 0 : getConstant("cpp_rate_QC")); ?> //?; //Canada Pension Plan rate
 
-		var cpp_max = <?php echo getConstant("cpp_max") ?> //51100;   //Canada Pension Plan
-		var cpp_max_QC = <?php echo getConstant("cpp_max_QC") ?> //?;   //Quebec Pension Plan
+		var cpp_max = <?php echo (getConstant("cpp_max")== '' ? 0 : getConstant("cpp_max")); ?>; //51100;   //Canada Pension Plan
+		var cpp_max_QC = <?php echo (getConstant("cpp_max_QC")== '' ? 0 : getConstant("cpp_max_QC")); ?>; //?;   //Quebec Pension Plan
 
 									//maximum pensionable earnings (annual)
-		var cpp_exempt = <?php echo getConstant("cpp_exempt") ?> //3500; //Canada Pension Plan exemption (annual)
-		var cpp_exempt_QC = <?php echo getConstant("cpp_exempt_QC") ?> //?; //Quebec Pension Plan exemption (annual)
+		var cpp_exempt = <?php echo (getConstant("cpp_exempt")== '' ? 0 : getConstant("cpp_exempt")); ?> //3500; //Canada Pension Plan exemption (annual)
+		var cpp_exempt_QC = <?php echo (getConstant("cpp_exempt_QC")== '' ? 0 : getConstant("cpp_exempt_QC")); ?>; //?; //Quebec Pension Plan exemption (annual)
 
-		var ei_rate1  = <?php echo getConstant("ei_rate1") ?> //0.0188; //Employment Insurance rate (EE rate)
-		var ei_rate1_QC  = <?php echo getConstant("ei_rate1_QC") ?> //0.0127?; //Employment Insurance rate (EE rate) for Quebec
+		var ei_rate1  = <?php echo (getConstant("ei_rate1")== '' ? 0 : getConstant("ei_rate1")); ?>; //0.0188; //Employment Insurance rate (EE rate)
+		var ei_rate1_QC  = <?php echo (getConstant("ei_rate1_QC")== '' ? 0 : getConstant("ei_rate1_QC")); ?>; //0.0127?; //Employment Insurance rate (EE rate) for Quebec
 
-		var ei_rate2 = <?php echo getConstant("ei_rate2") ?> //1.201;  //Employment Insurance rate (ER rate)
-		var ei_rate2_QC = <?php echo getConstant("ei_rate2_QC") ?> //?;  //Employment Insurance rate (ER rate) for Quebec
+		var ei_rate2 = <?php echo (getConstant("ei_rate2")== '' ? 0 : getConstant("ei_rate2")); ?>; //1.201;  //Employment Insurance rate (ER rate)
+		var ei_rate2_QC = <?php echo (getConstant("ei_rate2_QC")== '' ? 0 : getConstant("ei_rate2_QC")); ?>; //?;  //Employment Insurance rate (ER rate) for Quebec
 
-		var ei_max = <?php echo getConstant("ei_max") ?> //47400;    //Employment Insurance maximum insurable earnings (annual)
-		var qpip_annual_ei_max = <?php echo getConstant("qpip_annual_ei_max") ?> //?;    //Employment Insurance maximum insurable earnings (annual)  QPIP quebec max
+		var ei_max = <?php echo (getConstant("ei_max")== '' ? 0 : getConstant("ei_max")); ?>; //47400;    //Employment Insurance maximum insurable earnings (annual)
+		var qpip_annual_ei_max = <?php echo (getConstant("qpip_annual_ei_max")== '' ? 0 : getConstant("qpip_annual_ei_max")); ?>; //?;    //Employment Insurance maximum insurable earnings (annual)  QPIP quebec max
 
-		var qpip_rate_QC_ER = <?php echo getConstant("qpip_rate_QC_ER") ?> //?about 0.767%;    // QPIP quebec
+		var qpip_rate_QC_ER = <?php echo (getConstant("qpip_rate_QC_ER")== '' ? 0 : getConstant("qpip_rate_QC_ER")); ?>; //?about 0.767%;    // QPIP quebec
 
 		//Extended Health Coverage
-		var ehc = new Array(<?php echo getConstant("ehc_single") ?>, <?php echo getConstant("ehc_couple") ?>, <?php echo getConstant("ehc_family") ?>);
+		var ehc = new Array(<?php echo getConstant("ehc_single"); ?>, <?php echo getConstant("ehc_couple"); ?>, <?php echo getConstant("ehc_family"); ?>);
 			//= new Array(100, 220, 260); //single, couple, family
-		var ehc_int = new Array(<?php echo getConstant("ehc_single_int") ?>, <?php echo getConstant("ehc_couple_int") ?>, <?php echo getConstant("ehc_family_int") ?>);
-		var dental = new Array(<?php echo getConstant("dental_single") ?>, <?php echo getConstant("dental_couple") ?>, <?php echo getConstant("dental_family") ?>);
+		var ehc_int = new Array(<?php echo getConstant("ehc_single_int"); ?>, <?php echo getConstant("ehc_couple_int"); ?>, <?php echo getConstant("ehc_family_int"); ?>);
+		var dental = new Array(<?php echo getConstant("dental_single"); ?>, <?php echo getConstant("dental_couple"); ?>, <?php echo getConstant("dental_family") ?>);
 			//= new Array(100, 220, 260); //single, couple, family
 		var dental_int = new Array(<?php echo getConstant("dental_single_int") ?>, <?php echo getConstant("dental_couple_int") ?>, <?php echo getConstant("dental_family_int") ?>);
 		var ehc_MB = <?php echo getConstant("ehc_MB") ?> //1; //Manitoba tax on EHC
