@@ -50,7 +50,7 @@
 				}
 			}
 			else {
-		  		header( 'Location: ' . get_site_url() . '/wp-login.php?redirect_to=' . $redirect_to );
+                               header( 'Location: ' . apply_filters('login_url', get_site_url() . '/wp-login.php?redirect_to=' . $redirect_to));
 				die();
 			}
 	  	}
