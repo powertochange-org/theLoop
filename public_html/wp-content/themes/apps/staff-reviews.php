@@ -83,7 +83,7 @@
                             <th>Step 1: Staff Member Prepwork</th>
                             <th>Step 2: Supervisor Prepwork</th>
                             <th>Step 3: Discussion with Staff Member</th>
-                            <th>Document Link</th>
+                            <th>Document Links</th>
                         </tr>';
                     foreach($result as $row) {
                         $displaySup = 1;
@@ -102,6 +102,9 @@
                     ?>
                         
                 </div>
+            </div>
+            <div style="margin-top: 30px;margin-bottom: 30px;">
+                <?php echo get_the_content(); ?>
             </div>
         <?php endwhile; else: ?>
         <h2>404 - Not Found</h2>
