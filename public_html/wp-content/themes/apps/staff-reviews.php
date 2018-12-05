@@ -74,8 +74,15 @@
                             FROM staffreview 
                             LEFT JOIN employee on staffreview.empid = employee.employee_number 
                             LEFT JOIN employee sup on staffreview.supid = sup.employee_number 
-                            LEFT JOIN wp_users ON sup.user_login = wp_users.user_login 
-                            WHERE wp_users.ID = '$wpID'";
+                            LEFT JOIN wp_users wp1 ON sup.user_login = wp1.user_login 
+                            LEFT JOIN employee sup2 on staffreview.supid2 = sup2.employee_number
+                            LEFT JOIN wp_users wp2 ON sup2.user_login = wp2.user_login
+                            LEFT JOIN employee sup3 on staffreview.supid3 = sup3.employee_number
+                            LEFT JOIN wp_users wp3 ON sup3.user_login = wp3.user_login
+                            LEFT JOIN employee sup4 on staffreview.supid4 = sup4.employee_number
+                            LEFT JOIN wp_users wp4 ON sup4.user_login = wp4.user_login
+                            WHERE wp1.ID = '$wpID' OR wp2.ID = '$wpID' 
+                                OR wp3.ID = '$wpID' OR wp4.ID = '$wpID'";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     
                     $e = '<h2>My Staff</h2>
@@ -106,6 +113,69 @@
             <div style="margin-top: 30px;margin-bottom: 30px;">
                 <?php echo get_the_content(); ?>
             </div>
+            
+            <?php
+            //Use this script execution to send out emails that require supervisor reminders
+            require_once("workflow/inc/PHPMailer-master/PHPMailerAutoload.php");
+            
+            $date = new DateTime(date("Y-m-d"));
+            $newdate = new DateTime(date("Y-m-d"));
+            $newdate->add(new DateInterval('P7D'));
+            
+            $sql = "SELECT staffreview.*, employee.first_name, employee.last_name, sup.first_name AS supfirst_name, sup.last_name AS suplast_name, wp_users.user_email 
+                    FROM staffreview 
+                    LEFT JOIN employee on staffreview.empid = employee.employee_number 
+                    LEFT JOIN employee sup on staffreview.supid = sup.employee_number 
+                    LEFT JOIN wp_users ON sup.user_login = wp_users.user_login 
+                    WHERE empsubmitdate IS NOT NULL 
+                        AND supsubmitdate IS NULL 
+                        AND (supreminder <= '".$date->format('Y-m-d')."' 
+                                OR supreminder IS NULL)";
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            
+            $template = '{SUPERVISOR_NAME}, <br><br>
+<p>{STAFF_NAME} has completed their Prepwork for the staff review!</p>
+
+<p>You can now review their answers and complete your prepwork.  To do this, click the link below and in the “staff reviews” menu select “Get Staff Review”.  After authorizing the script, you should see the staff member’s answers.  In rare cases, the data may not load on the first try.  If this happens, simply select “get staff review” again and it should load.  </p>
+
+<p>Complete your Prepwork. <a href="{SUP_LINK}" target="_blank">Click Here</a></p>
+
+<p>You can check the progress of all your staff on the <a href="https://staff.powertochange.org/forms-information/my-position/staff-reviews-2018-2019/" target="_blank">Staff Review Dashboard</a>. </p>';
+            
+            foreach($result as $row) {
+                $subId = $row['id'];
+                $mail = new PHPMailer;
+                $mail->isSMTP();          // Set mailer to use SMTP
+                $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
+                //$mail->SMTPAuth = true;                            // Enable SMTP authentication
+                //$mail->SMTPDebug = 2;
+                //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
+                $mail->Port = 25;
+
+                $mail->From = 'staffreview-no-reply@p2c.com';
+                $mail->FromName = 'Staff Review';
+                
+                $mail->AddAddress($row['user_email']); 
+
+                $mail->IsHTML(true);
+                
+                $mail->Subject = 'Staff Review Prepwork Completed by '.$row['first_name'].' '.$row['last_name'];
+                
+                $tmpBody = str_replace('{SUPERVISOR_NAME}', $row['supfirst_name'].' '.$row['suplast_name'], $template);
+                $tmpBody = str_replace('{STAFF_NAME}', $row['first_name'].' '.$row['last_name'], $tmpBody);
+                $body = str_replace('{SUP_LINK}', $row['supdraftlink'], $tmpBody);
+                
+                $mail->Body = $body;
+                $mail->Send();
+                
+                //Update the submission reminder date
+                $sql = "UPDATE staffreview 
+                        SET supreminder = '".$newdate->format('Y-m-d')."'
+                        WHERE id = '$subId'";
+                $wpdb->query($sql, ARRAY_A);
+            }
+            
+            ?>
         <?php endwhile; else: ?>
         <h2>404 - Not Found</h2>
         <p>The page you are looking for is not here.</p>                     
