@@ -136,9 +136,9 @@
             $template = '{SUPERVISOR_NAME}, <br><br>
 <p>{STAFF_NAME} has completed their Prepwork for the staff review!</p>
 
-<p>You can now review their answers and complete your prepwork.  To do this, click the link below and in the “staff reviews” menu select “Get Staff Review”.  After authorizing the script, you should see the staff member’s answers.  In rare cases, the data may not load on the first try.  If this happens, simply select “get staff review” again and it should load.  </p>
+<p>You can now review their answers and complete your prepwork.  To do this, click the link below and in the "staff reviews" menu select "Get Staff Review".  After authorizing the script, you should see the staff member\'s answers.  In rare cases, the data may not load on the first try.  If this happens, simply select "get staff review" again and it should load.  </p>
 
-<p>Complete your Prepwork. <a href="{SUP_LINK}" target="_blank">Click Here</a></p>
+<p><a href="{SUP_LINK}" target="_blank">Complete your Prepwork.</a></p>
 
 <p>You can check the progress of all your staff on the <a href="https://staff.powertochange.org/forms-information/my-position/staff-reviews-2018-2019/" target="_blank">Staff Review Dashboard</a>. </p>';
             
