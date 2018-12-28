@@ -37,7 +37,7 @@ RewriteRule . /index.php [L]
 # END WordPress
 
 # BEGIN Shibboleth
-<IfModule mod_shib.c>
+<IfModule mod_shib2.c>
 AuthType shibboleth
 Require shibboleth
 </IfModule>
