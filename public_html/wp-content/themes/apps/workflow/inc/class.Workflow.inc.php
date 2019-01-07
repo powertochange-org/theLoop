@@ -2896,7 +2896,7 @@ class Workflow {
                         (  
                             SELECT workflowsettings.VALUE 
                             FROM employee
-                            INNER JOIN workflowsettings ON employee.ministry = workflowsettings.SETTINGS_KEY 
+                            INNER JOIN workflowsettings ON IFNULL(employee.ministry, '') = workflowsettings.SETTINGS_KEY 
                                     AND workflowsettings.NAME = 'directors'
                             WHERE employee.employee_number = '$userid'
                             
