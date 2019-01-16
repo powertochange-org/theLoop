@@ -53,7 +53,7 @@
                         <th>Document Links</th></tr>';
                     foreach($result as $row) {
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'</td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')</td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
