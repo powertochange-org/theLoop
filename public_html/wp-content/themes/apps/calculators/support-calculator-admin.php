@@ -15,11 +15,11 @@
 include('functions-admin.php');
 
 
-		// var data = cpp_rate + "+" + cpp_rate_QC + "+" + cpp_max + "+" + cpp_max_QC + "+" + cpp_exempt + "+" + cpp_exempt_QC + "+" + ei_rate1 + "+" + ei_rate1_QC + "+" + ei_rate2 + "+" + ei_rate2_QC + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_int.join("+") + "+" + dental.join("+") + "+" + dental_int.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + add_rate_int + "+" + life_rate_int + "+" + life_max_int + "+" + dept_life_int.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
+		// var data = cpp_rate + "+" + cpp_rate_QC + "+" + cpp_max + "+" + cpp_max_QC + "+" + cpp_exempt + "+" + cpp_exempt_QC + "+" + ei_rate1 + "+" + ei_rate1_QC + "+" + ei_rate2 + "+" + ei_rate2_QC + "+" + ei_max + "+" + ehc.join("+") + "+" + ehc_int.join("+") + "+" + dental.join("+") + "+" + dental_int.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + add_rate_int + "+" + life_rate_int + "+" + life_max_int + "+" + dept_life_int.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC_employer_decimal + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
 
 
 
-$constants = array("cpp_rate", "cpp_rate_QC", "cpp_max", "cpp_max_QC", "cpp_exempt", "cpp_exempt_QC", "ei_rate1", "ei_rate1_QC", "ei_rate2", "ei_rate2_QC", "ei_max", "qpip_annual_ei_max", "qpip_rate_QC_ER", "ehc_single", "ehc_couple", "ehc_family", "ehc_single_int", "ehc_couple_int", "ehc_family_int", "dental_single", "dental_couple", "dental_family", "dental_single_int", "dental_couple_int", "dental_family_int", "ehc_MB", "health_tax_AB", "health_tax_BC", "health_tax_MB", "health_tax_NB", "health_tax_NL", "health_tax_NT", "health_tax_NS", "health_tax_NU", "health_tax_ON", "health_tax_PE", "health_tax_QC", "health_tax_SK", "health_tax_YT", "health_tax_FR", "part_time", "add_rate", "life_rate", "life_max", "dept_life_single", "dept_life_couple", "dept_life_family", "add_rate_int", "life_rate_int", "life_max_int", "dept_life_single_int", "dept_life_couple_int", "dept_life_family_int", "medical_ON", "medical_QC", "medical_BC_single", "medical_BC_couple", "medical_BC_family", "workers_rate_AB", "workers_rate_BC", "workers_rate_MB", "workers_rate_NB", "workers_rate_NL", "workers_rate_NT", "workers_rate_NS", "workers_rate_NU", "workers_rate_ON", "workers_rate_PE", "workers_rate_QC", "workers_rate_SK", "workers_rate_YT", "workers_rate_FR", "cr_charge");
+$constants = array("cpp_rate", "cpp_rate_QC", "cpp_max", "cpp_max_QC", "cpp_exempt", "cpp_exempt_QC", "ei_rate1", "ei_rate1_QC", "ei_rate2", "ei_rate2_QC", "ei_max", "qpip_annual_ei_max", "qpip_rate_QC_ER", "ehc_single", "ehc_couple", "ehc_family", "ehc_single_int", "ehc_couple_int", "ehc_family_int", "dental_single", "dental_couple", "dental_family", "dental_single_int", "dental_couple_int", "dental_family_int", "ehc_MB", "health_tax_AB", "health_tax_BC", "health_tax_MB", "health_tax_NB", "health_tax_NL", "health_tax_NT", "health_tax_NS", "health_tax_NU", "health_tax_ON", "health_tax_PE", "health_tax_QC", "health_tax_SK", "health_tax_YT", "health_tax_FR", "part_time", "add_rate", "life_rate", "life_max", "dept_life_single", "dept_life_couple", "dept_life_family", "add_rate_int", "life_rate_int", "life_max_int", "dept_life_single_int", "dept_life_couple_int", "dept_life_family_int", "medical_ON", "medical_QC", "medical_BC_employer_decimal", "medical_BC_single", "medical_BC_couple", "medical_BC_family", "workers_rate_AB", "workers_rate_BC", "workers_rate_MB", "workers_rate_NB", "workers_rate_NL", "workers_rate_NT", "workers_rate_NS", "workers_rate_NU", "workers_rate_ON", "workers_rate_PE", "workers_rate_QC", "workers_rate_SK", "workers_rate_YT", "workers_rate_FR", "cr_charge");
 
 parseConstantInput();
 
@@ -269,7 +269,7 @@ function printAdmin(){
 		</tr>
 		<tr>
 			<td>
-				Depedents life (single, couple, family)
+				Dependents life (single, couple, family)
 			</td>
 			<td>
 				<input type="text" name="set_dept_life_single" id="set_dept_life_single" value="'.getConstant("dept_life_single").'" title="single">
@@ -308,7 +308,7 @@ function printAdmin(){
 		</tr>
 		<tr>
 			<td>
-				Intl Depedents life (single, couple, family)
+				Intl Dependents life (single, couple, family)
 			</td>
 			<td>
 				<input type="text" name="set_dept_life_single_int" id="set_dept_life_single_int" value="'.getConstant("dept_life_single_int").'" title="single">
@@ -318,7 +318,7 @@ function printAdmin(){
 		</tr>
 		<tr>
 			<td colspan=2 style="text-align:center;">
-				<b>Provincal Rates</b>
+				<b>Provincial Rates</b>
 			</td>
 		</tr>
 		<tr>
@@ -339,7 +339,15 @@ function printAdmin(){
 		</tr>
 		<tr>
 			<td>
-				British Columbia medical is a flat rate (single, couple, family)
+				British Columbia decimal employers medical rate
+			</td>
+			<td>
+				<input type="text" name="set_medical_BC_employer_decimal" id="set_medical_BC_employer_decimal" value="'.getConstant("medical_BC_employer_decimal").'">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				British Columbia flat employee medical rate up to start of 2020 (single, couple, family)
 			</td>
 			<td>
 				<input type="text" name="set_medical_BC_single" id="set_medical_BC_single" value="'.getConstant("medical_BC_single").'" title="single">
@@ -420,6 +428,7 @@ function printAdmin(){
 		dept_life_int = new Array(get_value_float("set_dept_life_single_int"), get_value_float("set_dept_life_couple_int"), get_value_float("set_dept_life_family_int"));
 		medical_ON = get_value_float("set_medical_ON");
 		medical_QC = get_value_float("set_medical_QC");
+		medical_BC_employer_decimal = get_value_float("set_medical_BC_employer_decimal");
 		medical_BC = new Array(get_value_float("set_medical_BC_single"), get_value_float("set_medical_BC_couple"), get_value_float("set_medical_BC_family"));
 		workers_rate = new Array('.printWorkersSet().' get_value_float("set_workers_rate_FR"));
 		cr_charge = get_value_float("set_cr_charge");
@@ -427,7 +436,7 @@ function printAdmin(){
 
 	function saveConstants(){
 		storeValues();
-		var data = cpp_rate + "+" + cpp_rate_QC + "+" + cpp_max + "+" + cpp_max_QC + "+" + cpp_exempt + "+" + cpp_exempt_QC + "+" + ei_rate1 + "+" + ei_rate1_QC + "+" + ei_rate2 + "+" + ei_rate2_QC + "+" + ei_max + "+" + qpip_annual_ei_max + "+" + qpip_rate_QC_ER + "+" + ehc.join("+") + "+" + ehc_int.join("+") + "+" + dental.join("+") + "+" + dental_int.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + add_rate_int + "+" + life_rate_int + "+" + life_max_int + "+" + dept_life_int.join("+") + "+" + medical_ON + "+" + medical_QC + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
+		var data = cpp_rate + "+" + cpp_rate_QC + "+" + cpp_max + "+" + cpp_max_QC + "+" + cpp_exempt + "+" + cpp_exempt_QC + "+" + ei_rate1 + "+" + ei_rate1_QC + "+" + ei_rate2 + "+" + ei_rate2_QC + "+" + ei_max + "+" + qpip_annual_ei_max + "+" + qpip_rate_QC_ER + "+" + ehc.join("+") + "+" + ehc_int.join("+") + "+" + dental.join("+") + "+" + dental_int.join("+") + "+" + ehc_MB + "+" + health_tax.join("+") + "+" + part_time + "+" + add_rate + "+" + life_rate + "+" + life_max + "+" + dept_life.join("+") + "+" + add_rate_int + "+" + life_rate_int + "+" + life_max_int + "+" + dept_life_int.join("+") + "+" + medical_ON + "+" + medical_QC  + "+" + medical_BC_employer_decimal  + "+" + medical_BC.join("+") + "+" + workers_rate.join("+") + "+" + cr_charge;
 		document.getElementById("constants").value = data;
 		sendConstants.submit();
 	}
