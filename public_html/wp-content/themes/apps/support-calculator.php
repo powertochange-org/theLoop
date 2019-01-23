@@ -372,6 +372,7 @@ include('functions/js_functions.php'); ?>
 		//Province Medical
 		var medical_ON = <?php echo getConstant("medical_ON") ?> //0.0195; //Ontario medical rate
 		var medical_QC = <?php echo getConstant("medical_QC") ?> //0.027; //Quebec medical rate
+		var medical_BC_employer_decimal = <?php echo getConstant("medical_BC_employer_decimal") ?> //0.027 (copy of Quebec but will be different); //BC % employer medical rate
 		var medical_BC = new Array(<?php echo getConstant("medical_BC_single") ?>, <?php echo getConstant("medical_BC_couple") ?>, <?php echo getConstant("medical_BC_family") ?>);
 			//= new Array(66.50, 120.50, 133.00);
 								//British Columbia medical is a flat rate
@@ -505,7 +506,7 @@ include('functions/js_functions.php'); ?>
 
 		function get_medical(){
 			//Ontario and Quebec medical percentage of salary while
-			//British Columbia it is a flat rate
+			//British Columbia it is a flat rate -*for 2019 will be flat + the percentage, and then will be just the percentage after
 			if (hours < part_time){
 				return 0;
 			}
@@ -516,10 +517,13 @@ include('functions/js_functions.php'); ?>
 				return (salary + salary_s) * medical_QC;
 			}
 			if (province == BC){
-				if(coverage_int == 0) {
-					return medical_BC[coverage];
+				if(coverage_int == 0) { //coverage_int means whether they have INTernational coverage 
+					
+					//if no international coverage, both rates apply for 2018
+					return ((salary + salary_s) * medical_BC_employer_decimal) + medical_BC[coverage];
 				} else {
-					return 0;
+					//if there is international coverage, only the percentage rate applies
+					return ((salary + salary_s) * medical_BC_employer_decimal);
 				}
 			}
 			return 0;
