@@ -764,7 +764,7 @@ class Workflow {
         $misc_content = '';
         $comments = '';
         $submittedby = '';
-        $hrfiled = $hrvoid = '';
+        $hrfiled = $hrvoid = $approvalStage = '';
         $miscfields = array();
         
         $loggedInUser = Workflow::loggedInUser();
@@ -888,7 +888,7 @@ class Workflow {
             } else if(!$approver) {
                 $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
             }
-            
+            $approvalStage = Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
             if($processor) {
                 //Give viewing access to the processor. If form was denied, you can prevent the processor from seeing it here
                 $configvalue = 9;
@@ -1007,7 +1007,7 @@ class Workflow {
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
             $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
-            $miscfields);
+            $miscfields, $approvalStage);
     }
     
     
@@ -1058,7 +1058,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '', $miscfields = '') {
+        $hrvoid = '', $miscfields = '', $approvalStage = '') {
         global $wpdb;
         $formActive = 0;
         $ignoreQuickReply = false;
@@ -1112,7 +1112,7 @@ class Workflow {
             $response .= '<p style="font-size: 24px;margin: 0;">';
         
         if($configuration == 0 || $configuration == 4) 
-            $response .= 'Status: Pending Approval.';
+            $response .= 'Status: Pending Approval. '.($approvalStage != '' ? '('.$approvalStage.')' : '');
         else if(($configuration == 7 || $configuration == 9) && $status == 9)
             $response .= 'Status: Approved - Not Processed Yet';
         else if(($configuration == 7 || $configuration == 9) && $status == 10)
@@ -1128,7 +1128,7 @@ class Workflow {
         else if($configuration == 9 && $status == 3)
             $response .= 'Status: Pending Resubmission by Submitter';
         else if($configuration == 9 && $status == 4)
-            $response .= 'Status: Under Review by another approval group';
+            $response .= 'Status: Under Review by another approval group '.($approvalStage != '' ? '('.$approvalStage.')' : '');
         if($hrvoid)
             $response .= ' - <span style="color:red;"><b>VOIDED</b></span>';
         $response .= '</p>';
