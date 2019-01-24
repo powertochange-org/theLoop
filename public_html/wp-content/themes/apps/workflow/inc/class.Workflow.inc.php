@@ -985,21 +985,40 @@ class Workflow {
             $submittedby = $loggedInUser;
             $hasAnotherApproval = 1;
             $approvalStatus = 0;
+            $approverRole = -1;
             
-            
-            $sql = "SELECT APPROVER_ROLE, ENABLED
-                    FROM workflowform
-                    WHERE FORMID = '$wfid'";
-            
-            $result = $wpdb->get_results($sql, ARRAY_A);
-            
-            if(count($result) != 1 || !$result[0]['ENABLED']) {
-                header('location: ?page=viewsubmissions');
-                $_SESSION['ERRMSG'] = 'This form does not exist or is no longer available.';
-                die();
+            while(true) {
+                $sql = "SELECT  wform.APPROVER_ROLE, 
+                                wform.ENABLED, workflowsettings.*, 
+                                wform2.APPROVER_ROLE AS 'AP2APPROVER_ROLE', 
+                                wform2.ENABLED AS 'AP2ENABLED'
+                        FROM workflowform wform
+                        LEFT OUTER JOIN workflowsettings 
+                            ON wform.FORMID = workflowsettings.SETTINGS_KEY AND workflowsettings.NAME = 'redirect'
+                        LEFT OUTER JOIN workflowform wform2 ON workflowsettings.VALUE = wform2.FORMID
+                        WHERE wform.FORMID = '$wfid'";
+                
+                $result = $wpdb->get_results($sql, ARRAY_A);
+                
+                if(count($result) != 1 || !$result[0]['ENABLED'] && $result[0]['AP2ENABLED'] == null) {
+                    header('location: ?page=viewsubmissions');
+                    $_SESSION['ERRMSG'] = 'This form does not exist or is no longer available.';
+                    die();
+                } else if(!$result[0]['ENABLED'] && !$result[0]['AP2ENABLED']) {
+                    $wfid = $result[0]['VALUE'];
+                } else if(!$result[0]['ENABLED'] && $result[0]['AP2ENABLED']) {
+                    //If there is a form that has replaced the disabled form
+                    $approverRole = $result[0]['AP2APPROVER_ROLE'];
+                    $wfid = $result[0]['VALUE'];
+                    break;
+                } else {
+                    $approverRole = $result[0]['APPROVER_ROLE'];
+                    break;
+                }
             }
             
-            if($result[0]['APPROVER_ROLE'] == 8)
+            
+            if($approverRole == 8)
                 $supNext = 1;
             else 
                 $supNext = 0;
