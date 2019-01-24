@@ -3364,7 +3364,7 @@ class Workflow {
                 $_SESSION['impersonateusername'] = 'UserName not found';
             }
             
-            echo '<script>alert("You are now trying to impersonate.'.$_SESSION['impersonateuser'].' - '.$_SESSION['impersonateusername'].'");</script>';
+            //echo '<script>alert("You are now trying to impersonate.'.$_SESSION['impersonateuser'].' - '.$_SESSION['impersonateusername'].'");</script>';
         }
         
     }
@@ -3373,7 +3373,7 @@ class Workflow {
         unset($_SESSION['impersonate']);
         unset($_SESSION['impersonateuser']);
         unset($_SESSION['impersonateusername']);
-        echo '<script>alert("You are now logged in as yourself.");</script>';
+        //echo '<script>alert("You are now logged in as yourself.");</script>';
     }
     
     public static function loggedInUser() {

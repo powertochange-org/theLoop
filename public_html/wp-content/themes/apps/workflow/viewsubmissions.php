@@ -29,7 +29,7 @@ if(isset($_SESSION['ERRMSG'])) {
     unset($_SESSION['ERRMSG']);
 }
 
-/*Impersonating an employee in debug mode.*/
+/*Impersonating an employee.*/
 global $wpdb;
 $debugText = '';
 $impersonateMode = Workflow::impersonateMode();
@@ -41,6 +41,8 @@ if(Workflow::debugMode() || $impersonateMode) {
             Workflow::stopImpersonateEmployee();
         else 
             Workflow::impersonateEmployee($_POST['newuser']);
+         header('location: ?page=viewsubmissions');
+         die();
     } 
 
     $debugText .= 'Currently logged in as: ';

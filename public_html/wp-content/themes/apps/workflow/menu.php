@@ -1,3 +1,8 @@
+<?php if(Workflow::actualloggedInUser() != Workflow::loggedInUser()) {
+    echo '<div style="margin-top:-30px;margin-bottom:20px;background-color:#91f291;border:2px solid #1b7f21;padding:5px;text-align:center;">You are impersonating: <b>'.Workflow::loggedInUserName().'</b>
+</div>';
+} ?>
+
 <div id="workflow-navbar">
     <?php
         $admin = Workflow::isAdmin(Workflow::loggedInUser());
