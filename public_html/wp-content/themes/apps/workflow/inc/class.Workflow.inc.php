@@ -3381,7 +3381,7 @@ class Workflow {
         global $currentUserEmployeeNum;
         
         // Check if we are impersonating someone else
-        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
+        if((Workflow::debugMode() || Workflow::impersonateMode()) && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
             return $_SESSION['impersonateuser'];
         }
         // Check if the current employee number has already been looked up and cached - this saves from having to look up in the db again
@@ -3413,15 +3413,7 @@ class Workflow {
     }
     
     public static function loggedInUserName() {
-        // If we are impersonating someone, return the name stored in the session
-        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
-            //return $_SESSION['impersonateusername'];
-            return Workflow::getUserName(Workflow::loggedInUser());
-        } else {
-            // Otherwise, just return the current user login
-            //return wp_get_current_user()->user_login;
-            return Workflow::getUserName(Workflow::loggedInUser());
-        }
+        return Workflow::getUserName(Workflow::loggedInUser());
     }
     
     public static function hasRoleAccess($user, $roleSearch) {
@@ -3893,7 +3885,11 @@ class Workflow {
         else
             return 0;
     }
-
+    
+    public static function impersonateMode() {
+        return Workflow::hasRoleAccess(Workflow::actualloggedInUser(), 29);
+    }
+    
     /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
     public static function debugMode() {
         return get_option( 'workflowdebug' , 0 );

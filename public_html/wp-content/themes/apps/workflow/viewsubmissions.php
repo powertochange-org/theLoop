@@ -32,8 +32,9 @@ if(isset($_SESSION['ERRMSG'])) {
 /*Impersonating an employee in debug mode.*/
 global $wpdb;
 $debugText = '';
-if(Workflow::debugMode()) {
-    $debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
+$impersonateMode = Workflow::impersonateMode();
+if(Workflow::debugMode() || $impersonateMode) {
+    $debugText = '<hr><b>'.($impersonateMode ? 'IMPERSONATE' : 'DEBUG').' MODE ENABLED.</b><br>The below form is only available when debug mode is turned on or you are part of the IMPERSONATE USER role group.<br>';
     if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
         //Assign the impersonate variable to allow for impersonation. 
         if(Workflow::actualloggedInUser() == $_POST['newuser'])
@@ -153,12 +154,15 @@ if(Workflow::loggedInUser() != '0') {
     echo('<br>Your account may not have been set up to use this feature yet. Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>');
 }
 
-if(Workflow::debugMode()) {
+if(Workflow::debugMode() || $impersonateMode) {
     echo $debugText;
     echo '<form id="edituser" action="?page=viewsubmissions" method="POST" autocomplete="off">
-        <div class="style-1 workflowright"><input type="text" name="newuser"></div>
+        <div class="style-1 workflowright" style="float:left;"><input type="text" id="newuser" name="newuser"></div>
+        '.(Workflow::actualloggedInUser() != Workflow::loggedInUser() ? '<input type="button" value="Stop Impersonating" onclick="document.getElementById(\'newuser\').value = \''.Workflow::actualloggedInUser().'\';document.getElementById(\'edituser\').submit();" style="float:left;"/>' : '').
+        '<div style="clear:both;"></div>
         <input type="submit" value="Submit">
-    </form>';
+        
+    </form><hr>';
 }
 
 ?>
