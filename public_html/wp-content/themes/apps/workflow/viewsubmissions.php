@@ -7,7 +7,17 @@
 * author: gerald.becker
 *
 */
+
+$impersonateMode = Workflow::impersonateMode();
+if($impersonateMode) {
 ?>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
+<?php } ?>
+
 <h1>View Submissions</h1>
 
 <?php
@@ -32,7 +42,6 @@ if(isset($_SESSION['ERRMSG'])) {
 /*Impersonating an employee.*/
 global $wpdb;
 $debugText = '';
-$impersonateMode = Workflow::impersonateMode();
 if(Workflow::debugMode() || $impersonateMode) {
     $debugText = '<hr><b>'.($impersonateMode ? 'IMPERSONATE' : 'DEBUG').' MODE ENABLED.</b><br>The below form is only available when debug mode is turned on or you are part of the IMPERSONATE USER role group.<br>';
     if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
@@ -158,8 +167,17 @@ if(Workflow::loggedInUser() != '0') {
 
 if(Workflow::debugMode() || $impersonateMode) {
     echo $debugText;
+    //<input type="text" id="newuser1" name="newuser1">
     echo '<form id="edituser" action="?page=viewsubmissions" method="POST" autocomplete="off">
-        <div class="style-1 workflowright" style="float:left;"><input type="text" id="newuser" name="newuser"></div>
+        <div class="style-1 workflowright" style="float:left;">
+        <select id="newuser" name="newuser" class="chosen-select" data-placeholder=" "><option value="'.Workflow::actualloggedInUser().'">Myself</option>';
+            $values = Workflow::getAllUsers();
+            
+            for($i = 0; $i < count($values); $i++) {
+                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }
+            echo '</select>
+        </div>
         '.(Workflow::actualloggedInUser() != Workflow::loggedInUser() ? '<input type="button" value="Stop Impersonating" onclick="document.getElementById(\'newuser\').value = \''.Workflow::actualloggedInUser().'\';document.getElementById(\'edituser\').submit();" style="float:left;"/>' : '').
         '<div style="clear:both;"></div>
         <input type="submit" value="Submit">
@@ -179,4 +197,16 @@ if(Workflow::debugMode() || $impersonateMode) {
                 submissionLink = true;
         });
     });
+    <?php if($impersonateMode) { ?>
+        var config = {
+          '.chosen-select'           : {},
+          '.chosen-select-deselect'  : {allow_single_deselect:true},
+          '.chosen-select-no-single' : {disable_search_threshold:10},
+          '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+          '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+          $(selector).chosen(config[selector]);
+        }
+    <?php } ?>
 </script>
