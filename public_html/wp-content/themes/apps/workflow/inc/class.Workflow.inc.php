@@ -2610,13 +2610,14 @@ class Workflow {
                             WHEN (workflowformstatus.STATUS_APPROVAL = '2' AND workflowform.APPROVER_ROLE2 = '8') THEN 'S' 
                             WHEN (workflowformstatus.STATUS_APPROVAL = '3' AND workflowform.APPROVER_ROLE3 = '8') THEN 'S'
                             WHEN (workflowformstatus.STATUS_APPROVAL = '4' AND workflowform.APPROVER_ROLE4 = '8') THEN 'S'
-                        END AS 'FLAG'
+                        END AS 'FLAG',
+                        workflowformstatus.APPROVER_DIRECT
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
                 LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ( 
-                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL >= '1' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
@@ -2702,7 +2703,8 @@ class Workflow {
                         END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '1' AS 'PROCESS',
-                        '' AS 'FLAG'
+                        '' AS 'FLAG',
+                        workflowformstatus.APPROVER_DIRECT
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -2762,6 +2764,7 @@ class Workflow {
         $prevState = 1;
         $processorState = -1;
         $approved = $denied = $pending = $notprocessed = $processed = 0;
+        $pendingSub = $approvedSub = $notApprovedSub = $tbpSub = $proSub = '';
         foreach($result as $row) {
             if($row['STATUS'] != $prevState && !$row['PROCESS']) {
                 if($row['STATUS'] == 4) {
@@ -2769,6 +2772,7 @@ class Workflow {
                     $prevState = 4;
                 } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
                     $response .= '<tr class="approver-7 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+                    $response .= $approvedSub;
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
                     $response .= '<tr class="approver-8 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
@@ -2784,26 +2788,38 @@ class Workflow {
                 }
             }
             
-            $response .= '<tr class="selectedblackout ';
-            if($row['STATUS'] == 4) {
-                $response .= 'approver-4';
+            /*Status 7 is supposed to be completely approved forms only but HR requested a change
+            It now includes forms that were approved by the supervisor (for the supervisor)
+            In the future, change this to work for all roles. */
+            $supervisorApproved = 0;
+            if((($row['STATUS_APPROVAL'] >= 2 && $row['APPROVER_ROLE'] == 8)
+                || ($row['STATUS_APPROVAL'] >= 3 && $row['APPROVER_ROLE2'] == 8)
+                || ($row['STATUS_APPROVAL'] >= 4 && $row['APPROVER_ROLE3'] == 8))
+                && $row['STATUS'] == 4
+                && $row['APPROVER_DIRECT'] == Workflow::loggedInUser()) {
+                $supervisorApproved = 1;
+            }
+            $tempResponse = '';
+            $tempResponse .= '<tr class="selectedblackout ';
+            if($row['STATUS'] == 4 && !$supervisorApproved) {
+                $tempResponse .= 'approver-4';
                 $pending++;
-            } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
-                $response .= 'approver-7 hide';
+            } else if($row['STATUS'] == 7 && !$row['PROCESS'] || $supervisorApproved) {
+                $tempResponse .= 'approver-7 hide';
                 $approved++;
             } else if($row['STATUS'] == 8) {
-                $response .= 'approver-8 hide';
+                $tempResponse .= 'approver-8 hide';
                 $denied++;
             } else if($row['STATUS'] == 7 && $row['PROCESS'] && !$row['PROCESSED']) {
-                $response .= 'approver-9 hide';
+                $tempResponse .= 'approver-9 hide';
                 $notprocessed++;
             } else if($row['STATUS'] == 7 && $row['PROCESS'] && $row['PROCESSED']) {
-                $response .= 'approver-10 hide';
+                $tempResponse .= 'approver-10 hide';
                 $processed++;
             }
             
-            $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
-            $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
+            $tempResponse .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
+            $tempResponse .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].($supervisorApproved ? '*' : '').'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
                             <td style="width:400px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
@@ -2812,10 +2828,14 @@ class Workflow {
                                 '" style="display:none;">'.$row['COMMENT'].'</div></td>
                             <td onclick="loadComments(\''.$row['SUBMISSIONID'].'\');" style="width:20px;vertical-align:middle;">';
             if($row['COMMENT'] != '')
-                $response .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
+                $tempResponse .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
             
-            $response .= '</td>';
-            $response .= '</tr>';
+            $tempResponse .= '</td>';
+            $tempResponse .= '</tr>';
+            if(!$supervisorApproved)
+                $response .= $tempResponse;
+            else
+                $approvedSub .= $tempResponse;
         }
         //Add section headers just in case they weren't created so the user knows which page they are on
         if($pending == 0) {
