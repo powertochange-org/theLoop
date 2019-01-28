@@ -97,7 +97,8 @@ if(Workflow::loggedInUser() != '0') {
     else
         $formType = 'my';
     
-    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
+    //Displays the blue summary box
+    //echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     
     ?>
     <hr>
