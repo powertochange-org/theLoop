@@ -413,6 +413,12 @@ class Workflow {
                     }
                 }
                 if(!$foundSupervisor) {
+                    if(Workflow::getSingleWorkflowSetting('directors', '') == $sup) {
+                        $foundSupervisor = 1;
+                        $directApprover = $sup;
+                    }
+                }
+                if(!$foundSupervisor) {
                     $_SESSION['ERRMSG'] = 'The supervisor you have selected does not appear to be your supervisor. 
                     Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if this is
                     an error.';
@@ -1877,12 +1883,20 @@ class Workflow {
                     $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
-                    $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
                     if($directSup['supervisor'] == $direct2)
                         $omitDirect2 = 1;
+                    //Do not create an entry for a blank supervisor
+                    if($directSup['supname'] == null)
+                       continue;
+                    $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
                 }
                 if($direct2 != 0 && !$omitDirect2)
                     $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
+                //If the employee doesn't have a supervisor in the loop, use blank ministry director setting
+                if(count($directSupervisors) == 1 && !$direct2 && $directSupervisors['supname'] == null) {
+                    $noSup = Workflow::getSingleWorkflowSetting('directors', '');
+                    $response .= '<option value="'.$noSup.'">'.Workflow::getUserName($noSup).'</option>';
+                }
                 $response .= '</select></div>';
                 $response .= '<div id="warningmsg" style="color:red;"></div>';
             }
