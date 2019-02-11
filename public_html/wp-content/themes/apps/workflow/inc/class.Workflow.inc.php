@@ -413,6 +413,12 @@ class Workflow {
                     }
                 }
                 if(!$foundSupervisor) {
+                    if(Workflow::getSingleWorkflowSetting('directors', '') == $sup) {
+                        $foundSupervisor = 1;
+                        $directApprover = $sup;
+                    }
+                }
+                if(!$foundSupervisor) {
                     $_SESSION['ERRMSG'] = 'The supervisor you have selected does not appear to be your supervisor. 
                     Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a> if this is
                     an error.';
@@ -764,7 +770,7 @@ class Workflow {
         $misc_content = '';
         $comments = '';
         $submittedby = '';
-        $hrfiled = $hrvoid = '';
+        $hrfiled = $hrvoid = $approvalStage = '';
         $miscfields = array();
         
         $loggedInUser = Workflow::loggedInUser();
@@ -888,7 +894,7 @@ class Workflow {
             } else if(!$approver) {
                 $approver = (Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
             }
-            
+            $approvalStage = Workflow::getNextRoleName($approvalStatus, $hasAnotherApproval, $wfid, 1, $sbid, 1);
             if($processor) {
                 //Give viewing access to the processor. If form was denied, you can prevent the processor from seeing it here
                 $configvalue = 9;
@@ -985,21 +991,40 @@ class Workflow {
             $submittedby = $loggedInUser;
             $hasAnotherApproval = 1;
             $approvalStatus = 0;
+            $approverRole = -1;
             
-            
-            $sql = "SELECT APPROVER_ROLE, ENABLED
-                    FROM workflowform
-                    WHERE FORMID = '$wfid'";
-            
-            $result = $wpdb->get_results($sql, ARRAY_A);
-            
-            if(count($result) != 1 || !$result[0]['ENABLED']) {
-                header('location: ?page=viewsubmissions');
-                $_SESSION['ERRMSG'] = 'This form does not exist or is no longer available.';
-                die();
+            while(true) {
+                $sql = "SELECT  wform.APPROVER_ROLE, 
+                                wform.ENABLED, workflowsettings.*, 
+                                wform2.APPROVER_ROLE AS 'AP2APPROVER_ROLE', 
+                                wform2.ENABLED AS 'AP2ENABLED'
+                        FROM workflowform wform
+                        LEFT OUTER JOIN workflowsettings 
+                            ON wform.FORMID = workflowsettings.SETTINGS_KEY AND workflowsettings.NAME = 'redirect'
+                        LEFT OUTER JOIN workflowform wform2 ON workflowsettings.VALUE = wform2.FORMID
+                        WHERE wform.FORMID = '$wfid'";
+                
+                $result = $wpdb->get_results($sql, ARRAY_A);
+                
+                if(count($result) != 1 || !$result[0]['ENABLED'] && $result[0]['AP2ENABLED'] == null) {
+                    header('location: ?page=viewsubmissions');
+                    $_SESSION['ERRMSG'] = 'This form does not exist or is no longer available.';
+                    die();
+                } else if(!$result[0]['ENABLED'] && !$result[0]['AP2ENABLED']) {
+                    $wfid = $result[0]['VALUE'];
+                } else if(!$result[0]['ENABLED'] && $result[0]['AP2ENABLED']) {
+                    //If there is a form that has replaced the disabled form
+                    $approverRole = $result[0]['AP2APPROVER_ROLE'];
+                    $wfid = $result[0]['VALUE'];
+                    break;
+                } else {
+                    $approverRole = $result[0]['APPROVER_ROLE'];
+                    break;
+                }
             }
             
-            if($result[0]['APPROVER_ROLE'] == 8)
+            
+            if($approverRole == 8)
                 $supNext = 1;
             else 
                 $supNext = 0;
@@ -1007,7 +1032,7 @@ class Workflow {
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
             $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
-            $miscfields);
+            $miscfields, $approvalStage);
     }
     
     
@@ -1058,7 +1083,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '', $miscfields = '') {
+        $hrvoid = '', $miscfields = '', $approvalStage = '') {
         global $wpdb;
         $formActive = 0;
         $ignoreQuickReply = false;
@@ -1112,7 +1137,7 @@ class Workflow {
             $response .= '<p style="font-size: 24px;margin: 0;">';
         
         if($configuration == 0 || $configuration == 4) 
-            $response .= 'Status: Pending Approval.';
+            $response .= 'Status: Pending Approval. '.($approvalStage != '' ? '('.$approvalStage.')' : '');
         else if(($configuration == 7 || $configuration == 9) && $status == 9)
             $response .= 'Status: Approved - Not Processed Yet';
         else if(($configuration == 7 || $configuration == 9) && $status == 10)
@@ -1128,7 +1153,7 @@ class Workflow {
         else if($configuration == 9 && $status == 3)
             $response .= 'Status: Pending Resubmission by Submitter';
         else if($configuration == 9 && $status == 4)
-            $response .= 'Status: Under Review by another approval group';
+            $response .= 'Status: Under Review by another approval group '.($approvalStage != '' ? '('.$approvalStage.')' : '');
         if($hrvoid)
             $response .= ' - <span style="color:red;"><b>VOIDED</b></span>';
         $response .= '</p>';
@@ -1858,12 +1883,20 @@ class Workflow {
                     $directSupervisors = Workflow::getMultipleDirectApprovers(Workflow::loggedInUser());
                 $omitDirect2 = 0;
                 foreach($directSupervisors as $directSup) {
-                    $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
                     if($directSup['supervisor'] == $direct2)
                         $omitDirect2 = 1;
+                    //Do not create an entry for a blank supervisor
+                    if($directSup['supname'] == null)
+                       continue;
+                    $response .= '<option value="'.$directSup['supervisor'].'">'.Workflow::getUserName($directSup['supervisor']).'</option>';
                 }
                 if($direct2 != 0 && !$omitDirect2)
                     $response .= '<option value="'.$direct2.'">'.Workflow::getUserName($direct2).'</option>';
+                //If the employee doesn't have a supervisor in the loop, use blank ministry director setting
+                if(count($directSupervisors) == 1 && !$direct2 && $directSupervisors['supname'] == null) {
+                    $noSup = Workflow::getSingleWorkflowSetting('directors', '');
+                    $response .= '<option value="'.$noSup.'">'.Workflow::getUserName($noSup).'</option>';
+                }
                 $response .= '</select></div>';
                 $response .= '<div id="warningmsg" style="color:red;"></div>';
             }
@@ -2591,13 +2624,14 @@ class Workflow {
                             WHEN (workflowformstatus.STATUS_APPROVAL = '2' AND workflowform.APPROVER_ROLE2 = '8') THEN 'S' 
                             WHEN (workflowformstatus.STATUS_APPROVAL = '3' AND workflowform.APPROVER_ROLE3 = '8') THEN 'S'
                             WHEN (workflowformstatus.STATUS_APPROVAL = '4' AND workflowform.APPROVER_ROLE4 = '8') THEN 'S'
-                        END AS 'FLAG'
+                        END AS 'FLAG',
+                        workflowformstatus.APPROVER_DIRECT
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
                 LEFT JOIN workflowuserhistory ON workflowformstatus.USER = workflowuserhistory.EMPID
                 WHERE ( 
-                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL = '1' OR STATUS_APPROVAL = '100')
+                    ( (workflowform.APPROVER_ROLE = '8' AND (STATUS_APPROVAL >= '1' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
@@ -2683,7 +2717,8 @@ class Workflow {
                         END AS USERNAME,
                         workflowformstatus.COMMENT,
                         '1' AS 'PROCESS',
-                        '' AS 'FLAG'
+                        '' AS 'FLAG',
+                        workflowformstatus.APPROVER_DIRECT
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID 
                 LEFT JOIN employee ON workflowformstatus.USER = employee.employee_number
@@ -2743,6 +2778,7 @@ class Workflow {
         $prevState = 1;
         $processorState = -1;
         $approved = $denied = $pending = $notprocessed = $processed = 0;
+        $pendingSub = $approvedSub = $notApprovedSub = $tbpSub = $proSub = '';
         foreach($result as $row) {
             if($row['STATUS'] != $prevState && !$row['PROCESS']) {
                 if($row['STATUS'] == 4) {
@@ -2750,6 +2786,7 @@ class Workflow {
                     $prevState = 4;
                 } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
                     $response .= '<tr class="approver-7 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+                    $response .= $approvedSub;
                     $prevState = 7;
                 } else if($row['STATUS'] == 8) {
                     $response .= '<tr class="approver-8 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
@@ -2765,26 +2802,38 @@ class Workflow {
                 }
             }
             
-            $response .= '<tr class="selectedblackout ';
-            if($row['STATUS'] == 4) {
-                $response .= 'approver-4';
+            /*Status 7 is supposed to be completely approved forms only but HR requested a change
+            It now includes forms that were approved by the supervisor (for the supervisor)
+            In the future, change this to work for all roles. */
+            $supervisorApproved = 0;
+            if((($row['STATUS_APPROVAL'] >= 2 && $row['APPROVER_ROLE'] == 8)
+                || ($row['STATUS_APPROVAL'] >= 3 && $row['APPROVER_ROLE2'] == 8)
+                || ($row['STATUS_APPROVAL'] >= 4 && $row['APPROVER_ROLE3'] == 8))
+                && $row['STATUS'] == 4
+                && $row['APPROVER_DIRECT'] == Workflow::loggedInUser()) {
+                $supervisorApproved = 1;
+            }
+            $tempResponse = '';
+            $tempResponse .= '<tr class="selectedblackout ';
+            if($row['STATUS'] == 4 && !$supervisorApproved) {
+                $tempResponse .= 'approver-4';
                 $pending++;
-            } else if($row['STATUS'] == 7 && !$row['PROCESS']) {
-                $response .= 'approver-7 hide';
+            } else if($row['STATUS'] == 7 && !$row['PROCESS'] || $supervisorApproved) {
+                $tempResponse .= 'approver-7 hide';
                 $approved++;
             } else if($row['STATUS'] == 8) {
-                $response .= 'approver-8 hide';
+                $tempResponse .= 'approver-8 hide';
                 $denied++;
             } else if($row['STATUS'] == 7 && $row['PROCESS'] && !$row['PROCESSED']) {
-                $response .= 'approver-9 hide';
+                $tempResponse .= 'approver-9 hide';
                 $notprocessed++;
             } else if($row['STATUS'] == 7 && $row['PROCESS'] && $row['PROCESSED']) {
-                $response .= 'approver-10 hide';
+                $tempResponse .= 'approver-10 hide';
                 $processed++;
             }
             
-            $response .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
-            $response .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].'</td>
+            $tempResponse .= '" data-href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'">';
+            $tempResponse .=  '<td style="width:50px;">'.$row['SUBMISSIONID'].($supervisorApproved ? '*' : '').'</td>
                             <td style="width:150px;">'.$row['USERNAME'].'</td>
                             <td style="width:400px;">'.$row['NAME'].'</td>
                             <td style="width:150px;">'.WorkFlow::getLastEditedUserName($row['SUBMISSIONID']).'</td>
@@ -2793,10 +2842,14 @@ class Workflow {
                                 '" style="display:none;">'.$row['COMMENT'].'</div></td>
                             <td onclick="loadComments(\''.$row['SUBMISSIONID'].'\');" style="width:20px;vertical-align:middle;">';
             if($row['COMMENT'] != '')
-                $response .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
+                $tempResponse .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
             
-            $response .= '</td>';
-            $response .= '</tr>';
+            $tempResponse .= '</td>';
+            $tempResponse .= '</tr>';
+            if(!$supervisorApproved)
+                $response .= $tempResponse;
+            else
+                $approvedSub .= $tempResponse;
         }
         //Add section headers just in case they weren't created so the user knows which page they are on
         if($pending == 0) {
@@ -3345,7 +3398,7 @@ class Workflow {
                 $_SESSION['impersonateusername'] = 'UserName not found';
             }
             
-            echo '<script>alert("You are now trying to impersonate.'.$_SESSION['impersonateuser'].' - '.$_SESSION['impersonateusername'].'");</script>';
+            //echo '<script>alert("You are now trying to impersonate.'.$_SESSION['impersonateuser'].' - '.$_SESSION['impersonateusername'].'");</script>';
         }
         
     }
@@ -3354,7 +3407,7 @@ class Workflow {
         unset($_SESSION['impersonate']);
         unset($_SESSION['impersonateuser']);
         unset($_SESSION['impersonateusername']);
-        echo '<script>alert("You are now logged in as yourself.");</script>';
+        //echo '<script>alert("You are now logged in as yourself.");</script>';
     }
     
     public static function loggedInUser() {
@@ -3362,7 +3415,7 @@ class Workflow {
         global $currentUserEmployeeNum;
         
         // Check if we are impersonating someone else
-        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
+        if((Workflow::debugMode() || Workflow::impersonateMode()) && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
             return $_SESSION['impersonateuser'];
         }
         // Check if the current employee number has already been looked up and cached - this saves from having to look up in the db again
@@ -3394,15 +3447,7 @@ class Workflow {
     }
     
     public static function loggedInUserName() {
-        // If we are impersonating someone, return the name stored in the session
-        if(Workflow::debugMode() && isset($_SESSION['impersonate']) && $_SESSION['impersonate'] == 1) {
-            //return $_SESSION['impersonateusername'];
-            return Workflow::getUserName(Workflow::loggedInUser());
-        } else {
-            // Otherwise, just return the current user login
-            //return wp_get_current_user()->user_login;
-            return Workflow::getUserName(Workflow::loggedInUser());
-        }
+        return Workflow::getUserName(Workflow::loggedInUser());
     }
     
     public static function hasRoleAccess($user, $roleSearch) {
@@ -3874,7 +3919,11 @@ class Workflow {
         else
             return 0;
     }
-
+    
+    public static function impersonateMode() {
+        return Workflow::hasRoleAccess(Workflow::actualloggedInUser(), 29);
+    }
+    
     /*Checks if a developer is debugging the workflow app. Should return 0 in the production server.*/
     public static function debugMode() {
         return get_option( 'workflowdebug' , 0 );

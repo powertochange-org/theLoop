@@ -33,4 +33,10 @@ function my_replace_mail( $args ) {
     return $args;
 }
 
+add_action('init', 'track_sessions', 1);
+function track_sessions() { // if session isn't active, set it
+    if(!session_id()) {
+        session_start();
+    }
+}
 ?>

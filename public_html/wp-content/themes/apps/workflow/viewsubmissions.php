@@ -7,7 +7,17 @@
 * author: gerald.becker
 *
 */
+
+$impersonateMode = Workflow::impersonateMode();
+if($impersonateMode) {
 ?>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.jquery.js" type="text/javascript"></script>
+    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/docsupport/prism.css">
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/js/chosen/chosen.css">
+<?php } ?>
+
 <h1>View Submissions</h1>
 
 <?php
@@ -29,17 +39,19 @@ if(isset($_SESSION['ERRMSG'])) {
     unset($_SESSION['ERRMSG']);
 }
 
-/*Impersonating an employee in debug mode.*/
+/*Impersonating an employee.*/
 global $wpdb;
 $debugText = '';
-if(Workflow::debugMode()) {
-    $debugText = 'DEBUG MODE ENABLED. The below form will not be visible on the production version.<br>';
+if(Workflow::debugMode() || $impersonateMode) {
+    $debugText = '<hr><b>'.($impersonateMode ? 'IMPERSONATE' : 'DEBUG').' MODE ENABLED.</b><br>The below form is only available when debug mode is turned on or you are part of the IMPERSONATE USER role group.<br>';
     if(isset($_POST['newuser']) && $_POST['newuser'] != '') {
         //Assign the impersonate variable to allow for impersonation. 
         if(Workflow::actualloggedInUser() == $_POST['newuser'])
             Workflow::stopImpersonateEmployee();
         else 
             Workflow::impersonateEmployee($_POST['newuser']);
+         header('location: ?page=viewsubmissions');
+         die();
     } 
 
     $debugText .= 'Currently logged in as: ';
@@ -85,7 +97,8 @@ if(Workflow::loggedInUser() != '0') {
     else
         $formType = 'my';
     
-    echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
+    //Displays the blue summary box
+    //echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     
     ?>
     <hr>
@@ -153,12 +166,24 @@ if(Workflow::loggedInUser() != '0') {
     echo('<br>Your account may not have been set up to use this feature yet. Please contact help desk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>');
 }
 
-if(Workflow::debugMode()) {
+if(Workflow::debugMode() || $impersonateMode) {
     echo $debugText;
+    //<input type="text" id="newuser1" name="newuser1">
     echo '<form id="edituser" action="?page=viewsubmissions" method="POST" autocomplete="off">
-        <div class="style-1 workflowright"><input type="text" name="newuser"></div>
+        <div class="style-1 workflowright" style="float:left;">
+        <select id="newuser" name="newuser" class="chosen-select" data-placeholder=" "><option value="'.Workflow::actualloggedInUser().'">Myself</option>';
+            $values = Workflow::getAllUsers();
+            
+            for($i = 0; $i < count($values); $i++) {
+                echo '<option value="'.$values[$i][0].'">'.$values[$i][1].'</option>';
+            }
+            echo '</select>
+        </div>
+        '.(Workflow::actualloggedInUser() != Workflow::loggedInUser() ? '<input type="button" value="Stop Impersonating" onclick="document.getElementById(\'newuser\').value = \''.Workflow::actualloggedInUser().'\';document.getElementById(\'edituser\').submit();" style="float:left;"/>' : '').
+        '<div style="clear:both;"></div>
         <input type="submit" value="Submit">
-    </form>';
+        
+    </form><hr>';
 }
 
 ?>
@@ -173,4 +198,16 @@ if(Workflow::debugMode()) {
                 submissionLink = true;
         });
     });
+    <?php if($impersonateMode) { ?>
+        var config = {
+          '.chosen-select'           : {},
+          '.chosen-select-deselect'  : {allow_single_deselect:true},
+          '.chosen-select-no-single' : {disable_search_threshold:10},
+          '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+          '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+          $(selector).chosen(config[selector]);
+        }
+    <?php } ?>
 </script>
