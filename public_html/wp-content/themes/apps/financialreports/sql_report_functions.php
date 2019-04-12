@@ -3,7 +3,7 @@
 require_once('HTTP/Request.php');  // PEAR Library for making HTTP Requests
 
 function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
-	$WEB_SERVICE_URL = "http://hebron/RunSQLReport/";
+	$WEB_SERVICE_URL = "http://hqiis/RunSQLReport/";
 
 	// Create the request
 	$request = new HTTP_Request($WEB_SERVICE_URL . $sqlReportName . ".aspx?APIToken=" . SQL_REPORT_API_TOKEN . "&EmployeeNumber=$employeeNumber&ReportMonth=$reportMonth");
