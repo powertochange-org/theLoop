@@ -408,6 +408,11 @@ get_header(); ?>
 				}
 				echo $_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
 			?>">
+			<?php
+			//added to include the page content so as to put a button there
+				the_post();
+				the_content();
+			?>
 			<P>Choose Your Report:<BR>
 			<SELECT ID="repchoice" NAME="REPORT" onchange="updateDefaultDates(this.value);">
                   <OPTION VALUE="">--DONATION REPORTS--</OPTION>
