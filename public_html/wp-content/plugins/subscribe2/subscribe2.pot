@@ -1,75 +1,79 @@
-#, fuzzy
+# Copyright (C) 2019 Matthew Robinson, Tanay Lakhani, Bryan Hadaway
+# This file is distributed under the same license as the Subscribe2 package.
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"Project-Id-Version: Subscribe2\n"
-"POT-Creation-Date: 2019-02-03 14:02+0100\n"
-"PO-Revision-Date: 2019-01-25 22:54+0100\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"Project-Id-Version: Subscribe2 10.28\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/subscribe2\n"
+"POT-Creation-Date: 2019-02-24 11:49:50+00:00\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.12\n"
-"X-Poedit-Basepath: .\n"
-"X-Poedit-WPHeader: subscribe2.php\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
 
 #: admin/send-email.php:11 admin/settings.php:11 admin/subscribers.php:32
 #: admin/your-subscriptions.php:13
 msgid "Security error! Your request cannot be completed."
 msgstr ""
 
-#: admin/send-email.php:79
+#: admin/send-email.php:80
 msgid "Your email was empty"
 msgstr ""
 
-#: admin/send-email.php:86
+#: admin/send-email.php:87
 msgid "Check your settings and check with your hosting provider"
 msgstr ""
 
-#: admin/send-email.php:91
+#: admin/send-email.php:92
 msgid "Preview message sent!"
 msgstr ""
 
-#: admin/send-email.php:93
+#: admin/send-email.php:94
 msgid "Message sent!"
 msgstr ""
 
-#: admin/send-email.php:97
+#: admin/send-email.php:98
 msgid "Message failed!"
 msgstr ""
 
-#: admin/send-email.php:104
+#: admin/send-email.php:105
 msgid "Send an email to subscribers"
 msgstr ""
 
-#: admin/send-email.php:112
+#: admin/send-email.php:113
 msgid "A message from"
 msgstr ""
 
-#: admin/send-email.php:117
+#: admin/send-email.php:118
 msgid "Subject"
 msgstr ""
 
-#: admin/send-email.php:120
+#: admin/send-email.php:121
 msgid "Add More Files"
 msgstr ""
 
-#: admin/send-email.php:122
+#: admin/send-email.php:123
 msgid "Recipients:"
 msgstr ""
 
-#: admin/send-email.php:125
+#: admin/send-email.php:126
 msgid "Preview"
 msgstr ""
 
-#: admin/send-email.php:125
+#: admin/send-email.php:126
 msgid "Send"
 msgstr ""
 
@@ -114,7 +118,7 @@ msgid ""
 msgstr ""
 
 #: admin/settings.php:166
-#, php-format
+#. Translators: Warning message
 msgid ""
 "You appear to be sending notifications from %1$s, which has a different "
 "domain name than your blog server %2$s. This may result in failed emails."
@@ -210,8 +214,7 @@ msgid "Send Emails for Pages"
 msgstr ""
 
 #: admin/settings.php:233
-msgid ""
-"Subscribe2 will send email notifications for the following custom post types"
+msgid "Subscribe2 will send email notifications for the following custom post types"
 msgstr ""
 
 #: admin/settings.php:239
@@ -252,8 +255,9 @@ msgstr ""
 
 #: admin/settings.php:271
 msgid ""
-"eg. utm_source=subscribe2&amp;utm_medium=email&amp;"
-"utm_campaign=postnotify&amp;utm_id={ID}&amp;utm_title={TITLE}"
+"eg. "
+"utm_source=subscribe2&amp;utm_medium=email&amp;utm_campaign=postnotify&"
+"amp;utm_id={ID}&amp;utm_title={TITLE}"
 msgstr ""
 
 #: admin/settings.php:282
@@ -273,8 +277,7 @@ msgid "Message substitutions"
 msgstr ""
 
 #: admin/settings.php:291
-msgid ""
-"IF THE FOLLOWING KEYWORDS ARE ALSO IN YOUR POST THEY WILL BE SUBSTITUTED"
+msgid "IF THE FOLLOWING KEYWORDS ARE ALSO IN YOUR POST THEY WILL BE SUBSTITUTED"
 msgstr ""
 
 #: admin/settings.php:294
@@ -385,8 +388,7 @@ msgid "Compulsory Categories"
 msgstr ""
 
 #: admin/settings.php:338
-msgid ""
-"Compulsory categories will be checked by default for Registered Subscribers"
+msgid "Compulsory categories will be checked by default for Registered Subscribers"
 msgstr ""
 
 #: admin/settings.php:345
@@ -529,8 +531,8 @@ msgstr ""
 
 #: admin/settings.php:479
 msgid ""
-"Use javascript to update IP address in Subscribe2 HTML form data? (useful if "
-"caching is enabled)"
+"Use javascript to update IP address in Subscribe2 HTML form data? (useful "
+"if caching is enabled)"
 msgstr ""
 
 #: admin/settings.php:487
@@ -545,8 +547,8 @@ msgstr ""
 
 #: admin/settings.php:490
 msgid ""
-"Use a new line for each entry and omit the \"@\" symbol, for example !email."
-"com, hotmail.com, yahoo.*"
+"Use a new line for each entry and omit the \"@\" symbol, for example "
+"!email.com, hotmail.com, yahoo.*"
 msgstr ""
 
 #: admin/settings.php:493
@@ -579,8 +581,8 @@ msgstr ""
 
 #: admin/settings.php:508
 msgid ""
-"Use this to reset all options to their defaults. This <strong><em>will not</"
-"em></strong> modify your list of subscribers."
+"Use this to reset all options to their defaults. This <strong><em>will "
+"not</em></strong> modify your list of subscribers."
 msgstr ""
 
 #: admin/settings.php:510
@@ -602,8 +604,7 @@ msgid ""
 msgstr ""
 
 #: admin/subscribers.php:72
-msgid ""
-"Some emails were not processed, the following are already Public Subscribers"
+msgid "Some emails were not processed, the following are already Public Subscribers"
 msgstr ""
 
 #: admin/subscribers.php:75
@@ -611,8 +612,7 @@ msgid "Some emails were not processed, the following were not in the database"
 msgstr ""
 
 #: admin/subscribers.php:78
-msgid ""
-"Some emails were not processed, the following were invalid email addresses"
+msgid "Some emails were not processed, the following were invalid email addresses"
 msgstr ""
 
 #: admin/subscribers.php:86
@@ -746,8 +746,6 @@ msgid "Update Preferences"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-#. Author of the plugin/theme
-#: classes/class-s2-admin.php:8 classes/class-s2-form-widget.php:24
 msgid "Subscribe2"
 msgstr ""
 
@@ -774,9 +772,9 @@ msgstr ""
 #: classes/class-s2-admin.php:51
 msgid ""
 "From this page you can control your subscription preferences. Choose the "
-"email format you wish to receive, which categories you would like to receive "
-"notification for and depending on the site settings which authors you would "
-"like to read."
+"email format you wish to receive, which categories you would like to "
+"receive notification for and depending on the site settings which authors "
+"you would like to read."
 msgstr ""
 
 #: classes/class-s2-admin.php:63
@@ -813,7 +811,8 @@ msgid ""
 "On this page registered subscribers can be viewed and searched. User "
 "accounts can be deleted from here with any posts created by those users "
 "being assigned to the currently logged in user. Bulk changes can be applied "
-"to all user settings changing their subscription email format and categories."
+"to all user settings changing their subscription email format and "
+"categories."
 msgstr ""
 
 #: classes/class-s2-admin.php:88
@@ -858,7 +857,8 @@ msgstr ""
 
 #: classes/class-s2-admin.php:127
 msgid ""
-"This section allows you to customise the content of your notification emails."
+"This section allows you to customise the content of your notification "
+"emails."
 msgstr ""
 
 #: classes/class-s2-admin.php:128
@@ -899,9 +899,9 @@ msgstr ""
 
 #: classes/class-s2-admin.php:139
 msgid ""
-"A set of default settings for new users can also be specified using the Auto "
-"Subscribe section. Settings specified here will be applied to any newly "
-"created user accounts while Subscribe2 is activated."
+"A set of default settings for new users can also be specified using the "
+"Auto Subscribe section. Settings specified here will be applied to any "
+"newly created user accounts while Subscribe2 is activated."
 msgstr ""
 
 #: classes/class-s2-admin.php:146
@@ -1017,13 +1017,7 @@ msgid "Subscribe2 Notification Override"
 msgstr ""
 
 #: classes/class-s2-admin.php:386 gutenberg/gutenberg-translations.php:20
-msgid ""
-"Check here to disable sending of an email notification for this post/page"
-msgstr ""
-
-#: classes/class-s2-admin.php:490
-msgctxt "Comma Separated Column Header names for CSV Export"
-msgid "User Email,User Type,User Name,Confirm Date,IP"
+msgid "Check here to disable sending of an email notification for this post/page"
 msgstr ""
 
 #: classes/class-s2-admin.php:511
@@ -1106,8 +1100,7 @@ msgid "Receive notifications"
 msgstr ""
 
 #: classes/class-s2-admin.php:1049
-msgid ""
-"Check if you want to receive email notification when new posts are published"
+msgid "Check if you want to receive email notification when new posts are published"
 msgstr ""
 
 #: classes/class-s2-ajax.php:41
@@ -1138,14 +1131,13 @@ msgid "Slow down, you move too fast."
 msgstr ""
 
 #: classes/class-s2-ajax.php:98 classes/class-s2-frontend.php:8
-#, php-format
+#. Translators: Link to login page
 msgid "To manage your subscription options please <a href=\"%1$s\">login.</a>"
 msgstr ""
 
 #: classes/class-s2-ajax.php:108 classes/class-s2-ajax.php:122
 #: classes/class-s2-frontend.php:34
-msgid ""
-"Sorry, there seems to be an error on the server. Please try again later."
+msgid "Sorry, there seems to be an error on the server. Please try again later."
 msgstr ""
 
 #: classes/class-s2-ajax.php:112 classes/class-s2-frontend.php:26
@@ -1156,61 +1148,61 @@ msgstr ""
 msgid "That email address is not subscribed."
 msgstr ""
 
-#: classes/class-s2-core.php:552
+#: classes/class-s2-core.php:537
 msgid "Plain Text Excerpt Preview"
 msgstr ""
 
-#: classes/class-s2-core.php:554
+#: classes/class-s2-core.php:539
 msgid "Plain Text Full Preview"
 msgstr ""
 
-#: classes/class-s2-core.php:556
+#: classes/class-s2-core.php:541
 msgid "HTML Excerpt Preview"
 msgstr ""
 
-#: classes/class-s2-core.php:558
+#: classes/class-s2-core.php:543
 msgid "HTML Full Preview"
 msgstr ""
 
-#: classes/class-s2-core.php:1205
+#: classes/class-s2-core.php:1227
 msgid "Check here to Subscribe to email notifications for new posts"
 msgstr ""
 
-#: classes/class-s2-core.php:1210
+#: classes/class-s2-core.php:1232
 msgid ""
 "By registering with this blog you are also agreeing to receive email "
 "notifications for new posts but you can unsubscribe at anytime"
 msgstr ""
 
-#: classes/class-s2-core.php:1238
+#: classes/class-s2-core.php:1260
 msgid "Check here to Subscribe to notifications for new posts"
 msgstr ""
 
-#: classes/class-s2-core.php:1357
+#: classes/class-s2-core.php:1379
 msgid "Weekly"
 msgstr ""
 
-#: classes/class-s2-core.php:1570 classes/class-s2-core.php:1571
+#: classes/class-s2-core.php:1592 classes/class-s2-core.php:1593
 msgid "Author"
 msgstr ""
 
-#: classes/class-s2-core.php:1577
+#: classes/class-s2-core.php:1599
 msgid "Posted on"
 msgstr ""
 
-#: classes/class-s2-core.php:1601 classes/class-s2-core.php:1602
+#: classes/class-s2-core.php:1626 classes/class-s2-core.php:1627
 msgid "Posted in"
 msgstr ""
 
-#: classes/class-s2-core.php:1613 classes/class-s2-core.php:1614
+#: classes/class-s2-core.php:1640 classes/class-s2-core.php:1641
 msgid "Tagged as"
 msgstr ""
 
-#: classes/class-s2-core.php:1692
+#: classes/class-s2-core.php:1712
 msgid "Digest Email"
 msgstr ""
 
-#: classes/class-s2-core.php:1705
+#: classes/class-s2-core.php:1725
 msgid "Digest Preview"
 msgstr ""
 
@@ -1403,14 +1395,14 @@ msgid "Subscription preferences updated."
 msgstr ""
 
 #: classes/class-s2-frontend.php:12
-#, php-format
+#. Translators: Link to Profile page
 msgid ""
-"You may manage your subscription options from your <a href=\"%1$s\">profile</"
-"a>"
+"You may manage your subscription options from your <a "
+"href=\"%1$s\">profile</a>"
 msgstr ""
 
 #: classes/class-s2-frontend.php:20
-#, php-format
+#. Translators: Link to Profile page
 msgid ""
 "<a href=\"%1$s\">Subscribe</a> to email notifications when this blog posts "
 "new content."
@@ -1472,18 +1464,6 @@ msgstr ""
 msgid "[Un]Subscribe to Posts"
 msgstr ""
 
-#: classes/class-s2-list-table-legacy.php:75
-#: classes/class-s2-list-table-legacy.php:80 classes/class-s2-list-table.php:75
-#: classes/class-s2-list-table.php:80
-msgctxt "column name"
-msgid "Email"
-msgstr ""
-
-#: classes/class-s2-list-table-legacy.php:81 classes/class-s2-list-table.php:81
-msgctxt "column name"
-msgid "Date"
-msgstr ""
-
 #: classes/class-s2-list-table-legacy.php:131
 #: classes/class-s2-list-table.php:131
 msgid "Select All"
@@ -1529,7 +1509,7 @@ msgstr ""
 
 #: classes/class-s2-list-table-legacy.php:259
 #: classes/class-s2-list-table.php:266
-#, php-format
+#. Translators: Pagination
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
@@ -1545,13 +1525,6 @@ msgstr ""
 
 #: classes/class-s2-list-table-legacy.php:325
 msgid "Current page"
-msgstr ""
-
-#: classes/class-s2-list-table-legacy.php:333
-#: classes/class-s2-list-table.php:357
-#, php-format
-msgctxt "paging"
-msgid "%1$s of %2$s"
 msgstr ""
 
 #: classes/class-s2-list-table-legacy.php:338
@@ -1580,25 +1553,6 @@ msgstr ""
 
 #: classes/class-s2-list-table.php:376
 msgid "Last page"
-msgstr ""
-
-#: classes/mo-notice.php:60
-#, php-format
-msgid ""
-"Free optin form plugin that will %1$sincrease your email list subscribers"
-"%2$s and keep them engaged with %1$sautomated and schedule newsletters%2$s."
-msgstr ""
-
-#: classes/mo-notice.php:69
-msgid "Install MailOptin Now for Free!"
-msgstr ""
-
-#: classes/mo-notice.php:74
-msgid "Activate MailOptin Now!"
-msgstr ""
-
-#: classes/mo-notice.php:83
-msgid "Dismiss this notice"
 msgstr ""
 
 #: gutenberg/gutenberg-translations.php:5
@@ -1701,9 +1655,14 @@ msgstr ""
 #: include/options.php:148
 msgid ""
 "{BLOGNAME} has received a request to {ACTION} for this email address. To "
-"complete your request please click on the link below:\\n\\n{LINK}\\n\\nIf "
-"you did not request this, please feel free to disregard this notice!\\n"
-"\\nThank you,\\n{MYNAME}."
+"complete your request please click on the link below:\\n"
+"\\n"
+"{LINK}\\n"
+"\\n"
+"If you did not request this, please feel free to disregard this notice!\\n"
+"\\n"
+"Thank you,\\n"
+"{MYNAME}."
 msgstr ""
 
 #: include/options.php:152
@@ -1713,10 +1672,17 @@ msgstr ""
 #: include/options.php:156
 msgid ""
 "This email address was subscribed for notifications at {BLOGNAME} "
-"({BLOGLINK}) but the subscription remains incomplete.\\n\\nIf you wish to "
-"complete your subscription please click on the link below:\\n\\n{LINK}\\n"
-"\\nIf you do not wish to complete your subscription please ignore this email "
-"and your address will be removed from our database.\\n\\nRegards,\\n{MYNAME}"
+"({BLOGLINK}) but the subscription remains incomplete.\\n"
+"\\n"
+"If you wish to complete your subscription please click on the link below:\\n"
+"\\n"
+"{LINK}\\n"
+"\\n"
+"If you do not wish to complete your subscription please ignore this email "
+"and your address will be removed from our database.\\n"
+"\\n"
+"Regards,\\n"
+"{MYNAME}"
 msgstr ""
 
 #: include/options.php:160
@@ -1728,7 +1694,8 @@ msgid "I'm just a plugin, please don't call me directly"
 msgstr ""
 
 #: subscribe2.php:39
-#, php-format
+#. Translators: Subscribe2 needs WordPress 3.3 or above, exit if not on a
+#. compatible version
 msgid ""
 "This version of Subscribe2 requires WordPress 3.3 or greater. Please update "
 "%1$s or use an older version of %2$s."
@@ -1740,11 +1707,38 @@ msgid ""
 "on a site level"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
 #. Author URI of the plugin/theme
 msgid "https://subscribe2.wordpress.com/"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid "Notifies an email list when new entries are posted."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Matthew Robinson, Tanay Lakhani, Bryan Hadaway"
+msgstr ""
+
+#: classes/class-s2-admin.php:490
+msgctxt "Comma Separated Column Header names for CSV Export"
+msgid "User Email,User Type,User Name,Confirm Date,IP"
+msgstr ""
+
+#: classes/class-s2-list-table-legacy.php:75
+#: classes/class-s2-list-table-legacy.php:80 classes/class-s2-list-table.php:75
+#: classes/class-s2-list-table.php:80
+msgctxt "column name"
+msgid "Email"
+msgstr ""
+
+#: classes/class-s2-list-table-legacy.php:81 classes/class-s2-list-table.php:81
+msgctxt "column name"
+msgid "Date"
+msgstr ""
+
+#: classes/class-s2-list-table-legacy.php:333
+#: classes/class-s2-list-table.php:357
+#. Translators: Pagination
+msgctxt "paging"
+msgid "%1$s of %2$s"
 msgstr ""

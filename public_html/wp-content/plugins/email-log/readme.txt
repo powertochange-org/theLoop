@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: email, log, log email, resend email, multisite  
 Requires PHP: 5.3  
 Requires at least: 4.0  
-Tested up to: 4.9  
-Stable tag: 2.2.5  
+Tested up to: 5.1  
+Stable tag: 2.3.1  
 
 Log and view all outgoing emails from WordPress. Works with WordPress Multisite as well.
 
@@ -119,6 +119,23 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
+
+= v2.3.1 - (2019-04-11) =
+- Fix: Added a missing file that broke v2.3.1 release for some installations.
+
+= v2.3.1 - (2019-04-11) =
+
+- New: The 'To' and 'Subject' fields now supports text upto 500 characters.
+- New: Store the name of the attachment file if present.
+- New: Store ip address of the request that triggered the email.
+- New: Setting to enable notification when the number of email logs reach a threshold.
+- New: Dashboard Widget - Provide an option to hide Dashboard Widget from all users.
+- Tweak: Dashboard Widget - Add thousand separator for logs count.
+- Tweak: Improve preview of HTML emails.
+- Tweak: Enhanced the output of System Info page.
+- Fix: Deleting logs in bulk was not working.
+- Fix: Added compatibility with wp-ses plugin.
+- Fix: Added the ability to deactivate expired license.
 
 = v2.2.5 - (2018-02-22) =
 - Tweak: Show Dashboard Widget only if the user can view email logs.
@@ -294,6 +311,9 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 - Initial Release
 
 == Upgrade Notice ==
+
+= 2.3.1 =
+The 'To' and 'Subject' fields now supports text upto 500 characters.
 
 = 2.2.5 =
 Hide Dashboard Widget for users who can't view email logs.

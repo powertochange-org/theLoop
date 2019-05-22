@@ -3,8 +3,7 @@ Contributors: collizo4sky
 Donate link: https://mailoptin.io
 Tags: posts, subscription, email, subscribe, notify, notification, newsletter, post notification, email marketing
 Requires at least: 4.0
-Tested up to: 5.0.3
-Stable tag: 10.26.1
+Tested up to: 5.1
 License: GPLv3
 
 Sends a list of subscribers an email notification when you publish new posts.
@@ -65,6 +64,23 @@ This token will automatically be replaced by dynamic subscription information an
 [Visit FAQ site](https://subscribe2.wordpress.com/support/faqs/)
 
 == Changelog ==
+
+= 10.28 =
+
+* Fix warning message for when set_time_limit() is disabled in php.ini
+* Remove unused variable to fix error message
+* Fixes for strict in_array() checks
+
+= 10.27 =
+
+* Tightened checks for Coding Standards
+* Fixed bug in category form display caused by tighter coding standards
+* Save Editor content before sending preview email for better user experience
+* Update Excerpt creation code for languages that don't use spaces - props Masatoshi Hakoshima
+* Improved layout and efficiency of JavaScript files
+* Enable Preview emails for Classic Editor users
+* Update to use latest jQuery UI css library
+* Tidied up unused globals
 
 = 10.26.1 =
 
