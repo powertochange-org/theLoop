@@ -76,7 +76,7 @@ class S2_Core {
 			remove_all_filters( 'wp_mail_content_type' );
 			add_filter( 'wp_mail_content_type', array( $this, 'html_email' ) );
 			if ( 'yes' === $this->subscribe2_options['stylesheet'] ) {
-				$mailtext = apply_filters( 's2_html_email', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><title>' . $subject . '</title><link rel="stylesheet" href="' . get_stylesheet_directory_uri() . apply_filters( 's2_stylesheet_name', '/style.css' ) . '" type="text/css" media="screen" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>' . $message . '</body></html>', $subject, $message );
+				$mailtext = apply_filters( 's2_html_email', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><title>' . $subject . '</title><link rel="stylesheet" href="' . get_stylesheet_directory_uri() . apply_filters( 's2_stylesheet_name', '/style.css' ) . '" type="text/css" media="screen" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>' . $message . '</body></html>', $subject, $message ); // phpcs:ignore WordPress.WP.EnqueuedResources
 			} else {
 				$mailtext = apply_filters( 's2_html_email', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><title>' . $subject . '</title></head><body>' . $message . '</body></html>', $subject, $message );
 			}
@@ -298,7 +298,7 @@ class S2_Core {
 				$s2_post_types = array( 'post' );
 			}
 			$s2_post_types = apply_filters( 's2_post_types', $s2_post_types );
-			if ( ! in_array( $post->post_type, $s2_post_types ) ) {
+			if ( ! in_array( $post->post_type, $s2_post_types, true ) ) {
 				return $post;
 			}
 
@@ -310,7 +310,7 @@ class S2_Core {
 			// Is the post assigned to a format for which we should not be sending posts
 			$post_format      = get_post_format( $post->ID );
 			$excluded_formats = explode( ',', $this->subscribe2_options['exclude_formats'] );
-			if ( false !== $post_format && in_array( $post_format, $excluded_formats ) ) {
+			if ( false !== $post_format && in_array( $post_format, $excluded_formats, true ) ) {
 				return $post;
 			}
 
@@ -331,7 +331,7 @@ class S2_Core {
 			// is the current post assigned to any categories
 			// which should not generate a notification email?
 			foreach ( explode( ',', $this->subscribe2_options['exclude'] ) as $cat ) {
-				if ( in_array( $cat, $post_cats ) ) {
+				if ( in_array( $cat, $post_cats, true ) ) {
 					$check = true;
 				}
 			}
@@ -501,14 +501,8 @@ class S2_Core {
 				// strip tags and trailing whitespace
 				$excerpt = trim( wp_strip_all_tags( $excerpt ) );
 			} else {
-				// no <!--more-->, so grab the first 55 words
-				$excerpt = trim( wp_strip_all_tags( $excerpttext ) );
-				$words   = explode( ' ', $excerpt, $this->excerpt_length + 1 );
-				if ( count( $words ) > $this->excerpt_length ) {
-					array_pop( $words );
-					array_push( $words, '[...]' );
-					$excerpt = implode( ' ', $words );
-				}
+				// no <!--more-->, so create excerpt
+				$excerpt = $this->create_excerpt( $excerpttext );
 			}
 		}
 		$html_excerpt = trim( $post->post_excerpt );
@@ -519,17 +513,8 @@ class S2_Core {
 				// balance HTML tags and then strip leading and trailing whitespace
 				$html_excerpt = trim( balanceTags( $html_excerpt, true ) );
 			} else {
-				// no <!--more-->, so grab the first 55 words
-				$words = explode( ' ', $content, $this->excerpt_length + 1 );
-				if ( count( $words ) > $this->excerpt_length ) {
-					array_pop( $words );
-					array_push( $words, '[...]' );
-					$html_excerpt = implode( ' ', $words );
-					// balance HTML tags and then strip leading and trailing whitespace
-					$html_excerpt = trim( balanceTags( $html_excerpt, true ) );
-				} else {
-					$html_excerpt = $content;
-				}
+				// no <!--more-->, so create excerpt
+				$html_excerpt = $this->create_excerpt( $content, true );
 			}
 		}
 
@@ -586,8 +571,45 @@ class S2_Core {
 	}
 
 	/**
-	Send confirmation email to a public subscriber
-	*/
+	 * Function to create excerpts for emailing
+	 */
+	public function create_excerpt( $text, $html = false ) {
+		$excerpt_on_words = apply_filters( 's2_excerpt_on_words', true );
+
+		if ( false === $html ) {
+			$excerpt = trim( wp_strip_all_tags( $text ) );
+		} else {
+			$excerpt = strip_shortcodes( $text );
+		}
+
+		if ( true !== $excerpt_on_words ) {
+			$words = preg_split( '//u', $excerpt, $this->excerpt_length + 1 );
+		} else {
+			$words = explode( ' ', $excerpt, $this->excerpt_length + 1 );
+		}
+
+		if ( count( $words ) > $this->excerpt_length ) {
+			array_pop( $words );
+			array_push( $words, '[...]' );
+		}
+
+		if ( true !== $excerpt_on_words ) {
+			$excerpt = implode( '', $words );
+		} else {
+			$excerpt = implode( ' ', $words );
+		}
+
+		if ( true === $html ) {
+			// balance HTML tags and then strip leading and trailing whitespace
+			$excerpt = trim( balanceTags( $excerpt, true ) );
+		}
+
+		return $excerpt;
+	}
+
+	/**
+	 * Send confirmation email to a public subscriber
+	 */
 	public function send_confirm( $action = '', $is_remind = false ) {
 		if ( 1 === $this->filtered ) {
 			return true;
@@ -901,7 +923,7 @@ class S2_Core {
 		// collect all subscribers for compulsory categories
 		$compulsory = explode( ',', $this->subscribe2_options['compulsory'] );
 		foreach ( explode( ',', $r['cats'] ) as $cat ) {
-			if ( in_array( $cat, $compulsory ) ) {
+			if ( in_array( $cat, $compulsory, true ) ) {
 				$r['cats'] = '';
 			}
 		}
@@ -933,14 +955,14 @@ class S2_Core {
 		if ( $this->s2_mu ) {
 			$result = $wpdb->get_col(
 				$wpdb->prepare(
-					"SELECT a.user_id FROM $wpdb->usermeta AS a INNER JOIN $wpdb->usermeta AS e ON a.user_id = e.user_id " . $join . "WHERE a.meta_key='{$wpdb->prefix}capabilities' AND e.meta_key=%s AND e.meta_value <> ''" . $and,
+					"SELECT a.user_id FROM $wpdb->usermeta AS a INNER JOIN $wpdb->usermeta AS e ON a.user_id = e.user_id " . $join . "WHERE a.meta_key='{$wpdb->prefix}capabilities' AND e.meta_key=%s AND e.meta_value <> ''" . $and, // phpcs:ignore WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders
 					$this->get_usermeta_keyname( 's2_subscribed' )
 				)
 			);
 		} else {
 			$result = $wpdb->get_col(
 				$wpdb->prepare(
-					"SELECT a.user_id FROM $wpdb->usermeta AS a " . $join . "WHERE a.meta_key=%s AND a.meta_value <> ''" . $and,
+					"SELECT a.user_id FROM $wpdb->usermeta AS a " . $join . "WHERE a.meta_key=%s AND a.meta_value <> ''" . $and, // phpcs:ignore WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders
 					$this->get_usermeta_keyname( 's2_subscribed' )
 				)
 			);
@@ -953,9 +975,9 @@ class S2_Core {
 		}
 
 		if ( 'emailid' === $r['return'] ) {
-			$registered = $wpdb->get_results( "SELECT user_email, ID FROM $wpdb->users WHERE ID IN ($ids)", ARRAY_A );
+			$registered = $wpdb->get_results( "SELECT user_email, ID FROM $wpdb->users WHERE ID IN ($ids)", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL
 		} else {
-			$registered = $wpdb->get_col( "SELECT user_email FROM $wpdb->users WHERE ID IN ($ids)" );
+			$registered = $wpdb->get_col( "SELECT user_email FROM $wpdb->users WHERE ID IN ($ids)" ); // phpcs:ignore WordPress.DB.PreparedSQL
 		}
 
 		if ( empty( $registered ) ) {
@@ -1043,7 +1065,7 @@ class S2_Core {
 			update_user_meta( $user_ID, $this->get_usermeta_keyname( 's2_authors' ), '' );
 		} else {
 			// create post format entries for all users
-			if ( in_array( $this->subscribe2_options['autoformat'], array( 'html', 'html_excerpt', 'post', 'excerpt' ) ) ) {
+			if ( in_array( $this->subscribe2_options['autoformat'], array( 'html', 'html_excerpt', 'post', 'excerpt' ), true ) ) {
 				update_user_meta( $user_ID, $this->get_usermeta_keyname( 's2_format' ), $this->subscribe2_options['autoformat'] );
 			} else {
 				update_user_meta( $user_ID, $this->get_usermeta_keyname( 's2_format' ), 'excerpt' );
@@ -1152,7 +1174,7 @@ class S2_Core {
 			// need to use $id like this as this is a mixed array / object
 			$id = 0;
 			foreach ( $all_cats as $cat ) {
-				if ( in_array( $cat->term_id, $excluded ) ) {
+				if ( in_array( $cat->term_id, $excluded, true ) ) {
 					unset( $all_cats[ $id ] );
 				}
 				$id++;
@@ -1346,7 +1368,7 @@ class S2_Core {
 	public function add_weekly_sched( $scheds ) {
 		$exists = false;
 		foreach ( $scheds as $sched ) {
-			if ( array_search( 604800, $sched ) ) {
+			if ( array_search( 604800, $sched, true ) ) {
 				$exists = true;
 			}
 		}
@@ -1375,7 +1397,7 @@ class S2_Core {
 			$s2_post_types = array( 'post' );
 		}
 		$s2_post_types = apply_filters( 's2_post_types', $s2_post_types );
-		if ( ! in_array( $post->post_type, $s2_post_types ) ) {
+		if ( ! in_array( $post->post_type, $s2_post_types, true ) ) {
 			return;
 		}
 
@@ -1390,7 +1412,7 @@ class S2_Core {
 			return;
 		}
 		define( 'DOING_S2_CRON', true );
-		global $wpdb, $post;
+		global $wpdb;
 
 		if ( '' === $preview ) {
 			// set up SQL query based on options
@@ -1429,7 +1451,7 @@ class S2_Core {
 			} else {
 				$sql   = "SELECT ID, post_title, post_excerpt, post_content, post_type, post_password, post_date, post_author FROM $wpdb->posts AS a INNER JOIN $wpdb->postmeta AS b ON b.post_id = a.ID";
 				$sql  .= " AND b.meta_key = '_s2_digest_post_status' AND b.meta_value = 'pending' WHERE post_status IN ($status) AND post_type IN ($type) ORDER BY post_date " . ( ( 'desc' === $this->subscribe2_options['cron_order'] ) ? 'DESC' : 'ASC' );
-				$posts = $wpdb->get_results( $sql );
+				$posts = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL
 			}
 		} else {
 			// we are sending a preview
@@ -1480,7 +1502,7 @@ class S2_Core {
 
 		foreach ( $posts as $post ) {
 			// keep an array of post ids and skip if we've already done it once
-			if ( in_array( $post->ID, $ids ) ) {
+			if ( in_array( $post->ID, $ids, true ) ) {
 				continue;
 			}
 			$ids[]            = $post->ID;
@@ -1503,7 +1525,7 @@ class S2_Core {
 					// is the current post assigned to any categories
 					// which should not generate a notification email?
 					foreach ( explode( ',', $this->subscribe2_options['exclude'] ) as $cat ) {
-						if ( in_array( $cat, $post_cats ) ) {
+						if ( in_array( $cat, $post_cats, true ) ) {
 							$check = true;
 						}
 					}
@@ -1523,7 +1545,7 @@ class S2_Core {
 				// not be included in the notification email?
 				$post_format      = get_post_format( $post->ID );
 				$excluded_formats = explode( ',', $this->subscribe2_options['exclude_formats'] );
-				if ( false !== $post_format && in_array( $post_format, $excluded_formats ) ) {
+				if ( false !== $post_format && in_array( $post_format, $excluded_formats, true ) ) {
 					$check = true;
 				}
 				// if this post is excluded
@@ -1548,7 +1570,7 @@ class S2_Core {
 			// not be included in the notification email?
 			$post_format      = get_post_format( $post->ID );
 			$excluded_formats = explode( ',', $this->subscribe2_options['exclude_formats'] );
-			if ( false !== $post_format && in_array( $post_format, $excluded_formats ) ) {
+			if ( false !== $post_format && in_array( $post_format, $excluded_formats, true ) ) {
 				$check = true;
 			}
 			// if this post is excluded
@@ -1576,7 +1598,7 @@ class S2_Core {
 
 			$message_posttime .= __( 'Posted on', 'subscribe2' ) . ': ' . mysql2date( $datetime, $post->post_date ) . "\r\n";
 			if ( strstr( $mailtext, '{TINYLINK}' ) ) {
-				$tinylink = file_get_contents( 'http://tinyurl.com/api-create.php?url=' . urlencode( $this->get_tracking_link( get_permalink( $post->ID ) ) ) );
+				$tinylink = wp_safe_remote_get( 'http://tinyurl.com/api-create.php?url=' . rawurlencode( $this->get_tracking_link( get_permalink( $post->ID ) ) ) );
 			} else {
 				$tinylink = false;
 			}
@@ -1592,8 +1614,11 @@ class S2_Core {
 
 			if ( strstr( $mailtext, '{CATS}' ) ) {
 				$post_cat_names    = implode(
-					', ', wp_get_object_terms(
-						$post->ID, $s2_taxonomies, array(
+					', ',
+					wp_get_object_terms(
+						$post->ID,
+						$s2_taxonomies,
+						array(
 							'fields' => 'names',
 						)
 					)
@@ -1603,8 +1628,10 @@ class S2_Core {
 			}
 			if ( strstr( $mailtext, '{TAGS}' ) ) {
 				$post_tag_names = implode(
-					', ', wp_get_post_tags(
-						$post->ID, array(
+					', ',
+					wp_get_post_tags(
+						$post->ID,
+						array(
 							'fields' => 'names',
 						)
 					)
@@ -1623,17 +1650,10 @@ class S2_Core {
 				// no excerpt, is there a <!--more--> ?
 				if ( false !== strpos( $post->post_content, '<!--more-->' ) ) {
 					list($excerpt, $more) = explode( '<!--more-->', $post->post_content, 2 );
-					$excerpt              = strip_tags( $excerpt );
+					$excerpt              = wp_strip_all_tags( $excerpt );
 					$excerpt              = strip_shortcodes( $excerpt );
 				} else {
-					$excerpt = strip_tags( $post->post_content );
-					$excerpt = strip_shortcodes( $excerpt );
-					$words   = explode( ' ', $excerpt, $this->excerpt_length + 1 );
-					if ( count( $words ) > $this->excerpt_length ) {
-						array_pop( $words );
-						array_push( $words, '[...]' );
-						$excerpt = implode( ' ', $words );
-					}
+					$excerpt = $this->create_excerpt( $excerpt, true );
 				}
 				// strip leading and trailing whitespace
 				$excerpt = trim( $excerpt );
@@ -1645,7 +1665,7 @@ class S2_Core {
 		// we are not sending a preview so update post_meta data for sent ids but not sticky posts
 		if ( '' === $preview ) {
 			foreach ( $ids as $id ) {
-				if ( ! empty( $sticky_ids ) && ! in_array( $id, $sticky_ids ) ) {
+				if ( ! empty( $sticky_ids ) && ! in_array( $id, $sticky_ids, true ) ) {
 					update_post_meta( $id, '_s2_digest_post_status', 'done' );
 				} else {
 					update_post_meta( $id, '_s2_digest_post_status', 'done' );
@@ -1898,6 +1918,8 @@ class S2_Core {
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 			add_action( 'admin_menu', array( &$this, 's2_meta_init' ) );
 			add_action( 'save_post', array( &$this, 's2_meta_handler' ) );
+			add_action( 'save_post', array( &$this, 's2_preview_handler' ) );
+            add_action( 'save_post', array( &$this, 's2_resend_handler' ) );
 			add_action( 'create_category', array( &$this, 'new_category' ) );
 			add_action( 'delete_category', array( &$this, 'delete_category' ) );
 

@@ -1,21 +1,15 @@
 <?php
-/*
-Plugin Name: Subscribe to Comments Reloaded
-
-Version: 190117
-Stable tag: 190117
-Requires at least: 4.0
-Tested up to: 5.0.4-alpha
-
-Plugin URI: http://subscribe-reloaded.com/
-Description: Subscribe to Comments Reloaded is a robust plugin that enables commenters to sign up for e-mail notifications. It includes a full-featured subscription manager that your commenters can use to unsubscribe to certain posts or suspend all notifications.
-Contributors: reedyseth, camu
-Author: Reedyseth
-Author URI: https://profiles.wordpress.org/reedyseth/
-
-Text Domain: subscribe-reloaded
-Domain Path: /langs
-*/
+/**
+ * Plugin Name:       Subscribe to Comments Reloaded
+ * Description:       Subscribe to Comments Reloaded is a robust plugin that enables commenters to sign up for e-mail notifications. It includes a full-featured subscription manager that your commenters can use to unsubscribe to certain posts or suspend all notifications.
+ * Version:           190510
+ * Author:            WPKube
+ * Author URI:        http://wpkube.com/
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       subscribe-to-comments-reloaded
+ * Domain Path:       /langs
+ */
 
 namespace stcr;
 // Avoid direct access to this piece of code

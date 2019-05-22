@@ -1,13 +1,13 @@
 === Subscribe To Comments Reloaded ===
-Author: reedyseth
-Contributors: reedyseth, coolmann
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
+Author: WPKube
+Contributors: WPKube
 Tags: comments, subscribe, subscribe to comments, subscribe to comments reloaded, email, email notification, subscriptions, commenting, reply, reply to comments, post notification, comment notification, automatic comment notification, email signup
 Plugin URI: http://subscribe-reloaded.com/
 Requires at least: 4.0
 Requires PHP: 5.6
-Tested up to: 5.0.4-alpha
-Stable tag: 190117
+Requires MySQL: 5.6
+Tested up to: 5.2
+Stable tag: 190510
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,14 +37,11 @@ Subscribe to Comments Reloaded is a robust plugin that enables commenters to sig
 2. Upload the entire folder and all the subfolders to your Wordpress plugins' folder. You can also use the downloaded ZIP file to upload it.
 3. Activate it
 5. Customize the Permalink value under Settings > Subscribe to Comments > Management Page > Management URL. It **must** reflect your permalinks' structure
-5. If you don't see the checkbox to subscribe, you will have to manually edit your template, and add `<?php global $wp_subscribe_reloaded; if (isset($wp_subscribe_reloaded)){ $wp_subscribe_reloaded->stcr->subscribe_reloaded_show(); } ?>` somewhere in your `comments.php`
+5. If you don't see the checkbox to subscribe, you will have to manually edit your template, and add `<?php global $wp_subscribe_reloaded; if (isset($wp_subscribe_reloaded)){ echo $wp_subscribe_reloaded->stcr->subscribe_reloaded_show(); } ?>` somewhere in your `comments.php`
 6. If you're upgrading from a previous version, please **make sure to deactivate/activate** StCR.
 7. You can always install the latest development version by taking a look at this [Video](https://youtu.be/uQwkBciyFGY)
 
 == Frequently Asked Questions ==
-
-= Where can I give a Donation to support the plugin? =
-Thank you to your contributions the plugin gets better, please go to this [link](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XF86X93FDCGYA&lc=US&item_name=Datasoft%20Engineering&item_number=DI%2dSTCR&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted) to give a PayPal donation.
 
 = Are there any video tutorials? =
 Yeah, I have uploaded a few videos for the following topics:
@@ -82,7 +79,7 @@ Use the shortcode `[subscribe-url]`, or use the following code in your theme:
 
 = Can I move the subscription checkbox to another position? =
 Yes! Just disable the corresponding option under Settings > Comment Form and then add the following code where you want to display the checkbox:
-`<?php global $wp_subscribe_reloaded; if (isset($wp_subscribe_reloaded)){ $wp_subscribe_reloaded->stcr->subscribe_reloaded_show(); } ?>`
+`<?php global $wp_subscribe_reloaded; if (isset($wp_subscribe_reloaded)){ echo $wp_subscribe_reloaded->stcr->subscribe_reloaded_show(); } ?>`
 
 = What if after update to the version 141024 I still see plain HTML messages? =
 The information of your configuration needs to be updated. Go to the Subscribe to Comments Reloaded settings and click the `Save Changes` button on the tab
@@ -101,16 +98,57 @@ Just go to the Options Panel and click the generate button. By generating a new 
 6. Check the number of subscribers in your posts.
 7. Manage the subscriptions on the Frontend Side.
 
-== Upgrade Notice ==
-
-= v190117 =
-
-* **Upgrade** The backend interface to make the UX simpler for the user and Add option to get information of your WordPress System. Improve Logging with PHP errors catching.
-
-= v180225 =
-**Fix** Information that was not been validated on the backened.
-
 == Changelog ==
+
+= v190510 =
+* **New** Option to only enable the functionality for blog posts ( option named "Enable only for blog posts" located in WP admin > StCR > StCR Options)
+* **Tweak** Info on subscriber and subscriptions amount moved into separate table
+* **Fix** Text domain
+
+= v190426 = 
+* **New** Info on the amount of subscribers and subscriptions added in WP admin > StCR > StCR System
+* **Fix** Text domain (for translations) has been changed to the correct domain (from subscribe-reloaded to subscribe-to-comments-reloaded)
+* **Fix** Issue with undefined is_rtl function
+* **Fix** Missing blank space between sentences (below comment form when subscribed)
+* **Fix** Undefined variable notices for $order_status and $order_dt
+* **Fix** Temporarily hidden an unused option in StCR > Management Page to avoid confusion. 
+* **Fix** Removed localization for non textual strings
+* **Fix** Fixed incorrectly localized textual strings
+
+= v190412 =
+
+* **Fix** Issue with JavaScript code that is supposed to show the form when "StCR Position" is enabled
+
+= v190409 =
+
+* **Fix** Post author was notified of new comments even if they are awaiting approval, no need for this since WordPress itself sends out an email in that case
+* **Fix** Post author was notified twice ( if he was subscribed and "subscribe authors" was enabled )
+* **Fix** Issue with "StCR Position" option ( for older/outdated themes ) not working properly
+* **Fix** Issue with wrong translation in German
+* **Tweak** The "Action" select box labels on "Manage Subscriptions" page tweaked to be more descriptive
+
+= v190325 =
+
+* **New** Shortcode for manage page content (to be used on non-virtual management page). The shortcode is [stcr_management_page]
+* **Rewrite** New method for downloading system information file
+* **Fix** The admin panel CSS and JavaScript files now load only on StCR pages
+* **Fix** Tooltips not showing up on System options page
+* **Fix** Conflict with MailChimp for WP plugin (comment filter received echo instead of return which caused the issue)
+* **Fix** Issue with select/deselect all on management page
+* **Tweak** The MySQL requirements info on the system page now uses WordPress requirements
+* **Tweak** The post author will no longer be notified of his/her own comments
+
+= v190305 =
+
+* **Fix** Issue with "Subscribe authors" functionality sending the emails to administrator instead of the post author
+
+= v190214 =
+
+* **Fix** String error calling the Curl Array.
+* **Fix** wrong array definition that was breaking the site in some newer PHP versions.
+* **Fix** error by calling `$wp_locale` that was not needed.
+* **Fix** wrong label on option issue #467.
+* **Fix** typo en help description issue #468.
 
 = v190117 =
 
