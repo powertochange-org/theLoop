@@ -131,16 +131,6 @@ function shibboleth_getenv( $var ) {
  * @since 1.6
  */
 function shibboleth_auto_login() {
-	//Fix p2c forms auto redirect issue
-	$_SERVER['REQUEST_URI'] = str_replace('&sbid', '%26sbid', $_SERVER['REQUEST_URI']);
-    $_SERVER['REDIRECT_QUERY_STRING'] = str_replace('&sbid', '%26sbid', $_SERVER['REDIRECT_QUERY_STRING']);
-    $_SERVER['QUERY_STRING'] = str_replace('&sbid', '%26sbid', $_SERVER['QUERY_STRING']);
-    
-	//Fix workflow id replacement issue
-	$_SERVER['REQUEST_URI'] = str_replace('&wfid', '%26wfid', $_SERVER['REQUEST_URI']);
-    $_SERVER['REDIRECT_QUERY_STRING'] = str_replace('&wfid', '%26wfid', $_SERVER['REDIRECT_QUERY_STRING']);
-    $_SERVER['QUERY_STRING'] = str_replace('&wfid', '%26wfid', $_SERVER['QUERY_STRING']);
-	
 	
 	$shibboleth_auto_login = shibboleth_getoption( 'shibboleth_auto_login' );
 
