@@ -130,7 +130,8 @@
                     WHERE empsubmitdate IS NOT NULL 
                         AND supsubmitdate IS NULL 
                         AND (supreminder <= '".$date->format('Y-m-d')."' 
-                                OR supreminder IS NULL)";
+                                OR supreminder IS NULL)
+                        AND skipreminder = '0'";
             $result = $wpdb->get_results($sql, ARRAY_A);
             
             $template = '{SUPERVISOR_NAME}, <br><br>

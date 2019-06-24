@@ -1433,9 +1433,7 @@ class Workflow {
                     //For saved onbehalfof submissions, use autofill names for the person the form is being submitted for
                     $autoName = ($emailMode ? '%EMAILNAME%' : ($configuration == 2 && $behalfof == Workflow::loggedInUser() ? Workflow::getUserName($submittedby) : Workflow::loggedInUserName()));
                     
-                    $response .= '<input type="text" placeholder="'.$row['LABEL'].'" value="'.$autoName.'" disabled class="autonamefill">';
-                    $response .= '<input type="hidden" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].
-                        '" value="'.$autoName.'" class="autonamefill">';
+                    $response .= '<input type="text" id="workflowfieldid'.$row['FIELDID'].'" name="workflowfieldid'.$row['FIELDID'].'"placeholder="'.$row['LABEL'].'" value="'.$autoName.'"  class="autonamefill">';
                 } else {
                     $response .= '<input type="text" disabled value="'.$fieldvalue.'">';
                 }
