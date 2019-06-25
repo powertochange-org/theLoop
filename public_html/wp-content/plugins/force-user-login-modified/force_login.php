@@ -33,7 +33,7 @@
 	add_action( 'template_redirect', 'force_login' );
 	
 	function force_login() {
-		$redirect_to = $_SERVER['REQUEST_URI']; // Change this line to change to where logging in redirects the user, i.e. '/', '/wp-admin', etc.
+		$redirect_to = urlencode($_SERVER['REQUEST_URI']); // Change this line to change to where logging in redirects the user, i.e. '/', '/wp-admin', etc.
 		
 		if ( ! is_user_logged_in() ) {
 			if ( is_feed() ) {
