@@ -2879,7 +2879,6 @@ class Workflow {
     }
     
     public function sendEmail($submissionID, $reminder = 0) {
-        require_once("PHPMailer-master/PHPMailerAutoload.php");
         global $wpdb;
         $workflow = new Workflow();
         $response = '';
@@ -3085,39 +3084,30 @@ class Workflow {
                 }
                 
                 
-                $mail = new PHPMailer;
-                $mail->isSMTP();          // Set mailer to use SMTP
-                $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
-                //$mail->SMTPAuth = true;                            // Enable SMTP authentication
-                //$mail->SMTPDebug = 2;
-                //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
-                $mail->Port = 25;
-
-                $mail->From = 'p2cforms-no-reply@p2c.com';
-                $mail->FromName = 'P2C Forms';
+                $mail = array('to' => '');
+                $mail['headers'][] =  'From: P2C Forms <p2cforms-no-reply@p2c.com>';
                 
                 if(Workflow::debugMode()) {
                     if(Workflow::debugMode() == 2)
-                        $mail->AddAddress('matthew.campbell@p2c.com'); 
-                    $mail->AddBCC('gerald.becker@p2c.com');
+						$mail['to'] = 'matthew.campbell@p2c.com';
+					 $mail['headers'][] = 'Bcc: gerald.becker@p2c.com';
                 } else {
-                    $mail->AddAddress($recepients[$i][1]); //Sends email to the actual person
+                    $mail['to'] = $recepients[$i][1]; //Sends email to the actual person
                 }
                 
-
-                $mail->IsHTML(true);
+				$mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
                 
                 if($status == 3)
-                    $mail->Subject = $formName.' submission requiring further input - Submission ID # '.$submissionID;
+                    $mail['subject'] = $formName.' submission requiring further input - Submission ID # '.$submissionID;
                 else if($status == 4)
-                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail['subject'] = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else if($status == 7 && $recepients[$i][3] == 1)
-                    $mail->Subject = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
+                    $mail['subject'] = $formName.' email from '.Workflow::getUserName($userid).' - Submission ID # '.$submissionID;
                 else
-                    $mail->Subject = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
+                    $mail['subject'] = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
                 
-                $mail->Body = $body;
-                $mail->Send();
+                $mail->['message'] = $body;
+				wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers'])
                 
                 //Update the submission reminder date
                 $date = new DateTime(date("Y-m-d H:i:s"));
