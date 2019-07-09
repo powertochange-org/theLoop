@@ -3106,7 +3106,7 @@ class Workflow {
                 else
                     $mail['subject'] = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
                 
-                $mail->['message'] = $body;
+                $mail['message'] = $body;
 				wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers'])
                 
                 //Update the submission reminder date
