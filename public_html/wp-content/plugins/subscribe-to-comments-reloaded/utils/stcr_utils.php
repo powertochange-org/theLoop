@@ -548,19 +548,23 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_utils') )
 		 */
 		public function register_admin_scripts( $hook ) {
 
+            // paths
+            $stcr_admin_js  = ( is_ssl() ? str_replace( 'http://', 'https://', WP_PLUGIN_URL ) : WP_PLUGIN_URL ) . '/subscribe-to-comments-reloaded/includes/js/stcr-admin.js';
+            $stcr_admin_css  = ( is_ssl() ? str_replace( 'http://', 'https://', WP_PLUGIN_URL ) : WP_PLUGIN_URL ) . '/subscribe-to-comments-reloaded/includes/css/stcr-admin-style.css';
+
+            // register scripts
+            wp_register_script('stcr-admin-js', $stcr_admin_js, array( 'jquery' ) );
+
+            // rergister styles
+            wp_register_style( 'stcr-admin-style',  $stcr_admin_css );
+
             // check if we're on our pages
             if ( strpos( $hook, 'stcr' ) !== false ) {
-            
-                // paths
-    			$stcr_admin_js  = ( is_ssl() ? str_replace( 'http://', 'https://', WP_PLUGIN_URL ) : WP_PLUGIN_URL ) . '/subscribe-to-comments-reloaded/includes/js/stcr-admin.js';
-    			$stcr_admin_css  = ( is_ssl() ? str_replace( 'http://', 'https://', WP_PLUGIN_URL ) : WP_PLUGIN_URL ) . '/subscribe-to-comments-reloaded/includes/css/stcr-admin-style.css';
                 
-                // scripts
-                wp_register_script('stcr-admin-js', $stcr_admin_js, array( 'jquery' ) );
+                // enqueue scripts
                 wp_enqueue_script('stcr-admin-js');
 
-                // styles
-                wp_register_style( 'stcr-admin-style',  $stcr_admin_css );
+                // enqueue styles
                 wp_enqueue_style('stcr-admin-style');
 
             }
@@ -710,12 +714,16 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_utils') )
 			$notices = get_option( 'subscribe_reloaded_deferred_admin_notices' );
 			foreach ( $notices as $key => $notice ) {
 				if ( $key == $_name ) {
-					$notices[ $key ] = array(
-						"status" => $_status,
-						"message" => $notice['message'],
-						"type"	=> $notice['type'],
-						"nonce" => $_nonce
-					);
+                    if ( $_status == 'read' ) {
+                        unset( $notices[$key] );
+                    } else {
+                        $notices[ $key ] = array(
+                            "status" => $_status,
+                            "message" => $notice['message'],
+                            "type"	=> $notice['type'],
+                            "nonce" => $_nonce
+                        );
+                    }
 				}
 			}
 			update_option( 'subscribe_reloaded_deferred_admin_notices', $notices );
@@ -828,90 +836,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\stcr_utils') )
 
             return;
         }
-        /**
-         * Create a file with the given information.
-         *
-         * @since 07-Dic-2018
-         * @author reedyseth
-         *
-         * @param string $_hookname The notice to be binded.
-         */
-        public function stcr_create_file( $_filename, $_filedata )
-        {
-            $plugin_dir   = plugin_dir_path( __DIR__ );
-            $file_path    = $plugin_dir . "utils/" ;
-            $path         = "";
-
-            // Check  if $_filedata is an array
-            if ( is_array( $_filedata ) )
-            {
-                $_filedata = serialize( $_filedata );
-            }
-
-            if( is_writable( $file_path ) )
-            {
-                $handle = fopen( $file_path . $_filename, "w" );
-                fwrite( $handle, $_filedata);
-                $path = "true|" . plugins_url( "download.php", __FILE__ ) . "|";
-                fclose( $handle );
-            }
-            else
-            {
-                $path = "false|Check file permissions|{$file_path}";
-            }
-
-            return $path;
-        }
-        /**
-         * Call stcr_create_file to create the file again.
-         *
-         * @since 10-Dic-2018
-         * @author reedyseth
-         *
-         */
-        public function stcr_recreate_file()
-        {
-            $filename = esc_attr( $_POST['fileName'] );
-            $filedata = stripslashes($_POST['fileData']);
-            $action   = esc_attr( $_POST['action'] );
-//            sleep(1/2);
-
-            // Check Nonce
-            $isValid = check_ajax_referer( $action, 'security', false );
-
-            if( $isValid )
-            {
-               $result =  $this->stcr_create_file( $filename, unserialize($filedata) );
-               $result = explode( "|", $result);
-               $data = array(
-                   "result"         => $result[0],
-                   "path"           => $result[1],
-                   "additionalInfo" => $result[2]
-               );
-                // Send success message
-                wp_send_json_success( $data );
-            }
-
-            die();
-        }
-        /**
-         * Delete the Report File to keep the house clean
-         *
-         * @since 12-Dic-2018
-         * @author reedyseth
-         *
-         */
-        public function stcr_delete_report_file()
-        {
-            $plugin_dir   = plugin_dir_path( __DIR__ );
-            $file    = $plugin_dir . "utils/systemInformation.txt" ;
-
-            if( file_exists( $file )  && is_writable( $plugin_dir ) )
-            {
-                // unlink the file
-                unlink($file);
-            }
-        }
+        
 		/**
 		 * Update a StCR notification status
 		 *
