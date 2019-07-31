@@ -7,13 +7,22 @@ class S2_Core {
 	public function load_translations() {
 		load_plugin_textdomain( 'subscribe2', false, S2DIR );
 		load_plugin_textdomain( 'subscribe2', false, S2DIR . 'languages/' );
+
 		if ( is_admin() && function_exists( 'get_user_locale' ) ) {
 			$locale = get_user_locale();
 		} else {
 			$locale = get_locale();
 		}
+
 		$mofile = WP_LANG_DIR . '/subscribe2-' . apply_filters( 'plugin_locale', $locale, 'subscribe2' ) . '.mo';
-		load_textdomain( 'subscribe2', $mofile );
+		if ( file_exists( $mofile ) && is_readable( $mofile ) ) {
+			load_textdomain( 'subscribe2', $mofile );
+		}
+
+		$mofile = WP_LANG_DIR . '/plugins/subscribe2-' . apply_filters( 'plugin_locale', $locale, 'subscribe2' ) . '.mo';
+		if ( file_exists( $mofile ) && is_readable( $mofile ) ) {
+			load_textdomain( 'subscribe2', $mofile );
+		}
 	}
 
 	/* ===== mail handling ===== */
@@ -331,7 +340,7 @@ class S2_Core {
 			// is the current post assigned to any categories
 			// which should not generate a notification email?
 			foreach ( explode( ',', $this->subscribe2_options['exclude'] ) as $cat ) {
-				if ( in_array( $cat, $post_cats, true ) ) {
+				if ( in_array( (int) $cat, $post_cats, true ) ) {
 					$check = true;
 				}
 			}
@@ -577,7 +586,7 @@ class S2_Core {
 		$excerpt_on_words = apply_filters( 's2_excerpt_on_words', true );
 
 		if ( false === $html ) {
-			$excerpt = trim( wp_strip_all_tags( $text ) );
+			$excerpt = trim( wp_strip_all_tags( strip_shortcodes( $text ) ) );
 		} else {
 			$excerpt = strip_shortcodes( $text );
 		}
@@ -644,7 +653,7 @@ class S2_Core {
 			$body    = $this->substitute( stripslashes( $this->subscribe2_options['remind_email'] ) );
 			$subject = $this->substitute( stripslashes( $this->subscribe2_options['remind_subject'] ) );
 		} else {
-			$body = apply_filters( 's2_confirm_email', stripslashes( $this->subscribe2_options['confirm_email'] ), $what );
+			$body = apply_filters( 's2_confirm_email', stripslashes( $this->subscribe2_options['confirm_email'] ) );
 			$body = $this->substitute( $body );
 			if ( 'add' === $action ) {
 				$body    = str_replace( '{ACTION}', $this->subscribe, $body );
@@ -1174,7 +1183,7 @@ class S2_Core {
 			// need to use $id like this as this is a mixed array / object
 			$id = 0;
 			foreach ( $all_cats as $cat ) {
-				if ( in_array( $cat->term_id, $excluded, true ) ) {
+				if ( in_array( (string) $cat->term_id, $excluded, true ) ) {
 					unset( $all_cats[ $id ] );
 				}
 				$id++;
@@ -1525,7 +1534,7 @@ class S2_Core {
 					// is the current post assigned to any categories
 					// which should not generate a notification email?
 					foreach ( explode( ',', $this->subscribe2_options['exclude'] ) as $cat ) {
-						if ( in_array( $cat, $post_cats, true ) ) {
+						if ( in_array( (int) $cat, $post_cats, true ) ) {
 							$check = true;
 						}
 					}
@@ -1653,7 +1662,7 @@ class S2_Core {
 					$excerpt              = wp_strip_all_tags( $excerpt );
 					$excerpt              = strip_shortcodes( $excerpt );
 				} else {
-					$excerpt = $this->create_excerpt( $excerpt, true );
+					$excerpt = $this->create_excerpt( $excerpt );
 				}
 				// strip leading and trailing whitespace
 				$excerpt = trim( $excerpt );
@@ -1916,10 +1925,10 @@ class S2_Core {
 		if ( is_admin() ) {
 			//add menu, authoring and category admin actions
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-			add_action( 'admin_menu', array( &$this, 's2_meta_init' ) );
+			add_action( 'add_meta_boxes', array( &$this, 's2_meta_init' ), 10, 2 );
 			add_action( 'save_post', array( &$this, 's2_meta_handler' ) );
 			add_action( 'save_post', array( &$this, 's2_preview_handler' ) );
-            add_action( 'save_post', array( &$this, 's2_resend_handler' ) );
+			add_action( 'save_post', array( &$this, 's2_resend_handler' ) );
 			add_action( 'create_category', array( &$this, 'new_category' ) );
 			add_action( 'delete_category', array( &$this, 'delete_category' ) );
 
@@ -1959,6 +1968,9 @@ class S2_Core {
 			// subscriber page options handler
 			add_filter( 'set-screen-option', array( &$this, 'subscribers_set_screen_option' ), 10, 3 );
 
+			// MailOptin admin notices
+			require_once S2PATH . 'classes/mo-notice.php';
+
 			// capture CSV export
 			if ( isset( $_POST['s2_admin'] ) && isset( $_POST['csv'] ) ) {
 				$date = date( 'Y-m-d' );
@@ -1996,8 +2008,6 @@ class S2_Core {
 				add_action( 'wp_footer', array( &$this, 'js_ip_library_script' ), 20 );
 			}
 		}
-
-        require_once S2PATH . 'classes/mo-notice.php';
 	}
 
 	/* ===== define some variables ===== */
