@@ -246,91 +246,24 @@ function fieldTypeEdit(elem) {
 
 function fieldTypeContent(selectedValue) {
     var response = '';
-    if(selectedValue == 11) {
-        response += '<option value="11" selected>Heading 1</option>';
-    } else {
-        response += '<option value="11">Heading 1</option>';
-    }
-    if(selectedValue == 10) {
-        response += '<option value="10" selected>Heading 2</option>';
-    } else {
-        response += '<option value="10">Heading 2</option>';
-    }
-    if(selectedValue == 12) {
-        response += '<option value="12" selected>Heading 3</option>';
-    } else {
-        response += '<option value="12">Heading 3</option>';
-    }
-    if(selectedValue == 1) {
-        response += '<option value="1" selected>Instruction Text</option>';
-    } else {
-        response += '<option value="1">Instruction Text</option>';
-    }
-    if(selectedValue == 0) {
-        response += '<option value="0" selected>Entry Box Input</option>';
-    } else {
-        response += '<option value="0">Entry Box Input</option>';
-    }
-    if(selectedValue == 15) {
-        response += '<option value="15" selected>Text Area</option>';
-    } else {
-        response += '<option value="15">Text Area</option>';
-    }
-    if(selectedValue == 4) {
-        response += '<option value="4" selected>Checkbox</option>';
-    } else {
-        response += '<option value="4">Checkbox</option>';
-    }
-    if(selectedValue == 2) {
-        response += '<option value="2" selected>Drop-down List</option>';
-    } else {
-        response += '<option value="2">Drop-down List</option>';
-    }
-    if(selectedValue == 13) {
-        response += '<option value="13" selected>Radio Button</option>';
-    } else {
-        response += '<option value="13">Radio Button</option>';
-    }
-    if(selectedValue == 7) {
-        response += '<option value="7" selected>Date Picker</option>';
-    } else {
-        response += '<option value="7">Date Picker</option>';
-    }
-    if(selectedValue == 8) {
-        response += '<option value="8" selected>Ask a Question</option>';
-    } else {
-        response += '<option value="8">Ask a Question</option>';
-    }
-    if(selectedValue == 3) {
-        response += '<option value="3" selected>Start a New Line</option>';
-    } else {
-        response += '<option value="3">Start a New Line</option>';
-    }
-    if(selectedValue == 9) {
-        response += '<option value="9" selected>Horizontal Line</option>';
-    } else {
-        response += '<option value="9">Horizontal Line</option>';
-    }
-    if(selectedValue == 5) {
-        response += '<option value="5" selected>Autofill Name</option>';
-    } else {
-        response += '<option value="5">Autofill Name</option>';
-    }
-    if(selectedValue == 6) {
-        response += '<option value="6" selected>Autofill Date</option>';
-    } else {
-        response += '<option value="6">Autofill Date</option>';
-    }
-    if(selectedValue == 14) {
-        response += '<option value="14" selected>File Upload</option>';
-    } else {
-        response += '<option value="14">File Upload</option>';
-    }
-    if(selectedValue == 16) {
-        response += '<option value="16" selected>Employee Drop-down List</option>';
-    } else {
-        response += '<option value="16">Employee Drop-down List</option>';
-    }
+    response += '<option value="11" ' + (selectedValue == 11 ? 'selected' : '') + '>Heading 1</option>';
+    response += '<option value="10" ' + (selectedValue == 10 ? 'selected' : '') + '>Heading 2</option>';
+    response += '<option value="12" ' + (selectedValue == 12 ? 'selected' : '') + '>Heading 3</option>';
+    response += '<option value="1" ' + (selectedValue == 1 ? 'selected' : '') + '>Instruction Text</option>';
+    response += '<option value="0" ' + (selectedValue == 0 ? 'selected' : '') + '>Entry Box Input</option>';
+    response += '<option value="15" ' + (selectedValue == 15 ? 'selected' : '') + '>Text Area</option>';
+    response += '<option value="4" ' + (selectedValue == 4 ? 'selected' : '') + '>Checkbox</option>';
+    response += '<option value="2" ' + (selectedValue == 2 ? 'selected' : '') + '>Drop-down List</option>';
+    response += '<option value="13" ' + (selectedValue == 13 ? 'selected' : '') + '>Radio Button</option>';
+    response += '<option value="7" ' + (selectedValue == 7 ? 'selected' : '') + '>Date Picker</option>';
+    response += '<option value="8" ' + (selectedValue == 8 ? 'selected' : '') + '>Ask a Question</option>';
+    response += '<option value="3" ' + (selectedValue == 3 ? 'selected' : '') + '>Start a New Line</option>';
+    response += '<option value="9" ' + (selectedValue == 9 ? 'selected' : '') + '>Horizontal Line</option>';
+    response += '<option value="5" ' + (selectedValue == 5 ? 'selected' : '') + '>Autofill Name</option>';
+    response += '<option value="6" ' + (selectedValue == 6 ? 'selected' : '') + '>Autofill Date</option>';
+    response += '<option value="14" ' + (selectedValue == 14 ? 'selected' : '') + '>File Upload</option>';
+    response += '<option value="16" ' + (selectedValue == 16 ? 'selected' : '') + '>Employee Drop-down List</option>';
+    response += '<option value="17" ' + (selectedValue == 17 ? 'selected' : '') + '>New Supervisor Drop-down List</option>';
     return response;
 }
 
@@ -396,31 +329,11 @@ function approvalLevel(selectedValue, fieldType) {
     
     response += '>';
     
-    if(selectedValue == 0) {
-        response += '<option value="0" selected></option>';
-    } else {
-        response += '<option value="0"></option>';
-    }
-    if(selectedValue == 1) {
-        response += '<option value="1" selected>Level 1</option>';
-    } else {
-        response += '<option value="1">Level 1</option>';
-    }
-    if(selectedValue == 2) {
-        response += '<option value="2" selected>Level 2</option>';
-    } else {
-        response += '<option value="2">Level 2</option>';
-    }
-    if(selectedValue == 3) {
-        response += '<option value="3" selected>Level 3</option>';
-    } else {
-        response += '<option value="3">Level 3</option>';
-    }
-    if(selectedValue == 4) {
-        response += '<option value="4" selected>Level 4</option>';
-    } else {
-        response += '<option value="4">Level 4</option>';
-    }
+    response += '<option value="0" ' + (selectedValue == 0 ? 'selected' : '') + '></option>';
+    response += '<option value="1" ' + (selectedValue == 1 ? 'selected' : '') + '>Level 1</option>';
+    response += '<option value="2" ' + (selectedValue == 2 ? 'selected' : '') + '>Level 2</option>';
+    response += '<option value="3" ' + (selectedValue == 3 ? 'selected' : '') + '>Level 3</option>';
+    response += '<option value="4" ' + (selectedValue == 4 ? 'selected' : '') + '>Level 4</option>';
     response += '</select>';
     
     return response;
@@ -430,31 +343,12 @@ function approvalLevelEdit(elem) {
     var selectedValue = find(elem).value;
     
     var response = '';
-    if(selectedValue == 0) {
-        response += '<option selected></option>';
-    } else {
-        response += '<option></option>';
-    }
-    if(selectedValue == 1) {
-        response += '<option value="1" selected>Level 1</option>';
-    } else {
-        response += '<option value="1">Level 1</option>';
-    }
-    if(selectedValue == 2) {
-        response += '<option value="2" selected>Level 2</option>';
-    } else {
-        response += '<option value="2">Level 2</option>';
-    }
-    if(selectedValue == 3) {
-        response += '<option value="3" selected>Level 3</option>';
-    } else {
-        response += '<option value="3">Level 3</option>';
-    }
-    if(selectedValue == 4) {
-        response += '<option value="4" selected>Level 4</option>';
-    } else {
-        response += '<option value="4">Level 4</option>';
-    }
+    
+    response += '<option ' + (selectedValue == 0 ? 'selected' : '') + '></option>';
+    response += '<option value="1" ' + (selectedValue == 1 ? 'selected' : '') + '>Level 1</option>';
+    response += '<option value="2" ' + (selectedValue == 2 ? 'selected' : '') + '>Level 2</option>';
+    response += '<option value="3" ' + (selectedValue == 3 ? 'selected' : '') + '>Level 3</option>';
+    response += '<option value="4" ' + (selectedValue == 4 ? 'selected' : '') + '>Level 4</option>';
     response += '</select>';
     
     find(elem).innerHTML = response;
@@ -711,7 +605,7 @@ function preview() {
             updateText += '><div class="inside-text-center" style="text-align:left;">';
             updateText += '<input type="file" disabled>';
             updateText += '</div></div>';
-        } else if(find("fieldtype"+i).value == 16) { //Name Select
+        } else if(find("fieldtype"+i).value == 16 || find("fieldtype"+i).value == 17) { //Name Select
             if(find("approvallevel"+i).value != 0) {
                 updateText += '<div class="workflow workflowlabel approval"';
             } else {
@@ -1276,6 +1170,7 @@ function hideSettings(setting, fieldType) {
             fieldType == 6 || //autofill date
             fieldType == 7 || //date
             fieldType == 16 || //name select
+            fieldType == 17 || //name select
             fieldType == 9 || //horizontal line
             fieldType == 15 || //Text Area
             fieldType == 14 //File Upload
