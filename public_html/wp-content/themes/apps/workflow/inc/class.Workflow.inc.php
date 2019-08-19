@@ -2923,7 +2923,7 @@ class Workflow {
         $workflow = new Workflow();
         $response = '';
         
-        $sql = "SELECT STATUS, APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
+        $sql = "SELECT STATUS, APPROVER_DIRECT, NEW_APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
                 APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL, BEHALFOF, PROCESSOR
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
@@ -2939,6 +2939,7 @@ class Workflow {
         $status = $row['STATUS'];
         $approvalStatus = $row['STATUS_APPROVAL'];
         $directApprover = $row['APPROVER_DIRECT'];
+        $newDirectApprover = $row['NEW_APPROVER_DIRECT'];
         $userid = $row['USER'];
         $formID = $row['FORMID'];
         $commenttext = $row['COMMENT'];
@@ -2991,6 +2992,12 @@ class Workflow {
                             WHERE employee.employee_number = '$userid'
                             
                         )";
+        } else if($role == NEWSUPERVISOR) {
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
+                    FROM employee  
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
+                    WHERE employee.employee_number = '$newDirectApprover' 
+                    ORDER BY MEMBER";
         } else if($role != 8 && $role != '') {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON, REMINDER_ON
                     FROM workflowrolesmembers
@@ -3024,7 +3031,7 @@ class Workflow {
                 $recepients[] = array($row['MEMBER'], $row['user_email'], $row['EMAIL_ON'], 0, $row['REMINDER_ON']);
             }
         }
-        
+        var_dump($recepients);
         if($status == 7 && $processor != NULL) {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON
                     FROM workflowrolesmembers
@@ -3108,6 +3115,7 @@ class Workflow {
         }
         
         for($i = 0; $i < count($recepients); $i++) {
+            var_dump($recepients[$i]);
             if(!$reminder && $recepients[$i][2] == 1 || $reminder && $recepients[$i][4]) { //if sending of emails is checked in the email settings
                 if($status == 4) {
                     $modifiedTemplate = $template;
@@ -3147,6 +3155,7 @@ class Workflow {
                     $mail['subject'] = 'Your '.$formName.' submission has been reviewed - Submission ID # '.$submissionID;
                 
                 $mail['message'] = $body;
+                echo $body;
 				wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers']);
                 
                 //Update the submission reminder date
@@ -3159,6 +3168,7 @@ class Workflow {
                 $wpdb->query($sql, ARRAY_A);
             }
         }
+        die();
     }
     
     /*Returns submissions for a given form that a user is an approver for.
