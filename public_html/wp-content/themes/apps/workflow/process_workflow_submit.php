@@ -56,6 +56,7 @@ $misc_content = '';
 $commenttext = '';
 $hrnotes = '';
 $sup = 0;
+$newSup = 0;
 
 //echo 'The total count is: '.$_POST['count'].' and the new status is :'.$newstatus.'<br>';
 
@@ -105,6 +106,9 @@ if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
     $uniqueToken = $_POST['uniquetoken'];
 } 
 
+if(isset($_POST['newsupervisor'])) {
+    $newSup = $_POST['workflowfieldid'.$_POST['newsupervisor']];
+}
 
 
 for($i = 0; $i < $numfields; $i++) {
@@ -123,7 +127,7 @@ if(isset($_POST['reminderdate'])) {
 
 $obj = new Workflow();
 
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes, $statuslevel);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes, $statuslevel, $newSup);
 
 if($sbid != 0)
     $obj->sendEmail($sbid);

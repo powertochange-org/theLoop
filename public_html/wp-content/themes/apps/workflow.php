@@ -31,12 +31,12 @@ require_once('workflow/inc/class.Workflow.inc.php');
 
 ?>
 <?php get_header(); ?>
-    <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css?ver=1.0.3" rel="stylesheet" type="text/css" />
+    <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css?ver=1.0.4" rel="stylesheet" type="text/css" />
     <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow/style/print.css?ver=1.0.0" rel="stylesheet" type="text/css" media="print"/>
     <script language="javascript" type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/script.js?ver=1.0.8"></script>
-    <?php 
+    <?php
         if(isset($_GET['page']) && $_GET['page'] == 'createworkflow') {
-            echo '<script language="javascript" type="text/javascript" src="'.get_stylesheet_directory_uri().'/workflow/createworkflowscript.js?ver=1.1.3"></script>';
+            echo '<script language="javascript" type="text/javascript" src="'.get_stylesheet_directory_uri().'/workflow/createworkflowscript.js?ver=1.1.4"></script>';
         } ?>
     <div id="content" class='staff-d'>
         <?php if (have_posts()) : while (have_posts()) : the_post();  ?>

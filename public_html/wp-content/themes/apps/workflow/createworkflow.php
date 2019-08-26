@@ -270,6 +270,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
                 <option value="6">Autofill Date</option>
                 <option value="14">File Upload</option>
                 <option value="16">Employee Drop-down List</option>
+                <option value="17">New Supervisor Drop-down List</option>
             </select>
         </div>
         <div class="clear"></div>

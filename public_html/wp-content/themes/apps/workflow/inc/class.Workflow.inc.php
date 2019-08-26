@@ -10,6 +10,7 @@
 *
 */
 
+define('NEWSUPERVISOR', 30);
 
 class Workflow {
     private $name;
@@ -211,7 +212,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0) {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0, $newDirectApprover = 0) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -441,7 +442,7 @@ class Workflow {
             
             $sql = "INSERT INTO workflowformstatus (USER, STATUS, STATUS_APPROVAL, FORMID, 
                                                     MISC_CONTENT, DATE_SUBMITTED, COMMENT, 
-                                                    HR_NOTES, BEHALFOF, APPROVER_DIRECT)
+                                                    HR_NOTES, BEHALFOF, APPROVER_DIRECT, NEW_APPROVER_DIRECT)
                     VALUES ('$user', '$newstatus', '$newApprovalStatus', '$formID', 
                             '$new_misc_content', '".date('Y-m-d')."', ";
             
@@ -465,7 +466,13 @@ class Workflow {
             }
             
             if($directApprover != 0) {
-                $sql .= "'$directApprover')";
+                $sql .= "'$directApprover',";
+            } else {
+                $sql .= "NULL,";
+            }
+            
+            if($newDirectApprover != 0) {
+                $sql .= "'$newDirectApprover')";
             } else {
                 $sql .= "NULL)";
             }
@@ -501,7 +508,11 @@ class Workflow {
                                 VALUES ('$oldDirectApprover', '$submissionID', '$oldApprovalStatus')";
                 $resultOldDirect = $wpdb->query($sqlOldDirect);
             }
-                    
+            
+            if($newDirectApprover != 0) {
+                $sql .= ", NEW_APPROVER_DIRECT = '$newDirectApprover'";
+            }
+            
             if($commenttext != '') {
                 $oldcomment = str_replace("\\", "\\\\", $oldcomment);
                 $commenttext = str_replace("\\", "\\\\", $commenttext);
@@ -666,7 +677,7 @@ class Workflow {
         
         if(isset($sbid) && $sbid != '' && $sbid != 0) {
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT,
                             BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
                             SEND_REMINDER
                     FROM workflowformstatus
@@ -728,6 +739,8 @@ class Workflow {
                         && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
                 
+            } else if($currentApprovalRole == NEWSUPERVISOR && !$approver) {
+                $approver = ($row['NEW_APPROVER_DIRECT'] == $loggedInUser);
             } else if($currentApprovalRole == 4 && !$approver) {
                 //Check if they are a director
                 $approver = Workflow::ministryDirector($submittedby, $loggedInUser);
@@ -757,7 +770,7 @@ class Workflow {
     */
     public function configureWorkflow() {
         global $wpdb;
-        $configSuccess = $approver = $supNext = $processor = 0;
+        $configSuccess = $approver = $supNext = $newSupNext = $processor = 0;
         $configMsg = '';
         
         if(Workflow::loggedInUser() == '0') {
@@ -779,7 +792,7 @@ class Workflow {
             $sbid = $_GET['sbid'];
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT,
                             BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
                             SEND_REMINDER
                     FROM workflowformstatus
@@ -812,7 +825,6 @@ class Workflow {
             }
             
             
-            
             $currentApprovalRole = -1;
             $hasAnotherApproval = 0;
             if($approvalStatus == 0) {
@@ -820,6 +832,8 @@ class Workflow {
                     $hasAnotherApproval = 1;
                     if($row['APPROVER_ROLE'] == 8)
                         $supNext = 1;
+                    else if($row['APPROVER_ROLE'] == NEWSUPERVISOR)
+                        $newSupNext = 1;
                 }
             } else if($approvalStatus == 1) {
                 $currentApprovalRole = $row['APPROVER_ROLE'];
@@ -827,6 +841,8 @@ class Workflow {
                     $hasAnotherApproval = 1;
                     if($row['APPROVER_ROLE2'] == 8)
                         $supNext = 1;
+                    else if($row['APPROVER_ROLE2'] == NEWSUPERVISOR)
+                        $newSupNext = 1;
                 }
             } else if($approvalStatus == 2) {
                 $currentApprovalRole = $row['APPROVER_ROLE2'];
@@ -834,6 +850,8 @@ class Workflow {
                     $hasAnotherApproval = 1;
                     if($row['APPROVER_ROLE3'] == 8)
                         $supNext = 1;
+                    else if($row['APPROVER_ROLE3'] == NEWSUPERVISOR)
+                        $newSupNext = 1;
                 }
             } else if($approvalStatus == 3) {
                 $currentApprovalRole = $row['APPROVER_ROLE3'];
@@ -841,6 +859,8 @@ class Workflow {
                     $hasAnotherApproval = 1;
                     if($row['APPROVER_ROLE4'] == 8)
                         $supNext = 1;
+                    else if($row['APPROVER_ROLE4'] == NEWSUPERVISOR)
+                        $newSupNext = 1;
                 }
             } else if($approvalStatus == 4) {
                 $currentApprovalRole = $row['APPROVER_ROLE4'];
@@ -855,7 +875,13 @@ class Workflow {
                 if(!$approver && ($row['APPROVER_ROLE'] == 8 || $row['APPROVER_ROLE2'] == 8 
                     || $row['APPROVER_ROLE3'] == 8 || $row['APPROVER_ROLE4'] == 8)) {
                     $currentApprovalRole = 8;
-                } 
+                }
+                
+                //Check if they are a new supervisor
+                if(!$approver && ($row['APPROVER_ROLE'] == NEWSUPERVISOR || $row['APPROVER_ROLE2'] == NEWSUPERVISOR 
+                    || $row['APPROVER_ROLE3'] == NEWSUPERVISOR || $row['APPROVER_ROLE4'] == NEWSUPERVISOR)) {
+                    $currentApprovalRole = NEWSUPERVISOR;
+                }
                 
                 //Check if they just need to process the form
                 if(Workflow::hasRoleAccess($loggedInUser, $row['PROCESSOR'])) {
@@ -888,6 +914,8 @@ class Workflow {
                         && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
                 
+            } else if($currentApprovalRole == NEWSUPERVISOR && !$approver) {
+                $approver = ($row['NEW_APPROVER_DIRECT'] == $loggedInUser);
             } else if($currentApprovalRole == 4 && !$approver) {
                 //Check if they are a director
                 $approver = Workflow::ministryDirector($submittedby, $loggedInUser);
@@ -1032,7 +1060,7 @@ class Workflow {
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
             $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
-            $miscfields, $approvalStage);
+            $miscfields, $approvalStage, $newSupNext);
     }
     
     
@@ -1083,7 +1111,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '', $miscfields = '', $approvalStage = '') {
+        $hrvoid = '', $miscfields = '', $approvalStage = '', $newSupNext = 0) {
         global $wpdb;
         $formActive = 0;
         $ignoreQuickReply = false;
@@ -1730,7 +1758,13 @@ class Workflow {
                     $response .= '<textarea class="commenttext" style="width:100%;height:100px;" disabled>'.$fieldvalue.'</textarea>';
                 }
                 $response .= '</div></div>';
-            } else if($row['TYPE'] == 16) { //Name select
+            } else if($row['TYPE'] == 16 || $row['TYPE'] == 17) { //Name select
+                if($newSupNext != 0) {
+                    $response .= '<input type="hidden" name="newsupervisor" value="'.$row['FIELDID'].'"/>';
+                    if(!$editableField) {
+                        $response .= '<input type="hidden" name="workflowfieldid'.$row['FIELDID'].'" value="'.$fieldvalue.'"/>';
+                    }
+                }
                 if($row['APPROVAL_ONLY'] == 1)
                     if($configuration == 4 && $appLvlAccess || $approval_show)
                         $response .= '<div class="workflow workflowright style-1 approval mobile ';
@@ -1761,14 +1795,14 @@ class Workflow {
                         $response .= '<option value="'.$fieldvalue.'">'.$fieldvalue.'</option>';
                     $values = Workflow::getAllUsers();
                     for($i = 0; $i < count($values); $i++) {
-                        $response .= '<option value="'.$values[$i][1].'" ';
-                        if($values[$i][1] == $fieldvalue)
+                        $response .= '<option value="'.($row['TYPE'] == 16 ? $values[$i][1] : $values[$i][0]).'" ';
+                        if($row['TYPE'] == 16 && $values[$i][1] == $fieldvalue || $values[$i][0] == $fieldvalue)
                             $response .= 'selected';
                         $response .= '>'.$values[$i][1].'</option>';
                     }
                     $response .= '</select>';
                 } else {
-                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.$fieldvalue.'</option></select>';
+                    $response .= '<select disabled style="background-color:#EBEBE4;color:#545454;"><option>'.($row['TYPE'] == 16 ? $fieldvalue : Workflow::getUserName($fieldvalue)).'</option></select>';
                 }
                 $response .= '</div></div>';
             }
@@ -2633,7 +2667,13 @@ class Workflow {
                     OR workflowform.APPROVER_ROLE2 = '8' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE3 = '8' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
                     OR workflowform.APPROVER_ROLE4 = '8' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
-                    AND (workflowformstatus.APPROVER_DIRECT = '$userid') ) ";
+                    AND (workflowformstatus.APPROVER_DIRECT = '$userid') )
+                    OR
+                    ( (workflowform.APPROVER_ROLE = '".NEWSUPERVISOR."' AND (STATUS_APPROVAL >= '1' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE2 = '".NEWSUPERVISOR."' AND (STATUS_APPROVAL = '2' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE3 = '".NEWSUPERVISOR."' AND (STATUS_APPROVAL = '3' OR STATUS_APPROVAL = '100')
+                    OR workflowform.APPROVER_ROLE4 = '".NEWSUPERVISOR."' AND (STATUS_APPROVAL = '4' OR STATUS_APPROVAL = '100'))
+                    AND (workflowformstatus.NEW_APPROVER_DIRECT = '$userid') ) ";
         
         //Or director of a ministry
         $sql .= " OR ( 
@@ -2883,7 +2923,7 @@ class Workflow {
         $workflow = new Workflow();
         $response = '';
         
-        $sql = "SELECT STATUS, APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
+        $sql = "SELECT STATUS, APPROVER_DIRECT, NEW_APPROVER_DIRECT, USER, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, workflowform.NAME,
                 APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, STATUS_APPROVAL, BEHALFOF, PROCESSOR
                 FROM workflowformstatus
                 INNER JOIN workflowform ON workflowformstatus.FORMID = workflowform.FORMID
@@ -2899,6 +2939,7 @@ class Workflow {
         $status = $row['STATUS'];
         $approvalStatus = $row['STATUS_APPROVAL'];
         $directApprover = $row['APPROVER_DIRECT'];
+        $newDirectApprover = $row['NEW_APPROVER_DIRECT'];
         $userid = $row['USER'];
         $formID = $row['FORMID'];
         $commenttext = $row['COMMENT'];
@@ -2951,6 +2992,12 @@ class Workflow {
                             WHERE employee.employee_number = '$userid'
                             
                         )";
+        } else if($role == NEWSUPERVISOR) {
+            $sql = "SELECT employee.employee_number AS MEMBER, employee.user_login, user_email, '1' AS EMAIL_ON, '1' AS REMINDER_ON
+                    FROM employee  
+                    INNER JOIN wp_users ON employee.user_login = wp_users.user_login 
+                    WHERE employee.employee_number = '$newDirectApprover' 
+                    ORDER BY MEMBER";
         } else if($role != 8 && $role != '') {
             $sql = "SELECT MEMBER, employee.user_login, user_email, EMAIL_ON, REMINDER_ON
                     FROM workflowrolesmembers
