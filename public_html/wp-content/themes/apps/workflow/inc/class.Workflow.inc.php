@@ -1603,7 +1603,8 @@ class Workflow {
                 
                 if($editableField && $row['REQUIRED']) {
                     $response .= 'required ';
-                    $ignoreQuickReply = true; //There may be forms that have the radio button selected already so this may be requested to be turned off
+                    if($fieldvalue == '')
+                        $ignoreQuickReply = true;
                 }
                 
                 

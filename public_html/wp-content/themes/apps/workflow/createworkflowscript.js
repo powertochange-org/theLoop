@@ -198,6 +198,11 @@ function addField() {
             '<button type="button" style="width: 100px;" onclick="swap('+totalCount+', 0);">Move Down</button>&nbsp;' +
             '<button type="button" style="width: 100px;" onclick="removeField('+totalCount+');">Remove</button></div>' + 
             '<div class="clear"></div>' + 
+            '<div class="workflow workflowleft">New Position:<br>(Current: '+totalCount+')</div>' +
+            '<div class="workflow workflowright style-1">' + 
+            '<button type="button" style="width: 150px;" onclick="quickSwap('+totalCount+');">Move To Position</button>&nbsp;' + 
+            '<input id="quickswap'+totalCount+'" type="number" style="width: 100px;"></div>' +
+            '<div class="clear"></div>' + 
         '<div class="workflow workflowboth" style="margin-top: 0px;"><hr style="border-width:4px;"></div><div class="clear"></div></div>';
     
     find("workflowfields").innerHTML += text;
@@ -1040,6 +1045,20 @@ function scrollDown() {
     window.scrollTo(0,document.body.scrollHeight);
 }
 
+function quickSwap(id) {
+    let newPosition = document.getElementById('quickswap'+id).value;
+    if(newPosition == '')
+        return;
+    let positionsToMove = 0;
+    let moveup = 1;
+    if(newPosition > id)
+        moveup = 0;
+    positionsToMove = Math.abs(id - newPosition);
+    for(let x = 0; x < positionsToMove; x++) {
+        swap(id, moveup);
+        (moveup ? id-- : id++);
+    }
+}
 
 function swap(id, moveup) {
     var exists = 0;
