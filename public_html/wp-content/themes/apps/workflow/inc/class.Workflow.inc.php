@@ -47,7 +47,7 @@ class Workflow {
         $this->fields = array();
         
         $this->draft = $draft;
-        $this->savedData = str_replace("'", "\'", str_replace("\\", "\\\\", $savedData));;
+        $this->savedData = str_replace("'", "\'", str_replace("\\", "\\\\", $savedData));
         $this->numFields = $numFields;
         $this->mode = $mode;
         $this->previousID = $previousID;
@@ -170,6 +170,14 @@ class Workflow {
         
         //If the workflow is being saved, there is no more work needed to be done. 
         if($this->mode == 1 || $this->mode == 2) {
+            //Save the form creation data in case something gets corrupted later on
+            $sql = "INSERT INTO workflowformsave (FORMID, CONTENT, VERSION, DATE_SAVED, NUM_FIELDS)
+                    VALUES ('$inserted_id', '".$this->savedData."', 0, '".date('Y-m-d H:i:s')."', '".$this->numFields."')";
+            
+            $result = $wpdb->query($sql);
+            if(!$result) {
+                die('Failed to insert save history.<br>'.$sql);
+            }
             return;
         } 
         
@@ -2183,7 +2191,12 @@ class Workflow {
         
         $sql = "SELECT workflowform.FORMID, NAME, DRAFT, ENABLED, DATE_SAVED
                 FROM workflowform
-                LEFT OUTER JOIN workflowformsave ON workflowform.FORMID = workflowformsave.FORMID
+                LEFT OUTER JOIN workflowformsave ON workflowformsave.SAVEID = 
+                            (SELECT SAVEID 
+                            FROM workflowformsave 
+                            WHERE FORMID = workflowform.FORMID 
+                            ORDER BY SAVEID 
+                            DESC LIMIT 1)
                 WHERE ENABLED = '$enabled' AND DRAFT = '$draft'
                 ORDER BY DRAFT, NAME";
         

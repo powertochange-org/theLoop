@@ -358,9 +358,6 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
 ?>
 
 <script>
-//alert(find("count").value);
-//alert('TOTALCOUNT IS: ' + totalCount);
-
 //When loading a draft or a previous form, the count field needs to be set correctly to allow adding of other fields
 totalCount = find("count").value;
 //Set the second value to the field type that is first displayed when this page loads.

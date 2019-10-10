@@ -63,13 +63,9 @@ Also it determines whether it will be published or just saved as a draft again.
 */
 if($submitmode == 1 || $submitmode == 2) {
     $draft = 1;
-    $savedData = $_POST['savedData'];
-    //echo stripslashes($savedData);
-    
-} else {
-    //The saved data allows for copying of forms later on.
-    $savedData = $_POST['savedData'];
 }
+//The saved data allows for copying of forms later on.
+$savedData = $_POST['savedData'];
 
 if(isset($_POST['previousID']) && ($submitmode == 2 || $submitmode == 4))
     $previousID = $_POST['previousID'];
