@@ -101,6 +101,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     Prevents the page from exiting without first giving a warning to the user. 
     */
     var pageExitOK = false;
+    var preventEnterSubmission = false;
     
     function clearPageExit() {
         pageExitOK = true;
@@ -113,7 +114,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     }
     </script>
     
-    <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();">
+    <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();" onkeydown="preventSubmission(event);">
         <div class="workflow workflowleft">
             Form Name:<span class="red">*</span>
         </div>
