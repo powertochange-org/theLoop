@@ -65,8 +65,19 @@ function formValidate() {
     } else {
         find("workflowname").className = "";
     }
-    
+    if(!pageExitOK || preventEnterSubmission) {
+        return false;
+    }
     return true;
+}
+
+function preventSubmission(event) {
+    //Avoid submitting form on the enter key
+    if(event.keyCode == 13) {
+        preventEnterSubmission = true;
+        pageExitOK = false;
+        setTimeout(function(){preventEnterSubmission = false;pageExitOK = false;}, 3000);
+    }
 }
 
 function saveSubmission(status, approver) {

@@ -101,6 +101,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     Prevents the page from exiting without first giving a warning to the user. 
     */
     var pageExitOK = false;
+    var preventEnterSubmission = false;
     
     function clearPageExit() {
         pageExitOK = true;
@@ -113,7 +114,7 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
     }
     </script>
     
-    <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();">
+    <form id="addnewworkflow" action="?page=add_workflow" method="POST" autocomplete="off" onsubmit="return formValidate();" onkeydown="preventSubmission(event);">
         <div class="workflow workflowleft">
             Form Name:<span class="red">*</span>
         </div>
@@ -358,9 +359,6 @@ if(Workflow::isAdmin(Workflow::loggedInUser())) {
 ?>
 
 <script>
-//alert(find("count").value);
-//alert('TOTALCOUNT IS: ' + totalCount);
-
 //When loading a draft or a previous form, the count field needs to be set correctly to allow adding of other fields
 totalCount = find("count").value;
 //Set the second value to the field type that is first displayed when this page loads.
