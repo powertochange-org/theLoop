@@ -3,7 +3,7 @@
 Plugin Name: WP Super Cache
 Plugin URI: https://wordpress.org/plugins/wp-super-cache/
 Description: Very fast caching plugin for WordPress.
-Version: 1.6.9
+Version: 1.7.0
 Author: Automattic
 Author URI: https://automattic.com/
 License: GPL2+
@@ -548,7 +548,6 @@ function wp_cache_manager_updates() {
 	if ( isset( $_POST[ 'action' ] ) && $_POST[ 'action' ] == 'easysetup' ) {
 		$_POST[ 'action' ] = 'scupdates';
 		if( isset( $_POST[ 'wp_cache_easy_on' ] ) && $_POST[ 'wp_cache_easy_on' ] == 1 ) {
-			$_POST[ 'wp_cache_mobile_enabled' ] = 1;
 			$_POST[ 'wp_cache_enabled' ] = 1;
 			$_POST[ 'super_cache_enabled' ] = 1;
 			$_POST[ 'cache_rebuild_files' ] = 1;
@@ -575,7 +574,7 @@ function wp_cache_manager_updates() {
 			wp_clear_scheduled_hook( 'wp_cache_gc' );
 			wp_clear_scheduled_hook( 'wp_cache_gc_watcher' );
 		}
-		$advanced_settings = array( 'wp_super_cache_late_init', 'wp_cache_disable_utf8', 'wp_cache_no_cache_for_get', 'wp_supercache_304', 'wp_cache_mfunc_enabled', 'wp_cache_mobile_enabled', 'wp_cache_front_page_checks', 'wp_supercache_cache_list', 'wp_cache_clear_on_post_edit', 'wp_cache_make_known_anon', 'wp_cache_refresh_single_only', 'cache_compression' );
+		$advanced_settings = array( 'wp_super_cache_late_init', 'wp_cache_disable_utf8', 'wp_cache_no_cache_for_get', 'wp_supercache_304', 'wp_cache_mfunc_enabled', 'wp_cache_front_page_checks', 'wp_supercache_cache_list', 'wp_cache_clear_on_post_edit', 'wp_cache_make_known_anon', 'wp_cache_refresh_single_only', 'cache_compression' );
 		foreach( $advanced_settings as $setting ) {
 			if ( isset( $GLOBALS[ $setting ] ) && $GLOBALS[ $setting ] == 1 ) {
 				$_POST[ $setting ] = 1;
@@ -1098,25 +1097,16 @@ table.wpsc-settings-table {
 							<em><?php esc_html_e( 'Compression is disabled by default because some hosts have problems with compressed files. Switching it on and off clears the cache.', 'wp-super-cache' ); ?></em><br />
 						<?php endif; ?>
 					<?php endif; ?>
-					<label><input type='checkbox' name='wpsc_save_headers' <?php checked( $wpsc_save_headers ); ?> value='1' /> <?php esc_html_e( 'Cache HTTP headers with page content.', 'wp-super-cache' ); ?></label><br />
 					<label><input type='checkbox' name='cache_rebuild_files' <?php checked( $cache_rebuild_files ); ?> value='1'> <?php echo esc_html__( 'Cache rebuild. Serve a supercache file to anonymous users while a new file is being generated.', 'wp-super-cache' ) . ' <em>(' . esc_html__( 'Recommended', 'wp-super-cache' ) . ')</em>'; ?></label><br />
-				<?php
-				$disable_304 = true;
-				if ( 0 == $wp_cache_mod_rewrite )
-					$disable_304 = false;
-				if ( $disable_304 )
-					echo "<strike>";
-					?>
-					<label><input <?php disabled( $disable_304 ); ?> type='checkbox' name='wp_supercache_304' <?php checked( $wp_supercache_304 ); ?> value='1'> <?php echo esc_html__( '304 Not Modified browser caching. Indicate when a page has not been modified since it was last requested.', 'wp-super-cache' ) . ' <em>(' . esc_html__( 'Recommended', 'wp-super-cache' ) . ')</em>'; ?></label><br />
-					<?php
-					if ( $disable_304 ) {
-						echo '</strike>';
-						echo '<p><strong>' . esc_html__( 'Warning! 304 browser caching is only supported when mod_rewrite caching is not used.', 'wp-super-cache' ) . '</strong></p>';
-					} else {
-						echo '<em>' . esc_html__( '304 support is disabled by default because some hosts have had problems with the headers used in the past.', 'wp-super-cache' ) . '</em><br />';
-					}
-					?>
-					<label><input type='checkbox' name='wp_cache_make_known_anon' <?php checked( $wp_cache_make_known_anon ); ?> value='1'> <?php _e( 'Make known users anonymous so they&#8217;re served supercached static files.', 'wp-super-cache' ); ?></label><br />
+					<?php if ( $wp_cache_mod_rewrite ) { ?>
+						<br />
+						<p><strong><?php esc_html_e( 'Warning! The following settings are disabled because Expert caching is enabled.', 'wp-super-cache' ); ?></strong></p>
+						<br />
+					<?php } ?>
+					<label><input <?php disabled( $wp_cache_mod_rewrite ); ?> type='checkbox' name='wpsc_save_headers' <?php checked( $wpsc_save_headers ); ?> value='1' /> <?php esc_html_e( 'Cache HTTP headers with page content.', 'wp-super-cache' ); ?></label><br />
+					<label><input <?php disabled( $wp_cache_mod_rewrite ); ?> type='checkbox' name='wp_supercache_304' <?php checked( $wp_supercache_304 ); ?> value='1'> <?php echo esc_html__( '304 Browser caching. Improves site performance by checking if the page has changed since the browser last requested it.', 'wp-super-cache' ) . ' <em>(' . esc_html__( 'Recommended', 'wp-super-cache' ) . ')</em>'; ?></label><br />
+					<?php echo '<em>' . esc_html__( '304 support is disabled by default because some hosts have had problems with the headers used in the past.', 'wp-super-cache' ) . '</em><br />'; ?>
+					<label><input <?php disabled( $wp_cache_mod_rewrite ); ?> type='checkbox' name='wp_cache_make_known_anon' <?php checked( $wp_cache_make_known_anon ); ?> value='1'> <?php _e( 'Make known users anonymous so they&#8217;re served supercached static files.', 'wp-super-cache' ); ?></label><br />
 					</legend>
 					</fieldset>
 				</td>
@@ -1126,7 +1116,7 @@ table.wpsc-settings-table {
 			<td>
 				<fieldset>
 				<legend class="hidden">Advanced</legend>
-				<label><input type='checkbox' name='wp_cache_mfunc_enabled' <?php if( $wp_cache_mfunc_enabled ) echo "checked"; ?> value='1' <?php if ( $wp_cache_mod_rewrite ) { echo "disabled='disabled'"; } ?>> <?php _e( 'Enable dynamic caching. (See <a href="https://wordpress.org/plugins/wp-super-cache/faq/">FAQ</a> or wp-super-cache/plugins/dynamic-cache-test.php for example code.)', 'wp-super-cache' ); ?></label><br />
+				<label><input <?php disabled( $wp_cache_mod_rewrite ); ?> type='checkbox' name='wp_cache_mfunc_enabled' <?php if( $wp_cache_mfunc_enabled ) echo "checked"; ?> value='1'> <?php _e( 'Enable dynamic caching. (See <a href="https://wordpress.org/plugins/wp-super-cache/faq/">FAQ</a> or wp-super-cache/plugins/dynamic-cache-test.php for example code.)', 'wp-super-cache' ); ?></label><br />
 				<label><input type='checkbox' name='wp_cache_mobile_enabled' <?php if( $wp_cache_mobile_enabled ) echo "checked"; ?> value='1'> <?php _e( 'Mobile device support. (External plugin or theme required. See the <a href="https://wordpress.org/plugins/wp-super-cache/faq/">FAQ</a> for further details.)', 'wp-super-cache' ); ?></label><br />
 				<?php if ( $wp_cache_mobile_enabled ) {
 					echo '<blockquote><h5>' . __( 'Mobile Browsers', 'wp-super-cache' ) . '</h5>' . esc_html( $wp_cache_mobile_browsers ) . "<br /><h5>" . __( 'Mobile Prefixes', 'wp-super-cache' ) . "</h5>" . esc_html( $wp_cache_mobile_prefixes ) . "<br /></blockquote>";
@@ -1225,6 +1215,14 @@ table.wpsc-settings-table {
 				</td>
 				</tr>
 			</table>
+			<p><?php _e( 'The following recommended settings will be enabled:', 'wp-super-cache' ); ?></p>
+			<ol>
+			<li><?php _e( 'Caching disabled for logged in visitors.', 'wp-super-cache' ); ?></li>
+			<li><?php _e( 'Simple caching.', 'wp-super-cache' ); ?></li>
+			<li><?php _e( 'Cache Rebuild.', 'wp-super-cache' ); ?></li>
+			<li><?php _e( 'Interval garbage collection every 10 minutes with a cache lifetime of 30 minutes (if not configured already).', 'wp-super-cache' ); ?></li>
+			</ol>
+			<p><?php _e( 'These settings can be modified on the Advanced Settings page.', 'wp-super-cache' ); ?></p>
 			<?php
 			if ( ! $is_nginx && $cache_enabled && ! $wp_cache_mod_rewrite ) {
 				$scrules = trim( implode( "\n", extract_from_markers( trailingslashit( get_home_path() ) . '.htaccess', 'WPSuperCache' ) ) );
@@ -3832,7 +3830,7 @@ function supercache_admin_bar_render() {
 }
 
 /**
- * Adds "Delete Cache" button in WP Admin Bar.
+ * Adds "Delete Cache" button in WP Toolbar.
  */
 function wpsc_admin_bar_render( $wp_admin_bar ) {
 
