@@ -378,7 +378,7 @@ function preview() {
     updateText += '<h2 class="center" style="color:black;">Preview of Current Form</h2>';
     
     if(find("behalfof").checked) {
-        updateText += '<div class="workflow workflowlabel">Submit on behalf of Employee:</div>' +
+        updateText += '<div class="workflow workflowlabel">Submit on behalf of Staff Member:</div>' +
             '<div class="workflow workflowright style-1" style="width:150px;"><select></select></div>' +
             '<div class="clear" style="height: 50px;"></div>';
     }
