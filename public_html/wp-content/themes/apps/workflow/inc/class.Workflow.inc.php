@@ -1257,7 +1257,7 @@ class Workflow {
         }
         
         if($behalfofShow && $configuration == 1) {//on behalf of someone else
-            $response .= '<div class="workflow workflowlabel">Submit on behalf of Employee:</div>';
+            $response .= '<div class="workflow workflowlabel">Submit on behalf of Staff Member:</div>';
             $response .= '<div class="workflow workflowright style-1" style="width:250px;">';
             
             $response .= '<select id="onbehalf" name="onbehalf" class="chosen-select" data-placeholder=" " onchange="updateSupervisorButton();"><option value="Myself">Myself</option>';
