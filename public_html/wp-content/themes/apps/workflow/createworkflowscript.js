@@ -1130,13 +1130,12 @@ function swapConversion(text, oldID, newID) {
 }
 
 function removeField(id) {
-    
     for(var i = id; i < totalCount - 1; i++) {
         swap(i, 0);
     }
-    
     document.getElementById("fieldwrap"+(totalCount - 1)).remove();
     totalCount--;
+    find("count").value = totalCount;
 }
 
 function processWorkflow(status) {
