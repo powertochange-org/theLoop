@@ -145,7 +145,7 @@ get_header(); ?>
 		<tr><td><label for='ministry'>Ministry/ Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='sec_ministry'> Second Ministry/ Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
-		<tr><td><label for='includehqaddress'>Include HQ Address:</label></td><td><input type='checkbox' id='includehqaddress' value='1' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='includehqaddress'>Include HQ Address:</label></td><td><input type='checkbox' id='includehqaddress' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='' checked/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -167,7 +167,7 @@ get_header(); ?>
 					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value;
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
-					signature += '&nbsp;&nsbsp;|&nbsp;&nbsp;<span style="color:#c0c0c0;font-weight: 600;text-transform: uppercase;font-size: 12px;">' + ministry + '</span>';
+					signature += '&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:#c0c0c0;font-weight: 600;text-transform: uppercase;font-size: 12px;">' + ministry + '</span>';
 				}
 				signature += '</td></tr>';
 				var sec_role = document.getElementById('sec_role').value.trim();
@@ -206,7 +206,7 @@ get_header(); ?>
 				signature += '</a></td></tr>';
 				var includehqaddress = document.getElementById('includehqaddress').checked;
 				if(includehqaddress) {
-					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley BC</a></td></tr>';
+					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley BC</a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo.jpg" height="80"  /></a></td></tr></table>';
