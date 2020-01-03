@@ -44,7 +44,8 @@
                             FROM staffreview 
                             LEFT JOIN employee on staffreview.empid = employee.employee_number 
                             LEFT JOIN wp_users ON employee.user_login = wp_users.user_login 
-                            WHERE wp_users.ID = '$wpID'";
+                            WHERE wp_users.ID = '$wpID'
+                            ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     $e = '<table><tr><th></th>
                         <th>Step 1: Staff Member Prepwork</th>
@@ -53,7 +54,7 @@
                         <th>Document Links</th></tr>';
                     foreach($result as $row) {
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')</td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
@@ -82,7 +83,8 @@
                             LEFT JOIN employee sup4 on staffreview.supid4 = sup4.employee_number
                             LEFT JOIN wp_users wp4 ON sup4.user_login = wp4.user_login
                             WHERE wp1.ID = '$wpID' OR wp2.ID = '$wpID' 
-                                OR wp3.ID = '$wpID' OR wp4.ID = '$wpID'";
+                                OR wp3.ID = '$wpID' OR wp4.ID = '$wpID'
+                            ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     
                     $e = '<h2>My Staff</h2>
@@ -95,7 +97,7 @@
                     foreach($result as $row) {
                         $displaySup = 1;
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'</td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
@@ -116,7 +118,6 @@
             
             <?php
             //Use this script execution to send out emails that require supervisor reminders
-            require_once("workflow/inc/PHPMailer-master/PHPMailerAutoload.php");
             
             $date = new DateTime(date("Y-m-d"));
             $newdate = new DateTime(date("Y-m-d"));
@@ -145,29 +146,21 @@
             
             foreach($result as $row) {
                 $subId = $row['id'];
-                $mail = new PHPMailer;
-                $mail->isSMTP();          // Set mailer to use SMTP
-                $mail->Host = 'smtp.powertochange.org'; // Specify main and backup SMTP servers
-                //$mail->SMTPAuth = true;                            // Enable SMTP authentication
-                //$mail->SMTPDebug = 2;
-                //$mail->SMTPSecure = 'ssl';       // Enable TLS encryption, ssl also accepted
-                $mail->Port = 25;
-
-                $mail->From = 'staffreview-no-reply@p2c.com';
-                $mail->FromName = 'Staff Review';
                 
-                $mail->AddAddress($row['user_email']); 
-
-                $mail->IsHTML(true);
+                $mail = array('to' => '');
+                $mail['headers'][] =  'From: Staff Review <staffreview-no-reply@p2c.com>';
+                $mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
                 
-                $mail->Subject = 'Staff Review Prepwork Completed by '.$row['first_name'].' '.$row['last_name'];
+                $mail['to'] = $row['user_email'];
+                
+                $mail['subject'] = 'Staff Review Prepwork Completed by '.$row['first_name'].' '.$row['last_name'];
                 
                 $tmpBody = str_replace('{SUPERVISOR_NAME}', $row['supfirst_name'].' '.$row['suplast_name'], $template);
                 $tmpBody = str_replace('{STAFF_NAME}', $row['first_name'].' '.$row['last_name'], $tmpBody);
                 $body = str_replace('{SUP_LINK}', $row['supdraftlink'], $tmpBody);
                 
-                $mail->Body = $body;
-                $mail->Send();
+                $mail['message'] = $body;
+                wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers']);
                 
                 //Update the submission reminder date
                 $sql = "UPDATE staffreview 
@@ -179,7 +172,7 @@
             ?>
         <?php endwhile; else: ?>
         <h2>404 - Not Found</h2>
-        <p>The page you are looking for is not here.</p>                     
+        <p>The page you are looking for is not here.</p>
         <?php endif; ?>
     </div>
     <!--content end-->
