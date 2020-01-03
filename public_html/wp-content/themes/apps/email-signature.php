@@ -154,8 +154,8 @@ get_header(); ?>
 		<script type="text/javascript">
 			function refreshSignature(){
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
-					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 12pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #444444;padding-top:15px;display:inline-block">' +
+					'<td style="font-family:verdana,sans-serif;text-transform:capitalize;" >' +
 					document.getElementById('name').value; 
 					
 				var qual = document.getElementById('qual').value.trim();
@@ -164,21 +164,20 @@ get_header(); ?>
 				}
 				signature += '</tr>' +
 					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
-					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value + '<span style="color:#c0c0c0;">';
+					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value + '</td></tr>';
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
-					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
+					signature += '<td style="font-family:verdana,sans-serif;" ><span style="color:#c0c0c0;">' + ministry + '</span></td></tr>';
 				}
-				signature += '</td></tr>';
 				var sec_role = document.getElementById('sec_role').value.trim();
 				var sec_ministry = document.getElementById('sec_ministry').value.trim();
 				if (sec_role != "" || sec_ministry != ""){
-					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role;
+					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role + '</td></tr>';
 					if (sec_role != "" && sec_ministry != ""){
-						signature += '<span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>';
+						signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_ministry + '</td></tr>';
 					}
-					signature += sec_ministry + '</td></tr>';
 				}
+				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;"><td>&nbsp;</td></tr>'; 
 				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>").trim();
@@ -213,14 +212,7 @@ get_header(); ?>
 						'<a href="https://www.pinterest.ca/powertochange/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-pinterest.png" height="15px;"/></a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'https://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
-					'<?php
-						if(array_key_exists($current_user->user_login, $division)){ //special people
-							echo $division[$current_user->user_login][0];
-						} else {
-							echo $division[$user->ministry][0];
-						}
-					?>" height="80"  /></a></td></tr></table>';
+					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo.jpg" height="80"  /></a></td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
