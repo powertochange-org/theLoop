@@ -145,7 +145,7 @@ get_header(); ?>
 		<tr><td><label for='ministry'>Ministry/ Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
 		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='sec_ministry'> Second Ministry/ Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
-		<tr><td><label for='socialbtn'>Social Media Links:</label></td><td><input type='checkbox' id='socialbtn' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
+		<tr><td><label for='includehqaddress'>Include HQ Address:</label></td><td><input type='checkbox' id='includehqaddress' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='' checked/></td></tr>
 		</table>
 		<div  style="border: 1px #0079C1 solid;padding:50px;" class="resetCSS" id='preview'></div>
 		<textarea style='width:100%;height:200px;display:none;' id='code' readonly></textarea>
@@ -154,32 +154,33 @@ get_header(); ?>
 		<script type="text/javascript">
 			function refreshSignature(){
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 10pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #c0c0c0;padding-top:15px;display:inline-block">' +
-					'<td style="font-family:verdana,sans-serif;text-transform:uppercase;" >' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 12pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #444444;padding-top:15px;display:inline-block">' +
+					'<td style="font-family:verdana,sans-serif;text-transform:capitalize;" >' +
 					document.getElementById('name').value; 
 					
 				var qual = document.getElementById('qual').value.trim();
 				if (qual != ""){	
-					signature += '<span style="font-family:verdana,sans-serif;font-size: 11px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
+					signature += '<span style="font-family:verdana,sans-serif;font-size: 12px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
 				}
 				signature += '</tr>' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;">' +
-					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value + '<span style="color:#c0c0c0;">';
+					'<tr style="font-family:verdana,sans-serif;font-size: 12px;height:18px;">' +
+					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value;
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
-					signature += '&nbsp&nbsp;|&nbsp;&nbsp</span>' + ministry;
+					signature += '&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:#c0c0c0;font-weight: 600;text-transform: uppercase;font-size: 12px;">' + ministry + '</span>';
 				}
 				signature += '</td></tr>';
 				var sec_role = document.getElementById('sec_role').value.trim();
 				var sec_ministry = document.getElementById('sec_ministry').value.trim();
 				if (sec_role != "" || sec_ministry != ""){
-					signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role;
+					signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;height:18px;"><td style="font-family:verdana,sans-serif;" >' + sec_role;
 					if (sec_role != "" && sec_ministry != ""){
-						signature += '<span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>';
+						signature += '&nbsp;&nsbsp;|&nbsp;&nbsp;<span style="color:#c0c0c0;font-weight: 600;text-transform: uppercase;font-size: 12px;">' + sec_ministry;
 					}
-					signature += sec_ministry + '</td></tr>';
+					signature += '</td></tr>';
 				}
-				signature += '<tr style="font-family:verdana,sans-serif;font-size: 11px;">' +
+				signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;"><td>&nbsp;</td></tr>'; 
+				signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>").trim();
 				if (phone == ""){
@@ -203,24 +204,12 @@ get_header(); ?>
 					signature += 'C.&nbsp;<a style="text-decoration:none;color:#444444;">' + cell;
 				}
 				signature += '</a></td></tr>';
-				var socialbtn = document.getElementById('socialbtn').checked;
-				if(socialbtn) {
-					signature += '<tr><td style="padding-top:5px;">' +
-						'<a href="https://www.facebook.com/PowerToChangeCanada/" target="blank" style="padding:5px 5px 5px 0px;"><img src="/wp-content/images/icon-facebook.png" height="15px;"/></a>&nbsp;' +
-						'<a href="https://twitter.com/powertochange" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-twitter.png" height="15px;"/></a>&nbsp;' +
-						'<a href="https://www.youtube.com/c/powertochangeorgp2c/videos" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-youtube.png" height="15px;"/></a>&nbsp;' +
-						'<a href="https://www.instagram.com/powertochangecanada/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-instagram.png" height="15px;"/></a>&nbsp;' +
-						'<a href="https://www.pinterest.ca/powertochange/" target="blank" style="padding:5px;"><img src="/wp-content/images/icon-pinterest.png" height="15px;"/></a></td></tr>';
+				var includehqaddress = document.getElementById('includehqaddress').checked;
+				if(includehqaddress) {
+					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley BC</a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="http://powertochange.com/wp-content/uploads/2015/03/P2C-Logo-Email1.png" height="80"  /></a><a href="<?php if ($division[$user->ministry][1] == '') { echo 'https://p2c.com/';} else { echo $division[$user->ministry][1]; } ?>" target="_blank"><img src="http://powertochange.com/wp-content/uploads/' +
-					'<?php
-						if(array_key_exists($current_user->user_login, $division)){ //special people
-							echo $division[$current_user->user_login][0];
-						} else {
-							echo $division[$user->ministry][0];
-						}
-					?>" height="80"  /></a></td></tr></table>';
+					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1.jpg" height="80"  /></a></td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
