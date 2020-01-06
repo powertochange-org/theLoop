@@ -38,7 +38,7 @@ if (get_theme_mod('survey_active')) {
         <?php $siteURL = get_bloginfo('url'); ?>
         <link href="<?php bloginfo('template_url'); ?>/style.css?ver=1.0.0" rel="stylesheet" type="text/css" />
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-        <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.png" />
+        <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.png?v=2" />
         <?php wp_head(); ?> 
          <script type='text/javascript'>
            
@@ -81,7 +81,7 @@ if (get_theme_mod('survey_active')) {
     <header>
       <div class='inner'>
   			<div class="header-logo">
-          <a href="/"><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png' alt='Power To Change' /></a>
+          <a href="/"><img class='header-logo' src='<?php bloginfo('template_url'); ?>/img/header-logo.png?v=2' alt='Power To Change' /></a>
     			<a href="/"><img class='header-logo-img' src='<?php bloginfo('template_url'); ?>/img/loop-logo.png' alt='Home' /></a>
         </div>
         <div class="header-right">
