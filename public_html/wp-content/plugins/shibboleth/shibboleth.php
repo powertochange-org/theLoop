@@ -131,7 +131,9 @@ function shibboleth_getenv( $var ) {
  * @since 1.6
  */
 function shibboleth_auto_login() {
-    
+	
+
+
 	$shibboleth_auto_login = shibboleth_getoption( 'shibboleth_auto_login' );
 
 	if ( ! is_user_logged_in() && shibboleth_session_active( true ) && $shibboleth_auto_login ) {
