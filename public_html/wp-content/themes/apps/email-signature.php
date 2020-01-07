@@ -144,6 +144,19 @@ get_header(); ?>
 		<tr><td><label for='cell'>Cell (overwrites toll free):</label></td><td><input type='text' id='cell'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($cell != null){echo $cell->number;} ?>'/></td></tr>
 		<tr><td><label for='role'>Role:</label></td><td><input type='text' id='role'  onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php echo $user->role_title ?>'/></td></tr>
 		<tr><td><label for='ministry'>Ministry/ Department:</label></td><td><input type='text' id='ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='<?php if($user->ministry == 'Development'){ echo 'Advancement';} else {echo $user->ministry;} ?>'/></td></tr>
+		<tr><td><label for='ministrylogo'>Ministry Logo:</label></td><td>
+			<select id='ministrylogo' onchange='refreshSignature();'>
+				<option value="none">None</option>
+				<option value="aia">AIA</option>
+				<option value="dr">DRIME</option>
+				<option value="fl">FamilyLife</option>
+				<option value="li">LeaderImpact</option>
+				<option value="wh">WHEN</option>
+			</select>
+		</td></tr>
+		
+		
+		
 		<tr><td><label for='sec_role'> Second Role:</label></td><td><input type='text' id='sec_role' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='sec_ministry'> Second Ministry/ Department:</label></td><td><input type='text' id='sec_ministry' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value=''/></td></tr>
 		<tr><td><label for='includehqaddress'>Include HQ Address:</label></td><td><input type='checkbox' id='includehqaddress' onpaste='refreshSignature();' onkeyup='refreshSignature();' onchange='refreshSignature();' value='' checked/></td></tr>
@@ -207,7 +220,7 @@ get_header(); ?>
 				signature += '</a></td></tr>';
 				var includehqaddress = document.getElementById('includehqaddress').checked;
 				if(includehqaddress) {
-					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley, BC V2Y 1N5</a></td></tr>';
+					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;text-decoration:none;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley, BC V2Y 1N5</a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1.jpg" height="80"  /></a></td></tr></table>';
