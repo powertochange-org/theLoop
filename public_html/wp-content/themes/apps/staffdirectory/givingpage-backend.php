@@ -186,8 +186,7 @@ class Givingpage{
 	
 		$info = array('name' => "<ml><locale name=\"en-US\">$minOFE $name</locale>".
 				"<locale name=\"fr-CA\">$minOFF $name</locale></ml>",
-				'sename' => "$minOFE $name",
-				'cats' => array(68)
+				'sename' => "$minOFE $name"
 		);
 		$info['cats'] = array(WebService::send('POST', get_option(self::$prefix.'seWebService').'/service.asmx', 
 			'GetCategoryFromMinistry', array(
