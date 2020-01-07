@@ -224,7 +224,10 @@ get_header(); ?>
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
 					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1.jpg" height="80"  /></a></td>';
-				var ministrylogo = document.getElementById('ministrylogo');
+				
+				var ministrylogoselect = document.getElementById('ministrylogo');
+				var ministrylogo = ministrylogoselect.options[ministrylogoselect.selectedIndex].value;
+				console.log(ministrylogo);
 				switch(ministrylogo){
 					case('none'):
 						break;
