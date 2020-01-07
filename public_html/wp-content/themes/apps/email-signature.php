@@ -41,6 +41,7 @@ $cell = $wpdb->get_row("SELECT CONCAT(
 				`phone_type` = 'Business Mobile' 
 			LIMIT 0,1");
 
+/*
 $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', 'http://athletesinaction.com/'),
 	'Advancement' =>  array('2014/07/Advancement-Email1.png', ''),
 	'Business Intelligence' =>  array('2014/07/Advancement-Email1.png', ''),
@@ -70,7 +71,7 @@ $division = array( 'Athletes in Action' => array('2014/07/Athletes-Email.png', '
 	'WHEN' =>  array('2014/07/WHEN-Email.png', 'http://whenetwork.ca/'),
 	'Zones Teams' =>  array('2014/07/Zone-Teams-Email.png', ''),
 	
-	/*special people*/
+	/*special people
 	'chris.harman' => array('2015/05/Atlantic-Email.png', ''));
 	
 	/*very special people 
@@ -154,7 +155,7 @@ get_header(); ?>
 		<script type="text/javascript">
 			function refreshSignature(){
 				var signature = '<table style="border:none;font-family:verdana,sans-serif;color:#444444;" cellspacing="0" cellpadding="0">' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 12pt;color:#231f20;font-weight: bold;margin-bottom:3px;border-top:1px solid #444444;padding-top:15px;display:inline-block">' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 12pt;color:#231f20;font-weight: bold;margin-bottom:0px;border-top:1px solid #444444;padding-top:15px;display:inline-block;line-height:1em;">' +
 					'<td style="font-family:verdana,sans-serif;text-transform:capitalize;" >' +
 					document.getElementById('name').value; 
 					
@@ -163,7 +164,7 @@ get_header(); ?>
 					signature += '<span style="font-family:verdana,sans-serif;font-size: 12px; font-weight: normal;"><span style="color:#c0c0c0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>' + document.getElementById('qual').value + '</span></td>';
 				}
 				signature += '</tr>' +
-					'<tr style="font-family:verdana,sans-serif;font-size: 12px;height:18px;">' +
+					'<tr style="font-family:verdana,sans-serif;font-size: 12px;height:18px;line-height:1em;">' +
 					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value;
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
@@ -179,7 +180,7 @@ get_header(); ?>
 					}
 					signature += '</td></tr>';
 				}
-				signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;"><td>&nbsp;</td></tr>'; 
+				signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;line-height:1em;"><td>&nbsp;</td></tr>'; 
 				signature += '<tr style="font-family:verdana,sans-serif;font-size: 12px;">' +
 					'<td style="font-family:verdana,sans-serif;" >T.&nbsp;<a style="text-decoration:none;color:#444444;">';
 				var phone = document.getElementById('phone').value.replace(".", "<?php echo $delimiter ?>").trim();
