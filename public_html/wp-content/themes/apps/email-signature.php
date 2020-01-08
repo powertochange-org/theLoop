@@ -148,9 +148,11 @@ get_header(); ?>
 			<select id='ministrylogo' onchange='refreshSignature();'>
 				<option value="none">None</option>
 				<option value="aia">AIA</option>
+				<option value="ds">Digital Strategies</option>
 				<option value="dr">DRIME</option>
 				<option value="fl">FamilyLife</option>
 				<option value="li">LeaderImpact</option>
+				<option value="st">P2C Students</option>
 				<option value="wh">WHEN</option>
 			</select>
 		</td></tr>
@@ -181,7 +183,7 @@ get_header(); ?>
 					'<td style="font-family:verdana,sans-serif;" >' + document.getElementById('role').value;
 				var ministry = document.getElementById('ministry').value.trim();
 				if (ministry != ""){
-					signature += '&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:#c0c0c0;font-weight: 600;text-transform: uppercase;font-size: 12px;">' + ministry + '</span>';
+					signature += '&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:rgba(48, 46, 44, .65);font-weight: 600;text-transform: uppercase;font-size: 12px;">' + ministry + '</span>';
 				}
 				signature += '</td></tr>';
 				var sec_role = document.getElementById('sec_role').value.trim();
@@ -222,12 +224,27 @@ get_header(); ?>
 				if(includehqaddress) {
 					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;text-decoration:none;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley, BC V2Y 1N5</a></td></tr>';
 				}
-				signature += '<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1-1.jpg" height="80"  /></a>';
 				
 				var ministrylogoselect = document.getElementById('ministrylogo');
 				var ministrylogo = ministrylogoselect.options[ministrylogoselect.selectedIndex].value;
-				console.log(ministrylogo);
+
+				signature += '<tr style="font-family:verdana,sans-serif;">' +
+					'<td style="font-family:verdana,sans-serif;" >';
+				
+				// Determine main logo
+				switch(ministrylogo){
+					case('ds'):
+						signature += '<a href="https://p2cdigital.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-digitalstrategies.jpg" height="80"  /></a>';
+						break;
+					case('st'):
+						signature += '<a href="https://p2c.com/students/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-students.jpg" height="80"  /></a>';
+						break;
+					default:
+						signature += '<a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1-1.jpg" height="80"  /></a>';
+						
+				}
+
+				// Determine second logo
 				switch(ministrylogo){
 					case('none'):
 						break;
@@ -235,16 +252,16 @@ get_header(); ?>
 						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-aia.jpg" height="80"  /></a>';
 						break;
 					case('dr'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-drime.jpg" height="80"  /></a>';
+						signature += '<a href="https://drime.p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-drime.jpg" height="80"  /></a>';
 						break;
 					case('fl'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-familylife.jpg" height="80"  /></a>';
+						signature += '<a href="https://www.familylifecanada.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-familylife.jpg" height="80"  /></a>';
 						break;
 					case('li'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-leaderimpact.jpg" height="80"  /></a>';
+						signature += '<a href="https://www.leaderimpact.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-leaderimpact.jpg" height="80"  /></a>';
 						break;
 					case('wh'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-when-2.jpg" height="80"  /></a>';
+						signature += '<a href="https://whenetwork.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-when-2.jpg" height="80"  /></a>';
 						break;
 				}
 					
