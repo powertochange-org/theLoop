@@ -148,9 +148,11 @@ get_header(); ?>
 			<select id='ministrylogo' onchange='refreshSignature();'>
 				<option value="none">None</option>
 				<option value="aia">AIA</option>
+				<option value="ds">Digital Strategies</option>
 				<option value="dr">DRIME</option>
 				<option value="fl">FamilyLife</option>
 				<option value="li">LeaderImpact</option>
+				<option value="st">P2C Students</option>
 				<option value="wh">WHEN</option>
 			</select>
 		</td></tr>
