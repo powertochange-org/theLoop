@@ -223,7 +223,7 @@ get_header(); ?>
 					signature += '<tr><td style="padding-top:5px;font-family:verdana,sans-serif;font-size:12px;text-decoration:none;" ><a style="text-decoration:none;color:#444444;" href="https://goo.gl/maps/ZGCSp1QntXwfbHXi9">20385 64 Ave, Langley, BC V2Y 1N5</a></td></tr>';
 				}
 				signature += '<tr style="font-family:verdana,sans-serif;">' +
-					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1.jpg" height="80"  /></a></td>';
+					'<td style="font-family:verdana,sans-serif;" ><a href="https://p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1-1.jpg" height="80"  /></a>';
 				
 				var ministrylogoselect = document.getElementById('ministrylogo');
 				var ministrylogo = ministrylogoselect.options[ministrylogoselect.selectedIndex].value;
@@ -232,11 +232,11 @@ get_header(); ?>
 					case('none'):
 						break;
 					case('aia'):
-						signature += '<td style="font-family:verdana,sans-serif;" ><a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1.jpg" height="80"  /></a></td>';
+						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1.jpg" height="80"  /></a>';
 						break;
 				}
 					
-				signature += '</tr></table>';
+				signature += '</td></tr></table>';
 				document.getElementById('preview').innerHTML = signature;
 				document.getElementById('code').innerHTML = signature;
 			}
