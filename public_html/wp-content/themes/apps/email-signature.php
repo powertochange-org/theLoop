@@ -232,7 +232,7 @@ get_header(); ?>
 					case('none'):
 						break;
 					case('aia'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-logo-1-1.jpg" height="80"  /></a>';
+						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-aia.jpg" height="80"  /></a>';
 						break;
 					case('dr'):
 						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-drime.jpg" height="80"  /></a>';
@@ -244,7 +244,7 @@ get_header(); ?>
 						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-leaderimpact.jpg" height="80"  /></a>';
 						break;
 					case('wh'):
-						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-when.jpg" height="80"  /></a>';
+						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-when-2.jpg" height="80"  /></a>';
 						break;
 				}
 					
