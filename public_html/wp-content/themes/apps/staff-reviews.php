@@ -38,7 +38,7 @@
                     $wpID = wp_get_current_user()->id;
                     ?>
                     <h1>Staff Review Dashboard</h1>
-                    <h2>My Review</h2>
+                    <hr><h2 style="text-align: center;">My Review</h2><hr>
                     <?php
                     $sql = "SELECT staffreview.*, employee.first_name, employee.last_name 
                             FROM staffreview 
@@ -52,7 +52,12 @@
                         <th>Step 2: Supervisor Prepwork</th>
                         <th>Step 3: Discussion with Supervisor</th>
                         <th>Document Links</th></tr>';
+                    $prevYearsHeader = true;
                     foreach($result as $row) {
+                        if($row['year'] < date('Y') && $prevYearsHeader) {
+                            $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
+                            $prevYearsHeader = false;
+                        }
                         $e .= '<tr>';
                         $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
@@ -87,14 +92,19 @@
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     
-                    $e = '<h2>My Staff</h2>
+                    $e = '<hr><h2 style="text-align: center;">My Staff</h2><hr>
                         <table><tr><th></th>
                             <th>Step 1: Staff Member Prepwork</th>
                             <th>Step 2: Supervisor Prepwork</th>
                             <th>Step 3: Discussion with Staff Member</th>
                             <th>Document Links</th>
                         </tr>';
+                    $prevYearsHeader = true;
                     foreach($result as $row) {
+                        if($row['year'] < date('Y') && $prevYearsHeader) {
+                            $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
+                            $prevYearsHeader = false;
+                        }
                         $displaySup = 1;
                         $e .= '<tr>';
                         $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
