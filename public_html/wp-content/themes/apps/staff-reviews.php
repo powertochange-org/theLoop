@@ -190,9 +190,9 @@
                     WHERE empsubmitdate IS NOT NULL AND staffemailsent = '0'";
             $result = $wpdb->get_results($sql, ARRAY_A);
             
-            $template = '<p>{STAFF_NAME}, you have now completed your prep work for the Staff {REVIEW_TYPE} {REVIEW_YEAR} discussion!</p>
+            $template = '<p style="font-size:30px;">{STAFF_NAME}, you have now completed your prep work for the Staff {REVIEW_TYPE} {REVIEW_YEAR} discussion!</p>
 
-                <p>It will be forwarded to your supervisor. Your supervisor will review your submission and then complete their own prep work for the {REVIEW_TYPE} conversation. Once completed your supervisor will be in touch with you to set a time for the {REVIEW_TYPE} discussion.</p>';
+                <p style="font-size:30px;">It will be forwarded to your supervisor. Your supervisor will review your submission and then complete their own prep work for the {REVIEW_TYPE} conversation. Once completed your supervisor will be in touch with you to set a time for the {REVIEW_TYPE} discussion.</p>';
             
             foreach($result as $row) {
                 $subId = $row['id'];
