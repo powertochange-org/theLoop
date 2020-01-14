@@ -25,7 +25,7 @@ $result = $wpdb->get_results($sql, ARRAY_A);
 $template = '{SUPERVISOR_NAME}, <br><br>
     <p>{STAFF_NAME} has completed their Prepwork for the Staff {REVIEW_TYPE} {REVIEW_YEAR} discussion!</p>
 
-    <p>You can now review their answers and complete your {REVIEW_TYPE} prepwork. After authorizing the script, you should see the staff member\'s answers.  In rare cases, the data may not load on the first try. If this happens, simply select "get staff {REVIEW_TYPE}" again and it should load.  </p>
+    <p>You can now review their answers and complete your {REVIEW_TYPE} prepwork. To do this, click the link below and in the "Staff {REVIEW_TYPE}" menu select "Get Staff {REVIEW_TYPE}". After authorizing the script, you should see the staff member\'s answers.  In rare cases, the data may not load on the first try. If this happens, simply select "get staff {REVIEW_TYPE}" again and it should load.  </p>
 
     <p><a href="{SUP_LINK}" target="_blank">Complete your Prepwork.</a></p>
 
