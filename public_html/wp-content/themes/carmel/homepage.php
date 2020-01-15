@@ -190,7 +190,7 @@
 	<div class="container"></div>	
     <?php if(get_option( 'staffreview' , 0 )) { ?>
         <div class="container" style="border:2px solid #FF9336;margin-top:30px;padding:0;text-align: center;font-size:25px;">
-            <a href="/forms-information/my-position/staff-reviews-2018-2019/" style="padding:30px;display:block;">Access Staff Review Dashboard</a>
+            <a href="/forms-information/my-position/staff-reviews-2018-2019/" style="padding:30px;display:block;">Access Staff Debrief Dashboard</a>
         </div>
     <?php } ?>
 		<div id="main-content">
