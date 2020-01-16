@@ -54,17 +54,24 @@
                         <th>Document Links</th></tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
+                        $hideDraft = false;
                         if($row['year'] < date('Y') && $prevYearsHeader) {
                             $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
                             $prevYearsHeader = false;
+                        }
+                        if($row['year'] < date('Y')) {
+                            $hideDraft = true;
                         }
                         $e .= '<tr>';
                         $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td><a class="staffreviewlink" href="'.$row['empdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br> 
-                            <a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Supervisor</a></td>';
+                        $e .= '<td>';
+                        if(!$hideDraft) {
+                            $e .= '<a class="staffreviewlink" href="'.$row['empdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br> ';
+                        }
+                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Supervisor</a></td>';
                         $e .= '</tr>';
                     }
                     $e .= '</table>';
@@ -101,9 +108,13 @@
                         </tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
+                        $hideDraft = false;
                         if($row['year'] < date('Y') && $prevYearsHeader) {
                             $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
                             $prevYearsHeader = false;
+                        }
+                        if($row['year'] < date('Y')) {
+                            $hideDraft = true;
                         }
                         $displaySup = 1;
                         $e .= '<tr>';
@@ -111,8 +122,11 @@
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td><a class="staffreviewlink" href="'.$row['supdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br> 
-                            <a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Staff Member</a></td>';
+                        $e .= '<td>';
+                        if(!$hideDraft) {
+                            $e .= '<a class="staffreviewlink" href="'.$row['supdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br>';
+                        } 
+                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Staff Member</a></td>';
                         $e .= '</tr>';
                     }
                     $e .= '</table>';
