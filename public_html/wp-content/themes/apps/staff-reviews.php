@@ -37,8 +37,8 @@
                     <?php
                     $wpID = wp_get_current_user()->id;
                     ?>
-                    <h1>Staff Review Dashboard</h1>
-                    <h2>My Review</h2>
+                    <h1>Staff Debrief Dashboard</h1>
+                    <hr><h2 style="text-align: center;">My Debrief</h2><hr>
                     <?php
                     $sql = "SELECT staffreview.*, employee.first_name, employee.last_name 
                             FROM staffreview 
@@ -52,14 +52,26 @@
                         <th>Step 2: Supervisor Prepwork</th>
                         <th>Step 3: Discussion with Supervisor</th>
                         <th>Document Links</th></tr>';
+                    $prevYearsHeader = true;
                     foreach($result as $row) {
+                        $hideDraft = false;
+                        if($row['year'] < date('Y') && $prevYearsHeader) {
+                            $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
+                            $prevYearsHeader = false;
+                        }
+                        if($row['year'] < date('Y')) {
+                            $hideDraft = true;
+                        }
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').'</b></td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td><a class="staffreviewlink" href="'.$row['empdraftlink'].'" target="_blank">Complete Prepwork</a> <br> 
-                            <a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Supervisor</a></td>';
+                        $e .= '<td>';
+                        if(!$hideDraft) {
+                            $e .= '<a class="staffreviewlink" href="'.$row['empdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br> ';
+                        }
+                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Supervisor</a></td>';
                         $e .= '</tr>';
                     }
                     $e .= '</table>';
@@ -87,22 +99,34 @@
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     
-                    $e = '<h2>My Staff</h2>
+                    $e = '<hr><h2 style="text-align: center;">My Staff</h2><hr>
                         <table><tr><th></th>
                             <th>Step 1: Staff Member Prepwork</th>
                             <th>Step 2: Supervisor Prepwork</th>
                             <th>Step 3: Discussion with Staff Member</th>
                             <th>Document Links</th>
                         </tr>';
+                    $prevYearsHeader = true;
                     foreach($result as $row) {
+                        $hideDraft = false;
+                        if($row['year'] < date('Y') && $prevYearsHeader) {
+                            $e .= '<tr style="background-color: #0079c1;"><td colspan="5" style="color:white;font-weight:bold;">Previous Years</td></tr>';
+                            $prevYearsHeader = false;
+                        }
+                        if($row['year'] < date('Y')) {
+                            $hideDraft = true;
+                        }
                         $displaySup = 1;
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').'</b></td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
                         $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
                         $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td><a class="staffreviewlink" href="'.$row['supdraftlink'].'" target="_blank">Complete Prepwork</a> <br> 
-                            <a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Staff Member</a></td>';
+                        $e .= '<td>';
+                        if(!$hideDraft) {
+                            $e .= '<a class="staffreviewlink" href="'.$row['supdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br>';
+                        } 
+                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Staff Member</a></td>';
                         $e .= '</tr>';
                     }
                     $e .= '</table>';
@@ -115,61 +139,7 @@
             <div style="margin-top: 30px;margin-bottom: 30px;">
                 <?php echo get_the_content(); ?>
             </div>
-            
-            <?php
-            //Use this script execution to send out emails that require supervisor reminders
-            
-            $date = new DateTime(date("Y-m-d"));
-            $newdate = new DateTime(date("Y-m-d"));
-            $newdate->add(new DateInterval('P7D'));
-            
-            $sql = "SELECT staffreview.*, employee.first_name, employee.last_name, sup.first_name AS supfirst_name, sup.last_name AS suplast_name, wp_users.user_email 
-                    FROM staffreview 
-                    LEFT JOIN employee on staffreview.empid = employee.employee_number 
-                    LEFT JOIN employee sup on staffreview.supid = sup.employee_number 
-                    LEFT JOIN wp_users ON sup.user_login = wp_users.user_login 
-                    WHERE empsubmitdate IS NOT NULL 
-                        AND supsubmitdate IS NULL 
-                        AND (supreminder <= '".$date->format('Y-m-d')."' 
-                                OR supreminder IS NULL)
-                        AND skipreminder = '0'";
-            $result = $wpdb->get_results($sql, ARRAY_A);
-            
-            $template = '{SUPERVISOR_NAME}, <br><br>
-<p>{STAFF_NAME} has completed their Prepwork for the staff review!</p>
-
-<p>You can now review their answers and complete your prepwork.  To do this, click the link below and in the "staff reviews" menu select "Get Staff Review".  After authorizing the script, you should see the staff member\'s answers.  In rare cases, the data may not load on the first try.  If this happens, simply select "get staff review" again and it should load.  </p>
-
-<p><a href="{SUP_LINK}" target="_blank">Complete your Prepwork.</a></p>
-
-<p>You can check the progress of all your staff on the <a href="https://staff.powertochange.org/forms-information/my-position/staff-reviews-2018-2019/" target="_blank">Staff Review Dashboard</a>. </p>';
-            
-            foreach($result as $row) {
-                $subId = $row['id'];
-                
-                $mail = array('to' => '');
-                $mail['headers'][] =  'From: Staff Review <staffreview-no-reply@p2c.com>';
-                $mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
-                
-                $mail['to'] = $row['user_email'];
-                
-                $mail['subject'] = 'Staff Review Prepwork Completed by '.$row['first_name'].' '.$row['last_name'];
-                
-                $tmpBody = str_replace('{SUPERVISOR_NAME}', $row['supfirst_name'].' '.$row['suplast_name'], $template);
-                $tmpBody = str_replace('{STAFF_NAME}', $row['first_name'].' '.$row['last_name'], $tmpBody);
-                $body = str_replace('{SUP_LINK}', $row['supdraftlink'], $tmpBody);
-                
-                $mail['message'] = $body;
-                wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers']);
-                
-                //Update the submission reminder date
-                $sql = "UPDATE staffreview 
-                        SET supreminder = '".$newdate->format('Y-m-d')."'
-                        WHERE id = '$subId'";
-                $wpdb->query($sql, ARRAY_A);
-            }
-            
-            ?>
+            <?php require_once 'staff-reviews-cron.php'; ?>
         <?php endwhile; else: ?>
         <h2>404 - Not Found</h2>
         <p>The page you are looking for is not here.</p>

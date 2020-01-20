@@ -754,6 +754,14 @@ a.crumbstest {
     padding: 10px 20px;
 }
 
+
+/*Ben's addition for the weather alert*/
+#alert {
+	background-color: lightblue;
+  	padding: 40px;
+  	text-align: center;
+}
+
 .search-and-staff-app-button {
 	width:750px;
     margin:0px;
