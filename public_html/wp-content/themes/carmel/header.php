@@ -29,6 +29,18 @@ if (get_theme_mod('survey_active')) {
               </div>';
     }
 }
+
+
+//add in possible alert
+if (get_theme_mod('alert_text') != ''){
+  $alert_text = get_theme_mod('alert_text');
+  echo '<div id="alert">
+                      <h1><strong>'.$alert_text .'</strong></h1>
+          
+        </div>';
+}
+
+
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
     <head profile="http://gmpg.org/xfn/11">    

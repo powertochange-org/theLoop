@@ -41,7 +41,7 @@ foreach($posts_array as $post){
 
 function themename_customize_register($wp_customize){
     
-    //var_dump($wp_customize);
+    // var_dump($wp_customize);
 	global $postArray;
 	
 	// *************************************************************************************************
@@ -396,6 +396,24 @@ function themename_customize_register($wp_customize){
         'section'  => 'survey_settings',
         'type'     => 'checkbox',
     ));
+
+
+    //this is where Ben is adding a weather (or other) alert for Ann
+    $wp_customize->add_setting('alert_text', array(
+        'default'        => '',
+        'capability'     => 'edit_theme_options',
+        'type'           => 'theme_mod',
+ 
+    ));
+ 
+    $wp_customize->add_control('input_alert_text', array(
+        'label'      => 'Alert Text',
+        'section'    => 'static_front_page',
+        'settings'   => 'alert_text',
+    ));
+
+    //end of weather alert section
+
 }
  
 add_action('customize_register', 'themename_customize_register');
