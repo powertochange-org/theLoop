@@ -8,7 +8,7 @@ if ( ! function_exists( 'add_action' ) ) {
 }
 
 // globals
-define( __NAMESPACE__.'\\VERSION','191011' );
+define( __NAMESPACE__.'\\VERSION','191217' );
 define( __NAMESPACE__.'\\DEVELOPMENT', false );
 define( __NAMESPACE__.'\\SLUG', "subscribe-to-comments-reloaded" );
 
@@ -82,7 +82,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\wp_subscribe_reloaded') ) {
 
 			// add subscriptions for tests
             if ( DEVELOPMENT ) {
-				$this->add_test_subscriptions( 10000, 18,'Y', 'dev', 30);
+				$this->add_test_subscriptions( 1000, 18,'Y', 'dev', 30);
             }
 
 			// management page shortcode
@@ -97,7 +97,7 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\wp_subscribe_reloaded') ) {
 		 */
         public function add_test_subscriptions( $iterations = 1 ,$post_id, $status = 'Y', $email_prefix = 'dev', $last_id_subs = 0 ) {
             for ( $i = $last_id_subs+1; $i <= $iterations; $i++) {
-                $this->add_subscription( $post_id, "{$email_prefix}_{$i}@dev.com", $status );
+                $this->add_subscription( $post_id, "{$email_prefix}_{$i}" . time() . "@dev.com", $status );
             }
 		}
 		
@@ -131,6 +131,9 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\wp_subscribe_reloaded') ) {
                 if ( empty( $manager_page_permalink ) ) {
                     $manager_page_permalink = '/comment-subscriptions/';
                 }
+                
+                // remove the ending slash so both variations (with and without slash) work in the strpos check below
+                $manager_page_permalink = rtrim( $manager_page_permalink, '/' );
 
 				// if we are on the management page, filter the_posts
                 if ( ( strpos( $_SERVER["REQUEST_URI"], $manager_page_permalink ) !== false ) ) {
@@ -710,7 +713,12 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\wp_subscribe_reloaded') ) {
 				// vars
                 $action = !empty($_POST['sra']) ? $_POST['sra'] : (!empty($_GET['sra']) ? $_GET['sra'] : 0);
                 $key = !empty($_POST['srk']) ? $_POST['srk'] : (!empty($_GET['srk']) ? $_GET['srk'] : 0);
+                
                 $sre = !empty($_POST['sre']) ? $_POST['sre'] : (!empty($_GET['sre']) ? $_GET['sre'] : '');
+                if ( is_user_logged_in() ) {
+                    $sre = $current_user->data->user_email;
+                }
+
                 $srek = !empty($_POST['srek']) ? $_POST['srek'] : (!empty($_GET['srek']) ? $_GET['srek'] : '');
                 $link_source = !empty($_POST['srsrc']) ? $_POST['srsrc'] : (!empty($_GET['srsrc']) ? $_GET['srsrc'] : '');
                 $key_expired = !empty($_POST['key_expired']) ? $_POST['key_expired'] : (!empty($_GET['key_expired']) ? $_GET['key_expired'] : '0');
@@ -1619,8 +1627,10 @@ if( ! class_exists('\\'.__NAMESPACE__.'\\wp_subscribe_reloaded') ) {
 			if ( ! empty( $subscribe_to_comments_action ) && ! empty( $_POST['subscribe_reloaded_email'] ) &&
 				( $subscribe_to_comments_action == 's' ) && ( $subscribe_to_comments_post_ID > 0 )
 			) {
-				$subscribe_to_comments_clean_email = $this->utils->clean_email( $_POST['subscribe_reloaded_email'] );
-				setcookie( 'comment_author_email_' . COOKIEHASH, $subscribe_to_comments_clean_email, time() + 1209600, '/' );
+                $subscribe_to_comments_clean_email = $this->utils->clean_email( $_POST['subscribe_reloaded_email'] );
+                if ( get_option( 'subscribe_reloaded_use_cookies', 'yes' ) == 'yes' ) {
+                    setcookie( 'comment_author_email_' . COOKIEHASH, $subscribe_to_comments_clean_email, time() + 1209600, '/' );
+                }
 			}
 		}
 

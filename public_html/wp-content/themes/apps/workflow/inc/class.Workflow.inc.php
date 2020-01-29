@@ -3989,7 +3989,7 @@ class Workflow {
         return $string;
     }
     
-    private function submissionApprover($sbid, $loggedInUser, $role1, $role2, $role3, $role4, $aprDirect, $submittedby) {
+    private function submissionApprover($sbid, $loggedInUser, $role1, $role2, $role3, $role4, $aprDirect, $submittedby, $newAprDirect = -1) {
         global $wpdb;
         
         if(Workflow::hasRoleAccess($loggedInUser, $role1) 
@@ -4001,6 +4001,10 @@ class Workflow {
         //If they don't have normal access check if they are a supervisor
         if($role1 == 8 || $role2 == 8 || $role3 == 8 || $role4 == 8) 
             if($aprDirect == $loggedInUser)
+                return 1;
+        //Check if they are going to be the new supervisor
+        if($role1 == 30 || $role2 == 30 || $role3 == 30 || $role4 == 30) 
+            if($newAprDirect == $loggedInUser)
                 return 1;
         
         //Director
@@ -4033,7 +4037,8 @@ class Workflow {
         $filename = addslashes($filename); 
         
         $sql = "SELECT workflowformstatus.FORMID, USER, 
-                        APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, 
+                        APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4,
+                        APPROVER_DIRECT, NEW_APPROVER_DIRECT,
                         BEHALFOF, PROCESSOR, workflowformstatus.SUBMISSIONID,
                         workflowformsubmissions.FIELDID
                 FROM workflowformstatus
@@ -4077,7 +4082,7 @@ class Workflow {
         
         if($submittedby != $loggedInUser) {
             if(Workflow::submissionApprover($sbid, $loggedInUser, $row['APPROVER_ROLE'], $row['APPROVER_ROLE2'], 
-                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'], $submittedby)) {
+                $row['APPROVER_ROLE3'], $row['APPROVER_ROLE4'], $row['APPROVER_DIRECT'], $submittedby, $row['NEW_APPROVER_DIRECT'])) {
                 //The approver will eventually have access to this submission again
                 return true;
             } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
