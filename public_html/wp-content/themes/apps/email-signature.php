@@ -148,6 +148,7 @@ get_header(); ?>
 			<select id='ministrylogo' onchange='refreshSignature();'>
 				<option value="none">None</option>
 				<option value="aia">AIA</option>
+				<option value="cs">Connecting Streams</option>
 				<option value="ds">Digital Strategies</option>
 				<option value="dr">DRIME</option>
 				<option value="fl">FamilyLife</option>
@@ -250,6 +251,9 @@ get_header(); ?>
 						break;
 					case('aia'):
 						signature += '<a href="https://athletesinaction.ca/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-aia.jpg" height="80"  /></a>';
+						break;
+					case('cs'):
+						signature += '<a href="https://www.connectingstreams.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/03/connecting-streams-email-logo.jpg" height="80"  /></a>';
 						break;
 					case('dr'):
 						signature += '<a href="https://drime.p2c.com/" target="_blank"><img src="https://p2c.com/wp-content/uploads/2020/01/p2c-email-drime.jpg" height="80"  /></a>';
