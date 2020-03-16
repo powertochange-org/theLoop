@@ -44,10 +44,10 @@ function loop_sub_navigation_shortcode($atts) {
 
     // override default attributes with user attributes
     $subnav_atts = shortcode_atts([
-        "menuItems" => 'Please add your menu items',
-        "menuLinks" => '/',
-        "textColor" => '#fff',
-        "backgroundColor" => "#0079c1"
+        "menu_items" => 'Please add your menu items',
+        "menu_links" => '/',
+        "text_color" => '#fff',
+        "background_color" => "#0079c1"
     ], $atts);
 
 	// extract(shortcode_atts(array(
@@ -68,8 +68,8 @@ function loop_sub_navigation_shortcode($atts) {
             <ul>
         ';
 
-    $itemsArray=explode(",",$menuItems);
-    $linksArray=explode(",",$menuLinks);
+    $itemsArray=explode(",",$atts['menuItems']);
+    $linksArray=explode(",",$atts['menuLinks']);
 
     foreach($itemsArray as $index=>$value) {
         // do something with $value and $linksArray[$index] which will correspond
