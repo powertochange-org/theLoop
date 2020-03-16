@@ -80,6 +80,9 @@ function loop_sub_navigation_shortcode($atts) {
             .loopSubNavigation ul li a {
                 color: ' . $subnav_atts['text_color'] . ';
             }
+            h2 {
+                padding: 5px 0 20px;
+            }
         </style>
     ';
 
