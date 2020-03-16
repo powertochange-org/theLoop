@@ -41,12 +41,21 @@ function track_sessions() { // if session isn't active, set it
 }
 
 function loop_sub_navigation_shortcode($atts) {
-	extract(shortcode_atts(array(
-		"menuItems" => 'Please add your menu items',
+
+    // override default attributes with user attributes
+    $subnav_atts = shortcode_atts([
+        "menuItems" => 'Please add your menu items',
         "menuLinks" => '/',
         "textColor" => '#fff',
         "backgroundColor" => "#0079c1"
-    ), $atts));
+    ], $atts);
+
+	// extract(shortcode_atts(array(
+	// 	"menuItems" => 'Please add your menu items',
+    //     "menuLinks" => '/',
+    //     "textColor" => '#fff',
+    //     "backgroundColor" => "#0079c1"
+    // ), $atts));
 
     $output = '';
     $output .= '
