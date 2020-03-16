@@ -68,8 +68,8 @@ function loop_sub_navigation_shortcode($atts) {
             <ul>
         ';
 
-    $itemsArray=explode(",",$atts['menuItems']);
-    $linksArray=explode(",",$atts['menuLinks']);
+    $itemsArray=explode(",",$subnav_atts['menuItems']);
+    $linksArray=explode(",",$subnav_atts['menuLinks']);
 
     foreach($itemsArray as $index=>$value) {
         // do something with $value and $linksArray[$index] which will correspond
