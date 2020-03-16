@@ -60,6 +60,22 @@ function loop_sub_navigation_shortcode($atts) {
     $output = '';
     $output .= '
         <style>
+            .loopSubNavigation {
+                width: 100%;
+                display: block;
+                background: ' . $subnav_atts['background_color'] . ';
+                border-radius: 20px;
+            }
+            .loopSubNavigation ul {
+                list-style-type: none;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            .loopSubNavigation ul li {
+                white-space: nowrap;
+                color: ' . $subnav_atts['text_color'] . ';
+            }
         </style>
     ';
 
