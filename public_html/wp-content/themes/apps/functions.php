@@ -65,15 +65,19 @@ function loop_sub_navigation_shortcode($atts) {
                 display: block;
                 background: ' . $subnav_atts['background_color'] . ';
                 border-radius: 20px;
+                padding: 10px;
             }
             .loopSubNavigation ul {
                 list-style-type: none;
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-around;
+                padding: 0 !important;
             }
             .loopSubNavigation ul li {
                 white-space: nowrap;
+            }
+            .loopSubNavigation ul li a {
                 color: ' . $subnav_atts['text_color'] . ';
             }
         </style>
