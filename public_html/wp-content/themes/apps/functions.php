@@ -58,19 +58,18 @@ function loop_sub_navigation_shortcode($atts) {
                 display: block;
                 background: ' . $subnav_atts['background_color'] . ';
                 border-radius: 20px;
-                padding: 10px;
+                padding: 20px 30px;
+                margin: 0 auto;
+                max-width: 620px;
             }
             .loopSubNavigation ul {
                 list-style-type: none;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-around;
                 padding: 0 !important;
+                column-count: 2;
             }
             @media(max-width:767px){
                 .loopSubNavigation ul {
-                    flex-wrap: nowrap;
-                    flex-direction:column;
+                    column-count: 1;
                 }
             }
             .loopSubNavigation ul li {
