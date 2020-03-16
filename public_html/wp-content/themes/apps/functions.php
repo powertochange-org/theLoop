@@ -50,13 +50,6 @@ function loop_sub_navigation_shortcode($atts) {
         "background_color" => "#0079c1"
     ], $atts);
 
-	// extract(shortcode_atts(array(
-	// 	"menuItems" => 'Please add your menu items',
-    //     "menuLinks" => '/',
-    //     "textColor" => '#fff',
-    //     "backgroundColor" => "#0079c1"
-    // ), $atts));
-
     $output = '';
     $output .= '
         <style>
@@ -74,8 +67,15 @@ function loop_sub_navigation_shortcode($atts) {
                 justify-content: space-around;
                 padding: 0 !important;
             }
+            @media(max-width:767px){
+                .loopSubNavigation ul {
+                    flex-wrap: nowrap;
+                    flex-direction:column;
+                }
+            }
             .loopSubNavigation ul li {
                 white-space: nowrap;
+                padding-bottom: 5px;
             }
             .loopSubNavigation ul li a {
                 color: ' . $subnav_atts['text_color'] . ';
