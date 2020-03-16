@@ -39,4 +39,37 @@ function track_sessions() { // if session isn't active, set it
         session_start();
     }
 }
+
+function loop_sub_navigation_shortcode($atts) {
+	extract(shortcode_atts(array(
+		"menuItems" => 'Please add your menu items',
+        "menuLinks" => '/',
+        "textColor" => '#fff',
+        "backgroundColor" => "#0079c1"
+    ), $atts));
+
+    $output = '';
+    $output .= '
+        <style>
+        </style>
+    ';
+
+    $output .= '
+        <div class="loopSubNavigation">
+            <ul>
+        ';
+
+    $itemsArray=explode(",",$menuItems);
+    $linksArray=explode(",",$menuLinks);
+
+    foreach($itemsArray as $index=>$value) {
+        // do something with $value and $linksArray[$index] which will correspond
+        $output .= '<li><a href="' . $linksArray[$index] . '">' . $value . '</a></li>';
+    }
+
+    $output .= '</ul></div>';
+    
+    return $output;
+}
+add_shortcode('subnav', 'loop_sub_navigation_shortcode'); 
 ?>
