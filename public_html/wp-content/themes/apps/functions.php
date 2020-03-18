@@ -39,4 +39,68 @@ function track_sessions() { // if session isn't active, set it
         session_start();
     }
 }
+
+function loop_sub_navigation_shortcode($atts) {
+
+    // override default attributes with user attributes
+    $subnav_atts = shortcode_atts([
+        "menu_items" => 'Please add your menu items',
+        "menu_links" => '/',
+        "text_color" => '#fff',
+        "background_color" => "#0079c1"
+    ], $atts);
+
+    $output = '';
+    $output .= '
+        <style>
+            .loopSubNavigation {
+                width: 100%;
+                display: block;
+                background: ' . $subnav_atts['background_color'] . ';
+                border-radius: 20px;
+                padding: 20px 30px;
+                margin: 0 auto;
+                max-width: 620px;
+            }
+            .loopSubNavigation ul {
+                list-style-type: none;
+                padding: 0 !important;
+                column-count: 2;
+            }
+            @media(max-width:767px){
+                .loopSubNavigation ul {
+                    column-count: 1;
+                }
+            }
+            .loopSubNavigation ul li {
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
+            .loopSubNavigation ul li a {
+                color: ' . $subnav_atts['text_color'] . ';
+            }
+            h2 {
+                padding: 5px 0 20px;
+            }
+        </style>
+    ';
+
+    $output .= '
+        <div class="loopSubNavigation">
+            <ul>
+        ';
+
+    $itemsArray=explode(",",$subnav_atts['menu_items']);
+    $linksArray=explode(",",$subnav_atts['menu_links']);
+
+    foreach($itemsArray as $index=>$value) {
+        // do something with $value and $linksArray[$index] which will correspond
+        $output .= '<li><a href="' . $linksArray[$index] . '">' . $value . '</a></li>';
+    }
+
+    $output .= '</ul></div>';
+    
+    return $output;
+}
+add_shortcode('subnav', 'loop_sub_navigation_shortcode'); 
 ?>
