@@ -48,7 +48,7 @@ if (get_theme_mod('alert_text') != ''){
         <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>" charset="<?php bloginfo('charset'); ?>" />
         <title>The Loop | An Internal Communications Blog</title>
         <?php $siteURL = get_bloginfo('url'); ?>
-        <link href="<?php bloginfo('template_url'); ?>/style.css?ver=1.0.0" rel="stylesheet" type="text/css" />
+        <link href="<?php bloginfo('template_url'); ?>/style.css?ver=1.0.1" rel="stylesheet" type="text/css" />
         <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700,300,100|Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
         <link rel="shortcut icon" href="/wp-content/themes/carmel/favicon.png?v=2" />
         <?php wp_head(); ?> 
