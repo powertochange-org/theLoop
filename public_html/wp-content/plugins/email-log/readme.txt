@@ -1,16 +1,17 @@
 === Email Log ===
 Contributors: sudar  
 Tags: email, log, log email, resend email, multisite  
-Requires PHP: 5.3  
+Requires PHP: 5.6  
 Requires at least: 4.0  
-Tested up to: 5.1  
-Stable tag: 2.3.1  
+Tested up to: 5.3  
+Stable tag: 2.3.2  
 
 Log and view all outgoing emails from WordPress. Works with WordPress Multisite as well.
 
 == Description ==
 
 Email Log is a WordPress plugin that allows you to easily log and view all emails sent from WordPress.
+
 This would be very useful for debugging email related problems in your WordPress site or for storing sent emails for auditing purposes.
 
 You can perform advanced actions like re-sending email, automatically forwarding emails or export logs with our [premium add-ons](https://wpemaillog.com/store/?utm_campaign=Upsell&utm_medium=wporg&utm_source=readme&utm_content=store).
@@ -18,17 +19,20 @@ You can perform advanced actions like re-sending email, automatically forwarding
 ### Viewing logged emails
 
 The logged emails will be stored in a separate table and can be viewed from the admin interface.
+
 While viewing the logs, the emails can be filtered or sorted based on the date, email, subject etc.
 
 ### Deleting logged emails
 
 In the admin interface, all the logged emails can be delete in bulk or can also be selectively deleted based on date, email and subject.
+
 If you want to automatically delete the email logs after some days, then you can use the [Auto Delete Logs](https://wpemaillog.com/addons/auto-delete-logs/?utm_campaign=Upsell&utm_medium=wporg&utm_source=readme&utm_content=dl) add-on.
 
 ### Resend email (Pro addon)
 
 You can [buy the Resend email pro add-on](https://wpemaillog.com/addons/resend-email/?utm_campaign=Upsell&utm_medium=wporg&utm_source=readme&utm_content=re),
 which allows you to resend the email directly from the email log.
+
 The add-on allows you to modify the different fields of the email before resending it.
 
 ### More Fields (Pro addon)
@@ -46,7 +50,9 @@ which shows additional fields in the email log page. The following are the addit
 
 You can [buy the Forward email pro add-on](https://wpemaillog.com/addons/more-fields/?utm_campaign=Upsell&utm_medium=wporg&utm_source=readme&utm_content=fe),
 which allows you to send a copy of all the emails send from WordPress to another email address.
+
 The addon allows you to choose whether you want to forward through to, cc or bcc fields.
+
 This can be extremely useful when you want to debug by analyzing the emails that are sent from WordPress.
 
 ### Export email logs (Pro addon)
@@ -57,7 +63,7 @@ You can buy the [Export Email Logs add-on](https://wpemaillog.com/addons/export-
 
 As [recommended by Ozh][1], the Plugin has an uninstall hook which will clean up the database and options when the Plugin is uninstalled.
 
- [1]: http://sudarmuthu.com/blog/2009/10/07/lessons-from-wordpress-plugin-competition.html
+ [1]: https://sudarmuthu.com/blog/lessons-from-wordpress-plugin-competition/
 
 ### Documentation
 
@@ -66,6 +72,7 @@ You can find fully searchable documentation about using the plugin in the [doc s
 ### Development
 
 The development of the Plugin happens over at [github](http://github.com/sudar/email-log).
+
 If you want to contribute to the Plugin, [fork the project at github](http://github.com/sudar/email-log) and send me a pull request.
 
 If you are not familiar with either git or Github then refer to this [guide to see how fork and send pull request](http://sudarmuthu.com/blog/contributing-to-project-hosted-in-github).
@@ -85,7 +92,9 @@ The Plugin currently has translations for the following languages.
 *   Dutch (Thanks Zjan Preijde)
 
 The pot file is available with the Plugin.
+
 If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know.
+
 I will add it to the Plugin after giving credit to you.
 
 == Installation ==
@@ -99,8 +108,11 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ### The content of the email is not getting logged when I am using wpmandrill plugin
 
 wpmandrill plugin has a bug that prevents this plugin from logging the content of the email.
+
 More details about the bug is available at http://wordpress.org/support/topic/mandrill-is-changing-the-names-of-args-in-the-filter?replies=1.
+
 I have asked the author of the plugin to fix it and it might get fixed it the next release.
+
 Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. So if the content is not getting logged, then upgrade to v1.7.3.
 
 == Screenshots ==
@@ -120,10 +132,17 @@ Meanwhile, I have added a hack to handle this condition in v1.7.3 of my plugin. 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
 == Changelog ==
 
-= v2.3.1 - (2019-04-11) =
+= v2.3.2 – (2020-03-03) =
+- New: Added the ability to log BuddyPress emails which don't use wp_mail function.
+- New: Supports PHP 5.6 to PHP 7.4
+- Tweak: Design tweaks for WordPress 5.3
+- Fix: Don't throw a warning if wrong data is passed to wp_mail function.
+- Fix: Bulk Actions that were performed from the bottom dropdown in the Log List page was not working.
+
+= v2.3.1 – (2019-04-11) =
 - Fix: Added a missing file that broke v2.3.1 release for some installations.
 
-= v2.3.1 - (2019-04-11) =
+= v2.3.0 - (2019-04-11) =
 
 - New: The 'To' and 'Subject' fields now supports text upto 500 characters.
 - New: Store the name of the attachment file if present.
@@ -312,7 +331,7 @@ This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/
 
 == Upgrade Notice ==
 
-= 2.3.1 =
+= 2.3.0 =
 The 'To' and 'Subject' fields now supports text upto 500 characters.
 
 = 2.2.5 =

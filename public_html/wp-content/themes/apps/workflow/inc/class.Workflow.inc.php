@@ -1624,6 +1624,8 @@ class Workflow {
                 $response .='>'.$row['LABEL'].'</div></div>';
                 
             } else if($row['TYPE'] == 2) { //Option List
+                if($row['HIDE'] && $fieldvalue != $row['LABEL'])
+                    continue;
                 if($row['APPROVAL_ONLY'] == 1) 
                     if(!($configuration == 4 && $appLvlAccess || $approval_show)) 
                         continue;
