@@ -17,6 +17,7 @@ $sql = "SELECT staffreview.*, employee.first_name, employee.last_name, sup.first
         LEFT JOIN wp_users ON sup.user_login = wp_users.user_login 
         WHERE empsubmitdate IS NOT NULL 
             AND supsubmitdate IS NULL 
+            AND reviewsubmitdate IS NULL
             AND (supreminder <= '".$date->format('Y-m-d')."' 
                     OR supreminder IS NULL)
             AND skipreminder = '0'";
