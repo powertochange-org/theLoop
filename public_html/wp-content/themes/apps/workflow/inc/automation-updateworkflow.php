@@ -140,10 +140,10 @@ if(($formID == 223 || $formID == 224) && $newApprovalStatus == 100 && $newstatus
                 $planEm = 'Corp Adv Voice 20 at $25';
                 break;
             default: 
-                $planEm = 'Please continue this line on the existing plan';
+                $planEm = 'Please continue this line on the existing plan (subsidized device rate)';
         }
     } else {
-        $planEm = 'Please continue this line on the existing plan';
+        $planEm = 'Please continue this line on the existing plan (subsidized device rate)';
     }
     
     //Compose Email
