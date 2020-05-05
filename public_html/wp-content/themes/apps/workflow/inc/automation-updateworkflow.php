@@ -174,7 +174,7 @@ if(($formID == 223 || $formID == 224) && $newApprovalStatus == 100 && $newstatus
     
     $mail = array('to' => '');
     $mail['headers'][] =  'From: Keith Richmond <keith.richmond@p2c.com>';
-    $mail['to'] = 'mrpotatohead@p2c.com';
+    $mail['to'] = 'gerald.becker+guest@p2c.com';
     $mail['headers'][] = 'Cc: '.$userName.' <'.$userEmail.'>';
     
     //Add role members
