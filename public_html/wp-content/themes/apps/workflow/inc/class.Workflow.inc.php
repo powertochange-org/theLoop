@@ -534,7 +534,7 @@ class Workflow {
             }
             //Process the extra misc content including for historic forms
             //43 = Allowance calculator up until 3/20/2017
-            if($formID == $this->allowanceCalculatorID || $formID = 43) {
+            if($formID == $this->allowanceCalculatorID || $formID == 43) {
                 $misc_content = str_replace("\\", "\\\\", $misc_content);
                 $misc_content = str_replace("'", "\'", $misc_content);
                 $sql .= ", MISC_CONTENT = '$misc_content' ";
@@ -588,6 +588,9 @@ class Workflow {
                 VALUES ('$user', '$submissionID', '$historyApprovalStage', '$newstatus', '".date('Y-m-d H:i:s')."')";
         
         $result = $wpdb->query($sql, ARRAY_A);
+        
+        require_once 'automation-updateworkflow.php';
+        
         
         return $submissionID;
     }
