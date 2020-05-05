@@ -140,7 +140,8 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
     $mail = array('to' => '');
     $mail['headers'][] =  'From: Keith Richmond <keith.richmond@p2c.com>';
     $mail['to'] = 'mrpotatohead@p2c.com';
-    $mail['headers'][] = 'Cc: gerald.becker@p2c.com;keith.richmond@p2c.com; martha.richmond@p2c.com';
+    $mail['headers'][] = 'Cc: Gerald Becker <gerald.becker@p2c.com>';
+    $mail['headers'][] = 'Cc: Keith Richmond <keith.richmond@p2c.com>';
     
     $mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
     $mail['subject'] = 'ATTN: TELUS WSS WEST SUPPORT';
