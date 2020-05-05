@@ -27,9 +27,12 @@ if (array_key_exists("project", $_GET)){
 			$gitCommand = "pull";
 			echo "<p>Running command <b>git $gitCommand</b> in folder <b>$folder</b></p>";
 			$output = runGitCommand($folder, $gitCommand);
-			echo "<span style='font-family: courier new; font-size: small'>";
-			echo str_replace("\n", "<br />", str_replace(" ", "&nbsp", $output));
-			echo "</span>";
+			echo "<span style='font-family: courier new; font-size: small;'>";
+                        echo str_replace("\n", "<br />", str_replace(" ", "&nbsp", $output[1]));
+                        echo "</span>";
+                        echo "<span style='font-family: courier new; font-size: small;color:red;'>";
+                        echo str_replace("\n", "<br />", str_replace(" ", "&nbsp", $output[2]));
+                        echo "</span>";
 		}
 	}
 	else {
@@ -45,11 +48,15 @@ else {
 
 
 function runGitCommand ($folder, $gitCommand) {
-    $descriptorspec = array( 1 => array('pipe', 'w') ); // stdout is a pipe that the child will write to
+    $descriptorspec = array( 1 => array('pipe', 'w'), 2 => array('pipe', 'W')); // stdout is a pipe that the child will write to
     $resource = proc_open("git $gitCommand", $descriptorspec, $pipes, $folder);
     if (is_resource($resource)) {
-           $output = stream_get_contents($pipes[1]);
+	   $output = array(
+                1 => stream_get_contents($pipes[1]),
+                2 => stream_get_contents($pipes[2])
+        );
            fclose($pipes[1]);
+	   fclose($pipes[2]);
            proc_close($resource);
            return $output;
     }
