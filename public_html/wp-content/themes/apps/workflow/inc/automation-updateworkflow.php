@@ -15,7 +15,7 @@ echo "<br> $";*/
 //, , $, $, $, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $ = 0, $newDirectApprover = 0
 
 //TELUS NEW CONTRACT FORM
-if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
+if(($formID == 223 || $formID == 224) && $newApprovalStatus == 100 && $newstatus == 7) {
     $sql = "SELECT * 
             FROM workflowformsubmissions
             WHERE SUBMISSIONID = '$submissionID'";
@@ -33,30 +33,38 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
         foreach($result as $row) {
             // var_dump($row);
             
-            //224
-            if($row['FIELDID'] == 3)
+            if(($formID == 223 || $formID == 224) && $row['FIELDID'] == 3)
                 $FULLNAME = $row['VALUE'];
-            else if($row['FIELDID'] == 14)
+            else if(($formID == 223 && $row['FIELDID'] == 14) 
+                || ($formID == 224 && $row['FIELDID'] == 6))
                 $CURRENTCELL = $row['VALUE'];
-            else if($row['FIELDID'] == 17)
+            else if($formID == 223 && $row['FIELDID'] == 17)
                 $CURRENTCARRIER = $row['VALUE'];
-            else if($row['FIELDID'] == 20)
+            else if($formID == 223 && $row['FIELDID'] == 20)
                 $ACCOUNTNUMBER = $row['VALUE'];
-            else if($row['FIELDID'] == 27)
+            else if($formID == 223 && $row['FIELDID'] == 27)
                 $CONTRACTTYPE = $row['VALUE'];
-            else if($row['FIELDID'] == 35)
+            else if($formID == 223 && $row['FIELDID'] == 35)
                 $DEVICENEEDED = ($row['VALUE'] == 'Yes');
-            else if($row['FIELDID'] == 38)
+            else if(($formID == 223 && $row['FIELDID'] == 38) 
+                || ($formID == 224 && $row['FIELDID'] == 18)) {
                 $DEVICE = $row['VALUE'];
-            else if($row['FIELDID'] == 41)
+                if($formID == 224)
+                    $DEVICENEEDED = true;
+            } else if(($formID == 223 && $row['FIELDID'] == 41) 
+                || ($formID == 224 && $row['FIELDID'] == 21))
                 $APPLECARE = $row['VALUE'];
-            else if($row['FIELDID'] == 48)
+            else if(($formID == 223 && $row['FIELDID'] == 48)
+                || ($formID == 224 && $row['FIELDID'] == 28))
                 $PLANTYPE = $row['VALUE'];
-            else if($row['FIELDID'] == 51)
+            else if(($formID == 223 && $row['FIELDID'] == 51)
+                || ($formID == 224 && $row['FIELDID'] == 31))
                 $AREACODE = $row['VALUE'];
-            else if($row['FIELDID'] == 54)
+            else if(($formID == 223 && $row['FIELDID'] == 54)
+                || ($formID == 224 && $row['FIELDID'] == 34))
                 $SHIPPINGADDRESS = $row['VALUE'];
-            else if($row['FIELDID'] == 57)
+            else if(($formID == 223 && $row['FIELDID'] == 57)
+                || ($formID == 223 && $row['FIELDID'] == 37))
                 $CONTACTPHONE = $row['VALUE'];
         }
     }
@@ -73,9 +81,11 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
     
     //Port logic
     $portEm = '';
-    if($CURRENTCARRIER != '' || $CURRENTCELL != '')
-        $portEm = "Please port in $CURRENTCELL from $CURRENTCARRIER account number $ACCOUNTNUMBER";
-    else
+    if($CURRENTCARRIER != '' || $CURRENTCELL != '') {
+        $portEm = "Please port in $CURRENTCELL";
+        if($CURRENTCARRIER != '')
+            $portEm .= " from $CURRENTCARRIER account number $ACCOUNTNUMBER";
+    } else
         $portEm = "No phone number will be ported in. Please supply a new number for this line local to area code $AREACODE.";
     
     //Device logic
@@ -114,9 +124,24 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
             case 'Corporate Watch Access Plan - $10':
                 $planEm = 'Corporate Watch Access Plan at $10';
                 break;
+            case 'Switch My Plan To: Corp Connect Roam Flex 3GB - $48':
+                $planEm = 'Corp Connect Roam Flex 3GB at $48';
+                break;
+            case 'Switch My Plan To: Corp Connect Roam Flex 5GB - $52':
+                $planEm = 'Corp Connect Roam Flex 5GB at $52';
+                break;
+            case 'Switch My Plan To: Corp Easy Share 3GB - $53':
+                $planEm = 'Corp Easy Share 3GB at $53';
+                break;
+            case 'Switch My Plan To: Corp Connect ER Can-US 3GB - $65':
+                $planEm = 'Corp Connect ER Can-US 3GB at $65';
+                break;
+            case 'Switch My Plan To: Corp Adv Voice 20 - $25':
+                $planEm = 'Corp Adv Voice 20 at $25';
+                break;
+            default: 
+                $planEm = 'Please continue this line on the existing plan';
         }
-        
-        
     } else {
         $planEm = 'Please continue this line on the existing plan';
     }
@@ -133,15 +158,38 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
                     <p style='margin-bottom:5px;'><b>Please ensure that PORT BLOCKING is enabled on this line.</b></p>
                     <p style='margin-bottom:5px;'>Ref # $submissionID</p>";
     
-    //if()
-// Please activate a line on a three-year term
-// Please activate a line on a month-to-month plan
-// Please renew phone number %PHONE-NUMBER% on a new three-year term.
+    $userEmail = '';
+    $userName = '';
+    $sql = "SELECT USER, user_email, first_name, last_name
+            FROM workflowformstatus
+            INNER JOIN employee ON employee.employee_number = workflowformstatus.USER
+            INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+            WHERE SUBMISSIONID = '$submissionID'";
+        
+    $result = $wpdb->get_results($sql, ARRAY_A);
+    if(count($result) == 1) {
+        $userEmail = $result[0]['user_email'];
+        $userName = $result[0]['first_name'].' '.$result[0]['last_name'];
+    }
+    
     $mail = array('to' => '');
     $mail['headers'][] =  'From: Keith Richmond <keith.richmond@p2c.com>';
     $mail['to'] = 'mrpotatohead@p2c.com';
-    $mail['headers'][] = 'Cc: Gerald Becker <gerald.becker@p2c.com>';
-    $mail['headers'][] = 'Cc: Keith Richmond <keith.richmond@p2c.com>';
+    $mail['headers'][] = 'Cc: '.$userName.' <'.$userEmail.'>';
+    
+    //Add role members
+    $sql = "SELECT user_email, first_name, last_name, EMAIL_ON
+            FROM workflowrolesmembers
+            INNER JOIN employee ON employee.employee_number = workflowrolesmembers.MEMBER
+            INNER JOIN wp_users ON employee.user_login = wp_users.user_login
+            WHERE ROLEID = '32'
+            ORDER BY MEMBER";
+    $emailRecepients = $wpdb->get_results($sql, ARRAY_A);
+    foreach($emailRecepients as $row) {
+        if($row['user_email'] != '' && $row['EMAIL_ON']) {
+            $mail['headers'][] = 'Cc: '.$row['first_name'].' '.$row['last_name'].' <'.$row['user_email'].'>';
+        }
+    }
     
     $mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
     $mail['subject'] = 'ATTN: TELUS WSS WEST SUPPORT';
@@ -149,8 +197,7 @@ if($formID == 223 && $newApprovalStatus == 100 && $newstatus == 7) {
     $mail['message'] = $telusEmail;
     
     wp_mail($mail['to'], $mail['subject'], $mail['message'], $mail['headers']);
-    
-    //echo $telusEmail; die();
+    //echo $userName.' '.$userEmail.'<br>'.$telusEmail; die();
 }
 
 
