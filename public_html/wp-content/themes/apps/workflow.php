@@ -31,7 +31,7 @@ require_once('workflow/inc/class.Workflow.inc.php');
 
 ?>
 <?php get_header(); ?>
-    <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css?ver=1.0.4" rel="stylesheet" type="text/css" />
+    <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow-style.css?ver=1.0.5" rel="stylesheet" type="text/css" />
     <link href="<?php echo get_stylesheet_directory_uri(); ?>/workflow/style/print.css?ver=1.0.0" rel="stylesheet" type="text/css" media="print"/>
     <script language="javascript" type="text/javascript" src="<?php echo get_stylesheet_directory_uri(); ?>/workflow/script.js?ver=1.0.9"></script>
     <?php

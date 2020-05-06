@@ -118,17 +118,21 @@ div.clear {
     height: 40px;
 }
 
-#content-workflow input[type="text"]:focus {
+#content-workflow input[type="text"]:focus,
+#content-workflow textarea:focus {
     outline: none;
 }
 
-#content-workflow .style-1 input[type="text"] {
+#content-workflow .style-1 input[type="text"],
+#content-workflow .style-1 textarea {
     padding: 0px;
     border: solid 1px #dcdcdc;
     transition: box-shadow 0.3s, border 0.3s;
 }
 #content-workflow .style-1 input[type="text"]:focus,
-#content-workflow .style-1 input[type="text"].focus {
+#content-workflow .style-1 input[type="text"].focus,
+#content-workflow .style-1 textarea:focus,
+#content-workflow .style-1 textarea.focus {
     border: solid 1px #707070;
     box-shadow: 0 0 5px 1px #969696;
 }
