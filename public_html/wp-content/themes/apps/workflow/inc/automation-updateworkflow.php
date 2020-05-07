@@ -188,7 +188,7 @@ if(($formID == 223 || $formID == 224 || $formID == 225) && $newApprovalStatus ==
     }
     
     $mail['headers'][] = 'Content-Type: text/html; charset=UTF-8';
-    $mail['subject'] = 'ATTN: TELUS WSS WEST SUPPORT';
+    $mail['subject'] = 'ATTN: TELUS WSS WEST SUPPORT - Ref # '.$submissionID;
     
     $mail['message'] = $telusEmail;
     
