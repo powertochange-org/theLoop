@@ -66,7 +66,7 @@ if(($formID == 223 || $formID == 224 || $formID == 225) && $newApprovalStatus ==
             else if(($formID == 223 && $row['FIELDID'] == 70)
                 || ($formID == 224 && $row['FIELDID'] == 50)
                 || ($formID == 225 && $row['FIELDID'] == 51))
-                $ADDINSTR = $row['VALUE'];
+                $ADDINSTR = ($row['VALUE'] != '' ? $row['VALUE'] : 'None');
         }
     }
     
