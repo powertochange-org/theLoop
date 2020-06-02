@@ -44,7 +44,7 @@
                             FROM staffreview 
                             LEFT JOIN employee on staffreview.empid = employee.employee_number 
                             LEFT JOIN wp_users ON employee.user_login = wp_users.user_login 
-                            WHERE wp_users.ID = '$wpID'
+                            WHERE wp_users.ID = '$wpID' AND reviewtype != '3'
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     $e = '<table><tr><th></th>
@@ -94,8 +94,9 @@
                             LEFT JOIN wp_users wp3 ON sup3.user_login = wp3.user_login
                             LEFT JOIN employee sup4 on staffreview.supid4 = sup4.employee_number
                             LEFT JOIN wp_users wp4 ON sup4.user_login = wp4.user_login
-                            WHERE wp1.ID = '$wpID' OR wp2.ID = '$wpID' 
-                                OR wp3.ID = '$wpID' OR wp4.ID = '$wpID'
+                            WHERE (wp1.ID = '$wpID' OR wp2.ID = '$wpID' 
+                                OR wp3.ID = '$wpID' OR wp4.ID = '$wpID')
+                                AND reviewtype != '3'
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     

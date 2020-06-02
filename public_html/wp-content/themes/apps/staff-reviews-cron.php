@@ -15,7 +15,8 @@ $sql = "SELECT staffreview.*, employee.first_name, employee.last_name, sup.first
         LEFT JOIN employee on staffreview.empid = employee.employee_number 
         LEFT JOIN employee sup on staffreview.supid = sup.employee_number 
         LEFT JOIN wp_users ON sup.user_login = wp_users.user_login 
-        WHERE empsubmitdate IS NOT NULL 
+        WHERE reviewtype != '3'
+            AND empsubmitdate IS NOT NULL 
             AND supsubmitdate IS NULL 
             AND reviewsubmitdate IS NULL
             AND (supreminder <= '".$date->format('Y-m-d')."' 
@@ -65,7 +66,7 @@ $sql = "SELECT staffreview.*, employee.first_name, employee.last_name, wp_users.
         FROM staffreview 
         LEFT JOIN employee on staffreview.empid = employee.employee_number
         LEFT JOIN wp_users ON employee.user_login = wp_users.user_login 
-        WHERE empsubmitdate IS NOT NULL AND staffemailsent = '0'";
+        WHERE empsubmitdate IS NOT NULL AND staffemailsent = '0' AND reviewtype != '3'";
 $result = $wpdb->get_results($sql, ARRAY_A);
 
 $template = '<p style="font-size:30px;">{STAFF_NAME}, you have now completed your prep work for the Staff {REVIEW_TYPE} {REVIEW_YEAR} discussion!</p>
