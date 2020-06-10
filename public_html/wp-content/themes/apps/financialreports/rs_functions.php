@@ -8,9 +8,6 @@
  *
  ******************************************************************/
 
-require_once('HTTP/Request.php');  // PEAR Library for making HTTP Requests
-
-
 /*******************************************************************
  * produceRSReport - This function calls reporting services to 
  *     generate a report, and returns the result directly back to
@@ -69,13 +66,21 @@ global $SERVER_SQL2012;
   }
 
   // Set up the request
-  $request = new HTTP_Request($REPORT_WEB_SERVICE);
-  $request->setMethod(HTTP_REQUEST_METHOD_POST);
-
-  $request->addPostData('_reportPath', $reportPath);
-  $request->addPostData('_renderFormat', $renderFormat);
+  $request = curl_init($REPORT_WEB_SERVICE);
+  curl_setopt($request, CURLOPT_POST, true);
+  curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($request, CURLOPT_ENCODING,  '');
+  curl_setopt($request, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+  curl_setopt($request, CURLOPT_HEADER, true);
+  curl_setopt($request, CURLOPT_TIMEOUT, 10 * 60);
+  curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
+  $postData = array(
+    '_reportPath' => $reportPath,
+    '_renderFormat' => $renderFormat,
+  );
+		
   // API token, so we can run reports on behalf of other users.
-  include('constant.php');
+ include('constant.php');
 
   // If there are report parameters
   if (isset($reportParams) && $reportParams) {
@@ -84,19 +89,33 @@ global $SERVER_SQL2012;
 
     while (list($key, $val) = each($reportParams)) {
       // Pass along the request data
-      $request->addPostData($key, $val);
+	  $postData[$key] = $val;
     }
   }
 
+  curl_setopt($request, CURLOPT_POSTFIELDS, http_build_query ($postData));
+  $headers = array();
+  $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+  $headers[] = 'Content-Length: '.strlen(http_build_query ($postData));
+  curl_setopt($request, CURLOPT_CUSTOMREQUEST, 'POST');
+  curl_setopt($request, CURLOPT_HTTPHEADER, $headers);
+
+  
   // Send the request
-  $result = $request->sendRequest();
-  if (PEAR::isError($result)) {
-    echo "Error: " . $result->getMessage();
+  $result = curl_exec($request);
+  if (curl_errno($request)) {
+    echo "Error: " . curl_error($request);
+	curl_close($request);
     exit;
   }
 
   // Get the response data
-  $response = $request->getResponseBody();
+  $all = curl_exec($request);
+  $header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
+  $header = substr($all, 0, $header_size);
+  $response = substr($all, $header_size);
+  
+  curl_close($request);
 
   // Return error message returned by reporting services
   if(substr($response, 0, 5) == "ERROR"){
