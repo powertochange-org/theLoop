@@ -12,6 +12,7 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 	curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($request, CURLOPT_POST, false);
 	curl_setopt($request, CURLOPT_POSTFIELDS, null);
+	curl_setopt($request, CURLOPT_HEADER , false);
 
 	// Send the request
 	$result = curl_exec($request);
@@ -24,10 +25,7 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 	}
 
 	// Get the response data
-	$all = curl_exec($request);
-	$header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
-	$header = substr($all, 0, $header_size);
-	$response = substr($all, $header_size);
+	$response = curl_exec($request);
 
 	curl_close($request);
 

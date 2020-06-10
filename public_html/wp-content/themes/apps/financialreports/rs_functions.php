@@ -71,7 +71,7 @@ global $SERVER_SQL2012;
   curl_setopt($request, CURLOPT_SSL_VERIFYPEER, false);
   curl_setopt($request, CURLOPT_ENCODING,  '');
   curl_setopt($request, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-  curl_setopt($request, CURLOPT_HEADER, true);
+  curl_setopt($request, CURLOPT_HEADER, false);
   curl_setopt($request, CURLOPT_TIMEOUT, 10 * 60);
   curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
   $postData = array(
@@ -110,10 +110,7 @@ global $SERVER_SQL2012;
   }
 
   // Get the response data
-  $all = curl_exec($request);
-  $header_size = curl_getinfo($request, CURLINFO_HEADER_SIZE);
-  $header = substr($all, 0, $header_size);
-  $response = substr($all, $header_size);
+  $response = curl_exec($request);
   
   curl_close($request);
 
