@@ -117,9 +117,9 @@
                     $e = '<hr><h2 style="text-align: center;">My Staff\'s Objective and Development Cycles</h2><hr>
                         <table><tr><th></th>
                             <th>Set Objectives</th>
-                            <th>Review Objectives Growth Check-in</th>
+                            <th>Review Objectives <br>Growth Check-in</th>
                             <th>Review Objectives</th>
-                            <th>Debrief Engagement Check-in</th>
+                            <th>Debrief <br>Engagement Check-in</th>
                         </tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
