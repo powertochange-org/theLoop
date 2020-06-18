@@ -49,9 +49,9 @@
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     $e = '<table><tr><th></th>
                         <th>Set Objectives</th>
-                        <th>Review Objectives Growth Check-in</th>
+                        <th>Review Objectives <br>Growth Check-in</th>
                         <th>Review Objectives</th>
-                        <th>Debrief Engagement Check-in</th>
+                        <th>Debrief <br>Engagement Check-in</th>
                         </tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
@@ -68,22 +68,22 @@
                         $e .= '<td>'.($row['sodc1date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         
                         if($row['sodc1date'] == null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc2date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc2date'] == null && $row['sodc1date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc3date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc2date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc4date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc3date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '</tr>';
@@ -137,22 +137,22 @@
                         
                         $e .= '<td>'.($row['sodc1date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc1date'] == null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc2date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc2date'] == null && $row['sodc1date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc3date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc2date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '<td>'.($row['sodc4date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
                         if($row['sodc3date'] != null)
-                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">Link</a>';
+                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
                         $e .= '</td>';
                         
                         $e .= '</tr>';
