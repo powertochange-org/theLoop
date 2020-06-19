@@ -102,15 +102,12 @@ global $SERVER_SQL2012;
 
   
   // Send the request
-  $result = curl_exec($request);
+  $response = curl_exec($request);
   if (curl_errno($request)) {
     echo "Error: " . curl_error($request);
 	curl_close($request);
     exit;
   }
-
-  // Get the response data
-  $response = curl_exec($request);
   
   curl_close($request);
 

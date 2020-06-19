@@ -15,7 +15,7 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 	curl_setopt($request, CURLOPT_HEADER , false);
 
 	// Send the request
-	$result = curl_exec($request);
+	$response = curl_exec($request);
 	if (curl_errno($request)) {
 		$error = "Error: " . curl_error($request);
 		curl_close($request);
@@ -23,10 +23,7 @@ function produceSQLReport($sqlReportName, $employeeNumber, $reportMonth) {
 		return $error;
 		exit;
 	}
-
-	// Get the response data
-	$response = curl_exec($request);
-
+	
 	curl_close($request);
 
 	// Handle an error on the SQL side, embedded in the response we receive
