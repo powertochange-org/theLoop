@@ -1,8 +1,8 @@
 <?php
 /*
-*Template Name: zApp Staff_Review
+*Template Name: zApp Staff_Review_SODC
 *
-* A page that shows users their staff reviews
+* A page that shows users their SODC staff reviews (Type 3)
 *
 * author: gerald.becker
 *
@@ -37,21 +37,22 @@
                     <?php
                     $wpID = wp_get_current_user()->id;
                     ?>
-                    <h1>Staff Debrief Dashboard</h1>
-                    <hr><h2 style="text-align: center;">My Debrief</h2><hr>
+                    <h1>Staff Objectives and Development Cycle Dashboard</h1>
+                    <hr><h2 style="text-align: center;">My Objective and Development Cycle</h2><hr>
                     <?php
                     $sql = "SELECT staffreview.*, employee.first_name, employee.last_name 
                             FROM staffreview 
                             LEFT JOIN employee on staffreview.empid = employee.employee_number 
                             LEFT JOIN wp_users ON employee.user_login = wp_users.user_login 
-                            WHERE wp_users.ID = '$wpID' AND reviewtype != '3'
+                            WHERE wp_users.ID = '$wpID' AND reviewtype = '3'
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     $e = '<table><tr><th></th>
-                        <th>Step 1: Staff Member Prepwork</th>
-                        <th>Step 2: Supervisor Prepwork</th>
-                        <th>Step 3: Discussion with Supervisor</th>
-                        <th>Document Links</th></tr>';
+                        <th>Set Objectives</th>
+                        <th>Review Objectives <br>Growth Check-in</th>
+                        <th>Review Objectives</th>
+                        <th>Debrief <br>Engagement Check-in</th>
+                        </tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
                         $hideDraft = false;
@@ -63,15 +64,28 @@
                             $hideDraft = true;
                         }
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
-                        $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>';
-                        if(!$hideDraft) {
-                            $e .= '<a class="staffreviewlink" href="'.$row['empdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br> ';
-                        }
-                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Supervisor</a></td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? $row['year'] : '').'</b></td>'; //$row['year']-1).'/'.$row['year']
+                        $e .= '<td>'.($row['sodc1date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        
+                        if($row['sodc1date'] == null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc2date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc2date'] == null && $row['sodc1date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc3date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc2date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc4date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc3date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
                         $e .= '</tr>';
                     }
                     $e .= '</table>';
@@ -96,16 +110,16 @@
                             LEFT JOIN wp_users wp4 ON sup4.user_login = wp4.user_login
                             WHERE (wp1.ID = '$wpID' OR wp2.ID = '$wpID' 
                                 OR wp3.ID = '$wpID' OR wp4.ID = '$wpID')
-                                AND reviewtype != '3'
+                                AND reviewtype = '3'
                             ORDER BY year DESC";
                     $result = $wpdb->get_results($sql, ARRAY_A);
                     
-                    $e = '<hr><h2 style="text-align: center;">My Staff</h2><hr>
+                    $e = '<hr><h2 style="text-align: center;">My Staff\'s Objective and Development Cycles</h2><hr>
                         <table><tr><th></th>
-                            <th>Step 1: Staff Member Prepwork</th>
-                            <th>Step 2: Supervisor Prepwork</th>
-                            <th>Step 3: Discussion with Staff Member</th>
-                            <th>Document Links</th>
+                            <th>Set Objectives</th>
+                            <th>Review Objectives <br>Growth Check-in</th>
+                            <th>Review Objectives</th>
+                            <th>Debrief <br>Engagement Check-in</th>
                         </tr>';
                     $prevYearsHeader = true;
                     foreach($result as $row) {
@@ -119,15 +133,28 @@
                         }
                         $displaySup = 1;
                         $e .= '<tr>';
-                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br><b>'.($row['year'] != '' ? ($row['year']-1).'/'.$row['year'] : '').($row['reviewtype'] == 2 ? '<br>DEBRIEF' : '').'</b></td>';
-                        $e .= '<td>'.($row['empsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>'.($row['supsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>'.($row['reviewsubmitdate'] == null ? '&#10006;' : '&#10004;').'</td>';
-                        $e .= '<td>';
-                        if(!$hideDraft) {
-                            $e .= '<a class="staffreviewlink" href="'.$row['supdraftlink'].'" target="_blank">Complete '.($row['reviewtype'] == 2 ? '<br>Debrief ' : '').'Prepwork</a> <br>';
-                        } 
-                        $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank">Discussion with Staff Member</a></td>';
+                        $e .= '<td>'.$row['first_name'].' '.$row['last_name'].'<br>('.$row['ministry'].')<br><b>'.($row['year'] != '' ? $row['year'] : '').'</b></td>';
+                        
+                        $e .= '<td>'.($row['sodc1date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc1date'] == null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc2date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc2date'] == null && $row['sodc1date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc3date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc2date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['objectiveslink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
+                        $e .= '<td>'.($row['sodc4date'] == null ? '&#10006;' : '&#10004;').'<br><br>';
+                        if($row['sodc3date'] != null)
+                            $e .= '<a class="staffreviewlink" href="'.$row['reviewlink'].'" target="_blank" style="max-width:100px;margin:auto;">View</a>';
+                        $e .= '</td>';
+                        
                         $e .= '</tr>';
                     }
                     $e .= '</table>';

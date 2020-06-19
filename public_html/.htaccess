@@ -1,33 +1,8 @@
-AddHandler php5-script .php
-
-# WP-AVOID-SLOW Begin
-# Add Expires headers
-##ExpiresActive On
-##ExpiresDefault "access plus 5 days"
-##ExpiresByType text/css "modification plus 2 minutes"
-# ETags
-##FileETag none
-# WP-AVOID-SLOW END
-
-## The following will ensure the site uses https://
-RewriteEngine On
-#RewriteCond %{HTTPS} off
-#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
-
-## The following will prevent direct document access by non-logged-in users
-###RewriteCond %{HTTP:Cookie} !^(wordpress_logged_in_).*$ [NC]
-#RewriteCond %{REQUEST_URI} !\.(jpg|png|gif)$ [NC] #allow images to be accessed without logging in (there are security concerns about this)
-###RewriteRule .*\.(doc|xls|pdf|html|htm|xlsx|docx)$ https://devstaff.powertochange.org/wp-login.php?redirect_to=%{REQUEST_URI} [NC]
-
-# BEGIN WPSuperCache
-# END WPSuperCache
-
-
-
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+RewriteRule Shibboleth.sso - [L]
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
