@@ -8,7 +8,7 @@
 <div id="staff-dashboard" style="margin-top: -37px;margin-bottom: 37px;">
 <?php if(get_option( 'staffreview' , 0 )) { ?>
     <div class="container" style="border:2px solid #FF9336;margin-top:30px;padding:0;text-align: center;font-size:25px;">
-        <a href="/forms-information/staff-objectives-and-development-cycle/" style="padding:30px;display:block;">Access Staff Debrief Dashboard</a>
+        <a href="/forms-information/staff-objectives-and-development-cycle/" style="padding:30px;display:block;">P2C-Student Debrief Dashboard</a>
     </div>
     <style>
         #staff-dashboard a:hover {
