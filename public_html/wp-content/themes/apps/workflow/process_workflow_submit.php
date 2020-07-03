@@ -100,7 +100,11 @@ if(isset($_POST['directsupervisor']) && $_POST['directsupervisor'] != '') {
 /* Old method for the supervisor override. Used for behalf of submissions.*/
 if(isset($_POST['nextsupervisor']) && $_POST['nextsupervisor'] != '') {
     $sup = $_POST['nextsupervisor'];
-} 
+}
+$supAdd = 0;
+if(isset($_POST['addsupervisor']) && $_POST['addsupervisor'] != '') {
+    $supAdd = $_POST['addsupervisor'];
+}
 
 if(isset($_POST['uniquetoken']) && $_POST['uniquetoken'] != '') {
     $uniqueToken = $_POST['uniquetoken'];
@@ -127,7 +131,7 @@ if(isset($_POST['reminderdate'])) {
 
 $obj = new Workflow();
 
-$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes, $statuslevel, $newSup);
+$sbid = $obj->updateWorkflowSubmissions($fields, $newstatus, $sbid, $wfid, $loggedInUser, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes, $statuslevel, $newSup, $supAdd);
 
 if($sbid != 0)
     $obj->sendEmail($sbid);

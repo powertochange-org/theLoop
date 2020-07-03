@@ -10,7 +10,7 @@
 *
 */
 
-define('NEWSUPERVISOR', 30);
+define('NEWSUPERVISOR', 30); //The role used in forms that go from an old supervisor to a new one
 
 class Workflow {
     private $name;
@@ -220,7 +220,7 @@ class Workflow {
     /*
     Updates the database with the user submissions.
     */
-    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0, $newDirectApprover = 0) {
+    public function updateWorkflowSubmissions($fields, $newstatus, $submissionID, $formID, $user, $misc_content, $commenttext, $behalfof, $sup, $uniqueToken, $miscfields, $hrnotes = '', $statuslevel = 0, $newDirectApprover = 0, $newSubApprover = 0) {
         /*
         1) Brand new field
         2) Continue to edit
@@ -327,6 +327,23 @@ class Workflow {
             //Prevents sending of an email.
             return 0;
         } else if($newstatus == 50) {
+            //Update History of approvers
+            if($newSubApprover != 0) {
+                $sql = "INSERT INTO workflowsuphistory (SUBMISSIONID, USER_ID, DIRECT_LEVEL)
+                        VALUES ('$submissionID', '$newSubApprover', '0')";
+                $result = $wpdb->query($sql, ARRAY_A);
+            }
+            //Remove sub supervisor history if it the sub supervisor changes
+            $sql = "DELETE FROM workflowsuphistory
+                    WHERE SUBMISSIONID = '$submissionID' 
+                        AND USER_ID IN 
+                            (SELECT APPROVER_SUB 
+                                FROM workflowformstatus 
+                                WHERE SUBMISSIONID = '$submissionID' 
+                                    AND STATUS = '4' 
+                                    AND APPROVER_SUB != '$newSubApprover')";
+            $result = $wpdb->query($sql, ARRAY_A);
+            
             //Update only the HR notes
             $sql = "UPDATE workflowformstatus 
                     SET HR_NOTES = '$hrnotes'";
@@ -334,6 +351,7 @@ class Workflow {
             if(isset($miscfields['SEND_REMINDER']))
                 $sql .= ", SEND_REMINDER = '".$miscfields['SEND_REMINDER']."'";
             
+            $sql .= (", APPROVER_SUB = ".($newSubApprover == 0 ? "NULL" : "'$newSubApprover'"));
             $sql .= " WHERE SUBMISSIONID = '$submissionID'";
             $result = $wpdb->query($sql, ARRAY_A);
             return 0;
@@ -688,7 +706,7 @@ class Workflow {
         
         if(isset($sbid) && $sbid != '' && $sbid != 0) {
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT,
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT, APPROVER_SUB,
                             BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
                             SEND_REMINDER
                     FROM workflowformstatus
@@ -746,10 +764,10 @@ class Workflow {
                 //Decided to still allow the direct supervisor to be able to edit the submission even though
                 //it wasn't directed to them. See ** below.
                 $approver = ($row['APPROVER_DIRECT'] == $loggedInUser 
+                    || $row['APPROVER_SUB'] == $loggedInUser 
                     || (Workflow::getDirectApprover($submittedby) == $loggedInUser 
                         && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
-                
             } else if($currentApprovalRole == NEWSUPERVISOR && !$approver) {
                 $approver = ($row['NEW_APPROVER_DIRECT'] == $loggedInUser);
             } else if($currentApprovalRole == 4 && !$approver) {
@@ -783,6 +801,7 @@ class Workflow {
         global $wpdb;
         $configSuccess = $approver = $supNext = $newSupNext = $processor = 0;
         $configMsg = '';
+        $approverSub = '';
         
         if(Workflow::loggedInUser() == '0') {
             echo('<br>You need to log in.');
@@ -803,7 +822,7 @@ class Workflow {
             $sbid = $_GET['sbid'];
             
             $sql = "SELECT STATUS, STATUS_APPROVAL, workflowformstatus.FORMID, COMMENT, MISC_CONTENT, USER, 
-                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT,
+                            APPROVER_ROLE, APPROVER_ROLE2, APPROVER_ROLE3, APPROVER_ROLE4, APPROVER_DIRECT, NEW_APPROVER_DIRECT, APPROVER_SUB,
                             BEHALFOF, UNIQUE_TOKEN, PROCESSOR, PROCESSED, HR_NOTES, HR_FILED, HR_VOID,
                             SEND_REMINDER
                     FROM workflowformstatus
@@ -825,6 +844,7 @@ class Workflow {
                 $behalfof = $row['BEHALFOF'];
                 $this->uniqueToken = $row['UNIQUE_TOKEN'];
                 $miscfields['SEND_REMINDER'] = $row['SEND_REMINDER']; 
+                $approverSub = $row['APPROVER_SUB'];
                 
                 if($hrvoid && !Workflow::hasRoleAccess(Workflow::loggedInUser(), 27)) {
                     echo 'This submission is no longer available. Please contact HR if this submission was voided in error.';
@@ -921,6 +941,7 @@ class Workflow {
                 //Decided to still allow the direct supervisor to be able to edit the submission even though
                 //it wasn't directed to them. See ** below.
                 $approver = ($row['APPROVER_DIRECT'] == $loggedInUser 
+                    || $row['APPROVER_SUB'] == $loggedInUser
                     || (Workflow::getDirectApprover($submittedby) == $loggedInUser 
                         && $approvalStatus == 1)//**If this gets changed, remove this line
                     || Workflow::hasRoleAccess($loggedInUser, $currentApprovalRole));
@@ -976,7 +997,7 @@ class Workflow {
                 } else if(Workflow::isAdmin(Workflow::loggedInUser())) {
                     echo '<span style="color:red;"><b>ADMIN VIEW</b><br></span>';
                     //Prevent viewing of a form that is still being worked on by the submitter
-                    if($status == '2' || $status == '3') {
+                    if($status == '2') {
                         echo '<span style="color:red;">This submission is currently being edited by the submitter <b>'.Workflow::getUserName($submittedby).'</b>.<br></span>';
                         $displayHistoryOnly = 1;
                     } else if($status == '10') {
@@ -990,7 +1011,7 @@ class Workflow {
                     $hasAnotherApproval = 0;
                     $configvalue = 9; 
                 } else {
-                    echo 'You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br>';
+                    echo '<div style="clear:both"></div><div>You do not have access to view this form at this time. If this is an error, contact helpdesk at <a href="mailto:helpdesk@p2c.com">helpdesk@p2c.com</a>.<br></div>';
                     return;
                 }
             } else if($configvalue == 4) {
@@ -1071,7 +1092,7 @@ class Workflow {
         
         echo Workflow::loadWorkflowEntry($wfid, $configvalue, $sbid, $misc_content, $comments, $submittedby, 
             $status, $approvalStatus, $hasAnotherApproval, $behalfof, 0, $supNext, $hrnotes, $hrfiled, $hrvoid,
-            $miscfields, $approvalStage, $newSupNext);
+            $miscfields, $approvalStage, $newSupNext, $approverSub);
     }
     
     
@@ -1122,7 +1143,7 @@ class Workflow {
     */
     public function loadWorkflowEntry($id, $configuration, $submissionID, $misc_content, $comments, $submittedby, 
         $status, $approvalStatus, $hasAnotherApproval, $behalfof, $emailMode, $supNext, $hrnotes = '', $hrfiled = '',
-        $hrvoid = '', $miscfields = '', $approvalStage = '', $newSupNext = 0) {
+        $hrvoid = '', $miscfields = '', $approvalStage = '', $newSupNext = 0, $approverSub = '') {
         global $wpdb;
         $formActive = 0;
         $ignoreQuickReply = false;
@@ -1844,6 +1865,14 @@ class Workflow {
                 $remDate .= date('Y-m-d', strtotime($miscfields['SEND_REMINDER']));
                 $response .= '<br><b>Reminder Date: </b>
                     <input type="date" name="reminderdate" value="'.$remDate.'" style="width:200px;display:inline;"/>';
+            }
+            if($status == '4') {
+                $response .= '<br><br><b>Add Supervisor:</b> <div style="width:300px;"><select id="" name="addsupervisor" class="chosen-select" data-placeholder=" "><option>None</option>';
+                $values = Workflow::getAllUsers();
+                for($i = 0; $i < count($values); $i++) {
+                    $response .= '<option value="'.$values[$i][0].'" '.($approverSub == $values[$i][0] ? 'selected' : '').'>'.$values[$i][1].'</option>';
+                }
+                $response .= '</select></div>';
             }
             
             $response .= '<br><br>';
@@ -3057,7 +3086,6 @@ class Workflow {
         <tr>
         <td>
         <!-- Footer -->
-        <img src="http://staff.powertochange.org/wp-content/images/WorkflowFormFooter.png" width="100%" style="margin-top: 20px; max-height:350px;" alt="Report Footer"/>
         </td>
         </tr>
         </table>';
@@ -3733,19 +3761,28 @@ class Workflow {
         } 
         $sql .= "WHERE FORMID = '$formID'";
         $result = $wpdb->get_results($sql, ARRAY_A);
-        
         if(count($result) == 1) {
             $response = $result[0]['NAME'];
-            
-            
             if($resolveName && $result[0]['ROLEID'] == 8) {
                 $sql = "SELECT APPROVER_DIRECT FROM workflowformstatus WHERE SUBMISSIONID = '$sbid'";
                 $result = $wpdb->get_results($sql, ARRAY_A);
                 if(count($result) == 1) 
                     $response = Workflow::getUserName($result[0]['APPROVER_DIRECT']);
+                if($resolveName && $current == 1 && $currentLevel == 1) {
+                    $sql = "SELECT APPROVER_SUB FROM workflowformstatus WHERE SUBMISSIONID = '$sbid' AND APPROVER_SUB IS NOT NULL";
+                    $result = $wpdb->get_results($sql, ARRAY_A);
+                    if(count($result) == 1) 
+                        $response .= ' OR '.Workflow::getUserName($result[0]['APPROVER_SUB']);
+                }
             }
         }
         
+        if($resolveName && $current == 1 && $currentLevel == 0) {
+            $sql = "SELECT USER FROM workflowformstatus WHERE SUBMISSIONID = '$sbid'";
+            $result = $wpdb->get_results($sql, ARRAY_A);
+            if(count($result) == 1) 
+                $response = Workflow::getUserName($result[0]['USER']);
+        }
         
         
         
