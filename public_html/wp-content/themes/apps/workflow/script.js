@@ -279,6 +279,18 @@ var savedTag1 = 4;
  * mode 1 = approval submissions
  */
 function switchTab(mode, tab) {
+    if(mode == 'staff' || mode == 'all') {
+        mode = 1;
+    } else if(mode == 'my') {
+        mode = 0;
+    }
+    var d = new Date();
+    d.setTime(d.getTime() + (1*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    if(performance.navigation.type != 2) {
+        document.cookie = 'workflowtab='+tab+';' + expires + ";path=/";
+        document.cookie = 'workflowmode='+mode+';' + expires + ";path=/";
+    }
     savedMode = mode;
     if(mode == 0) {
         find('user-status-link' + savedTag0).classList.remove("workflow-status-header");
@@ -417,7 +429,7 @@ function switchTab(mode, tab) {
  * Toggles between user submissions and submissions requiring approval
  */
 function switchRole(mode) {
-    savedMode = mode;
+    /*savedMode = mode;
     if(mode == 0) {
         find('user-submissions').classList.remove('hide');
         find('approver-submissions').classList.add('hide');
@@ -428,7 +440,7 @@ function switchRole(mode) {
         find('approver-submissions').classList.remove('hide');
         find('user-submissions-summary').classList.remove('selected-submissions');
         find('approver-submissions-summary').classList.add('selected-submissions');
-    }
+    }*/
 }
 
 function formSearch() {

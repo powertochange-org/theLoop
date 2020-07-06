@@ -137,7 +137,10 @@ if($sbid != 0)
     $obj->sendEmail($sbid);
 
 
-if(isset($_POST['approverredirect']))
+if(isset($_COOKIE['workflowpage'])) {
+    header('location: ?page=viewsubmissions&forms='.$_COOKIE['workflowpage']);
+    die();
+} else if(isset($_POST['approverredirect']))
     header('location: ?page=viewsubmissions&forms=staff');
 else
     header('location: ?page=viewsubmissions');

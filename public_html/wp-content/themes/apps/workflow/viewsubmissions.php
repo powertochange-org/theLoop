@@ -97,6 +97,8 @@ if(Workflow::loggedInUser() != '0') {
     else
         $formType = 'my';
     
+    setcookie('workflowpage', $formType, time() + (3600 * 8), "/"); //8 hours
+    
     //Displays the blue summary box
     //echo $obj->viewSubmissionSummary(Workflow::loggedInUser(), $formsearch, "", $datesearch, $idsearch, $formType, $showvoid, $showfiled);
     
@@ -155,8 +157,11 @@ if(Workflow::loggedInUser() != '0') {
              $showvoid, $showfiled, $showCompleted);
     
     //Display the forms that the user was in before hitting the search button
-    if(isset($_GET['mode']) && isset($_GET['tag'])) {
-        echo '<script>switchRole('.$_GET['mode'].');switchTab('.$_GET['mode'].', '.$_GET['tag'].');</script>';
+    if(isset($_GET['tag'])) {
+        echo '<script>switchTab('.$formType.', '.$_GET['tag'].');</script>';
+    }
+    if(isset($_COOKIE['workflowpage']) && isset($_COOKIE['workflowtab'])) {
+        echo '<script>switchTab("'.$formType.'", '.($formType == $_COOKIE['workflowpage'] ? $_COOKIE['workflowtab'] : ($formType == 'my' ? '3' : '4')).');</script>';
     }
     
     ?>
