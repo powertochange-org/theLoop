@@ -466,6 +466,10 @@ function printForm() {
     window.print();
 }
 
+function openSubmissionTab() {
+    submissionLink = false;
+}
+
 function loadComments(commentid) {
     submissionLink = false;
     var text = '';

@@ -2859,9 +2859,9 @@ class Workflow {
         $response .= '<div id="approver-submissions">';
         $response .= '<table>';
         
-        $response .= '<tr><td colspan="7"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
+        $response .= '<tr><td colspan="8"><h2>'.($viewAll == 1 ? 'All' : 'My').' Staff\'s Forms</h2><br></td></tr>';
         
-        $response .= '<tr><td colspan="7">
+        $response .= '<tr><td colspan="8">
                         <div id="approver-status-link4" class="workflow-status-link workflow-status-header" onclick="switchTab(1, 4);">Approval Pending (%PENDING%)</div>
                         <div id="approver-status-link7" class="workflow-status-link" onclick="switchTab(1, 7);">Approved (%APPROVED%)</div>
                         <div id="approver-status-link8" class="workflow-status-link" onclick="switchTab(1, 8);">Not Approved (%DENIED%)</div>
@@ -2870,18 +2870,18 @@ class Workflow {
                     </td></tr>';
 
        
-        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:150px;">Staff Name</th><th style="width:400px;">Form Name</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th><th style="width:20px;">F</th><th></th></tr>';
+        $tableHeader = '<tr class="%CLASS% submissions-header"><th style="width:50px;">ID</th><th style="width:150px;">Staff Name</th><th style="width:400px;">Form Name</th><th style="width:150px;">Last Modified By</th><th style="width:125px;">Date Modified</th><th style="width:20px;">F</th><th></th><th></th></tr>';
         
         $prevState = 1;
         $processorState = -1;
         $approved = $denied = $pending = $notprocessed = $processed = 0;
         $pendingSub = $approvedSub = $notApprovedSub = $tbpSub = $proSub = '';
         
-        $response .= '<tr class="approver-4"><td colspan=7><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
-        $response .= '<tr class="approver-7 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
-        $response .= '<tr class="approver-8 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
-        $response .= '<tr class="approver-9 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
-        $response .= '<tr class="approver-10 hide"><td colspan=7><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
+        $response .= '<tr class="approver-4"><td colspan=8><div class="view-submissions-headers workflow-status-header">Submissions Requiring Approval</div></td></tr>'.str_replace('%CLASS%', "approver-4", $tableHeader);
+        $response .= '<tr class="approver-7 hide"><td colspan=8><div class="view-submissions-headers workflow-status-header">Approved Forms</div></td></tr>'.str_replace('%CLASS%', "approver-7  hide", $tableHeader);
+        $response .= '<tr class="approver-8 hide"><td colspan=8><div class="view-submissions-headers workflow-status-header">Forms Not Approved</div></td></tr>'.str_replace('%CLASS%', "approver-8  hide", $tableHeader);
+        $response .= '<tr class="approver-9 hide"><td colspan=8><div class="view-submissions-headers workflow-status-header">Forms To Be Processed</div></td></tr>'.str_replace('%CLASS%', "approver-9  hide", $tableHeader);
+        $response .= '<tr class="approver-10 hide"><td colspan=8><div class="view-submissions-headers workflow-status-header">Processed</div></td></tr>'.str_replace('%CLASS%', "approver-10  hide", $tableHeader);
         
         foreach($result as $row) {
             /*Status 7 is supposed to be completely approved forms only but HR requested a change
@@ -2927,6 +2927,12 @@ class Workflow {
                 $tempResponse .= '<img src="/wp-content/themes/apps/img/note_icon_20x20.png"/>';
             
             $tempResponse .= '</td>';
+            $tempResponse .= '<td onclick="openSubmissionTab();" style="width:20px;vertical-align:middle;">
+                    <a href="?page=workflowentry&sbid='.$row['SUBMISSIONID'].'" class="wfhyperlink tooltip" target="_blank">
+                        <img src="/wp-content/themes/apps/img/workflowlink_21x20.png"/>
+                        <span class="tooltiptext">Click the scroll wheel to open on a new tab</span>
+                    </a>
+                </td>';
             $tempResponse .= '</tr>';
             $response .= $tempResponse;
         }
